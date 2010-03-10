@@ -1,0 +1,13 @@
+<%= error_messages_for 'post' %>
+
+<p><%= text_area 'post', 'text', :cols => 45, :rows => 3 %></p>
+
+<% if session[:player].mod_level > 0 %>
+<% if session[:post_id] && @post.is_mods_only %>
+<p><input id="info_mods_only" name="mods_only" value="1" type="checkbox" CHECKED>Mods only</p>
+<% else %>
+<p><input id="info_mods_only" name="mods_only" value="1" type="checkbox">Mods only</p>
+<% end %>
+
+
+<% end %>

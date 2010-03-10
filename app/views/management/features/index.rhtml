@@ -1,0 +1,46 @@
+<h1>Listing features</h1>
+
+
+<table>
+  <tr>
+    <th>name</th>
+    <th>action cost</th>
+    <th>public</th>
+    <% if session[:player].admin %><th>world</th><% end %>
+    <th>cost</th>
+    <th>housing</th>
+    <th>shops</th>
+    <th>armed?</th>
+  </tr>
+
+<% for feature in @features %>
+  <tr>
+    <td><%= feature.name %></td>
+    <td><%= feature.action_cost %></td>
+    <td><%= feature.public %></td>
+    <% if session[:player].admin %><td><%= feature.world_feature %></td><% end %>
+    <td><%= feature.cost %></td>
+    <td><%= feature.num_occupants %></td>
+    <td><%= feature.store_front_size %></td>
+  <% if !feature.armed %>
+    <td><%= link_to 'ARM', { :action => 'arm_feature', :id => feature, :page => params[:page] }, :confirm => 'Are you sure?', :method => :post %></td>
+    <td><%= link_to 'Show', :action => 'show', :id => feature %></td>
+    <td><%= link_to 'Edit', :action => 'edit', :id => feature %></td>
+    <td><%= link_to 'Destroy', { :action => 'destroy', :id => feature, :page => params[:page] }, :confirm => 'Are you sure?', :method => :post %></td>
+  <% else %>
+    <td>armed</td>
+    <td><%= link_to 'Show', :action => 'show', :id => feature %></td>
+    <td></td>
+    <td></td>
+  <% end %>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= will_paginate @features %> 
+
+<br />
+
+<%= link_to 'New feature', :action => 'new' %>

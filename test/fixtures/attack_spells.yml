@@ -1,0 +1,41 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+weak_attack_spell:
+  name: "Weak Attack Spell"
+  min_level: 5
+  min_dam: 5
+  max_dam: 10
+  dam_from_mag: 0
+  dam_from_int: 0
+  mp_cost: 5
+  hp_cost: 0
+  splash: false
+strong_attack_spell:
+  name: "Strong Attack Spell"
+  min_level: 5
+  min_dam: 50
+  max_dam: 100
+  dam_from_mag: 5
+  dam_from_int: 5
+  mp_cost: 20
+  hp_cost: 0
+  splash: false
+splash_attack_spell:
+  name: "Splash Attack Spell"
+  min_level: 10
+  min_dam: 15
+  max_dam: 15
+  dam_from_mag: 5
+  dam_from_int: 10
+  mp_cost: 40
+  hp_cost: 0
+  splash: true
+mp_and_hp_attack:
+  name: "MP and HP Attack Spell"
+  min_level: 15
+  min_dam: 5
+  max_dam: 10
+  dam_from_mag: 0
+  dam_from_int: 0
+  mp_cost: 15
+  hp_cost: 10
+  splash: false

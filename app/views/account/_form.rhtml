@@ -1,0 +1,37 @@
+<%= error_messages_for 'player' %>
+
+<!--[form:player]-->
+<% if @player.new_record? %>
+<p><label for="player_handle">Handle</label><br/>
+<%= text_field 'player', 'handle'  %></p>
+<% else %>
+<p><label for="player_handle">Handle</label><br/>
+<%= text_field 'player', 'handle', {:disabled => true}  %></p>
+<% end %>
+
+<p><label for="player_passwd">Passwd</label><br/>
+<%= password_field 'player', 'passwd'  %></p>
+
+<p><label for="player_city">City</label><br/>
+<%= text_field 'player', 'city'  %></p>
+
+<p><label for="player_state">State</label><br/>
+<%= text_field 'player', 'state'  %></p>
+
+<p><label for="player_country">Country</label><br/>
+<%= text_field 'player', 'country'  %></p>
+
+<p><label for="player_email">Email</label><br/>
+<%= text_field 'player', 'email'  %></p>
+
+<p><label for="player_AIM">Aim</label><br/>
+<%= text_field 'player', 'AIM'  %></p>
+
+<p><label for="player_yahoo_sn">Yahoo sn</label><br/>
+<%= text_field 'player', 'yahoo_sn'  %></p>
+
+<p><label for="player_bio">Bio</label><br/>
+<%= text_area 'player', 'bio'  %></p>
+
+<!--[eoform:player]-->
+

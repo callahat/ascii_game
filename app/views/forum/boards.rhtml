@@ -1,0 +1,44 @@
+<h1>Boards</h1>
+
+<% if session[:player] && session[:player].mod_level == 9 %>
+<%= link_to 'Create new board', :action => 'new_board' %>
+<% end %>
+
+<% if session[:player] && ForumRestriction.no_viewing(session[:player]) %>
+You are prohibited from viewing the boards.
+<% elsif @boards.size == 0 %>
+you don't see any boards
+<% else %>
+<table class="map">
+<tr>
+  <th>Board</th>
+  <th>Description</th>
+  <th>Threds</th>
+  <th>Last Post</th>
+</tr>
+<% for board in @boards %>
+<tr>
+  <td><%= link_to "#{board.name}", :action => 'dispatch', :board_id => board.id %></td>
+  <td class="board_info"><%=h board.text %></td>
+  <td><%=h board.childs.size %></td>
+  <td class="board_info"><% if board.last_posted_child %><%=h board.time_of_last_posted_child %> in <%= link_to "#{board.last_posted_child.name}", :action => 'dispatch', :thred_id => board.last_posted_child.id %> by <%= board.last_posted_child.childs.first.player.handle %><% end %></td>
+</tr>
+<tr>
+  <td class="board_info"><% if session[:player] && session[:player].mod_level > 2 %>Mod Ops:<% elsif board.is_locked %>Board Locked<% end %></td>
+  <td colspan=3>
+  <table>
+    <tr>
+    <td class="board_info" style="word-spacing:3em"><% if session[:player] && session[:player].mod_level == 9 %><%= link_to 'edit', :action => 'edit_board', :board_id => board.id %>-<% end %>
+    <% forum_node = board %><%= render '/forum/forum_node_status.rhtml', { :forum_node => board, :mml => 7 } %></td>
+    </tr>
+  </table>
+  </td>
+</tr>
+<% end %>
+</table>
+
+<% end %>
+
+<p>
+<%= will_paginate @boards %>
+</p>

@@ -1,0 +1,22 @@
+<h1>Kingdom Notices for <%=h session[:player_character].present_kingdom.name %></h1>
+
+<table>
+  <tr>
+    <th>Date</th>
+    <th>Notice</th>
+  </tr>
+  
+<% for notice in @notices %>
+  <tr>
+    <td><%=h notice.datetime.strftime("%I:%M%p %m/%d/%Y") %></td>
+    <td><%=h notice.text %><br/><i>Signed:<% if notice.signed.nil? %>anonymous<% else %><%=h notice.signed %><% end %></i></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @notices %> 
+
+<br />
+
+
+<p><%= link_to 'Back', :action => 'castle' %></p>

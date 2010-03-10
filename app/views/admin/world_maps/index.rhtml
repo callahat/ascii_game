@@ -1,0 +1,16 @@
+<h1>Listing world_maps</h1>
+
+<table>
+  <tr>
+    <th>World</th>
+  </tr>
+  
+<% for world in @worlds %>
+  <tr>
+    <td><%=h world.world.name %></td>
+    <td><%= link_to 'Show', :action => 'show', :wid => world %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @worlds %> 

@@ -1,0 +1,48 @@
+<h1>Editing level</h1>
+
+<% form_tag :action => 'update', :id => @level do %>
+
+<table>
+<% @x = 0
+   @y = 0
+   while @y < @level.maxy %>
+   <tr>
+<%   while @x < @level.maxx 
+     #  square = session[:level_map][@y][@x] 
+        square = @level.level_maps.find(:all, :conditions => ['ypos = ? and xpos = ?', @y, @x]).last.feature %>
+    <td>
+      <% if square.nil? || square.name == "\nEmpty" %>
+         <select name="<%= 'map[' + @y.to_s + '][' + @x.to_s + ']' %>">
+         <option value = ""/>
+         <%= options_from_collection_for_select(@features, 'id','name') %>
+      <% elsif square.name[0..0] == "\n" %>
+         <%=h square.name[1..12] %><% if square.name[13..13] %>...<% end %>
+         <hidden value="<%= square.id %>" name="<%= 'map[' + @y.to_s + '][' + @x.to_s + ']' %>">
+      <% else %>
+         <select name="<%= 'map[' + @y.to_s + '][' + @x.to_s + ']' %>">
+         <option value = ""/>
+         <%= options_from_collection_for_select(@features,'id','name',square.id ) %>
+      <% end %>
+
+    </td>
+<%   @x += 1
+     end
+     @x = 0
+     @y += 1 %>
+   </tr>
+   <% end %>
+</table>
+
+  <%= submit_tag 'Edit' %>
+<% end %>
+<table>
+<tr><td colspan=<%= @y %>>Kingdom Coffers : <%= @gold %></td></tr>
+<tr><td colspan=2>Pricing:</td></tr>
+ <% for feature in @features %>
+ <tr><td><label for="c<%= feature.id %>"></label> <%= feature.name %> </td><td><%= feature.cost %></td></tr>
+ <% end %>
+</table>
+
+
+<%= link_to 'Show', :action => 'show', :id => @level %> |
+<%= link_to 'List Levels', :action => 'index' %>

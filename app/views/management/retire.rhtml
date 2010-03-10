@@ -1,0 +1,21 @@
+<% if @pc || @no_king %>
+
+<% form_tag :action => 'do_retire', :method => :post do %>
+<p><%=h @message %><br/></p>
+  <%= submit_tag 'Confirm' %> | <%= submit_tag 'Cancel' %>
+<% end %>
+
+<% else %>
+<h1>Who shall be the new King of <%= session[:kingdom].name %>?</h1>
+<%=h @message %>
+
+<% form_tag :action => 'retire', :method => :post do %>
+<p><label for="kingdom_new_king">(enter a name, or nothing to leave the kingdom without a king):</label><br/>
+<input type="text" name="new_king" /><br/>
+  <%= submit_tag 'Accept' %> or  <%= submit_tag 'Abandon' %>
+<% end %>
+<br/>
+<%= link_to 'Cancel', :action => 'index' %>
+
+<% end %>
+

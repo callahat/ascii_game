@@ -1,0 +1,19 @@
+<%= error_messages_for 'healer_skill' %>
+
+<!--[form:healer_skill]-->
+<p><label for="healer_skill_max_HP_restore">Max hp restore</label><br/>
+<%= text_field 'healer_skill', 'max_HP_restore'  %></p>
+
+<p><label for="healer_skill_max_MP_restore">Max mp restore</label><br/>
+<%= text_field 'healer_skill', 'max_MP_restore'  %></p>
+
+<p><label for="healer_skill_max_stat_restore">Max stat restore</label><br/>
+<%= text_field 'healer_skill', 'max_stat_restore'  %></p>
+
+<p><label for="healer_skill_disease_id">Disease</label><br/>
+<%= collection_select('healer_skill','disease_id', @diseases, 'id', 'name', {:include_blank => 'true'} ) %></p>
+
+<p><label for="healer_skill_min_sales">Min sales</label><br/>
+<%= text_field 'healer_skill', 'min_sales'  %></p>
+<!--[eoform:healer_skill]-->
+

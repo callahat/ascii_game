@@ -1,0 +1,20 @@
+<% @empty_feature = Feature.find(:first, :conditions => ['kingdom_id = ? and player_id = ? and name = ?', -1, -1, "\nEmpty"]) %>
+
+<table>
+<% while @y < @level.maxy %>
+<tr>
+<% while @x < @level.maxx %>
+  <td><% @feature = @level.level_maps.find(:all,:conditions => ['ypos = ? AND xpos = ?', @y, @x]).last.feature
+         if !@feature.nil? %>
+   <%= @pretag %><%=h @feature.image.image_text %></pre>
+         <% else %>
+   <%= @pretag %><%=h @empty_feature.image.image_text %></pre>
+         <% end %>
+  </td>
+<%     @x += 1 
+     end 
+     @x = 0 
+     @y += 1 %>
+</tr>
+<% end %>
+</table>

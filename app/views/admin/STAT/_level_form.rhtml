@@ -1,0 +1,17 @@
+<%= error_messages_for 'stat' %>
+
+<!--[form:stat]-->
+<table>
+  <% Stat.symbols.each{|sym| %>
+  <tr>
+    <td><label for="stat_<%= sym.to_s %>"><%= sym.to_s.capitalize %></label></td>
+    <td><%= text_field 'stat', sym.to_s, :size => 5 %></td>
+  </tr>
+  <% } %>
+  <tr>
+    <td><label for="stat_freepts">Freepts</label></td>
+    <td><%= text_field 'race', 'freepts', :size => 5 %></td>
+  </tr>
+</table>
+
+<!--[eoform:stat]-->

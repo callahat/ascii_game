@@ -1,0 +1,26 @@
+<%= error_messages_for 'quest' %>
+
+<!--[form:quest]-->
+<p><label for="quest_name">Name</label><br/>
+<%= text_field 'quest', 'name'  %></p>
+
+<p><label for="quest_description">Description</label><br/>
+<%= text_field 'quest', 'description'  %></p>
+
+<p><label for="quest_max_level">Max level</label><br/>
+<%= text_field 'quest', 'max_level'  %></p>
+
+<p><label for="quest_max_completeable">Max completeable</label><br/>
+<%= text_field 'quest', 'max_completeable'  %></p>
+
+<p><label for="quest_gold">Gold Reward</label><br/>
+<%= text_field 'quest', 'gold'  %></p>
+
+<p><label for="quest_item_id">Item Reward</label><br/>
+<%= collection_select('quest', 'item_id', @items, 'id', 'name', {:include_blank => 'true'} )  %></p>
+
+<p><label for="quest_quest_id">Prerequisite Quest</label><br/>
+<%= collection_select('quest', 'quest_id', @prereqs, 'id', 'name', {:include_blank => 'true'} )  %></p>
+
+<!--[eoform:quest]-->
+

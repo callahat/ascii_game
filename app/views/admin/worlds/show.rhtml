@@ -1,0 +1,8 @@
+<% for column in World.content_columns %>
+<p>
+  <b><%= column.human_name %>:</b> <%=h @world.send(column.name) %>
+</p>
+<% end %>
+
+<%= link_to 'Edit', :action => 'edit', :id => @world %> |
+<%= link_to 'Back', :action => 'list' %>

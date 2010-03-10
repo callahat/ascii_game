@@ -1,0 +1,8 @@
+<h1>Edit sub event</h1>
+
+<% form_tag :action => 'update_sub_event', :id => @event do %>
+  <%= render :partial => 'sub_event_form' %>
+  <%= submit_tag "Update" %>
+<% end %>
+
+<%= link_to 'Back', :action => 'edit', :id => @event %>

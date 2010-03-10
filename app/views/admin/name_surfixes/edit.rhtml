@@ -1,0 +1,9 @@
+<h1>Editing name_surfixes</h1>
+
+<% form_tag :action => 'update', :id => @name_surfixes do %>
+  <%= render :partial => 'form' %>
+  <%= submit_tag 'Edit' %>
+<% end %>
+
+<%= link_to 'Show', :action => 'show', :id => @name_surfixes %> |
+<%= link_to 'Back', :action => 'list' %>

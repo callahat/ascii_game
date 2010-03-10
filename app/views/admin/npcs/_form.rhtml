@@ -1,0 +1,48 @@
+<%= error_messages_for 'npc','health','stat' %>
+
+<!--[form:npc]-->
+<p><label for="npc_name">Name</label><br/>
+<%= text_field 'npc', 'name'  %></p>
+
+<p><label for="health_wellness">Wellness</label><br/>
+<%= text_field 'health', 'wellness'  %></p>
+
+<p><label for="npc_npc_division">Npc division</label><br/>
+<%= select 'npc', 'npc_division', @divisions  %></p>
+
+<p><label for="health_base_HP">Base hp</label><br/>
+<%= text_field 'health', 'base_HP'  %></p>
+
+<p><label for="health_HP">Hp</label><br/>
+<%= text_field 'health', 'HP'  %></p>
+
+<p><label for="stat_str">Str</label><br/>
+<%= text_field 'stat', 'str'  %></p>
+
+<p><label for="stat_dex">Dex</label><br/>
+<%= text_field 'stat', 'dex'  %></p>
+
+<p><label for="stat_con">Con</label><br/>
+<%= text_field 'stat', 'con'  %></p>
+
+<p><label for="stat_int">Int</label><br/>
+<%= text_field 'stat', 'int'  %></p>
+
+<p><label for="stat_mag">Mag</label><br/>
+<%= text_field 'stat', 'mag'  %></p>
+
+<p><label for="stat_dam">Dam</label><br/>
+<%= text_field 'stat', 'dam'  %></p>
+
+<p><label for="stat_def">Dfn</label><br/>
+<%= text_field 'stat', 'dfn'  %></p>
+
+<p><label for="npc_gold">Gold</label><br/>
+<%= text_field 'npc', 'gold'  %></p>
+
+<p><label for="npc_experience">Experience</label><br/>
+<%= text_field 'npc', 'experience'  %></p>
+
+<p><label for="npc_is_hired?">Hired?</label><br/>
+<%= check_box 'npc','is_hired' %></p>
+<!--[eoform:npc]-->

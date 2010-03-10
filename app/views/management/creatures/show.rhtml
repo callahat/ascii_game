@@ -1,0 +1,31 @@
+<table>
+<tr><td><b>name: </b></td><td><%= @creature.name %></td></tr>
+<tr><td><b>description: </b></td><td><%= @creature.description %></td></tr>
+<tr><td><b>experience: </b></td><td><%= @creature.experience %></td></tr>
+<tr><td><b>HP: </b></td><td><%= @creature.HP %></td></tr>
+<tr><td><b>str: </b></td><td><%= @creature.stat.str %></td></tr>
+<tr><td><b>dex: </b></td><td><%= @creature.stat.dex %></td></tr>
+<tr><td><b>dam: </b></td><td><%= @creature.stat.dam %></td></tr>
+<tr><td><b>dfn: </b></td><td><%= @creature.stat.dfn %></td></tr>
+<tr><td><b>int: </b></td><td><%= @creature.stat.int %></td></tr>
+<tr><td><b>mag: </b></td><td><%= @creature.stat.mag %></td></tr>
+<tr><td><b>gold: </b></td><td><%= @creature.gold %></td></tr>
+<tr><td><b>image: </b></td><td><%= @creature.image.name %></td></tr>
+<tr><td colspan=2>
+<table><tr><td>
+<tr><td><pre class="creature"><%= @creature.image.image_text %></pre></td></tr>
+</td></tr></table>
+</td></tr>
+<tr><td><b>made by: </b></td><td><%= @creature.player.handle %></td></tr>
+<tr><td><b>public: </b></td><td><%= @creature.public %></td></tr>
+<tr><td><b>home kingdom: </b></td><td><%= @creature.kingdom.name %></td></tr>
+<tr><td><b>number alive: </b></td><td><%= @creature.number_alive %></td></tr>
+<tr><td><b>fecundity: </b></td><td><%= @creature.fecundity %></td></tr>
+<tr><td><b>disease: </b></td><td><% if @creature.disease.nil? %>None<% else %><%= @creature.disease.name %><% end %></td></tr>
+</table>
+
+<% if !@creature.armed %>
+<%= link_to 'ARM', :action => 'arm_creature', :id => @creature %> |
+<%= link_to 'Edit', :action => 'edit', :id => @creature %> |
+<% end %>
+<%= link_to 'Back', :action => 'index' %>

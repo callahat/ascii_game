@@ -1,0 +1,41 @@
+<table>
+<tr>
+  <td>X</td>
+  <td align="center"><% if @north %><%= link_to '|North|', {:action => 'world_move', :id => 'north'},:method => :post %><% else %>North<% end %></td>
+  <td>X</td>
+</tr>
+<tr>
+<td><% if @west %><%= link_to '|W|<br/>|e|<br/>|s|<br/>|t|<br/>', {:action => 'world_move', :id => 'west'},:method => :post %><% else %>W<br/>e<br/>s<br/>t<br/><% end %></td>
+<td>
+  <table>
+  <% @x = 1
+     while @y <= @world.maxy %>
+     <tr>
+<%     while @x <= @world.maxx 
+          @lm = @world.world_maps.find(:all, :conditions => ['bigypos = ? and bigxpos = ? and ypos = ? and xpos = ?', session[:player_character].bigy, session[:player_character].bigx, @y, @x]).last
+          @f = @lm.feature %>
+        <% if @f %>
+   <td><span title="<%=h @f.name %>"><a href="/game/feature?id=<%=h @lm.id %>" class="map">
+   <pre class="world_feature"><%=h @f.image.image_text %></pre>
+   </a></span></td>
+        <% else %>
+   <td><span title="Empty"><a href=# class="map">
+   <pre class="world_feature"><%=h @empty_image %></pre>
+   </a></span></td>
+        <% end %>
+<%     @x += 1
+       end
+       @x = 1
+       @y += 1 %>
+     </tr>
+     <% end %>
+  </table>
+</td>
+<td><% if @east %><%= link_to '|E|<br/>|a|<br/>|s|<br/>|t|<br/>', {:action => 'world_move', :id => 'east'},:method => :post %><% else %>E<br/>a<br/>s<br/>t<br/><% end %></td>
+</tr>
+<tr>
+  <td>X</td>
+  <td align="center"><% if @south %><%= link_to '|South|', {:action => 'world_move', :id => 'south'},:method => :post %><% else %>South<% end %></td>
+  <td>X</td>
+</tr>
+</table>

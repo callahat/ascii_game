@@ -1,0 +1,39 @@
+<h1>Listing events</h1>
+
+<table>
+  <tr>
+    <th>name</th>
+    <th>repetition type</th>
+    <th>event reps</th>
+    <th>event type</th>
+    <th>cost</th>
+    <th>armed?</th>
+  </tr>
+  
+<% for event in @events %>
+  <tr>
+    <td><%= event.name %></td>
+    <td><%= SpecialCode.get_text('event_rep_type',event.event_rep_type) %></td>
+    <td><%= event.event_reps %></td>
+    <td><%= SpecialCode.get_text('event_type',event.event_type) %></td>
+    <td><%= event.cost %></td>
+    <td><% if !event.armed %><%= link_to 'ARM', {:action => 'arm_event', :id => event, :page => params[:page]}, :confirm => 'Are you sure?', :method => :post %><% else %>armed<% end %></td>
+    <td><%= link_to 'Show', :action => 'show', :id => event %></td>
+   <% if !event.armed? %>
+    <td><%= link_to 'Edit', :action => 'edit', :id => event %></td>
+    <td><%= link_to 'Destroy', { :action => 'destroy', :id => event, :page => params[:page] }, :confirm => 'Are you sure?', :method => :post %></td>
+   <% else %>
+    <td></td>
+    <td></td>
+   <% end %>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= will_paginate @events %> 
+
+<br />
+
+<%= link_to 'New event', :action => 'new' %>

@@ -1,0 +1,36 @@
+<table>
+<tr><td><b>Name: </b></td><td><%= @quest.name %></td></tr>
+<tr><td><b>Description: </b></td><td><%= @quest.description %></td></tr>
+<tr><td><b>Status: </b></td><td><%= SpecialCode.get_text('quest_status',@quest.quest_status) %></td></tr>
+<tr><td><b>Gold reward: </b></td><td><%= @quest.gold %></td></tr>
+<% if @quest.item_id %>
+<tr><td><b>Item reward: </b></td><td><%= @quest.item.name %></td></tr>
+<% end %>
+<% if @quest.quest_id %>
+<tr><td><b>Prerequisite: </b></td><td><%= @quest.quest.name %></td></tr>
+<% end %>
+
+<tr><td><b>Max Level: </b></td><td><%= @quest.max_level %></td></tr>
+<tr><td><b>Number Completed: </b></td><td><%= @times_completed %></td></tr>
+<% if @quest.max_completeable %>
+<tr><td><b>Max Completeable: </b></td><td><%= @quest.max_completeable %></td></tr>
+<% end %>
+</table>
+
+<table>
+<tr><td>
+<%= render :file => "/game/quest_reqs.rhtml" %>
+</td>
+<td>
+<%= render :file => "game/log_quest_reqs.rhtml" %>
+</td></tr>
+</table>
+
+<% if @done_quest.nil? %>
+<% if @log_quest %>
+<p><%= link_to 'Abandon quest',:action => 'abandon_quest', :qid => @quest.id %></p>
+<% elsif (@quest.quest_status == SpecialCode.get_code('quest_status','active')) && (@quest.max_level.nil? || session[:player_character][:level] < @quest.max_level) %>
+<p><%= link_to 'Join quest',:action => 'join_quest', :qid => @quest.id %></p>
+<% end %>
+<% end %>
+<p><%= link_to 'Quest Listings', :action => 'quest_office' %></p>

@@ -1,0 +1,8 @@
+<h1>New quest requirement</h1>
+
+<% form_tag :action => 'create_req', :id => params[:id], :type => params[:type] do %>
+  <%= render :partial => 'req_form' %>
+  <%= submit_tag 'Create' %>
+<% end %>
+
+<%= link_to 'Back', :action => 'show', :id => params[:id] %>

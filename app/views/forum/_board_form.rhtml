@@ -1,0 +1,12 @@
+<%= error_messages_for 'board' %>
+
+<% if session[:player] && session[:player].mod_level > 7 || @board.new_record? %>
+<p><label for="board_name">Name</label><br/>
+<%= text_field 'board', 'name' %></p>
+<% else %>
+<p><label for="board_name">Name</label><br/>
+<%= text_field 'board', 'name', {:disabled => true} %></p>
+<% end %>
+
+<p><label for="board_text">Description</label><br/>
+<%= text_area 'board', 'text', :cols => 23, :rows => 4 %></p>

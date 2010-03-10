@@ -1,0 +1,28 @@
+<%= error_messages_for 'healing_spell' %>
+
+<!--[form:healing_spell]-->
+<p><label for="healing_spell_name">Name</label><br/>
+<%= text_field 'healing_spell', 'name'  %></p>
+
+<p><label for="healing_spell_description">Description</label><br/>
+<%= text_field 'healing_spell', 'description'  %></p>
+
+<p><label for="healing_spell_min_level">Min level</label><br/>
+<%= text_field 'healing_spell', 'min_level'  %></p>
+
+<p><label for="healing_spell_min_heal">Min heal</label><br/>
+<%= text_field 'healing_spell', 'min_heal'  %></p>
+
+<p><label for="healing_spell_max_heal">Max heal</label><br/>
+<%= text_field 'healing_spell', 'max_heal'  %></p>
+
+<p><label for="healing_spell_mp_cost">Mp cost</label><br/>
+<%= text_field 'healing_spell', 'mp_cost'  %></p>
+
+<p><label for="healing_spell_disease_id">Disease</label><br/>
+<%= collection_select('healing_spell','disease_id', @diseases, 'id', 'name', {:include_blank => 'true'} ) %></p>
+
+<p><label for="healing_spell_cast_on_others?">Cast on others?</label><br/>
+<select id="healing_spell_cast_on_others?" name="healing_spell[cast_on_others?]"><option value="false">False</option><option value="true">True</option></select></p>
+<!--[eoform:healing_spell]-->
+

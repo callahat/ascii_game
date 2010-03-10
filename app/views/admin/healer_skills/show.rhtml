@@ -1,0 +1,8 @@
+<p><b>max_HP_restore: </b><%= @healer_skill.max_HP_restore %></p>	   
+<p><b>max_MP_restore: </b><%= @healer_skill.max_MP_restore %></p>	   
+<p><b>disease: </b><% if @healer_skill.disease.nil? %>N/A<% else %><%= @healer_skill.disease.name %><% end %></p>	   
+<p><b>max_stat_restore: </b><%= @healer_skill.max_stat_restore %></p>	   
+<p><b>min_sales: </b><%= @healer_skill.min_sales %></p>	 
+
+<%= link_to 'Edit', :action => 'edit', :id => @healer_skill %> |
+<%= link_to 'Back', :action => 'list' %>

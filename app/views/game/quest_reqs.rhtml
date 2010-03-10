@@ -1,0 +1,62 @@
+<table><tr><th colspan=3>Requirements:</th></tr>
+
+<% for qck in @quest.creature_kills do %>
+<tr>
+  <td><%= qck.to_sentence %></td>
+ <% if @quest.quest_status == SpecialCode.get_code("quest_status","design") && controller.class == Management::QuestsController %>
+  <td><%= link_to "edit", :action => "edit_req",:id => params[:id],:type => "creature_kill",:req_id => qck %></td>
+  <td><%= link_to "drop", :action => "destroy_req",:id => params[:id],:type => "creature_kill",:req_id => qck %></td>
+ <% end %>
+</tr>
+<% end %>
+
+<% for quest_explore in @quest.explores do %>
+<tr>
+  <td><%= quest_explore.to_sentence %></td>
+ <% if @quest.quest_status == SpecialCode.get_code("quest_status","design") && controller.class == Management::QuestsController %>
+  <td><%= link_to "edit", :action => "edit_req",:id => params[:id],:type => "explore",:req_id => quest_explore %></td>
+  <td><%= link_to "drop", :action => "destroy_req",:id => params[:id],:type => "explore",:req_id => quest_explore %></td>
+ <% end %>
+</tr>
+<% end %>
+
+<% for quest_item in @quest.items do %>
+<tr>
+  <td><%= quest_item.to_sentence %></td>
+ <% if @quest.quest_status == SpecialCode.get_code("quest_status","design") && controller.class == Management::QuestsController %>
+  <td><%= link_to "edit", :action => "edit_req",:id => params[:id],:type => "item",:req_id => quest_item %></td>
+  <td><%= link_to "drop", :action => "destroy_req",:id => params[:id],:type => "item",:req_id => quest_item %></td>
+ <% end %>
+</tr>
+<% end %>
+
+<% for quest_kill_n_npc in @quest.kill_n_npcs do %>
+<tr>
+  <td><%= quest_kill_n_npc.to_sentence %></td>
+ <% if @quest.quest_status == SpecialCode.get_code("quest_status","design") && controller.class == Management::QuestsController %>
+  <td><%= link_to "edit", :action => "edit_req",:id => params[:id],:type => "kill_any_npc",:req_id => quest_kill_n_npc %></td>
+  <td><%= link_to "drop", :action => "destroy_req",:id => params[:id],:type => "kill_any_npc",:req_id => quest_kill_n_npc %></td>
+ <% end %>
+</tr>
+<% end %>
+
+<% for quest_kill_pc in @quest.kill_pcs do %>
+<tr>
+  <td><%= quest_kill_pc.to_sentence %></td>
+ <% if @quest.quest_status == SpecialCode.get_code("quest_status","design") && controller.class == Management::QuestsController %>
+  <td><%= link_to "edit", :action => "edit_req",:id => params[:id],:type => "kill_pc",:req_id => quest_kill_pc %></td>
+  <td><%= link_to "drop", :action => "destroy_req",:id => params[:id],:type => "kill_pc",:req_id => quest_kill_pc %></td>
+ <% end %>
+</tr>
+<% end %>
+
+<% for qks in @quest.kill_s_npcs do %>
+<tr>
+  <td><%= qks.to_sentence %></td>
+ <% if @quest.quest_status == SpecialCode.get_code("quest_status","design") && controller.class == Management::QuestsController %>
+  <td><%= link_to "edit", :action => "edit_req",:id => params[:id],:type => "kill_specific_npc",:req_id => qks %></td>
+  <td><%= link_to "drop", :action => "destroy_req",:id => params[:id],:type => "kill_specific_npc",:req_id => qks %></td>
+ <% end %>
+</tr>
+<% end %>
+</table>

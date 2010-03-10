@@ -1,0 +1,37 @@
+<p>Infections</p>
+
+<% if @infections %>
+  <table>
+  <tr><td><b>Infections</b></td></td>
+    <tr>
+      <th>Name</th>
+      <th>dam</th>
+      <th>dfn</th>
+      <th>str</th>
+      <th>dex</th>
+      <th>mag</th>
+      <th>int</th>
+      <th>con</th>
+      <th>HP /turn</th>
+      <th>MP /turn</th>
+    </tr>
+  <% for infection in @infections %>
+    <tr>
+      <td><span title="<%= infection.disease.description %>"><%= infection.disease.name %></span></td>
+      <td><%= infection.disease.dam %></td>
+      <td><%= infection.disease.dfn %></td>
+      <td><%= infection.disease.str %></td>
+      <td><%= infection.disease.dex %></td>
+      <td><%= infection.disease.mag %></td>
+      <td><%= infection.disease.int %></td>
+      <td><%= infection.disease.con %></td>
+      <td><%= infection.disease.HP_per_turn %></td>
+      <td><%= infection.disease.MP_per_turn %></td>
+    </tr>
+  <% end %>
+  </table>
+<% end %>
+
+<%= will_paginate @infections %> 
+
+<%= render :file => 'characterse/footer.rhtml' %>

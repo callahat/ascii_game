@@ -1,0 +1,32 @@
+<% form_tag :action => 'fight' do %>
+<%= battle_grid(@battle) %>
+
+<table>
+<tr><td>
+	Attack using:
+	<select name="attack">
+		<option value="">Conventional Weapons</option>
+		<%= options_for_select(@attack_spells, session[:attack]) %>
+	</select>
+ </td></tr>
+ <% if @healing_spells.to_a.size > 0 %>
+   <% form_tag :action => 'heal_spell' do %>
+ <tr><td>
+		<select name="heal">
+			<%= options_for_select(@healing_spells, session[:heal]) %>
+     <%= submit_tag 'Cast (Heal)' %>
+ </td></tr>
+   <% end %>
+ <% end %>
+
+	<tr><td>
+	<% form_tag :action => 'run_away' do %>
+	<%= submit_tag 'Run Away' %>
+	<% end %>
+</td></tr>
+</table>
+<% end %>
+
+<% if flash[:battle_report] %>
+<%= render :file => "game/battle/_battle_report.rhtml" %>
+<% end %>

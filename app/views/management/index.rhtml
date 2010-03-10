@@ -1,0 +1,68 @@
+<% if session[:kingdom].nil? %>
+<h1>Select Kingdom to Manage</h1>
+
+<% form_tag :action => 'select_kingdom' do %>
+  <%= collection_select('king','kingdom_id',@kingdoms,'id', 'name' ) %></p>
+  <%= submit_tag 'Manage' %>
+<% end %>
+<% else %>
+<h1>(<%= session[:kingdom].name %>) Kingdom Management Console</h1>
+
+<p>Links for managing things about the kingdom:</p>
+<p><%= link_to 'What does all this mean?', :action => 'helptext' %></p>
+
+<table><tr><td>
+<%= link_to 'Creatures', :controller => 'management/creatures' %> -> <br/>
+<%= link_to 'Pref List', :controller => 'management/creatures', :action => 'pref_lists' %>
+</td><td>
+<%= link_to 'Events', :controller => 'management/events' %> -> <br/>
+<%= link_to 'Pref List', :controller => 'management/events', :action => 'pref_lists' %>
+</td><td>
+<%= link_to 'Features', :controller => 'management/features' %> -> <br/>
+<%= link_to 'Pref List', :controller => 'management/features', :action => 'pref_lists' %>
+</td><td>
+<%= link_to 'Kingdom Maps', :controller => 'management/levels' %>
+</td></tr>
+<tr><td colspan=4>
+<%= link_to 'Images', :controller => 'management/images' %>
+</td></tr>
+<tr><td colspan=4>
+<%= link_to 'Quests', :controller => 'management/quests' %>
+</td></tr>
+</table>
+
+<br/>
+<table>
+<tr><td>
+<%= link_to 'Castle Manager', :controller => 'management/castles' %>
+</td></tr>
+<tr><td>
+<%= link_to 'Kingdom Notice Board', :controller => 'management/kingdom_notices' %>
+</td></tr>
+<tr><td>
+<%= link_to 'Banned Characters', :controller => 'management/kingdom_bans' %>
+</td></tr>
+<tr><td>
+<%= link_to 'Kingdom Entry Restrictions', :controller => 'management/kingdom_entries' %>
+</td></tr>
+<tr><td>
+<%= link_to 'Pass the Throne', :action => 'retire' %>
+</td></tr>
+</table>
+
+<br/>
+<table>
+<tr><td>
+<%= link_to 'Kingdom Finances', :controller => 'management/kingdom_finances' %>
+</td></tr>
+<tr><td>
+<% if session[:player_character] && session[:kingdom].player_character_id == session[:player_character][:id] %><%= link_to 'Kingdom Storerooms', :controller => 'management/kingdom_items' %><% end %>
+</td></tr>
+<tr><td>
+<%= link_to 'NPC\'s of the kingdom', :controller => 'management/kingdom_npcs' %><% if session[:kingdom].npcs.exists?(:is_hired => false) %> (<%= session[:kingdom].npcs.find(:all, :conditions => ['is_hired = ?', false]).size %> new)<% end %>
+</td></tr>
+</table>
+
+<p><%= link_to 'Kingdom Selection', :action => 'choose_kingdom' %></p>
+
+<% end %>

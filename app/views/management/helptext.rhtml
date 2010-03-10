@@ -1,0 +1,89 @@
+<h1>Management Console Help</h1>
+<p>The management console is the portal for controlling aspects of the kingdoms your characters control.
+You are in charge of a variety of customizations, such as designing the floorplan for your kingdoms
+to hiring and firing non player characters to provide services to other players. Everytime a character
+purchases goods or services from NPC's in your realm, a tax is collected which fills the coffers. This
+gold can be used by your kings to finance the addition of levels and construction of features for the kingdom.
+These features provide adventurers with something to do in the kingdom. Each level in your kingdom is composed
+of a grid of features. These are the icons that represet points of interest. Features have a variety of 
+associated events. An event is one thing that happens to a character, such as an encounter with a creature.
+A feature can have one or multiple events, and a player may or may not be given the option to choose one 
+event over other events.</p>
+
+<p>Events have priority, chance, and choice. Priority determines the order that events for a certain feature
+will occur. Events will occur from low priority number to high priority number. For example, a creature event
+with priority of 1 will occur before a move event with a priority of 4. Chance is the likelihood that a
+certain event will occur. Choice give the player the option of determining which event will occur. Choice also
+allows the player to ignore the events altogether. Note, if there are multiple events with the same priority and no
+choice, one will be selected at random to occur. If there is choice, then the player may chose one (or none) of
+the choice events with the same priority. If a player fails to complete an event, such as being killed by a 
+creature, then the event chain ends.</p>
+
+<p>The number of times an event may be completed can be defined. Limiting the number of times an event may
+be completed lowers the price of the event. There are other factors that determine the price of an event,
+such as the power of the creature encountered, or the value of the item discovered.</p>
+
+<p>Completed events will only be counted as completed for the map tile in which their parent feature is located.
+For example, if a level has two features, each feature having an event that give the player a "knife" and can
+occur only once, then the character can find a total of two knives, one from each feature.</p>
+
+<p>Taxes add funds directly accessable to the king and kingdom for construction as well as personal use.
+When a player is victorious in a creature encounter, part of the gold won is taken as tax. Tax is also collected
+when players buy goods and services from your kingdom's NPCs. NPCs gain experience the more they sell,
+and are able to learn new skills and offer more services to other characters. In order to have NPCs, other 
+than just guards, you will need to design and/or build features with shops in them.</p>
+
+<p>When designing creatures, events, or features, before they can be used, they will need to be "armed".</p>
+
+<p>Images owned by you or the kingdom may be edited. This includes images representing features, as well
+as the stock image. Images are ascii representations of characters, creatures, and features.</p>
+
+<p>Quests are tasks players may undertake. Generally, there are a number of requirements that must be completed.
+There can be gold, or an item, or both promised as reward. The number of quests that may be completed may be
+specified. Quests may also have character level restrictions. This can be useful to prevent a very powerful
+character from undertaking quests intended for lower level players.</p>
+
+<p>Other kingdom management items</p>
+
+<p>Castle management allows the construction of stairs to any level of the kindgom as well as placement of
+the throne. Stairs are essentially shortcuts to reach other parts of the kingdom. They are like regular
+move events, only they are directly accessable from the castle feature in level 0 of your kingdom.
+Placement of the throne is important. The throne is where other characters will come and pledge service.
+Also, other characters will be able to attack your king when they find the throne. If your character is killed,
+then the other player can take your kingdom.</p>
+
+<p>The kingdom notice board can be read by players who enter the castle office. The king can edit and remove any
+notices, as well as determine who can see what notices. Some notices will automatically appear, such as
+when a character storms the gates of the kingdom and forcibly gains entry. The king can also post notices for whatever
+purpose.</p>
+
+<p>Banned Characters allows the king to have the guards stop a character from freely entering the kingdom.</p>
+
+<p>Kingdom Entry Restrictions prevent characters from entering based on their affiliation to the kingdom.
+You can specify to allow everyone free entry (with the excpetion of the banned characters), to only allow
+characters allied with your kingdom entry, and to allow no one free entry. The latter could be useful if,
+for example, there is a plague going around.</p>
+
+<p>As king, you may chose to pass the throne to someone else, or just completely abandon the crown.</p>
+
+<p>Kingdom Finances allows the setting of the tax rate, as well as the deposit or withdraw directly from the
+coffers. To withdraw or deposit you must have the king selected as your current character.</p>
+
+<p>Kingdom storerooms are a convenient place to put extra equipment. Quests that have reward items will
+take the item from here to give to the player.</p>
+
+<p>Last but not least is Kingdom Selection. If there re multiple kingdoms controlled by your characters,
+you may select the one to edit on that screen.</p>
+
+<p>"Pref lists", or preference lists, are tools to select what things, such as features, to make available
+for selection when building a higher level thing, such as level maps. For example, adding the "Move to level 1" 
+and "Snake encounter" to the event preference list will allow them to be selected as feature events
+when editing a feature.If there are no other events on the pref list, then the two used in example above
+will be the only events that may be selected as feature events when editign a feature. Pref Lists cut down on the
+"clutter" that would otherwise need sorted throguh when editing higher level things and linking them
+with lower level things. Otherwise, consider the existance of 500 features. Without the Pref List, then
+the you would have to sort through all 500 features (including public ones) instead of a smaller 
+subset.</p>
+
+<br/>
+<%= link_to 'Back', :action => 'index' %>

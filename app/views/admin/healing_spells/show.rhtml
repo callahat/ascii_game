@@ -1,0 +1,11 @@
+<p><b>name: </b><%= @healing_spell.name %></p>	   
+<p><b>description: </b><%= @healing_spell.description %></p>	   
+<p><b>min level: </b><%= @healing_spell.min_level %></p>	   
+<p><b>min heal: </b><%= @healing_spell.min_heal %></p>	   
+<p><b>max heal: </b><%= @healing_spell.max_heal %></p>	   
+<p><b>disease: </b><% if @healing_spell.disease.nil? %> N/A<% else %><%= @healing_spell.disease.name %><% end %></p>	   
+<p><b>mp cost: </b><%= @healing_spell.mp_cost %></p>	   
+<p><b>cast on others?: </b><%= @healing_spell.cast_on_others? %></p>	 
+
+<%= link_to 'Edit', :action => 'edit', :id => @healing_spell %> |
+<%= link_to 'Back', :action => 'list' %>

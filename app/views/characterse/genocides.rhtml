@@ -1,0 +1,25 @@
+<p>Creature Genocides</p>
+
+<% if @genocides %>
+  <table>
+  <tr><td><b>Creatures Genocided: </b><%= session[:player_character].genocides.size %></td></td>
+    <tr>
+      <th>Name</th>
+      <th>PC Level</th>
+      <th>Method</th>
+      <th>Date</th>
+    </tr>
+  <% for genocide in @genocides %>
+    <tr>
+      <td><span title="<%= genocide.creature.description %>"><%= genocide.creature.name %></span></td>
+      <td><%= genocide.level %></td>
+      <td><%= SpecialCode.get_text('how_eliminated',genocide.how_eliminated) %></td>
+      <td><% if genocide.when %><%= genocide.when.to_date.to_s %><% end %></td>
+    </tr>
+  <% end %>
+  </table>
+<% end %>
+
+<%= will_paginate @genocides %> 
+
+<%= render :file => 'characterse/footer.rhtml' %>

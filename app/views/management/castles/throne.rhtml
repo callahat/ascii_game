@@ -1,0 +1,44 @@
+<% if !@levels.nil? %>
+  <% form_tag :action => 'throne_square' do %>
+  <p>Select level:</p>
+  <%= collection_select 'level','id',@levels,'id','level' %>
+   <%= submit_tag 'Accept' %>
+  <% end %>
+
+<% elsif !@squares.nil? %>
+<% form_tag :action => 'set_throne' do %>
+<p>Select available square. Grey squares cannot be built upon; something already occupies that space.</p>
+<table>
+<% while @y < @squares.maxy %>
+  <tr>
+    <% while @x < @squares.maxx %>
+    <td><% @lm = @squares.level_maps.find(:all,:conditions => ['ypos = ? AND xpos = ?', @y, @x]).last %>
+      <%= radio_button 'throne', 'spot', @lm.id, :disabled => !@lm.feature.nil? %>
+    </td>
+<%     @x += 1 
+     end 
+     @x = 0 
+     @y += 1 %>
+</tr>
+<% end %>
+</table>
+ <%= submit_tag 'Accept' %>
+<% end %>
+<br/>
+<%= link_to 'Back',:action => 'throne_level' %>
+
+<% else %>
+  <% if @throne.nil? %>
+  The throne is currently on at the ground floor of the castle.
+  <% else %>
+  The throne is on level <%=h @throne.level_maps.last.level.level %> at <%=h @throne.level_maps.last.xpos %> by <%=h @throne.level_maps.last.ypos %>
+  <% end %>
+
+<br/>
+<br/>
+
+<%= link_to 'Relocate Throne', :action => 'throne_level' %>
+<% end %>
+
+<br/>
+<%= link_to 'Cancel', :action => 'index' %>

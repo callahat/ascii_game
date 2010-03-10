@@ -1,0 +1,28 @@
+<h1>Listing blacksmith_skills</h1>
+
+<table>
+  <tr>
+    <th>Min Sales</th>
+    <th>Min Mod</th>
+    <th>Max Mod</th>
+    <th>Base Item</th>
+  </tr>
+  
+<% for blacksmith_skill in @blacksmith_skills %>
+  <tr>
+    <td><%= blacksmith_skill.min_sales %></td>
+    <td><%= blacksmith_skill.min_mod %></td>
+    <td><%= blacksmith_skill.max_mod %></td>
+    <td><%= blacksmith_skill.base_item.name %></td>
+    <td><%= link_to 'Show', :action => 'show', :id => blacksmith_skill %></td>
+    <td><%= link_to 'Edit', :action => 'edit', :id => blacksmith_skill %></td>
+    <td><%= link_to 'Destroy', { :action => 'destroy', :id => blacksmith_skill }, :confirm => 'Are you sure?', :method => :post %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @blacksmith_skills %> 
+
+<br />
+
+<%= link_to 'New blacksmith_skill', :action => 'new' %>

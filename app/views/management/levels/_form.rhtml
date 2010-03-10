@@ -1,0 +1,13 @@
+<%= error_messages_for 'level' %>
+
+<!--[form:level]-->
+<p><label for="level_level">Build a level:</label><br/>
+<%= radio_button 'level', 'level', @lowest,:checked => true %>downward : <%= @lowest.abs.power! 3 %> gold * area<br/>
+<%= radio_button 'level', 'level', @highest %>upward : <%= @highest.abs.power! 3 %> gold * area</p>
+
+<p><label for="level_maxx">Maxx</label><br/>
+<%= text_field 'level', 'maxx'  %></p>
+
+<p><label for="level_maxy">Maxy</label><br/>
+<%= text_field 'level', 'maxy'  %></p>
+<!--[eoform:level]-->

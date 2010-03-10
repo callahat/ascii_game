@@ -1,0 +1,46 @@
+<%= error_messages_for 'c_class_level' %>
+
+<!--[form:c_class_level]-->
+<%= hidden_field 'c_class_level', 'c_class_id' %>
+
+<p><b>Level: </b><%= @c_class_level.level  %></p>
+<%= hidden_field 'c_class_level', 'level' %>
+
+<p><b>Min xp: </b><%= @c_class_level.min_xp  %></p>
+<%= hidden_field 'c_class_level', 'min_xp' %>
+
+<table>
+  <tr>
+    <td><label for="c_class_level_dam">Dam</label></td>
+    <td><%= text_field 'c_class_level', 'dam', :size => 5 %></td>
+  </tr>
+  <tr>
+    <td><label for="c_class_level_def">Dfn</label></td>
+    <td><%= text_field 'c_class_level', 'dfn', :size => 5 %></td>
+  <tr>
+    <td><label for="c_class_level_str">Str</label></td>
+    <td><%= text_field 'c_class_level', 'str', :size => 5 %></td>
+  </tr>
+  <tr>
+    <td><label for="c_class_level_dex">Dex</label></td>
+    <td><%= text_field 'c_class_level', 'dex', :size => 5 %></td>
+  </tr>
+  <tr>
+    <td><label for="c_class_level_mag">Mag</label></td>
+    <td><%= text_field 'c_class_level', 'mag', :size => 5 %></td>
+  </tr>
+  <tr>
+    <td><label for="c_class_level_int">Int</label></td>
+    <td><%= text_field 'c_class_level', 'int', :size => 5 %></td>
+  </tr>
+  <tr>
+    <td><label for="c_class_level_con">Con</label></td>
+    <td><%= text_field 'c_class_level', 'con', :size => 5 %></td>
+  </tr>
+  <tr>
+    <td><label for="c_class_level_freepts">Freepts</label></td>
+    <td><%= text_field 'c_class_level', 'freepts', :size => 5 %></td>
+  </tr>
+</table>
+
+<!--[eoform:c_class_level]-->

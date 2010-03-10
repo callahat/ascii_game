@@ -1,0 +1,23 @@
+<% if @player %>
+  <h1>Welcome back, <%=h @player.handle %></h1>
+  <p>Site wide announcement here<p/>
+  <% if @actives.size > 0 %>
+    <p><b>Active characters:</b></p>
+    <% for active in @actives %>
+      <span title="Click to play this character">
+      <p>
+      <%= link_to '[#]', {:controller => 'character', :action => 'do_choose', :id => active.id} , :method => :post %><%=h active.name %>
+      <% if active.kingdom_id %> of <%=h active.kingdom.name %><% end %>
+      </p>
+      </span>
+    <% end %>
+  <% end %>
+
+  <% if @retireds.size > 0 %>
+    <p><%=h @retireds.size %> characters in retirement</p>
+  <% end %>
+
+  <% if @deads.size > 0 %>
+    <p><%=h @deads.size %> completely dead characters</p>
+  <% end %>
+<% end %>

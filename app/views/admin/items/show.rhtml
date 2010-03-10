@@ -1,0 +1,20 @@
+<p><b>name: </b><%= @item.name %></p>
+<p><b>equip_loc: </b><%= SpecialCode.get_text('equip_loc',@item.equip_loc) %></p>
+<p><b>description: </b><%= @item.description %></p>
+<p><b>base_item_id: </b><%= @item.base_item.name %></p>
+<p><b>min_level: </b><%= @item.min_level %></p>
+<p><b>c_class_id: </b><%= @item.c_class.name %></p>
+<p><b>race_id: </b><%= @item.race.name %></p>
+<p><b>str_mod: </b><%= @item.str %></p>
+<p><b>dex_mod: </b><%= @item.dex %></p>
+<p><b>mag_mod: </b><%= @item.mag %></p>
+<p><b>int_mod: </b><%= @item.int %></p>
+<p><b>con_mod: </b><%= @item.con %></p>
+<p><b>dfn_mod: </b><%= @item.dfn %></p>
+<p><b>dam_mod: </b><%= @item.dam %></p>
+<p><b>race_body_type: </b><% if @item.race_body_type.nil? %>N/A<% else %><%= SpecialCode.get_text('race_body_type',@item.race_body_type) %><% end %></p>
+<p><b>price: </b><%= @item.price %></p>
+
+
+<%= link_to 'Edit', :action => 'edit', :id => @item %> |
+<%= link_to 'Back', :action => 'list' %>

@@ -1,0 +1,4 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+event_npc_det:
+  event: npc_event
+  npc_id: 1

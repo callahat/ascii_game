@@ -1,0 +1,22 @@
+<p>The quest office</p>
+
+<table><tr><td>Quest</td><td>Status</td><td>Attempted</td><td>Completed</td><td>Rewarded</td></tr>
+<% for quest in @quests do %>
+<% @attempted = session[:player_character].log_quests.exists?(:quest_id => quest.id) %>
+<tr>
+  <td><%= link_to quest.name, :action => 'view_quest', :qid => quest.id %></td>
+  <td><%= SpecialCode.get_text('quest_status',quest.quest_status) %></td>
+  <td><%= @attempted %></td>
+  <% if @attempted %>
+    <% @log = session[:player_character].log_quests.find(:first, :conditions => ['quest_id = ?', quest.id]) %>
+    <td><%= @log.completed %></td>
+    <td><%= @log.rewarded %></td>
+  <% else %>
+    <td>N/A</td>
+    <td>N/A</td>
+  <% end %>
+</tr>
+<% end %>
+</table>
+
+<p><%= link_to 'Back to castle', :action => 'castle' %></p>

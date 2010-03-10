@@ -1,0 +1,18 @@
+<%= error_messages_for 'feature_event' %>
+
+<!--[form:event]-->
+<p><label for="event_id">Event</label><br/>
+<%= collection_select('feature_event','event_id',@events,'id','name') %></p>
+
+<p><label for="feature_chance">Chance</label><br/>
+<%= text_field 'feature_event', 'chance'  %></p>
+
+<p><label for="feature_priority">Priority</label><br/>
+<%= text_field 'feature_event', 'priority' %></p>
+
+<p><label for="feature_priority">Player's Choice?</label><br/>
+<%= check_box 'feature_event', 'choice' %></p>
+
+<%= hidden_field 'feature_event','feature_id' %>
+
+<!--[eoform:event]-->

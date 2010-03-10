@@ -1,0 +1,9 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+one:
+  id: 1
+  name: "Race One"
+  freepts: 10
+two:
+  id: 2
+  name: "Race Two"
+  freepts: 3

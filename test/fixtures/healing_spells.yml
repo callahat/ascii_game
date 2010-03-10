@@ -1,0 +1,23 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+heal_spell_one:
+  name: "Heal Only"
+  min_level: 3
+  min_heal: 15
+  max_heal: 15
+  mp_cost: 10
+cure_sars:
+  name: "Cure Sars"
+  description: "Really just the airborn disease"
+  min_level: 5
+  min_heal: 0
+  max_heal: 0
+  disease: air_disease
+  mp_cost: 30
+cure_sars_and_heal:
+  name: "Cure Sars and Heal"
+  description: "Really just the airborn disease, also heals a bit too"
+  min_level: 8
+  min_heal: 20
+  max_heal: 20
+  disease: air_disease
+  mp_cost: 50

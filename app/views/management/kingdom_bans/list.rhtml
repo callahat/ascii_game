@@ -1,0 +1,24 @@
+<h1>Listing kingdom_bans</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+  </tr>
+<% if @kingdom_bans.size == 0 %>
+<tr><td>No characters banned.</td></tr>
+<% end %>  
+<% for kingdom_ban in @kingdom_bans %>
+  <tr>
+    <td><%=h kingdom_ban.name %></td>
+
+    <td><%= link_to 'Show', :action => 'show', :id => kingdom_ban %></td>
+    <td><%= link_to 'UnBan', { :action => 'destroy', :id => kingdom_ban, :page => params[:page] }, :confirm => 'Are you sure?', :method => :post %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @kingdom_bans %> 
+
+<br />
+
+<%= link_to 'New Ban', :action => 'new' %>

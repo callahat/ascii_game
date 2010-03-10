@@ -1,0 +1,28 @@
+<h1>Listing c_classes</h1>
+
+<table>
+  <tr>
+  <th>Gen Lvls</th>
+  <% for column in CClass.content_columns %>
+    <th><%= column.human_name %></th>
+  <% end %>
+  </tr>
+
+<% for c_class in @c_classes %>
+  <tr>
+    <td><%= CClassLevel.find(:all, :conditions => ['c_class_id = ?', c_class]).size %></p>
+  <% for column in CClass.content_columns %>
+    <td><%=h c_class.send(column.name) %></td>
+  <% end %>
+    <td><%= link_to 'ShowLevels', :action => 'show_levels', :id => c_class %></td>
+    <td><%= link_to 'Edit', :action => 'edit', :id => c_class %></td>
+    <td><%= link_to 'Destroy', { :action => 'destroy', :id => c_class }, :confirm => 'Are you sure?', :method => :post %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @c_classes %> 
+
+<br />
+
+<%= link_to 'New c_class', :action => 'new' %>

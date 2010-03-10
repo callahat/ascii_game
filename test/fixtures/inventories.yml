@@ -1,0 +1,79 @@
+#
+#PlayerCharacterItem
+#
+pcinv_1:
+  id:       1
+  owner_id: 1
+  item_id:  1
+  quantity: 1
+  kind:     "PlayerCharacterItem"
+pcinv_2:
+  id:       2
+  owner_id: 1
+  item_id:  2
+  quantity: 1
+  kind:     "PlayerCharacterItem"
+pcinv_3:
+  id:       3
+  owner_id: 1
+  item_id:  3
+  quantity: 1
+  kind:     "PlayerCharacterItem"
+pcinv_4:
+  id:       4
+  owner_id: 2
+  item_id:  1
+  quantity: 44
+  kind:     "PlayerCharacterItem"
+pcinv_5:
+  id:       5
+  owner_id: 2
+  item_id:  3
+  quantity: 9
+  kind:     "PlayerCharacterItem"
+ 
+#
+#NpcStock
+# 
+npcinv_1:
+  id:       6
+  owner_id: 1
+  item_id:  1
+  quantity: 1
+  kind:     "NpcStock"
+npcinv_2:
+  id:       7
+  owner_id: 1
+  item_id:  1
+  quantity: 1
+  kind:     "NpcStock"
+npcinv_3:
+  id:       8
+  owner_id: 1
+  item_id:  1
+  quantity: 1
+  kind:     "NpcStock"
+npcinv_4:
+  id:       9
+  owner_id: 1
+  item_id:  1
+  quantity: 1
+  kind:     "NpcStock"
+ 
+# 
+#KingdomItem
+#
+kinv_1:
+  id:       10
+  owner_id: 2
+  item_id:  1
+  quantity: 1
+  kind:     "KingdomItem"
+<% 2.upto(31){|i| %>
+kinv_<%= i %>:
+  id:       <%= i + 9 %>
+  owner_id: 1
+  item_id:  <%= i %>
+  quantity: 100
+  kind:     "KingdomItem"
+<% } %>

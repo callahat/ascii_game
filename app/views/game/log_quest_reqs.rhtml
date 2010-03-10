@@ -1,0 +1,55 @@
+<table><tr><th colspan=3><%= @reqs_remaining %> Remaining requirements:</th></tr>
+
+<% if @log_quest.nil? %>
+<tr><td>
+Quest not attempted.
+</tr></td>
+<% elsif !@log_quest.completed %>
+
+ <% for ck in @log_quest.creature_kills %>
+ <tr><td><%= ck.to_sentence %></td></tr>
+ <% end %>
+
+ <% for qe in @log_quest.explores %>
+ <tr><td><%= qe.to_sentence %></td></tr>
+ <% end %>
+
+ <% for qi in @quest.items %>
+ <% @pc_inv = session[:player_character].items.find(:first, :conditions => ['item_id = ?', qi.detail])
+    @pc_inv = ( @pc_inv ? @pc_inv.quantity : 0 )
+    @diff = (qi.quantity - @pc_inv) %>
+ <% if @diff > 0 %>
+ <tr>
+   <td>Retrieve <%= @diff.to_s %> more <%= @diff > 1 ? qi.item.name.pluralize : qi.item.name %>.</td>
+ </tr>
+ <% end %>
+ <% end %>
+
+ <% for kn in @log_quest.kill_n_npcs %>
+ <tr><td><%= kn.to_sentence %></td></tr>
+ <% end %>
+
+ <% for kpc in @log_quest.kill_pcs %>
+ <tr><td><%= kpc.to_sentence %></td></tr>
+ <% end %>
+
+ <% for ks in @log_quest.kill_s_npcs %>
+ <tr><td><%= ks.to_sentence %></td></tr>
+ <% end %>
+
+<% elsif !@log_quest.rewarded %>
+<tr><td>
+You have yet to collect your reward<br/>
+<%= link_to "Collect reward", :action => 'collect_reward' %>
+</td></tr>
+<% elsif @done_quest %>
+<tr><td>
+You have completed and collected the reward for this quest.
+</td></tr>
+<% else %>
+<tr><td>
+Condition unknown! You shouldn't see this, something went wrong.
+</td></tr>
+<% end %>
+
+</table>

@@ -1,0 +1,39 @@
+#Illness is used for STI, so it includes infections, npc_diseases, and pandemics
+pcill_1:
+  id: 1
+  owner_id: 2
+  disease: air_disease
+  kind: "Infection"
+pcill_2:
+  id: 2
+  owner_id: 2
+  disease: contact_disease
+  kind: "Infection"
+pcill_3:
+  id: 3
+  owner_id: 2
+  disease: fluid_disease
+  kind: "Infection"
+pcill_4:
+  id: 4
+  owner_id: 2
+  disease: ether_disease
+  kind: "Infection"
+
+npcd_1:
+  id: 5
+  owner_id: 2
+  disease: air_disease
+  kind: "NpcDisease"
+npcd_2:
+  id: 6
+  owner_id: 2
+  disease: air_disease2
+  kind: "NpcDisease"
+
+pandemic_1:
+  id: 7
+  owner_id: 2
+  disease: air_disease
+  day: 4
+  kind: "Pandemic"

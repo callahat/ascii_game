@@ -1,0 +1,2 @@
+module ForumNodeHelper
+end

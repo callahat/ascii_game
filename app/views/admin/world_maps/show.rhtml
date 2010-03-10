@@ -1,0 +1,34 @@
+<table>
+<tr>
+<td></td>
+<% while @x <= @world.maxbigx %>
+<td><%=h @x %></td>
+<% @x += 1 %>
+<% end %>
+</tr>
+
+<% @x = @world.minbigx
+   while @y <= @world.maxbigy %>
+   <tr>
+     <td><%=h @y %></td>
+<%   while @x <= @world.maxbigx 
+        square = WorldMap.find(:all, :conditions => ['world_id = ? and bigypos = ? and bigxpos = ?', session[:wid], @y, @x]).last %>
+    <td>
+      <% if !square.nil? %>
+        <%= link_to "#{square.bigxpos}, #{square.bigypos}", :action => 'show_map', :bigxpos => square.bigxpos, :bigypos => square.bigypos %>
+      <% else %>
+        _____
+      <% end %>
+    </td>
+<%   @x += 1
+     end
+     @x = @world.minbigx
+     @y += 1 %>
+   </tr>
+   <% end %>
+</table>
+
+<br/>
+
+<%= link_to 'New map', :action => 'new' %> |
+<%= link_to 'Back', :action => 'index' %>

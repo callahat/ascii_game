@@ -1,0 +1,92 @@
+<h1><%=h @thred.name %></h1>
+
+
+<table><tr><td valign="top">
+ <table width=115><tr><td><p><%= @thred.text %></p><p><%= link_to 'Back to Board', :action => 'threds' %></p></td></tr></table>
+ </td><td>
+ <% if (@thred.parent_forum_node(:is_locked) && session[:player] && session[:player].mod_level < 6) %>
+ <b>This thread is locked</b>
+ <% elsif session[:player].nil? %>
+ <b>Must be signed in to post.</b>
+ <% elsif (!ForumRestriction.no_posting(session[:player]) && session[:post_id].nil?) %>
+ <table class="post_text"><tr><td>
+ <% form_tag :action => 'create_post' do %>
+   <%= render :partial => 'post_form' %>
+   <%= submit_tag "Post!" %>
+ <% end %>
+ </td></tr>
+ </table>
+ <% end %>
+ </td></tr>
+</table>
+
+<% if session[:player] && ForumRestriction.no_viewing(session[:player]) %>
+You are prohibited from viewing the posts.
+<% elsif @posts.size == 0 %>
+No Posts
+<% else %>
+<table>
+<% for post in @posts %>
+<tr valign="top"><td>
+  <table class="author" width=115>
+    <tr><td><%=h post.player.handle %></td></tr>
+    <% if post.player.mod_level > 0 %><tr><td>Mod Level <%=h post.player.mod_level %></td></tr><% end %>
+    <tr><td><%=h post.player.posts.size %> posts</td></tr>
+    <tr><td>Member since:</td></tr>
+    <tr><td><%=h post.player.joined.strftime("%m-%d-%Y") %></td></tr>
+    <% if session[:player] && session[:player].mod_level > post.player.mod_level %>
+    <tr><td><%= link_to 'Punish', :action => 'banhammer', :player_id => post.player_id %></td></tr>
+    <tr><td><%= link_to 'Promote', :action => 'promote_mod', :player_id => post.player_id %></td></tr>
+    <% end %>
+  </table>
+</td><td>
+  <table width=385>
+    <% if session[:post_id].to_i == post.id && session[:player] && !ForumRestriction.no_posting(session[:player]) %>
+      <tr><td colspan=3>
+      <% form_tag :action => 'update_post', :post_id => post.id do %>
+        <%= render :partial => 'post_form' %>
+        <%= submit_tag "Update" %> | <%= link_to 'Cancel edit', :action => 'cancel_edit', :page => params[:page] %>
+      <% end %>
+      </td></tr>
+    <% else %>
+      <tr><td colspan=3>
+      <% if post.is_mods_only %>
+      <i><p width=100% class="post_text"><%= simple_format h post.text %></p></i>
+      <% else %>
+      <p width=100% class="post_text"><%= simple_format h post.text %></p>
+      <% end %>
+      <% if session[:player] && session[:player].mod_level == 9 %>
+        <b>
+        <% if post.is_locked %>
+          THIS POST IS LOCKED<br/>
+        <% end %>
+        <% if session[:player] && session[:player].mod_level > 0 && post.is_hidden %>
+          THIS POST ID HIDDEN<br/>
+        <% end %>
+        <% if session[:player] && session[:player].mod_level > 0 && post.is_deleted %>
+          THIS POST HAS BEEN DELETED<br/>
+        <% end %>
+        <% if session[:player] && session[:player].mod_level > 0 && post.is_mods_only %>
+          THIS POST IS ONLY VISABLE TO MODS<br/>
+        <% end %>
+        </b>
+      <% end %>
+      </td></tr>
+      <tr class="edit_notices"><td colspan=3><%= post.edit_notices %></td></tr>
+      <tr class="post_info"><td>posted <%=h post.datetime.strftime("%m-%d-%Y %H:%M.%S %p") %></td>
+      <td><% if session[:player] && (post.player_id == session[:player][:id] || post.player.mod_level < session[:player].mod_level) %>
+        <%= link_to '-edit', :action => 'dispatch', :post_id => post.id %><% end %></td>
+      <td><% if session[:player] && (post.player_id == session[:player][:id] || (post.player.mod_level < session[:player].mod_level && session[:player].mod_level > 7)) %>
+        <%= link_to '-delete', :action => 'delete_post', :post_id => post.id %><% end %></td>
+      </tr>
+      <tr><td colspan=100%><hr/></td><tr>
+    <% end %>
+  </table>
+</td>
+<% end %>
+</table>
+<% end %>
+
+<p>
+<%= will_paginate @posts %>
+</p>

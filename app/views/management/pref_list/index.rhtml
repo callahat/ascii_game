@@ -1,0 +1,26 @@
+<h1>Listing the Preference List</h1>
+
+<table>
+  <tr>
+    <th>name</th>
+    <th>home</th>
+    <th>do what</th>
+  </tr>
+
+<% for pl in @all_things %>
+  <tr>
+    <td><%= pl.thing.name %></td>
+    <td><%= pl.thing.kingdom.name %></td>
+    <td><% if @pref_list.find(:first, :conditions => ['thing_id = ?', pl.thing.id]) %><%= link_to 'Drop', {:action => 'drop_from_list', :id => pl.thing.id, :page => params[:page]}, :method => :post %>
+        <% else %><%= link_to 'Add', {:action => 'add_to_list', :id => pl.thing.id, :page => params[:page]}, :method => :post %>
+        <% end %>
+    </td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @all_things %> 
+
+<br />
+
+<%= link_to 'Back', :controller => '/management' %>

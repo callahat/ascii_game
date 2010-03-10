@@ -1,0 +1,26 @@
+<h1>Listing trainer_skills</h1>
+
+<table>
+  <tr>
+  <% for column in TrainerSkill.content_columns %>
+    <th><%= column.human_name %></th>
+  <% end %>
+  </tr>
+  
+<% for trainer_skill in @trainer_skills %>
+  <tr>
+  <% for column in TrainerSkill.content_columns %>
+    <td><%=h trainer_skill.send(column.name) %></td>
+  <% end %>
+    <td><%= link_to 'Show', :action => 'show', :id => trainer_skill %></td>
+    <td><%= link_to 'Edit', :action => 'edit', :id => trainer_skill %></td>
+    <td><%= link_to 'Destroy', { :action => 'destroy', :id => trainer_skill }, :confirm => 'Are you sure?', :method => :post %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @trainer_skills  %> 
+
+<br />
+
+<%= link_to 'New trainer_skill', :action => 'new' %>

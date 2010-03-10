@@ -1,0 +1,14 @@
+<h1>Pick Requirement</h1>
+
+<% form_tag :action => 'new_req', :id => params[:id] do %>
+  <p>
+  <select id="type" name="type">
+    <% for req in @reqs %>
+      <option value="<%= req.text %>"><%= req.text %></option>
+    <% end %>
+  </select>
+  </p>
+  <%= submit_tag "Add" %>
+<% end %>
+
+<%= link_to 'Back', :action => 'show', :id => params[:id] %>

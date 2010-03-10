@@ -1,0 +1,38 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+one:
+  id: 1
+sick_pc:
+  id: 2
+  name: "sick pc"
+  c_class_id: 1
+  race_id: 1
+  image: pc_image
+
+test_king:
+  name: "Test King"
+  c_class_id: 1
+  race_id: 1
+  kingdom_id: 1
+  image: pc_image
+
+test_pc_one:
+  name: "Test PC One"
+  player: test_player_one
+  c_class_id: 1
+  race_id: 1
+  level: 1
+  next_level_at: 500
+  experience: 6
+  kingdom_id: 0
+  house_x: 1
+  house_y: 1
+  turns: 80
+  freepts: 3
+  gold: 14
+  image_id: 0
+  in_kingdom: 1
+  bigx: 0
+  bigy: 0
+  kingdom_level:
+  in_world: 1
+  image: pc_image

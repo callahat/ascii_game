@@ -1,0 +1,23 @@
+<%= error_messages_for 'event' %>
+
+<!--[form:event]-->
+<p><label for="event_name">Event name</label><br/>
+<%= text_field 'event', 'name'  %></p>
+
+<p><label for="event_name">Event text</label><br/>
+<%= text_field 'event', 'text'  %></p>
+
+<% p @event_rep_types %>
+<% p @event_types %>
+
+<p><label for="event_event_rep_type">Event rep type</label><br/>
+<%= select('event', 'event_rep_type', @event_rep_types)  %></p>
+
+<p><label for="event_event_reps">Event reps</label><br/>
+<%= text_field 'event', 'event_reps'  %></p>
+
+<p><label for="event_event_type">Event type</label><br/>
+<%= select('event', 'event_type', @event_types)  %></p>
+
+<!--[eoform:event]-->
+

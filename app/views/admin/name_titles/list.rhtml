@@ -1,0 +1,26 @@
+<h1>Listing name_titles</h1>
+
+<table>
+  <tr>
+  <% for column in NameTitle.content_columns %>
+    <th><%= column.human_name %></th>
+  <% end %>
+  </tr>
+  
+<% for name_title in @name_titles %>
+  <tr>
+  <% for column in NameTitle.content_columns %>
+    <td><%=h name_title.send(column.name) %></td>
+  <% end %>
+    <td><%= link_to 'Show', :action => 'show', :id => name_title %></td>
+    <td><%= link_to 'Edit', :action => 'edit', :id => name_title %></td>
+    <td><%= link_to 'Destroy', { :action => 'destroy', :id => name_title }, :confirm => 'Are you sure?', :method => :post %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @name_titles %> 
+
+<br />
+
+<%= link_to 'New name_title', :action => 'new' %>

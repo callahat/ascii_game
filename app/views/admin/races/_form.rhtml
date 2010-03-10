@@ -1,0 +1,15 @@
+<%= error_messages_for 'race' %>
+
+<!--[form:race]-->
+<p><label for="race_name">Name</label><br/>
+<%= text_field 'race', 'name'  %></p>
+
+<p><label for="race_description">Description</label><br/>
+<%= text_field 'race', 'description'  %></p>
+
+<p><label for="race_race_body_type">Race body type</label><br/>
+<%       @body_types = SPEC_CODEC['race_body_type'].collect{|c,t| ColnumText.new(c, t) } %>
+<%= collection_select('race','race_body_type', @body_types, :col_num, :text ) %></p>
+
+<!--[eoform:race]-->
+

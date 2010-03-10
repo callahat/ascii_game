@@ -1,0 +1,47 @@
+<h1><%=h @board.name %><% if @board.is_locked %> (This board is locked)<% end %></h1>
+
+
+<p>
+<% unless session[:player].nil? || session[:player].forum_restrictions.exists?(:restriction => [SpecialCode.get_code('restrictions','no_threading'), SpecialCode.get_code('restrictions','no_threding')]) %>
+<%= link_to 'New thred', :action => 'new_thred' %> | 
+<% end %>
+<%= link_to 'Back', :action => 'boards' %>
+</p>
+
+<% if session[:player] && ForumRestriction.no_viewing(session[:player]) %>
+You are prohibited from viewing the threds.
+<% elsif @threds.size == 0 %>
+you don't see any threds
+<% else %>
+<table>
+<tr>
+  <th>Thred</th>
+  <th>Description</th>
+  <th>Posts</th>
+  <th>Last Post</th>
+</tr>
+<% for thred in @threds %>
+<tr>
+  <td><%= link_to "#{thred.name}", :action => 'dispatch', :thred_id => thred.id %></td>
+  <td class="board_info"><%=h thred.text %></td>
+  <td class="board_info"><%=h thred.childs.size %></td>
+  <td class="board_info"><% if thred.childs.size > 0 %><%= thred.childs.first.datetime.strftime("%m-%d-%Y %I:%M.%S %p") %> by <%=h thred.childs.first.player.handle %><% end %></td>
+</tr>
+<tr>
+  <td class="board_info"><% if session[:player] && session[:player].mod_level > 2 %>Mod Ops:<% elsif thred.parent_forum_node(:is_locked) %>Thred Locked<% end %></td>
+  <td colspan=3>
+  <table>
+    <tr>
+    <td class="board_info" style="word-spacing:1em"><% if  session[:player] && session[:player].mod_level == 9 %><%= link_to '-edit', :action => 'edit_thred', :thred_id => thred.id %><% end %>
+    <% forum_node = thred %><%= render '/forum/forum_node_status.rhtml', { :forum_node => thred, :mml => 7 } %></td>
+    </tr>
+    </table>
+  </td>
+</tr>
+<% end %>
+</table>
+<% end %>
+
+<p>
+<%= will_paginate @threds %>
+</p>

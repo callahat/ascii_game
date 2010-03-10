@@ -1,0 +1,16 @@
+<%= error_messages_for 'c_class' %>
+
+<!--[form:c_class]-->
+<p><label for="c_class_name">Name</label><br/>
+<%= text_field 'c_class', 'name'  %></p>
+
+<p><label for="c_class_description">Description</label><br/>
+<%= text_field 'c_class', 'description'  %></p>
+
+<p><label for="c_class_attack_spells">Attack spells</label><br/>
+<select id="c_class_attack_spells" name="c_class[attack_spells]"><option value="false">False</option><option value="true">True</option></select></p>
+
+<p><label for="c_class_healing_spells">Healing spells</label><br/>
+<select id="c_class_healing_spells" name="c_class[healing_spells]"><option value="false">False</option><option value="true">True</option></select></p>
+<!--[eoform:c_class]-->
+

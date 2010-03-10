@@ -1,0 +1,32 @@
+<h1>Listing images</h1>
+
+<table>
+  <tr>
+    <th>thumbnail</th>
+    <th>name</th>
+    <th>image type</th>  
+    <th>public</th>
+    <th>player</th>
+    <th>kingdom</th>
+  </tr>
+  
+<% for image in @images %>
+  <tr>
+    <td><pre class="image_index"><%= image.image_text %></pre></td>
+    <td><%= image.name %></td>
+    <td><% if image.image_type.nil? %>*NONE*<% else %><%=h SpecialCode.get_text('image_type',image.image_type) %><% end %></td>
+    <td><%= image.public %></td>
+    <td><%= image.player.handle %></td>
+    <td><%= image.kingdom.name %></td>
+    <td><%= link_to 'Show', :action => 'show', :id => image %></td>
+    <td><%= link_to 'Edit', :action => 'edit', :id => image %></td>
+    <td><%= link_to 'Destroy', { :action => 'destroy', :id => image, :page => params[:page] }, :confirm => 'Are you sure?', :method => :post %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @images %> 
+
+<br />
+
+<%= link_to 'New image', :action => 'new' %>

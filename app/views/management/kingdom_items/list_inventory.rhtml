@@ -1,0 +1,22 @@
+<h1>Listing kingdom_items</h1>
+
+<table>
+  <tr>
+    <th>Item</th>
+    <th>Quantity</th>
+  </tr>
+  
+<% for pc_item in @player_character_items %>
+  <tr>
+    <td><%=h pc_item.item.name %></td>
+    <td><%=h pc_item.quantity %></td>
+    <td><%= link_to 'Store', :action => 'store', :id => pc_item %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @player_character_items %> 
+
+<br />
+
+<%= link_to 'Storerooms', :action => 'list' %>

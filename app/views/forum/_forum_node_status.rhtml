@@ -1,0 +1,10 @@
+<% #print forum_node.inspect %>
+<% { :is_locked => [2, "lock"], :is_hidden => [4, "hide"], :is_mods_only => [mml, "mods_only"], :is_deleted => [8, "delete"] }.each do |foo|
+  what = foo[0]
+  where = foo[0].to_s[3..-1]
+  why = foo[1][1]
+  if forum_node[what] then why = 'un' + why end
+  if session[:player] && session[:player].mod_level > foo[1][0] %>
+  <%= link_to "-"+why, :action => 'toggle_'+where , :forum_node_id => forum_node.id %>
+  <% end %>
+<% end %>

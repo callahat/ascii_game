@@ -1,0 +1,25 @@
+<% if @npc.npc_division == SpecialCode.get_code('npc_division','merchant') %>
+<p><%= @npc.name %>'s Workshop</p>
+  <% if @npc.npc_merchant.healing_sales %>
+    <p><%= link_to 'Recieve healing', :action => 'heal' %></p>
+  <% end %>
+  <% if @npc.npc_merchant.trainer_sales %>
+    <p><%= link_to 'Train', :action => 'train' %></p>
+  <% end %>
+  <% if @npc.npc_merchant.blacksmith_sales %>
+    <p><%= link_to 'Buy new items', :action => 'smithy' %></p>
+  <% end %>
+  <% if @npc.npc_merchant.consignor == true %>
+      <p><%= link_to 'Buy used items', :action => 'buy' %></p>
+    <p><%= link_to 'Sell items', :action => 'sell' %></p>
+  <% end %>
+<% elsif @npc.npc_division == SpecialCode.get_code('npc_division','guard') %>
+<p><%= @npc.name %> is standing here</p>
+<% elsif @npc.npc_division == SpecialCode.get_code('npc_division','peasant') %>
+<p>You encounter peasants!</p>
+<% else %>
+<p>Unrecognized NPC type</p>
+<% end %>
+
+<p><%= link_to 'Attack!', :controller => '/game/battle', :action => 'fight_npc' %></p>
+<p><%= link_to 'Leave', :controller => '/game', :action => 'complete' %></p>

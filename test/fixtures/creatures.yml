@@ -1,0 +1,46 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+wild_foo:
+  id: 1
+  name: "Wild foo"
+  experience: 5
+  HP: 40
+  gold: 30
+  number_alive: 400
+  armed: 1
+  player_id: -1
+  fecundity: 10
+  kingdom_id: -1
+  image: creature_image
+peasantry:
+  name: "Peasant"
+  experience: 10
+  HP: 20
+  gold: 30
+  number_alive: -1
+  armed: 1
+  player_id: -1
+  fecundity: 10
+  kingdom_id: -1
+  image: creature_image
+wimp_monster:
+  name: "Wimp Monster"
+  experience: 3
+  HP: 2
+  gold: 5
+  number_alive: -1
+  armed: 1
+  player_id: -1
+  fecundity: 10
+  kingdom_id: -1
+  image: creature_image
+tough_monster:
+  name: "Tough Monster"
+  experience: 50
+  HP: 200
+  gold: 50
+  number_alive: -1
+  armed: 1
+  player_id: -1
+  fecundity: 4
+  kingdom_id: -1
+  image: creature_image

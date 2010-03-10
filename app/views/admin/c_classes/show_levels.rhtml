@@ -1,0 +1,20 @@
+<h1>Listing race_levels</h1>
+<p>If the min_xp is't to your liking, you can always edit the level seed and redistribute. Remember, the more points in  attribute, the more expensive each point becomes.</p>
+<%= link_to 'Back', :action => 'list' %>||<%= link_to 'Edit The Level Seed', :action => 'edit_first_level', :id => params[:id], :pres => 'true' %>||<%= link_to 'Generate another 50 Levels', :action => 'gen_levels', :id => params[:id], :add => '50' %>||<%= link_to 'Edit The Level Seed and Regenerate all Levels', :action => 'edit_first_level', :id => params[:id] %>
+
+<table>
+  <% for column in CClassLevel.content_columns %>
+    <th><%= column.human_name %></th>
+  <% end %>
+  </tr>
+  
+<% for c_class_level in @c_class_levels %>
+  <tr>
+  <% for column in CClassLevel.content_columns %>
+    <td><%=h c_class_level.send(column.name) %></td>
+  <% end %>
+  </tr>
+<% end %>
+</table>
+
+

@@ -1,0 +1,22 @@
+<p><b>Name: </b><%= @base_item.name %></p>
+<p><b>Description: </b><%= @base_item.description %></p>
+<p><b>Dfn Mod: </b><%= @base_item.dfn_mod %></p>
+<p><b>Dam Mod: </b><%= @base_item.dam_mod %></p>
+<p><b>Price: </b><%= @base_item.price %></p>
+<p><b>Equip loc: </b>
+<% if @base_item.equip_loc.nil? %>
+N/A
+<% else %>
+(<%= @base_item.equip_loc %>) - <%= SpecialCode.get_text('equip_loc', @base_item.equip_loc) %>
+<% end %>
+</p>
+<p><b>Race body type: </b>
+<% if @base_item.race_body_type.nil? %>
+N/A
+<% else %>
+(<%= @base_item.race_body_type %>) - <%= SpecialCode.get_text('race_body_type', @base_item.race_body_type) %>
+<% end %>
+</p>
+
+<%= link_to 'Edit', :action => 'edit', :id => @base_item %> |
+<%= link_to 'Back', :action => 'list' %>

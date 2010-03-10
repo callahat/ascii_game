@@ -1,0 +1,12 @@
+<p><%= @kingdom.name %> Castle Offices</p>
+<% if @kingdom.player_character_id %>
+<p><%= @kingdom.player_character.name %> is the ruling king</p>
+<% else %>
+<p>There is no king</p>
+<% end %>
+
+
+<p><%= link_to 'Quests', :action => 'quest_office' %></p>
+<p><%= link_to 'Bulletin Board', :action => 'bulletin' %></p>
+
+<p><%= link_to 'Leave', :controller => '/game', :action => 'complete' %></p>

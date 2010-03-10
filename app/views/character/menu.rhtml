@@ -1,0 +1,30 @@
+<h1>Characters</h1>
+
+<% if @active_chars.size < 3 %>
+<%= link_to 'Create a character', :action => 'new' %><br/>
+<% end %>
+
+<% if (@active_chars.size > 0) %>
+<%= link_to 'Select a character', :action => 'choose_character' %><br/>
+<%= link_to 'Retire a character', :action => 'retire' %><br/>
+<% end %>
+
+<% if !@retired_chars.nil? && @retired_chars.size > 0 && @active_chars.size < 3 %>
+<%= link_to 'Unretire a character', :action => 'unretire' %><br/>
+<% end %>
+
+<% if @active_chars.size + @retired_chars.size > 0 %>
+<%= link_to 'Edit a character image', :action => 'edit_character' %><br/>
+<%= link_to 'Delete a character', :action => 'destroy' %><br/>
+<% end %>
+
+<br />
+<b>Player's characters</b>
+<% for character in session[:player].player_characters.find(:all,:order => 'char_stat') %>
+<br />
+<% if character.char_stat == SpecialCode.get_code("char_stat","active") %>
+<%= h character.name %>
+<% else %>
+<strike><%= h character.name %></strike>
+<% end %>
+<% end %>

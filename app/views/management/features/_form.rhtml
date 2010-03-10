@@ -1,0 +1,41 @@
+<%= error_messages_for 'feature' %>
+
+<!--[form:event]-->
+<p><label for="feature_name">Feature name</label><br/>
+<%= text_field 'feature', 'name'  %></p>
+
+<p><label for="feature_description">description</label><br/>
+<%= text_field 'feature', 'description'  %></p>
+
+<p><label for="feature_cost">Action cost</label><br/>
+<%= text_field 'feature', 'action_cost'  %></p>
+
+<p><label for="feature_num_peasants">Number of occupants/ Housing size</label><br/>
+<%= text_field 'feature', 'num_occupants'  %></p>
+
+<p><label for="feature_store_front_size">Max number of Merchant shops</label><br/>
+<%= text_field 'feature', 'store_front_size'  %></p>
+
+<p><label for="feature_cost">(Calculated gold) Cost</label><br/>
+<%= text_field 'feature', 'cost', :readonly => 'true'  %></p>
+
+<p><label for="feature_image_id">Choose Image</label><br/>
+<%= collection_select 'feature', 'image_id', @images, 'id', 'name', {:include_blank => 'true'}  %></p>
+
+<p><label for="image_image_text">Make New Image</label><br/>
+<%= text_area 'image','image_text', :rows => '10', :cols => '15', :wrap => 'soft' %></p>
+
+<p><label for="feature_public">Public</label><br/>
+<%= check_box 'feature','public' %></p>
+
+<% if session[:player].admin %>
+<p><label for="feature_world_feature">World feature</label><br/>
+<%= check_box 'feature','world_feature' %></p>
+<% else %>
+<%= hidden_field 'feature','world_feature', :value => 'false' %>
+<% end %>
+
+<%= hidden_field 'feature','player_id', :value => session[:player][:id] %>
+<%= hidden_field 'feature','kingdom_id', :value => session[:kingdom][:id] %>
+
+<!--[eoform:event]-->

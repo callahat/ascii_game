@@ -1,0 +1,6 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+event_creature_det:
+  event: creature_event
+  creature: wimp_monster
+  low: 7
+  high: 7

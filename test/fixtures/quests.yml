@@ -1,0 +1,19 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+quest_one:
+  name: "Quest One"
+  description: "Uses at least one of every requirement type"
+  kingdom_id: 1
+  player_id: 1
+  max_level: 99
+  quest_status: 1
+  gold: 500
+  
+quest_two:
+  name: "Quest Two"
+  description: "Has quest one as a prereq"
+  kingdom_id: 1
+  player_id: 1
+  max_level: 99
+  quest_status: 1
+  gold: 500
+  quest: quest_one

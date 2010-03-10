@@ -1,0 +1,36 @@
+<h1>Listing healing_spells</h1>
+
+<table>
+  <tr>
+    <th>name</th>	   
+    <th>description</th>	   
+    <th>min level</th>	   
+    <th>min heal</th>	   
+    <th>max heal</th>	   
+    <th>disease</th>	   
+    <th>mp cost</th>	   
+    <th>cast on others?</th>	 
+  </tr>
+  
+<% for healing_spell in @healing_spells %>
+  <tr>
+<td><%= healing_spell.name %></td>	   
+<td><%= healing_spell.description %></td>	   
+<td><%= healing_spell.min_level %></td>	   
+<td><%= healing_spell.min_heal %></td>	   
+<td><%= healing_spell.max_heal %></td>	   
+<td><% if healing_spell.disease.nil? %>N/A<% else %><%= healing_spell.disease.name %><% end %></td>	   
+<td><%= healing_spell.mp_cost %></td>	   
+<td><%= healing_spell.cast_on_others? %></td>	 
+    <td><%= link_to 'Show', :action => 'show', :id => healing_spell %></td>
+    <td><%= link_to 'Edit', :action => 'edit', :id => healing_spell %></td>
+    <td><%= link_to 'Destroy', { :action => 'destroy', :id => healing_spell }, :confirm => 'Are you sure?', :method => :post %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @healing_spells %> 
+
+<br />
+
+<%= link_to 'New healing_spell', :action => 'new' %>

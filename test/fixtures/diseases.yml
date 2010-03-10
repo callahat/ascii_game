@@ -1,0 +1,40 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+air_disease:
+  name: "airbourne disease"
+  trans_method: 1
+  peasant_fatality: 10
+  virility: 100
+  min_peasants: 200
+contact_disease:
+  name: "contact disease"
+  trans_method: 2
+  peasant_fatality: 10
+  virility: 100
+  min_peasants: 200
+fluid_disease:
+  name: "fluid disease"
+  trans_method: 3
+  peasant_fatality: 10
+  virility: 100
+  min_peasants: 200
+ether_disease:
+  name: "luminiferous ether disease"
+  trans_method: 4
+  peasant_fatality: 10
+  virility: 100
+  min_peasants: 200
+air_disease2:
+  name: "airbourne fatal disease"
+  trans_method: 1
+  peasant_fatality: 100
+  NPC_fatal: true
+  virility: 100
+  min_peasants: 200
+
+new_sickness:
+  name: "NewInfection"
+  trans_method: 1
+  virility: 100
+  peasant_fatality: 0
+  virility: 100
+  min_peasants: 1000000

@@ -1,0 +1,15 @@
+<p>
+  <b>Min Sales: </b> <%= @blacksmith_skill.min_sales %>
+</p>
+<p>
+  <b>Min Mod: </b> <%= @blacksmith_skill.min_mod %>
+</p>
+<p>
+  <b>Max Mod: </b> <%= @blacksmith_skill.max_mod %>
+</p>
+<p>
+  <b>Base Item: </b> <%= @blacksmith_skill.base_item.name %>
+</p>
+
+<%= link_to 'Edit', :action => 'edit', :id => @blacksmith_skill %> |
+<%= link_to 'Back', :action => 'list' %>

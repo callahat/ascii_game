@@ -1,0 +1,23 @@
+<p><b>Level: </b><%= @level.level %> - <b>Maxx: </b><%= @level.maxx %> - <b>Maxy: </b><%= @level.maxy %></p>
+
+<table>
+<% while @y < @level.maxy %>
+<tr>
+<% while @x < @level.maxx %>
+  <td><% @feature = @level.level_maps.find(:all,:conditions => ['ypos = ? AND xpos = ?', @y, @x]).last.feature
+         if !@feature.nil? %>
+   <pre class="feature"><%=h @feature.image.image_text %></pre>
+         <% else %>
+   <pre class="feature"><%=h @empty_image %></pre>
+         <% end %>
+  </td>
+<%     @x += 1 
+     end 
+     @x = 0 
+     @y += 1 %>
+</tr>
+<% end %>
+</table>
+
+<%= link_to 'Edit Level Map', :action => 'edit', :id => @level %> |
+<%= link_to 'List Levels', :action => 'index' %>

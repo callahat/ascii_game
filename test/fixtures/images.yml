@@ -1,0 +1,24 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+creature_image: &creature_img_defs
+  name: "creature image"
+  player_id: -1
+  kingdom_id: -1
+  public: 0
+  image_text: "I am some image\ntext for a creatures"
+  image_type: <%= SpecialCode.get_code('image_type','creature') %>
+
+pc_image: &char_img_defs
+  name: "Test pc image"
+  player_id: -1
+  kingdom_id: -1
+  public: 0
+  image_text: ":)"
+  image_type: <%= SpecialCode.get_code('image_type','character') %>
+guard_image:
+  <<: *char_img_defs
+  name: "guard image"
+  image_text: "v_v"
+npc_image:
+  <<: *char_img_defs
+  name: "guard image"
+  image_text: "^_^"

@@ -1,0 +1,8 @@
+<p>You have slain the king of <%= @kingdom.name %>!<p>
+<p>The kingdom is yours for the taking.</p>
+
+<%= link_to 'Claim the throne', {:controller => '/game', :action => 'complete'}, :method => :post %><br/>
+<% if session[:enemies].size > 0 %>
+<%= link_to 'Claim throne, continue fighting', :action => 'battle' %><br/>
+<% end %>
+<%= link_to 'Abandon throne', {:controller => '/game', :action => 'completeA'}, :method => :post %>

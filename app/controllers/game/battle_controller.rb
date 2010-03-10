@@ -1,0 +1,152 @@
+class Game::BattleController < ApplicationController
+	before_filter :authenticate
+	before_filter :pc_alive, :except => ['run_away', 'fight', 'battle']
+
+	layout 'main'
+
+	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
+	verify :method => :post, :only => [ :do_heal, :do_choose, :do_train ],				 :redirect_to => { :action => :feature }
+
+	def creature
+		@e = session[:current_event].event_creature
+		@pc = session[:player_character]
+		result, msg = Battle.new_creature_battle(@pc, @e.creature, @e.low, @e.high, @pc.present_kingdom)
+
+		pre_battle_director(result, msg)
+	end
+
+	def fight_pc
+		@enemy_pc = session[:current_event].event_player_character.player_character
+		@pc = session[:player_character]
+		result, msg = Battle.new_pc_battle(@pc, @enemy_pc)
+
+		pre_battle_director(result, msg)
+	end
+
+	def fight_npc
+		@pc = session[:player_character]
+		@npc = session[:current_event].event_npc.npc
+		result, msg = Battle.new_npc_battle(@pc, @npc)
+
+		pre_battle_director(result, msg)
+	end
+
+	def fight_king
+		@pc = session[:player_character]
+		@kingdom = @pc.present_kingdom
+		result, msg = Battle.new_king_battle(@pc, @kingdom)
+
+		pre_battle_director(result, msg)
+	end
+
+	def storm_the_gates
+		@storm_move = session[:current_event].event_storm_gate.level
+		session[:storm_level] = @storm_move.id
+		session[:storm_gate] = @storm_move.kingdom_id
+
+		@pc = session[:player_character]
+		@kingdom = @storm_move.kingdom
+
+		result, msg = Battle.storm_gates(@pc, @kingdom)
+
+		pre_battle_director(result, msg, true)
+	end
+
+
+	def battle
+		@battle = Battle.find(:first, :conditions => ['owner_id = ?', session[:player_character][:id]])
+		@pc = session[:player_character]
+
+		if @battle.nil?
+			redirect_to :controller => '/game', :action => 'main'
+		elsif session[:regicide] && session[:keep_fighting].nil?
+			session[:keep_fighting] = true
+			@pc.present_kingdom.change_king(nil)
+			redirect_to :action => 'regicide'
+		elsif @batgld = @battle.victory
+			@message = "The enemy host has been defeated!<br/>Found " + @batgld.to_s + " gold."
+			if @pc.in_kingdom
+				@message += " Taxman takes " + (@batgld * (@pc.present_kingdom.tax_rate / 100.0)).to_i.to_s + " of it."
+			end
+			session[:completed] = true
+			@battle.clear_battle
+			render 'game/complete'
+		elsif @pc.health.HP <= 0
+			@message = "You have been killed."
+			@battle.clear_battle
+			render 'game/complete'
+		else #fight on!
+			@healing_spells = []
+			@attack_spells = []
+			if session[:player_character].c_class.healing_spells
+				healing_list = HealingSpell.find(:all, :conditions => ['min_level < ?', session[:player_character].level])
+				@healing_spells = healing_list.collect() {|s| [s.name + ' (MP:' + s.mp_cost.to_s + ')' , s.id ] }
+			end
+			if session[:player_character].c_class.attack_spells
+				attack_list = AttackSpell.find(:all, :conditions => ['min_level < ?', session[:player_character].level])
+				@attack_spells = attack_list.collect() {|s| splash = ( s.splash ? ' (splash)' : '' )
+																	[ s.name + ' (MP:' + s.mp_cost.to_s + ' HP:' + s.hp_cost.to_s + ')' + splash , s.id]}
+			end
+		end
+	end
+
+	def fight
+		@battle = Battle.find(:first, :conditions => ['owner_id = ?', session[:player_character][:id]])
+		@pc = session[:player_character]
+	
+		@bg = @battle.groups.find_by_name(params[:commit]) if params[:commit] && params[:commit] != ""
+		
+		session[:attack] = params[:attack]
+		session[:attack] = (@spell = AttackSpell.find(params[:attack])).id if params[:commit] !~ /Heal/ && params[:attack] && params[:attack] != ""
+		if params[:commit] =~ /Heal/
+			@spell = HealingSpell.find(params[:heal])
+			session[:heal] = @spell.id
+			@bg = @pc 
+		end
+
+		@battle.report = {}
+		@battle.for_this_round(@pc, @bg, @spell)
+
+		flash[:battle_report] = @battle.report
+
+		redirect_to :action => 'battle'
+	end
+
+	def run_away
+		@battle = Battle.find(:first, :conditions => ['owner_id = ?', session[:player_character][:id]])
+		@pc = session[:player_character]
+
+		if @battle.run_away(75)
+			session[:completed] = nil
+			@message = 'You ran away.'
+			render 'game/complete'
+		else
+			@message = 'could not run away'
+			@battle.for_this_round(@pc, nil)
+			flash[:notice] = 'Could not run away'
+			flash[:notice] += @battle.report.to_s
+			redirect_to :action => 'battle'
+		end
+	end
+
+	def regicide
+		if session[:regicide]
+			session[:completed] = true
+			@kingdom = session[:player_character].present_kingdom
+		else
+			redirect_to :controller => '/game', :action => 'feature'
+		end
+	end
+protected
+	#In the future, this may not be needed if events leading to battles setup the battle stuff themselves and
+	#redirect to the battle action. But for now, here it is.
+	def pre_battle_director(result, msg, comp=nil)
+		if result
+			redirect_to :action => 'battle'
+		else
+			@message = msg
+			session[:completed] = comp
+			render 'game/complete'
+		end
+	end
+end

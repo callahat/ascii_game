@@ -1,0 +1,4 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+event_pc_det:
+  event: pc_event
+  player_character_id: 2

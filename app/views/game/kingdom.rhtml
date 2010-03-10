@@ -1,0 +1,23 @@
+<p><b><%= session[:player_character].present_kingdom.name %>, level <%= @level.level %></b></p>
+<p><% if @level.level == 0 %><%= link_to 'Leave Kingdom', :action => 'leave_kingdom' %><% end %></p>
+<table>
+<% while @y < @level.maxy %>
+<tr>
+<% while @x < @level.maxx %>
+  <td><% @level_map = @level.level_maps.find(:all,:conditions => ['ypos = ? AND xpos = ?', @y, @x]).last
+         @feature = @level_map.feature 
+         if @feature %>
+   <span title="<%=h @feature.name %>"><a href="/game/feature?id=<%=h @level_map.id %>" class="map">
+   <pre class="feature"><%=h @feature.image.image_text %></pre>
+   </a></span>
+         <% else %>
+   <span title="Empty"><a href="#" class="map"><pre class="feature"><%=h @empty_image %></pre></a></span>
+         <% end %>
+  </td>
+<%     @x += 1 
+     end 
+     @x = 0 
+     @y += 1 %>
+</tr>
+<% end %>
+</table>

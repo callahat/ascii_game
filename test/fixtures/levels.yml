@@ -1,0 +1,6 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+first_kingdom_level_one:
+  kingdom_id: 1
+  level: 0
+  maxx: 3
+  maxy: 3

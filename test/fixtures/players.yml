@@ -1,0 +1,7 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+test_player_one:
+  handle: "Test Player One"
+  account_status: 1
+  admin: 0
+  table_editor_access: 0
+  mod_level: 0

@@ -1,0 +1,17 @@
+<% if @king %>
+<% if @king.id == session[:player_character][:id] %>
+<p>You sit on your throne.</p>
+<% else %>
+
+<p>Stand before the throne of <%= @king.name %>, king of <%= @king.kingdom.name %></p>
+
+<p><%= link_to 'Pledge Service', :action => 'join_king' %></p>
+<p><%= link_to 'Attack!', :controller => '/game/battle', :action => 'fight_king' %></p>
+<% end %>
+
+<% else %>
+<p>You stand before an empty throne. The steward is the only force preventing the kingdom from ruin.</p>
+<p><%= link_to 'Claim the throne', :action => 'king_me' %></p>
+<% end %>
+
+<p><%= link_to 'Leave', :controller => '/game', :action => 'complete' %></p>

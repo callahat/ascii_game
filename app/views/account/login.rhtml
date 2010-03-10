@@ -1,0 +1,22 @@
+<h1>Weclome!</h1>
+<p>Asciigame.com is a free online mmorpg, consisting of cheap quasi graphics composed of ascii characters.</p>
+<p>Please sign in to play the game</p>
+<% form_tag :action => 'verify', :id => @player do %>
+		<p><label for="player_handle">Handle</label><br/>
+		<%= text_field 'player', 'handle'  %></p>
+
+		<p><label for="player_passwd">Passwd</label><br/>
+		<%= password_field 'player', 'passwd'  %></p>
+	<%= submit_tag 'Login' %>
+<% end %>
+
+<p>Or register a new account here:</p>
+
+<% form_tag :action => 'new' do %>
+<%= submit_tag 'Ok' %>
+<% end %>
+
+<p>Or click here for more details:</p>
+<% form_tag :action => 'what' do %>
+<%= submit_tag 'Ok' %>
+<% end %>

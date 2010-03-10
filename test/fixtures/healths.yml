@@ -1,0 +1,55 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+one_pc_health:
+  base_HP: 0
+  base_MP: 0
+  HP: 0
+  MP: 0
+  wellness: <%= SpecialCode.get_code('wellness','alive') %>
+  owner_id: 1
+  kind: "HealthPc"
+sick_pc_health:
+  base_HP: 30
+  base_MP: 30
+  HP: 3
+  MP: 30
+  wellness: <%= SpecialCode.get_code('wellness','diseased') %>
+  owner_id: 2
+  kind: "HealthPc"
+test_pc_one_health:
+  base_HP: 30
+  base_MP: 30
+  HP: 30
+  MP: 30
+  wellness: <%= SpecialCode.get_code('wellness','alive') %>
+  owner: test_pc_one
+  kind: "HealthPc"
+test_king_health:
+  base_HP: 60
+  base_MP: 60
+  HP: 60
+  MP: 60
+  wellness: <%= SpecialCode.get_code('wellness','alive') %>
+  owner: test_king
+  kind: "HealthPc"
+	
+npc_one_health:
+  wellness: <%= SpecialCode.get_code('wellness','alive') %>
+  base_HP: 30
+  HP: 30
+  owner_id: 1
+  kind: "HealthNpc"
+sick_npc_health:
+  wellness: <%= SpecialCode.get_code('wellness','diseased') %>
+  base_HP: 30
+  HP: 9
+  owner_id: 2
+  kind: "HealthNpc"
+	
+<% 1.upto(10){|i| %>
+guard_<%= i %>_health:
+  wellness: <%= SpecialCode.get_code('wellness','alive') %>
+  base_HP: 75
+  HP: 75
+  owner: guard_<%= i.to_s %>
+  kind: "HealthNpc"
+<% } %>

@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+#referenced by the inventories unit test
+<% 1.upto(34){ |it| %>
+item_<%= it %>:
+  id: <%= it %>
+  name: "Item<%= it %>"
+  min_level: 1
+  equip_loc: 1
+  base_item_id: 1
+<% } %>
+  
+item_99:
+  id: 99
+  name: "Item99"
+  min_level: 1
+  equip_loc: 1
+  base_item_id: 1

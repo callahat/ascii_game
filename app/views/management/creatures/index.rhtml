@@ -1,0 +1,57 @@
+<h1>Listing creatures</h1>
+
+<table>
+  <tr>
+    <th>name</th>
+    <th>exp</th>
+    <th>HP</th>
+    <th>str</th>
+    <th>dex</th>
+    <th>dam</th>
+    <th>dfn</th>
+    <th>int</th>
+    <th>mag</th>
+    <th>gold</th>
+    <th>public</th>
+    <th>number alive</th>
+    <th>fecundity</th>
+    <th>disease</th>
+    <th>armed?</th>
+  </tr>
+
+<% for creature in @creatures %>
+  <tr>
+    <td><%= creature.name %></td>
+    <td><%= creature.experience %></td>
+    <td><%= creature.HP %></td>
+    <td><%= creature.stat.str %></td>
+    <td><%= creature.stat.dex %></td>
+    <td><%= creature.stat.dam %></td>
+    <td><%= creature.stat.dfn %></td>
+    <td><%= creature.stat.int %></td>
+    <td><%= creature.stat.mag %></td>
+    <td><%= creature.gold %></td>
+    <td><%= creature.public %></td>
+    <td><%= creature.number_alive %></td>
+    <td><%= creature.fecundity %></td>
+    <td><% if creature.disease.nil? %>None<% else %><%= creature.disease.name %><% end %></td>
+    <td><% if !creature.armed %><%= link_to 'ARM', :action => 'arm_creature', :id => creature, :page => params[:page] %><% else %>armed<% end %></td>
+    <td><%= link_to 'Show', :action => 'show', :id => creature %></td>
+   <% if !creature.armed? %>
+    <td><%= link_to 'Edit', :action => 'edit', :id => creature %></td>
+    <td><%= link_to 'Destroy', { :action => 'destroy', :id => creature, :page => params[:page] }, :confirm => 'Are you sure?', :method => :post %></td>
+   <% else %>
+     <td></td>
+     <td></td>
+   <% end %>
+  </tr>
+<% end %>
+</table>
+
+<br/>
+
+<%= will_paginate @creatures %>
+
+<br />
+
+<%= link_to 'New creature', :action => 'new' %>

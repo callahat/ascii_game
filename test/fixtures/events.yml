@@ -1,0 +1,33 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+creature_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Weak Monster encounter"
+  event_type: <%= SpecialCode.get_code('event_type','creature') %>
+  armed: 1
+  cost: 500
+pc_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Sick PC encounter"
+  event_type: <%= SpecialCode.get_code('event_type','pc') %>
+  armed: 1
+  cost: 500
+npc_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Healthy Npc encounter"
+  event_type: <%= SpecialCode.get_code('event_type','npc') %>
+  armed: 1
+  cost: 500
+storm_gate_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Storm Kingdom 1 Gate event"
+  event_type: <%= SpecialCode.get_code('event_type','storm_gate') %>
+  armed: 1
+  cost: 50

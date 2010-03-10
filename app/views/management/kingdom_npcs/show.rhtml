@@ -1,0 +1,41 @@
+<p><b>name: </b><%= @npc.name %></p>
+<p><b>wellness: </b><%= SpecialCode.get_text('wellness',@npc.wellness) %></p>
+<p><b>npc_division: </b><%= SpecialCode.get_text('npc_division',@npc.npc_division) %></p>
+<% if @npc.npc_division == SpecialCode.get_code('npc_division','merchant') %>
+<% if !@npc.npc_merchant.healing_sales.nil? %>
+<p><b>healing_sales: </b><%= @npc.npc_merchant.healing_sales %></p>
+<% end %>
+<% if !@npc.npc_merchant.blacksmith_sales.nil? %>
+<p><b>blacksmith_sales: </b><%= @npc.npc_merchant.blacksmith_sales %></p>
+<% end %>
+<% if !@npc.npc_merchant.trainer_sales.nil? %>
+<p><b>trainer_sales: </b><%= @npc.npc_merchant.trainer_sales %></p>
+<% end %>
+<p><b>race body type: </b><%= SpecialCode.get_text('race_body_type',@npc.npc_merchant.race_body_type) %></p>
+<p><b>consignor: </b><%= @npc.npc_merchant.consignor %></p>
+<% end %>
+<p><b>HP: </b><%= @npc.health.base_HP %></p>
+<p><b>str: </b><%= @npc.stat.str %></p>
+<p><b>dex: </b><%= @npc.stat.dex %></p>
+<p><b>con: </b><%= @npc.stat.con %></p>
+<p><b>int: </b><%= @npc.stat.int %></p>
+<p><b>mag: </b><%= @npc.stat.mag %></p>
+<p><b>dam: </b><%= @npc.stat.dam %></p>
+<p><b>dfn: </b><%= @npc.stat.dfn %></p>
+<p><b>hired?: </b><%= @npc.is_hired %></p>
+<% if @npc.is_hired && @npc.npc_division == SpecialCode.get_code('npc_division','merchant') %>
+  <p><b>Store Location: </b>
+  <% if !(@loc = @npc.event_npcs.last.level_map).nil? %>
+    Level <%=h @loc.level.level %>, <%=h @loc.ypos %> by <%=h @loc.xpos %></p>
+  <% else %>
+    None</p>
+  <% end %>
+<% end %>
+
+<% if !@npc.is_hired && @npc.npc_division == SpecialCode.get_code('npc_division','merchant') %>
+<%= link_to 'Give Store Front', :action => 'assign_store', :id => @npc %> |
+<% elsif !@npc.is_hired %>
+<%= link_to 'Hire', {:action => 'hire_guard', :id => @npc}, :method => :post %> |
+<% end %>
+<%= link_to 'Turn Away', { :action => 'turn_away', :id => @npc }, :method => :post %> |
+<%= link_to 'Kingdom NPCS', :action => 'list' %>

@@ -1,0 +1,30 @@
+<%= error_messages_for 'image' %>
+
+<!--[form:image]-->
+<p><label for="image_name">Name</label><br/>
+<%= text_field 'image', 'name' %></p>
+
+<p><label for="image_image_text">Image text</label><br/>
+<% if @image_box == 1 %>
+<%= text_area 'image', 'image_text'  %></p>
+<% elsif @image_box == 2 %>
+<%= text_area 'image','image_text', :rows => '10', :cols => '15', :wrap => 'hard' %></p>
+<% end %>
+
+<p><label for="image_public">Public</label><br/>
+<%= check_box 'image','public' %></p>
+
+<% if @image.image_type.nil? %>
+<p><label for="image_image_type">Image type</label><br/>
+<%= collection_select 'image', 'image_type', @types, 'col_num','text' %></p>
+<% else %>
+<p><label for="image_image_type">Image type</label><br/>
+<b><%= SpecialCode.get_text('image_type',@image.image_type) %></b></p>
+<% end %>
+
+<% if false %>
+<p><label for="image_picture">Picture</label><br/>
+<%= text_field 'image', 'picture'  %></p>
+<% end %>
+<!--[eoform:image]-->
+

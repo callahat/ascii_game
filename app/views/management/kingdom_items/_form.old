@@ -1,0 +1,9 @@
+THIS WILL BE DELETED, PAGE MARKED AS OLD.
+
+<%= error_messages_for 'kingdom_item' %>
+
+<!--[form:kingdom_item]-->
+<p><label for="kingdom_item_number">Number</label><br/>
+<%= text_field 'kingdom_item', 'number'  %></p>
+<!--[eoform:kingdom_item]-->
+

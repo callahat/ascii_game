@@ -1,0 +1,4 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+storm_gate_event_det:
+  event: storm_gate_event
+  level: first_kingdom_level_one
