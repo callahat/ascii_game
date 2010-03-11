@@ -38,6 +38,21 @@ class Illness < ActiveRecord::Base
 		return @ret
 	end
 	
+	def self.cure(what, who)
+		if (illness = who.illnesses.find(:first, :conditions => ['disease_id = ?', what.id])) &&
+				illness.destroy
+			who.transaction do
+				who.stat.lock!
+				who.health.wellness = SpecialCode.get_code('wellness','alive') if who.illnesses.size == 0 
+				who.stat.add_stats(what.stat)
+				who.stat.save!
+			end
+			return true
+		else
+			return false
+		end
+	end
+	
 	#Pagination related stuff
 	def self.per_page
 		20

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100220172359) do
+ActiveRecord::Schema.define(:version => 20100310015004) do
 
   create_table "attack_spells", :force => true do |t|
     t.string  "name",         :limit => 32,  :default => "", :null => false
@@ -176,101 +176,27 @@ ActiveRecord::Schema.define(:version => 20100220172359) do
   add_index "done_quests", ["quest_id", "player_character_id"], :name => "quest_id_player_character_id"
   add_index "done_quests", ["quest_id"], :name => "quest_id"
 
-  create_table "event_creatures", :force => true do |t|
-    t.integer "event_id",                   :null => false
-    t.integer "creature_id",                :null => false
-    t.integer "low",         :default => 1, :null => false
-    t.integer "high",        :default => 1, :null => false
-  end
-
-  add_index "event_creatures", ["creature_id"], :name => "creature_id"
-  add_index "event_creatures", ["event_id"], :name => "event_id"
-
-  create_table "event_diseases", :force => true do |t|
-    t.integer "event_id",   :null => false
-    t.integer "disease_id", :null => false
-    t.boolean "cures?",     :null => false
-  end
-
-  add_index "event_diseases", ["disease_id"], :name => "disease_id"
-  add_index "event_diseases", ["event_id"], :name => "event_id"
-
-  create_table "event_items", :force => true do |t|
-    t.integer "event_id",                :null => false
-    t.integer "item_id",                 :null => false
-    t.integer "number",   :default => 0, :null => false
-  end
-
-  add_index "event_items", ["event_id"], :name => "event_id"
-  add_index "event_items", ["item_id"], :name => "item_id"
-
-  create_table "event_moves", :force => true do |t|
-    t.integer "event_id",  :null => false
-    t.integer "move_type", :null => false
-    t.integer "move_id",   :null => false
-  end
-
-  add_index "event_moves", ["event_id"], :name => "event_id"
-  add_index "event_moves", ["move_type", "move_id"], :name => "move_type_move_id"
-
-  create_table "event_npcs", :force => true do |t|
-    t.integer "event_id",     :null => false
-    t.integer "npc_id"
-    t.integer "level_map_id"
-  end
-
-  add_index "event_npcs", ["event_id"], :name => "event_id"
-  add_index "event_npcs", ["level_map_id"], :name => "level_map_id"
-  add_index "event_npcs", ["npc_id"], :name => "npc_id"
-
-  create_table "event_player_characters", :force => true do |t|
-    t.integer "event_id",            :null => false
-    t.integer "player_character_id", :null => false
-  end
-
-  add_index "event_player_characters", ["event_id"], :name => "event_id"
-  add_index "event_player_characters", ["player_character_id"], :name => "player_character_id"
-
-  create_table "event_quests", :force => true do |t|
-    t.integer "event_id", :null => false
-    t.text    "text"
-  end
-
-  add_index "event_quests", ["event_id"], :name => "event_id"
-
-  create_table "event_stats", :force => true do |t|
-    t.integer "event_id",                  :null => false
-    t.integer "gold",       :default => 0
-    t.integer "experience", :default => 0
-    t.text    "text"
-  end
-
-  add_index "event_stats", ["event_id"], :name => "event_id"
-
-  create_table "event_storm_gates", :force => true do |t|
-    t.integer "event_id", :null => false
-    t.integer "level_id", :null => false
-  end
-
-  add_index "event_storm_gates", ["event_id"], :name => "event_id"
-  add_index "event_storm_gates", ["level_id"], :name => "level_id"
-
   create_table "events", :force => true do |t|
-    t.integer "kingdom_id",                                      :null => false
-    t.integer "player_id",                                       :null => false
-    t.integer "event_rep_type",                                  :null => false
+    t.integer "kingdom_id",                                       :null => false
+    t.integer "player_id",                                        :null => false
+    t.integer "event_rep_type",                                   :null => false
     t.integer "event_reps"
-    t.string  "name",           :limit => 32, :default => "",    :null => false
-    t.integer "event_type",                                      :null => false
-    t.boolean "armed",                        :default => false
-    t.integer "cost",                                            :null => false
+    t.string  "name",           :limit => 32,  :default => "",    :null => false
+    t.boolean "armed",                         :default => false
+    t.integer "cost",                                             :null => false
     t.string  "text"
+    t.string  "kind",           :limit => 20
+    t.integer "thing_id"
+    t.string  "flex",           :limit => 256
   end
 
-  add_index "events", ["armed", "event_type", "name"], :name => "armed_event_type_name"
+  add_index "events", ["armed", "kind", "kingdom_id"], :name => "armed_kind_kingdom_id"
+  add_index "events", ["armed", "kind", "player_id"], :name => "armed_kind_player_id"
   add_index "events", ["armed", "kingdom_id"], :name => "armed_kingdom_id"
   add_index "events", ["armed", "player_id"], :name => "armed_player_id"
-  add_index "events", ["event_type"], :name => "event_type"
+  add_index "events", ["kind", "kingdom_id"], :name => "kind_kingdom_id"
+  add_index "events", ["kind", "player_id"], :name => "kind_player_id"
+  add_index "events", ["kind"], :name => "kind"
   add_index "events", ["kingdom_id"], :name => "kingdom_id"
   add_index "events", ["player_id"], :name => "player_id"
 
@@ -588,9 +514,9 @@ ActiveRecord::Schema.define(:version => 20100220172359) do
   end
 
   create_table "nonplayer_character_killers", :force => true do |t|
-    t.integer  "player_character_id", :null => false
-    t.integer  "npc_id"
-    t.datetime "when",                :null => false
+    t.integer   "player_character_id", :null => false
+    t.integer   "npc_id"
+    t.timestamp "when",                :null => false
   end
 
   add_index "nonplayer_character_killers", ["npc_id"], :name => "npc_id"
@@ -646,9 +572,9 @@ ActiveRecord::Schema.define(:version => 20100220172359) do
   add_index "player_character_equip_locs", ["player_character_id"], :name => "player_character_id"
 
   create_table "player_character_killers", :force => true do |t|
-    t.integer  "player_character_id", :null => false
-    t.integer  "killed_id",           :null => false
-    t.datetime "when",                :null => false
+    t.integer   "player_character_id", :null => false
+    t.integer   "killed_id",           :null => false
+    t.timestamp "when",                :null => false
   end
 
   add_index "player_character_killers", ["killed_id"], :name => "killed_id"
@@ -803,14 +729,11 @@ ActiveRecord::Schema.define(:version => 20100220172359) do
   end
 
   create_table "table_locks", :force => true do |t|
-    t.string   "name",       :default => "",    :null => false
-    t.boolean  "locked",     :default => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.string  "name", :limit => 32, :default => "",    :null => false
+    t.boolean "lock",               :default => false
   end
 
-  add_index "table_locks", ["name"], :name => "index_table_locks_on_name"
-  add_index "table_locks", ["updated_at"], :name => "index_table_locks_on_updated_at"
+  add_index "table_locks", ["name"], :name => "name"
 
   create_table "trainer_skills", :force => true do |t|
     t.float   "max_skill_taught", :null => false

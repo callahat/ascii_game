@@ -15,3 +15,9 @@ item_99:
   min_level: 1
   equip_loc: 1
   base_item_id: 1
+
+cool_item:
+  name: "Cool item"
+  min_level: 1
+  equip_loc: 1
+  base_item_id: 1

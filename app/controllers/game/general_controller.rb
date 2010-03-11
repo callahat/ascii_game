@@ -10,106 +10,105 @@ class Game::GeneralController < ApplicationController
 	
 	#General controller, for events that the player must be alive to complete.
 	
-	def disease
-			@event = session[:current_event]
-			@event_disease = @event.event_disease
-			@disease = @event_disease.disease
-		
-		stat_change_dir = 0
-		
-			if @event_disease.cures? 
-			print "\nTrying to cure player id: " + session[:player_character].id.to_s + " of disease id: " + @disease.id.to_s
-			if session[:player_character].illnesses.exists?(:disease_id => @disease.id)
-				stat_change_dir = 1
-				session[:player_character].illnesses.find(:first, :conditions => ['disease_id = ?', @disease.id]).destroy
-					@message = 'Your case of ' + @disease.name + ' has cleared up!'
-				else
-					#no point in going on, player already healthy, nothing happens.
-					@message = '...Nothing interesting happened.'
-				end
-		elsif !session[:player_character].illnesses.exists?(:disease_id => @disease.id)
-			stat_change_dir = -1
-			if Illness.infect(session[:player_character], @disease)
-					@message = 'You don\'t feel so good...'
-				else
-					@message = 'uh oh, you should\'ve gotten a disease from that!'
-				end
-			else
-				#don't infect someone with the same organism more than once
-				@message = "This place feels unhealthy"
-			end
-		
-		if stat_change_dir != 0
-			@stat = session[:player_character].stat.dup
-			PlayerCharacter.transaction do
-				@stat.lock!
-				if stat_change_dir > 0
-					@stat.add_stats(@disease.stat)
-				else
-					@stat.subtract_stats(@disease.stat)
-		end
-				@stat.save!
-			end
-		end
-		
-		session[:completed] = true
-		render :action => '../complete'
-	end
+	#def disease
+	#		@event = session[:current_event]
+	#		@event_disease = @event.event_disease
+	#		@disease = @event_disease.disease
+	#	
+	#	stat_change_dir = 0
+	#	
+	#		if @event_disease.cures? 
+	#		print "\nTrying to cure player id: " + session[:player_character].id.to_s + " of disease id: " + @disease.id.to_s
+	#		if session[:player_character].illnesses.exists?(:disease_id => @disease.id)
+	#			stat_change_dir = 1
+	#			session[:player_character].illnesses.find(:first, :conditions => ['disease_id = ?', @disease.id]).destroy
+	#				@message = 'Your case of ' + @disease.name + ' has cleared up!'
+	#			else
+	#				#no point in going on, player already healthy, nothing happens.
+	#				@message = '...Nothing interesting happened.'
+	#			end
+	#	elsif !session[:player_character].illnesses.exists?(:disease_id => @disease.id)
+	#		stat_change_dir = -1
+	#		if Illness.infect(session[:player_character], @disease)
+	#				@message = 'You don\'t feel so good...'
+	#			else
+	#				@message = 'uh oh, you should\'ve gotten a disease from that!'
+	#			end
+	#		else
+	#			#don't infect someone with the same organism more than once
+	#			@message = "This place feels unhealthy"
+	#		end
+	#	
+	#	if stat_change_dir != 0
+	#		@stat = session[:player_character].stat.dup
+	#		PlayerCharacter.transaction do
+	#			@stat.lock!
+	#			if stat_change_dir > 0
+	#				@stat.add_stats(@disease.stat)
+	#			else
+	#				@stat.subtract_stats(@disease.stat)
+	#	end
+	#			@stat.save!
+	#		end
+	#	end
+	#	
+	#	session[:completed] = true
+	#	render :action => '../complete'
+	#end
 	
-	def item
-		@event_item = session[:current_event].event_item
-		@item = @event_item.item
-		
-		print "\nITEM:" + @item.id.to_s
-		
-		if PlayerCharacterItem.update_inventory(session[:player_character].id,@item.id,@event_item.number)
-			flash[:notice] = 'Found ' + @event_item.number.to_s + ' ' + @item.name
-		else
-			flash[:notice] = 'Failed to update the inventory'
-		end
-		
-		session[:completed] = true
-		render :action => '../complete'
-	end
+	#def item
+	#	@event_item = session[:current_event].event_item
+	#	@item = @event_item.item
+	#	
+	#	print "\nITEM:" + @item.id.to_s
+	#	
+	#	if PlayerCharacterItem.update_inventory(session[:player_character].id,@item.id,@event_item.number)
+	#		flash[:notice] = 'Found ' + @event_item.number.to_s + ' ' + @item.name
+	#	else
+	#		flash[:notice] = 'Failed to update the inventory'
+	#	end
+	#	
+	#	session[:completed] = true
+	#	render :action => '../complete'
+	#end
 	
-	def quest
-		#why do i even have this event type anymore? Isn't it just a textbox at this point?
-		@message = session[:current_event].event_quest.text
-		
-		session[:completed] = true
-		render :action => '../complete'
-	end
+	#def quest
+	#	#why do i even have this event type anymore? Isn't it just a textbox at this point?
+	#	(@message, session[:completed]) = session[:current_event].happens
+	#	
+	#	render :action => '../complete'
+	#end
 	
-	def stat
-		@pc = session[:player_character].dup
-			@event_stat = session[:current_event].event_stat
-		
-		PlayerCharacter.transaction do
-			@pc.lock!
-			@pc.gold += @event_stat.gold
-			@pc.experience += @event_stat.experience
-			@pc.save!
-			end
-		Health.transaction do
-			@health = @pc.health.lock!
-			@health.HP += @event_stat.HP
-			@health.MP += @event_stat.MP
-			if @health.HP <= 0
-				@health.wellness = SpecialCode.get_code('wellness','dead')
-			end
-			@health.save!
-		end
-		StatPc.transaction do
-			@stat = @pc.stat.lock!
-			@stat.add_stats(@disease.stat)
-			@stat.save!
-		end
-			@message = @event_stat.text
-		
-		session[:player_character] = @pc
-		session[:completed] = true
-		render :action => '../complete'
-	end
+	#def stat
+	#	@pc = session[:player_character].dup
+	#		@event_stat = session[:current_event].event_stat
+	#	
+	#	PlayerCharacter.transaction do
+	#		@pc.lock!
+	#		@pc.gold += @event_stat.gold
+	#		@pc.experience += @event_stat.experience
+	#		@pc.save!
+	#		end
+	#	Health.transaction do
+	#		@health = @pc.health.lock!
+	#		@health.HP += @event_stat.HP
+	#		@health.MP += @event_stat.MP
+	#		if @health.HP <= 0
+	#			@health.wellness = SpecialCode.get_code('wellness','dead')
+	#		end
+	#		@health.save!
+	#	end
+	#	StatPc.transaction do
+	#		@stat = @pc.stat.lock!
+	#		@stat.add_stats(@disease.stat)
+	#		@stat.save!
+	#	end
+	#		@message = @event_stat.text
+	#	
+	#	session[:player_character] = @pc
+	#	session[:completed] = true
+	#	render :action => '../complete'
+	#end
 	
 	def spawn_kingdom
 		#make sure player is really eligible to found a new kingdom. Should make foundking a kingdom always

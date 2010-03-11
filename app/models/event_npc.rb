@@ -1,7 +1,6 @@
-class EventNpc < ActiveRecord::Base
-	belongs_to :event
-	belongs_to :npc
-	belongs_to :level_map
+class EventNpc < Event
+	belongs_to :npc, :foreign_key => 'thing_id'
+	belongs_to :level_map, :foreign_key => 'flex'
 
-	validates_presence_of :event_id,:npc_id
+	validates_presence_of :thing_id,:flex
 end

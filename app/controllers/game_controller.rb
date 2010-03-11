@@ -229,30 +229,38 @@ class GameController < ApplicationController
 	def exec_event
 		@event = session[:current_event]
 		
+		@direction, @message = @event.happens
+		if @direction.class == Hash
+			redirect_to @direction
+		elsif @direction.class
+			render :action => '../complete'
+		end
+		
+		#below will be cut
 		if @event.event_type == SpecialCode.get_code('event_type','creature')
-			print "\nprocessing creature event"
-			redirect_to :controller => 'game/battle', :action => 'creature'
-		elsif @event.event_type == SpecialCode.get_code('event_type','disease')
-			print "\nprocessing diseasee event"
-			redirect_to :controller => 'game/general', :action => 'disease'
-		elsif @event.event_type == SpecialCode.get_code('event_type','item') 
-			print "\nprocessing item event"
-			redirect_to :controller => 'game/general', :action => 'item'
+		#	print "\nprocessing creature event"
+		#	redirect_to :controller => 'game/battle', :action => 'creature'
+		#elsif @event.event_type == SpecialCode.get_code('event_type','disease')
+		#	print "\nprocessing diseasee event"
+		#	redirect_to :controller => 'game/general', :action => 'disease'
+		#elsif @event.event_type == SpecialCode.get_code('event_type','item') 
+		#	print "\nprocessing item event"
+		#	redirect_to :controller => 'game/general', :action => 'item'
 		elsif @event.event_type == SpecialCode.get_code('event_type','move')
 			print "\nprocessing move event"
 			redirect_to :action => 'move'
 		elsif @event.event_type == SpecialCode.get_code('event_type','npc')
 			print "\nprocessing npc event"
 			redirect_to :controller => 'game/npc', :action => 'npc'
-		elsif @event.event_type == SpecialCode.get_code('event_type','pc') 
-			print "\nprocessing pc event"
-			redirect_to :action => 'pc'
-		elsif @event.event_type == SpecialCode.get_code('event_type','quest')
-			print "\nprocessing quest event"
-			redirect_to :controller => 'game/general', :action => 'quest'
-		elsif @event.event_type == SpecialCode.get_code('event_type','stat')
-			print "\nprocessing stat event"
-			redirect_to :controller => 'game/general', :action => 'stat'
+		#elsif @event.event_type == SpecialCode.get_code('event_type','pc') 
+		#	print "\nprocessing pc event"
+		#	redirect_to :action => 'pc'
+		#elsif @event.event_type == SpecialCode.get_code('event_type','quest')
+		#	print "\nprocessing quest event"
+		#	redirect_to :controller => 'game/general', :action => 'quest'
+		#elsif @event.event_type == SpecialCode.get_code('event_type','stat')
+		#	print "\nprocessing stat event"
+		#	redirect_to :controller => 'game/general', :action => 'stat'
 		elsif @event.event_type == SpecialCode.get_code('event_type','throne')
 			print "\nprocessing throne event"
 			redirect_to :controller => 'game/court', :action => 'throne'
@@ -353,15 +361,15 @@ class GameController < ApplicationController
 		redirect_to :action => 'complete'
 	end
 	
-	def pc
-		@pc = session[:current_event].event_player_character.player_character
-		if @pc.health.HP > 0	&& @pc.health.wellness != SpecialCode.get_code('wellness','dead')
-			session[:completed] = true
-		else
-			flash[:notice] = @pc.name + " has shuffled from this mortal coil"
-			render :action => 'complete'
-		end
-	end
+	#def pc
+	#	@pc = session[:current_event].event_player_character.player_character
+	#	if @pc.health.HP > 0	&& @pc.health.wellness != SpecialCode.get_code('wellness','dead')
+	#		session[:completed] = true
+	#	else
+	#		flash[:notice] = @pc.name + " has shuffled from this mortal coil"
+	#		render :action => 'complete'
+	#	end
+	#end
 	
 	def wave_at_pc
 		@pc = PlayerCharacter.find(session[:current_event].event_player_character.player_character_id)

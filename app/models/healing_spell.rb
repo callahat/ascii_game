@@ -40,18 +40,8 @@ class HealingSpell < ActiveRecord::Base
 			receiver.health.save!
 		end
 		
-		if @disease
-			if (illness = receiver.illnesses.find(:first, :conditions => ['disease_id = ?', @disease.id])) &&
-					illness.destroy
-				receiver.transaction do
-					receiver.stat.lock!
-					receiver.health.wellness = SpecialCode.get_code('wellness','alive') if receiver.illnesses.size == 0 
-					receiver.stat.add_stats(@disease.stat)
-					receiver.stat.save!
-				end
-			else
-				@disease = nil
-			end
+		unless @disease && Illness.cure(@disease, receiver)
+			@disease = nil
 		end
 		#return amount healed and disease cured
 		return @healed, @disease

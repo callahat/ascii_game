@@ -7,13 +7,14 @@ class Game::BattleController < ApplicationController
 	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
 	verify :method => :post, :only => [ :do_heal, :do_choose, :do_train ],				 :redirect_to => { :action => :feature }
 
-	def creature
-		@e = session[:current_event].event_creature
-		@pc = session[:player_character]
-		result, msg = Battle.new_creature_battle(@pc, @e.creature, @e.low, @e.high, @pc.present_kingdom)
+	#def creature
+	#	#deprecated, the creature event will do this, and then redirect to the battle action
+	#	@e = session[:current_event].event_creature
+	#	@pc = session[:player_character]
+	#	result, msg = Battle.new_creature_battle(@pc, @e.creature, @e.low, @e.high, @pc.present_kingdom)
 
-		pre_battle_director(result, msg)
-	end
+	#	pre_battle_director(result, msg)
+	#end
 
 	def fight_pc
 		@enemy_pc = session[:current_event].event_player_character.player_character
@@ -39,18 +40,15 @@ class Game::BattleController < ApplicationController
 		pre_battle_director(result, msg)
 	end
 
-	def storm_the_gates
-		@storm_move = session[:current_event].event_storm_gate.level
-		session[:storm_level] = @storm_move.id
-		session[:storm_gate] = @storm_move.kingdom_id
-
-		@pc = session[:player_character]
-		@kingdom = @storm_move.kingdom
-
-		result, msg = Battle.storm_gates(@pc, @kingdom)
-
-		pre_battle_director(result, msg, true)
-	end
+	#def storm_the_gates
+	#	@storm_move = session[:current_event].event_storm_gate.level
+	#	session[:storm_level] = @storm_move.id
+	#	session[:storm_gate] = @storm_move.kingdom_id
+	#	@pc = session[:player_character]
+	#	@kingdom = @storm_move.kingdom
+	#	result, msg = Battle.storm_gates(@pc, @kingdom)
+	#	pre_battle_director(result, msg, true)
+	#end
 
 
 	def battle

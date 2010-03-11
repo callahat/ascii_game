@@ -2,6 +2,7 @@ class Level < ActiveRecord::Base
 	belongs_to :kingdom
 
 	has_many :level_maps
+	has_many :event_creatures, :foreign_key => 'thing_id'
 	
 	validates_presence_of :level
 	validates_inclusion_of :maxx,:in => 1..5, :message => ' must be between 1 and 5.'

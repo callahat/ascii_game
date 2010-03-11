@@ -8,7 +8,7 @@ class Creature < ActiveRecord::Base
 	has_one :stat, :foreign_key => 'owner_id', :class_name => 'StatCreature'
 
 	has_many :creature_kills
-	has_many :event_creatures
+	has_many :event_creatures, :foreign_key => 'thing_id'
 	has_many :quest_creature_kills
 
 	validates_uniqueness_of :name
