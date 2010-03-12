@@ -3,7 +3,7 @@ class EventDisease < Event
 
 	validates_presence_of :thing_id
 	
-	def happens(who)
+	def make_happen(who)
 		if self.flex
 			if Illness.cure(self.disease, who)
 				@message = 'Your case of ' + @disease.name + ' has cleared up!'
@@ -18,6 +18,6 @@ class EventDisease < Event
 			@message = 'This place feels unhealthy'
 		end
 		
-		return true, @message
+		return nil, true, @message
 	end
 end

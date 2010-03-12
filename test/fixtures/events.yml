@@ -75,3 +75,38 @@ stat_event:
   cost: 50
   text: "Stat text explaining what happened"
   flex: "500;10"
+	
+world_move_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "world move event"
+  kind: "EventMoveWorld"
+  armed: 1
+  cost: 50
+local_move_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "local move event"
+  kind: "EventMoveLocal"
+  armed: 1
+  cost: 50
+  level: first_kingdom_level_one
+relative_move_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "relative move event"
+  kind: "EventMoveRelative"
+  armed: 1
+  cost: 50
+  flex: -1
+throne_event:
+  kingdom_id: 1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "throne event"
+  kind: "EventThrone"
+  armed: 1
+  cost: 0

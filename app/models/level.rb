@@ -15,9 +15,9 @@ class Level < ActiveRecord::Base
 	
 	def self.get_page(page, kid = nil)
 		if kid.nil?
-		paginate(:page => page, :order => 'level' )
-	else
+			paginate(:page => page, :order => 'level' )
+		else
 			paginate(:page => page, :conditions => ['kingdom_id = ?', kid], :order => 'level' )
-	end
+		end
 	end
 end

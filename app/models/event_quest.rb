@@ -3,7 +3,7 @@ class EventQuest < Event
 
 	#validates_presence_of :thing_id
 
-	def happens(ig=nil)
-		return true, text
+	def make_happen(ig=nil)
+		return nil, true, text
 	end
 end

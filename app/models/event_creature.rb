@@ -3,13 +3,13 @@ class EventCreature < Event
 
 	validates_presence_of :thing_id,:flex
 	
-	def happens(who)
+	def make_happen(who)
 		low, high = flex.split(";")
 		result, msg = Battle.new_creature_battle(who, self.creature, low.to_i, high.to_i, who.present_kingdom)
 		if result
-			return {:controller => 'game/battle', :action => 'battle'}, "message seen anywhere for the creature event?"
+			return {:controller => 'game/battle', :action => 'battle'}, false, "message seen anywhere for the creature event?"
 		else
-			return false, msg
+			return nil, false, msg
 		end
 	end
 

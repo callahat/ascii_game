@@ -4,7 +4,7 @@ class EventStat < Event
 
 	validates_presence_of :flex
 	
-	def happens(who)
+	def make_happen(who)
 		gold,exp = flex.split(";").collect{|c| c.to_i}
 		PlayerCharacter.transaction do
 			who.lock!
@@ -24,6 +24,6 @@ class EventStat < Event
 			who.stat.add_stats(self.stat)
 			who.stat.save!
 		end
-		return true, self.text
+		return nil, true, self.text
 	end
 end

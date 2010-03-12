@@ -7,10 +7,6 @@ class Game::CourtController < ApplicationController
 	verify :method => :post, :only => [ :do_heal, :do_choose, :do_train ],				 :redirect_to => { :action => :feature }
 	
 	def throne
-		@king = session[:player_character].present_kingdom.player_character
-		if @king && @king.health.HP > 0 && @king.health.wellness != SpecialCode.get_code('wellness','dead')
-			session[:completed] = true
-		end
 	end
 	
 	def join_king

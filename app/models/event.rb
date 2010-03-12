@@ -35,6 +35,14 @@ class Event < ActiveRecord::Base
 		return @sys_gen_event
 	end
 	
+	def happens(who)
+		if who.health.wellness == SpecialCode.get_code('wellness','dead')
+			return {:controller => '/game', :action => 'complete'}, nil, 'You can\'t do that since you are dead.'
+		else
+			return self.make_happen(who)
+		end
+	end
+	
 	#Pagination related stuff
 	def self.per_page
 		15

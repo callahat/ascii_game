@@ -3,15 +3,12 @@ class EventStormGate < Event
 	
 	validates_presence_of :thing_id
 	
-	def happens(who)
-		low, high = flex.split(";")
+	def make_happen(who)
 		result, msg = Battle.storm_gates(who, self.level.kingdom)
 		if result
-			session[:storm_level] = self.thing_id
-			session[:storm_gate] = self.level.kingdom_id
-			return {:controller => 'game/battle', :action => 'battle'}, "message seen anywhere for the storm gate event?"
+			return {:controller => 'game/battle', :action => 'battle'}, false, "message seen anywhere for the storm gate event?"
 		else
-			return true, msg
+			return nil, true, msg
 		end
 	end
 end

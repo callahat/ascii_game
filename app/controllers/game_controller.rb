@@ -229,10 +229,10 @@ class GameController < ApplicationController
 	def exec_event
 		@event = session[:current_event]
 		
-		@direction, @message = @event.happens
-		if @direction.class == Hash
+		@direction, @completed, @message = @event.happens
+		if @direction
 			redirect_to @direction
-		elsif @direction.class
+		else
 			render :action => '../complete'
 		end
 		
@@ -246,12 +246,12 @@ class GameController < ApplicationController
 		#elsif @event.event_type == SpecialCode.get_code('event_type','item') 
 		#	print "\nprocessing item event"
 		#	redirect_to :controller => 'game/general', :action => 'item'
-		elsif @event.event_type == SpecialCode.get_code('event_type','move')
-			print "\nprocessing move event"
-			redirect_to :action => 'move'
-		elsif @event.event_type == SpecialCode.get_code('event_type','npc')
-			print "\nprocessing npc event"
-			redirect_to :controller => 'game/npc', :action => 'npc'
+		#elsif @event.event_type == SpecialCode.get_code('event_type','move')
+		#	print "\nprocessing move event"
+		#	redirect_to :action => 'move'
+		#elsif @event.event_type == SpecialCode.get_code('event_type','npc')
+		#	print "\nprocessing npc event"
+		#	redirect_to :controller => 'game/npc', :action => 'npc'
 		#elsif @event.event_type == SpecialCode.get_code('event_type','pc') 
 		#	print "\nprocessing pc event"
 		#	redirect_to :action => 'pc'
@@ -261,115 +261,24 @@ class GameController < ApplicationController
 		#elsif @event.event_type == SpecialCode.get_code('event_type','stat')
 		#	print "\nprocessing stat event"
 		#	redirect_to :controller => 'game/general', :action => 'stat'
-		elsif @event.event_type == SpecialCode.get_code('event_type','throne')
-			print "\nprocessing throne event"
-			redirect_to :controller => 'game/court', :action => 'throne'
-		elsif @event.event_type == SpecialCode.get_code('event_type','castle')
-			print "\nprocessing castle event"
-			redirect_to :controller => 'game/court', :action => 'castle'
+		#elsif @event.event_type == SpecialCode.get_code('event_type','throne')
+		#	print "\nprocessing throne event"
+		#	redirect_to :controller => 'game/court', :action => 'throne'
+		#elsif @event.event_type == SpecialCode.get_code('event_type','castle')
+		#	print "\nprocessing castle event"
+		#	redirect_to :controller => 'game/court', :action => 'castle'
 		elsif @event.event_type == SpecialCode.get_code('event_type','spawn_kingdom')
 			print "\nprocessing spawn kingdom event"
 			redirect_to :controller => 'game/general', :action => 'spawn_kingdom'
-		elsif @event.event_type == SpecialCode.get_code('event_type','storm_gate')
-			print "\nprocessing storm gate event"
-			redirect_to :controller => 'game/battle', :action => 'storm_the_gates'
-		else
-			flash[:notice] = 'Invalid type! Quit trying to hack it!'
-			session[:current_event] = nil
-			redirect_to :action => 'main'
+		#elsif @event.event_type == SpecialCode.get_code('event_type','storm_gate')
+		#	print "\nprocessing storm gate event"
+		#	redirect_to :controller => 'game/battle', :action => 'storm_the_gates'
+		#else
+		#	flash[:notice] = 'Invalid type! Quit trying to hack it!'
+		#	session[:current_event] = nil
+		#	redirect_to :action => 'main'
 		end
 	end
-	
-	def move
-		@pc = session[:player_character]
-		#add a lock for the player character
-	PlayerCharacter.transaction do
-			@pc.lock!
-	
-			@event_move = session[:current_event].event_move
-		
-			if @event_move.move_type == SpecialCode.get_code('move_type','local')
-				if @pc.in_kingdom
-					if @pc.in_kingdom == @event_move.level.kingdom_id
-						@pc[:kingdom_level] = @event_move.move_id
-						@message = "Moved to level " + @event_move.level.level.to_s
-					else
-						@message = "Look before you leap, that route won't take you where you can go"
-					end
-				else
-					@inf_flag = false	#flag that will be true if player can enter kingdom, and contact possible disease
-			
-					#gotta check for the player not being allowed in.
-					if !KingdomBan.find(:first, :conditions => ['kingdom_id = ? and player_character_id = ?', @event_move.level.kingdom_id, @pc[:id]]).nil?
-						@message = '"You are prevented from entry, by order of the king" a gaurd shouts'
-					elsif SpecialCode.get_code('entry_limitations','no one') == @event_move.level.kingdom.kingdom_entry.allowed_entry
-						@message = '"No one may enter the kingdom today" the gaurd explains'
-					elsif SpecialCode.get_code('entry_limitations','allies') == @event_move.level.kingdom.kingdom_entry.allowed_entry
-						if @pc.kingdom_id == @event_move.level.kingdom_id
-							@pc.in_kingdom = @event_move.level.kingdom_id
-							@pc.kingdom_level = @event_move.move_id
-							@message = "Entered " + @event_move.level.kingdom.name
-							@inf_flag = true
-						else
-							@message = '"Hold! Only the kings men may pass today" says the guard'
-						end
-					else #everyone can come on in
-						@pc.in_kingdom = @event_move.level.kingdom_id
-						@pc.kingdom_level = @event_move.move_id
-						@message = "Entered " + @event_move.level.kingdom.name
-						@inf_flag = true
-					end
-				
-					#diseases spread!
-					if @inf_flag
-						@kingdom = @pc.present_kingdom
-						#did player infect the kingdom?
-						Illness.spread(@pc, @kingdom, SpecialCode.get_code('trans_method','air'))
-						#did player catch somethign from the kingdom?
-						if Illness.spread(@kingdom, @pc, SpecialCode.get_code('trans_method','air'))
-								flash[:notice] = "You don't feel so good ..."
-							end
-						end
-					end
-			elsif @event_move.move_type == SpecialCode.get_code('move_type','local_relative')
-				if @pc.in_kingdom
-					@next_level = Level.find(:first, :conditions => ['kingdom_id = ? and level = ?', @pc.in_kingdom, @pc.present_level.level + @event_move.move_id])
-					if @next_level.nil?
-						@message = "The passage is maked \"UNDER CONSTRUCTION\", and comlpetely sealed off"
-					else
-						@pc.kingdom_level = @next_level.id
-				
-						@message = "Moved to level " + @next_level.level.to_s
-					end
-				else
-					@message = "You're in the world"
-				end
-			elsif @event_move.move_type == SpecialCode.get_code('move_type','world')
-				#should this just move the player from within a kingdom to the world square?
-				#what do the notes say?
-				@pc.in_kingdom = nil
-				@pc.kingdom_level = nil
-
-				@message = "Left the kingdom"
-			else
-				@message = 'Move type not recognized.'
-			end
-			@pc.save!
-		end
-		
-		session[:completed] = true
-		redirect_to :action => 'complete'
-	end
-	
-	#def pc
-	#	@pc = session[:current_event].event_player_character.player_character
-	#	if @pc.health.HP > 0	&& @pc.health.wellness != SpecialCode.get_code('wellness','dead')
-	#		session[:completed] = true
-	#	else
-	#		flash[:notice] = @pc.name + " has shuffled from this mortal coil"
-	#		render :action => 'complete'
-	#	end
-	#end
 	
 	def wave_at_pc
 		@pc = PlayerCharacter.find(session[:current_event].event_player_character.player_character_id)
@@ -470,12 +379,12 @@ class GameController < ApplicationController
 				end
 			end
 			
-			if session[:storm_gate]
+			if session[:current_event].class == EventStormGate
 				#Player enters castle if sucessfully stormed
 		PlayerCharacter.transaction do
 					session[:player_character].lock!
-					session[:player_character][:in_kingdom] = session[:storm_gate]
-					session[:player_character][:kingdom_level] = session[:storm_level]
+					session[:player_character][:in_kingdom] = session[:current_event].level.kingdom_id
+					session[:player_character][:kingdom_level] = session[:current_event].thing_id
 				
 					#create kingdom notice of a player storming the gate
 					create_storm_gate_notice(session[:player_character].name + " stormed the gates and gained entry to the kingdom.")

@@ -30,9 +30,7 @@ test_pc_one:
   freepts: 3
   gold: 14
   image_id: 0
-  in_kingdom: 1
   bigx: 0
   bigy: 0
-  kingdom_level:
   in_world: 1
   image: pc_image
