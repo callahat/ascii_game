@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100310015004) do
+ActiveRecord::Schema.define(:version => 20100313002707) do
 
   create_table "attack_spells", :force => true do |t|
     t.string  "name",         :limit => 32,  :default => "", :null => false
@@ -447,10 +447,11 @@ ActiveRecord::Schema.define(:version => 20100310015004) do
   add_index "kingdoms", ["world_id"], :name => "world_id"
 
   create_table "level_maps", :force => true do |t|
-    t.integer "level_id",   :null => false
-    t.integer "xpos",       :null => false
-    t.integer "ypos",       :null => false
+    t.integer "level_id",                      :null => false
+    t.integer "xpos",                          :null => false
+    t.integer "ypos",                          :null => false
     t.integer "feature_id"
+    t.boolean "lock",       :default => false
   end
 
   add_index "level_maps", ["feature_id"], :name => "feature_id"
@@ -743,12 +744,13 @@ ActiveRecord::Schema.define(:version => 20100310015004) do
   add_index "trainer_skills", ["min_sales"], :name => "min_sales"
 
   create_table "world_maps", :force => true do |t|
-    t.integer "world_id",   :null => false
-    t.integer "xpos",       :null => false
-    t.integer "ypos",       :null => false
-    t.integer "bigxpos",    :null => false
-    t.integer "bigypos",    :null => false
+    t.integer "world_id",                      :null => false
+    t.integer "xpos",                          :null => false
+    t.integer "ypos",                          :null => false
+    t.integer "bigxpos",                       :null => false
+    t.integer "bigypos",                       :null => false
     t.integer "feature_id"
+    t.boolean "lock",       :default => false
   end
 
   add_index "world_maps", ["feature_id"], :name => "feature_id"

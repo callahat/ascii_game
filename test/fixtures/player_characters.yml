@@ -24,6 +24,8 @@ test_pc_one:
   next_level_at: 500
   experience: 6
   kingdom_id: 0
+  in_kingdom: 1
+  present_level: first_kingdom_level_one
   house_x: 1
   house_y: 1
   turns: 80

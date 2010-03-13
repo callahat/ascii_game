@@ -173,7 +173,7 @@ class Game::CourtController < ApplicationController
 			flash[:notice] = msg
 			redirect_to :action => 'quest_office'
 		end
-			end
+	end
 		
 	def abandon_quest
 		abandoned, msg = LogQuest.abandon(session[:player_character], params[:qid])

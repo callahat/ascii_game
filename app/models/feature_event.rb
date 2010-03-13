@@ -13,4 +13,8 @@ class FeatureEvent < ActiveRecord::Base
 			end
 		end
 	end
+	
+	def self.spawn_gen(h)
+		create(h.merge(:chance => 100.0, :priority => 42, :choice => true))
+	end
 end

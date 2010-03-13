@@ -19,6 +19,15 @@ class Image < ActiveRecord::Base
 		return @copy_image
 	end
 	
+	def self.new_castle(k)
+		@image = Image.find(:first, :conditions => ['name = ? and kingdom_id = ? and player_id = ?', 'DEFAULT CASTLE', -1, -1])
+		@new_image = Image.deep_copy(@image)
+		@new_image.kingdom_id = k.id
+		@new_image.name = k.name + " Castle Image"
+		@new_image.save!
+		@new_image
+	end
+	
 	#Pagination related stuff
 	def self.per_page
 		10

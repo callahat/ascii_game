@@ -1,4 +1,4 @@
-class EventNpc < Event
+class EventNpc < EventLifeNeutral
 	belongs_to :npc, :foreign_key => 'thing_id'
 	belongs_to :level_map, :foreign_key => 'flex'
 

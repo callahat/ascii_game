@@ -4,6 +4,10 @@ class WorldMap < ActiveRecord::Base
 	
 	has_many :done_events
 	
+	def self.current_tile(bigy, bigx, y, x)
+		find(:last, :conditions => ['bigypos = ? and bigxpos = ? and ypos = ? and xpos = ?', bigy, bigx, y, x])
+	end
+	
 	def self.copy(world_map)
 		@world_map_copy = WorldMap.new
 		

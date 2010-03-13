@@ -11,7 +11,7 @@ class Illness < ActiveRecord::Base
 			@disease = illness.disease
 			caught +=1 if Illness.infect(target, @disease)
 		end
-	return caught > 0
+		return caught > 0
 	end
 	
 	def self.infect(who, disease)
@@ -32,9 +32,9 @@ class Illness < ActiveRecord::Base
 					end
 				end
 			end
-		who.save!
-		@tl.save!
-	end
+			who.save!
+			@tl.save!
+		end
 		return @ret
 	end
 	
@@ -66,6 +66,6 @@ class Illness < ActiveRecord::Base
 			paginate(:page => page,
 						 :joins => 'INNER JOIN diseases on disease_id = diseases.id',
 				 :conditions => ['owner_id = ?', oid], :order => 'name' )
-	end
+		end
 	end
 end

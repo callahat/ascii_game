@@ -10,7 +10,7 @@ class Event < ActiveRecord::Base
 
 	validates_presence_of :player_id,:kingdom_id,:name,:event_rep_type
 	#validates_uniqueness_of :name
-	
+
 	def validate
 		if event_rep_type != SpecialCode.get_code('event_rep_type','unlimited')
 			if event_reps.nil?
@@ -20,21 +20,23 @@ class Event < ActiveRecord::Base
 			end
 		end
 	end
-	
-	def self.sys_gen(name, event_type, event_rep_type, reps)
-		@sys_gen_event = Event.new
+
+	def self.sys_gen!(n)
+		@event = sys_gen(n)
+		@event.save!
+		@event
+	end
+
+	def self.sys_gen(n)
+		@sys_gen_event = self.new(n)
 		@sys_gen_event.kingdom_id = -1
 		@sys_gen_event.player_id = -1
-		@sys_gen_event.event_rep_type = event_rep_type
-		@sys_gen_event.event_reps = reps
-		@sys_gen_event.name = name
-		@sys_gen_event.event_type = event_type
 		@sys_gen_event.armed = 1
 		@sys_gen_event.cost = 0
 		
 		return @sys_gen_event
 	end
-	
+
 	def happens(who)
 		if who.health.wellness == SpecialCode.get_code('wellness','dead')
 			return {:controller => '/game', :action => 'complete'}, nil, 'You can\'t do that since you are dead.'
@@ -42,12 +44,12 @@ class Event < ActiveRecord::Base
 			return self.make_happen(who)
 		end
 	end
-	
+
 	#Pagination related stuff
 	def self.per_page
 		15
 	end
-	
+
 	def self.get_page(page, pcid = nil, kid = nil)
 		if pcid.nil? && kid.nil?
 			paginate(:page => page, :order => 'armed,event_type,name' )

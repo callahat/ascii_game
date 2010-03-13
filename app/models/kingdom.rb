@@ -33,14 +33,20 @@ class Kingdom < ActiveRecord::Base
 	
 	has_many :pref_lists
 	
-	validates_uniqueness_of :name
-	
+	def valid_name
+		if name.nil? || name == ""
+			errors.add('name', 'cannot be empty')
+		elsif Kingdom.find_by_name(name)
+			errors.add('name', 'is already taken')
+		end
+		errors.size == 0
+	end
 	
 	def self.pay_tax(tax, kingdom_id)
 		Kingdom.transaction do
 			@kingdom = self.find(kingdom_id, :lock => true)
 			@kingdom.gold += tax
-		@kingdom.save!
+			@kingdom.save!
 		end
 	end
 	
@@ -51,7 +57,7 @@ class Kingdom < ActiveRecord::Base
 			self.lock!
 			self.num_peasants -= @peasants
 			self.save!
-end
+		end
 		@peasants
 	end
 	
@@ -62,5 +68,97 @@ end
 			self.player_character = pcid
 			self.save!
 		end
+	end
+	
+	def self.cannot_spawn(who)
+		if who.level < 42
+			return "You are not yet powerful enough to found a kingdom"
+		elsif who.kingdoms.size > 0
+			return "You are already a king somewhere"
+		else
+			nil
+		end
+	end
+	
+	#returns nil 
+	def self.spawn_new(who, kname, wm)
+		@kingdom = Kingdom.new(:name => kname)
+		@ret_kingdom = nil
+		@msg = ""
+		
+		WorldMap.transaction do
+			wm.lock!
+
+			unless @msg = Kingdom.cannot_spawn(who)
+				if wm.id != (WorldMap.current_tile(wm.bigypos, wm.bigxpos, wm.ypos, wm.xpos)).id
+					@msg = "Someone has already founded a kingdom here!"
+				elsif @kingdom.valid_name
+					make_new_kingdom(who, kname, wm)
+				else
+					@ret_kingdom = @kingdom
+				end
+			end
+			wm.save!
+		end
+		
+		return @ret_kingdom, @msg
+	end
+
+	def self.make_new_kingdom(who, kname, wm)
+		@emtpy_feature = Feature.find(:first, :conditions => ['name = ? and kingdom_id = ? and player_id = ?', "\nEmpty", -1, -1])
+		@unlimited = SpecialCode.get_code('event_rep_type','unlimited')
+		@kingdom = Kingdom.create(:name => kname,
+															:player_character_id => who.id,
+															:num_peasants => rand(400) + 100,
+															:gold => 55000,
+															:tax_rate => 5,
+															:world_id => wm.world_id,
+															:bigx => wm.bigxpos,
+															:bigy => wm.bigypos)
+		@ec = EventCastle.sys_gen!(:name => "\nCastle #{@kingdom.name} event",
+															:event_rep_type => @unlimited)
+		@et = EventThrone.sys_gen!(:name => "\nThrone #{@kingdom.name} event",
+															:event_rep_type => @unlimited)
+		@castle_img = Image.new_castle(@kingdom)
+		@castle_feature = Feature.sys_gen("\nCastle #{@kingdom.name}", @castle_img.id)
+		@castle_feature.save!
+		@castle_fe = FeatureEvent.spawn_gen(:feature_id => @castle_feature.id,
+																				:event_id => @ec.id )
+		@throne_fe = FeatureEvent.spawn_gen(:feature_id => @castle_feature.id,
+																				:event_id => @et.id )
+		@level = Level.create(:kingdom_id => @kingdom.id,
+													:level => 0,
+													:maxy => 3,
+													:maxx => 5)
+		LevelMap.gen_level_map_squares(@level, @emtpy_feature)
+		@castle_location = LevelMap.create(	:level_id => @level.id,
+																				:xpos => 2,
+																				:ypos => 1,
+																				:feature_id => @castle_feature.id)
+		@entrance = EventMoveLocal.sys_gen!(:name => "\nKingdom #{@kingdom.name} entrance",
+																				:event_rep_type => @unlimited,
+																				:thing_id => @level.id )
+		@storm_event = EventStormGate.sys_gen!(:name => "\nKingdom #{@kingdom.name} storm event",
+																					:event_rep_type => @unlimited,
+																					:thing_id => @level.id )
+		@kingdom_entrance_feature = Feature.sys_gen("\nKingdom #{@kingdom.name} entrance", @castle_img.id)
+		@kingdom_entrance_feature.world_feature = true
+		@kingdom_entrance_feature.save!
+		@entrance_fe = FeatureEvent.spawn_gen(:feature_id => @kingdom_entrance_feature.id,
+																					:event_id => @entrance.id )
+		@storm_gate_fe = FeatureEvent.spawn_gen(:feature_id => @kingdom_entrance_feature.id,
+																						:event_id => @storm_event.id )
+		@new_kingdom = WorldMap.copy(wm)
+		@new_kingdom.feature_id = @kingdom_entrance_feature.id
+		@new_kingdom.save!
+		1.upto(5){ Npc.gen_stock_guard(@kingdom.id) }
+		KingdomEntry.create(:kingdom_id => @kingdom.id,
+												:allowed_entry => SpecialCode.get_code('entry_limitations','everyone') )
+		PlayerCharacter.transaction do
+			who.lock!
+			who.kingdom_id = @kingdom.id
+			who.save!
+		end
+		
 	end
 end

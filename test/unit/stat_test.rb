@@ -4,14 +4,14 @@ class HealthTest < ActiveSupport::TestCase
   # Replace this with your real tests.
   # Replace this with your real tests.
   test "verify stat fixtures loaded" do
-    assert Stat.count == 38
-    assert StatPc.count == 4
-    assert StatPcBase.count == 4
-    assert StatPcTrn.count == 4
-    assert StatDisease.count == 6
-    assert StatRace.count == 2
-    assert StatCClass.count == 2
-    assert StatNpc.count == 12
+    assert Stat.count == 39, Stat.count
+    assert StatPc.count == 4, StatPc.count 
+    assert StatPcBase.count == 4, StatPcBase.count
+    assert StatPcTrn.count == 4, StatPcTrn.count
+    assert StatDisease.count == 6, StatDisease.count
+    assert StatRace.count == 2, StatRace.count
+    assert StatCClass.count == 2, StatCClass.count
+    assert StatNpc.count == 12, StatNpc.count
     
     PlayerCharacter.all.each{|pc|
       assert pc.stat

@@ -110,3 +110,19 @@ throne_event:
   kind: "EventThrone"
   armed: 1
   cost: 0
+spawn_kingdom_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "spawn kingdom event"
+  kind: "EventSpawnKingdom"
+  armed: 1
+  cost: 0
+castle_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "castle event"
+  kind: "EventCastle"
+  armed: 1
+  cost: 0

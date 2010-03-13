@@ -70,7 +70,6 @@ class BattleTest < ActiveSupport::TestCase
 	
 	test "Peasant battles in a kingdom" do
 		@orig_peasants = @kingdom.num_peasants
-		#@peasants = Creature.find_by_name("Peasant")
 		battle, msg = Battle.new_creature_battle(@pc, @peasants, 100, 100, @kingdom)
 		assert battle && msg == ""
 		assert battle.groups.size == 1, battle.groups
@@ -530,7 +529,7 @@ class BattleTest < ActiveSupport::TestCase
 	
 	test "fighter killed completion of a quest req" do
 		joined, msg = LogQuest.join_quest(@pc, @quest.id)
-
+		
 		battle, msg = Battle.new_creature_battle(@pc, @wild_foo, 9, 9, @pc.in_kingdom)
 		assert @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.size == 1
 		assert @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.first.quantity == 10
