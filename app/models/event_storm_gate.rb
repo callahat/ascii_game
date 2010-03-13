@@ -11,4 +11,8 @@ class EventStormGate < Event
 			return nil, true, msg
 		end
 	end
+	
+	def as_option_text(pc=nil)
+		"Storm the gates of " + level.kingdom.name
+	end
 end

@@ -20,4 +20,12 @@ class EventDisease < Event
 		
 		return nil, true, @message
 	end
+	
+	def as_option_text(pc=nil)
+		if flex
+			@link_text = "Cure " + disease.name
+		else
+			@link_text = "Get infected with " + disease.name
+		end
+	end
 end

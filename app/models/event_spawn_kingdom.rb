@@ -6,4 +6,8 @@ class EventSpawnKingdom < Event
 			return {:controller => '/general', :action => 'spawn_kingdom'}, false, ""
 		end
 	end
+	
+	def as_option_text(pc=nil)
+		"Found a new kingdom"
+	end
 end

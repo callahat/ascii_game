@@ -19,4 +19,8 @@ class EventMoveRelative < EventLifeNeutral
 		end
 		return {:action => 'complete'}, true, @message
 	end
+	
+	def as_option_text(pc=nil)
+		"Go to level " + level.level.to_s
+	end
 end

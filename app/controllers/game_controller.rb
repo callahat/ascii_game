@@ -43,8 +43,8 @@ class GameController < ApplicationController
 	def leave_kingdom
 		PlayerCharacter.transaction do
 			session[:player_character].lock!
-
 			session[:player_character].in_kingdom = nil
+			session[:player_character].kingdom_level = nil
 			session[:player_character].save!
 		end
 
@@ -65,7 +65,7 @@ class GameController < ApplicationController
 		@west = WorldMap.find(:first, :conditions => ['bigxpos = ? and bigypos = ?', session[:player_character][:bigx] - 1, session[:player_character][:bigy]])
 	end
 	
-	#moving in the world, by just walking. no need for a 
+	#moving in the world, by just walking. no need for an event
 	def world_move
 		@pc = session[:player_character]
 		PlayerCharacter.transaction do
@@ -196,6 +196,7 @@ class GameController < ApplicationController
 	end
 
 	def choose
+		@pc = session[:player_character]
 		if session[:current_event].class == Array
 			@feature_events = session[:current_event]
 			if @feature_events.nil? || @feature_events.size == 0
@@ -228,8 +229,8 @@ class GameController < ApplicationController
 	
 	def exec_event
 		@event = session[:current_event]
-		
-		@direction, @completed, @message = @event.happens
+		p @event.inspect
+		@direction, @completed, @message = @event.happens(session[:player_character])
 		if @direction
 			redirect_to @direction
 		else

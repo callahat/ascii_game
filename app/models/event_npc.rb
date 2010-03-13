@@ -7,4 +7,12 @@ class EventNpc < EventLifeNeutral
 	def make_happen(who)
 		return {:controller => 'game/npc', :action => 'npc'}, nil, ""
 	end
+	
+	def as_option_text(pc=nil)
+		if player_chracter.health.wellness != SpecialCode.get_code('wellness','dead')
+			"Poke " + npc.name + "'s corpse"
+		else
+			"Chat with " + npc.name
+		end
+	end
 end

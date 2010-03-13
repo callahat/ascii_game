@@ -26,4 +26,9 @@ class EventStat < Event
 		end
 		return nil, true, self.text
 	end
+	
+	def as_option_text(pc=nil)
+		return text if text
+		name + " (status changer)"
+	end
 end

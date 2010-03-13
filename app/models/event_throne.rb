@@ -7,4 +7,8 @@ class EventThrone < EventLifeNeutral
 			return {:controller => 'game/court', :action => 'throne'}, nil, ""
 		end
 	end
+	
+	def as_option_text(pc=nil)
+		"Approach the throne of the king"
+	end
 end

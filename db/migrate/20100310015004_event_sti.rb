@@ -46,7 +46,14 @@ class EventSti < ActiveRecord::Migration
 		#Move 4
 		Event.find_by_sql('select * from event_moves').each{|es|
 			event = Event.find(es.event_id)
-			event.update_attribute(:kind, "EventMove")
+			case es.move_type.to_i
+				when SpecialCode.get_code('move_type','local')
+					event.update_attribute(:kind, "EventMoveLocal")
+				when SpecialCode.get_code('move_type','local_relative')
+					event.update_attribute(:kind, "EventMoveRelative")
+				when SpecialCode.get_code('move_type','world')
+					event.update_attribute(:kind, "EventMoveWorld")
+			end
 			event.update_attribute(:thing_id, es.move_id)
 			event.update_attribute(:flex, es.move_type)
 		}

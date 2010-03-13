@@ -6,4 +6,8 @@ class EventQuest < Event
 	def make_happen(ig=nil)
 		return nil, true, text
 	end
+	
+	def as_option_text(pc=nil)
+		name + " (quest event)"
+	end
 end

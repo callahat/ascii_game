@@ -10,4 +10,8 @@ class EventItem < Event
 
 		return nil, true, 'Found ' + self.flex + ' ' + self.item.name
 	end
+	
+	def as_option_text(pc=nil)
+		"Take " + flex + " " + (flex.to_i > 1 ? item.name.pluralize : item.name)
+	end
 end

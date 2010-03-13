@@ -11,4 +11,8 @@ class EventMoveWorld < EventLifeNeutral
 		end
 		return {:action => 'complete'}, true, @message
 	end
+	
+	def as_option_text(pc=nil)
+		"Journey onward into the wilderness"
+	end
 end

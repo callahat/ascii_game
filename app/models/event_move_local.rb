@@ -51,4 +51,12 @@ class EventMoveLocal < EventLifeNeutral
 		end
 		return {:action => 'complete'}, true, @message
 	end
+	
+	def as_option_text(pc=nil)
+		if pc && pc.in_kingdom.nil?
+			@link_text = "Enter " + level.kingdom.name
+		else
+			@link_text = "Go to level " + level.level.to_s
+		end
+	end
 end

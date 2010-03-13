@@ -1,69 +1,9 @@
 <p><b>There are several things you can do here:</b></p>
 
-<% for fev in @feature_events do
-    @chone = "None of the above"
-    feature_event = FeatureEvent.find(fev.id)
-    @link_text = nil
-    if feature_event.event.event_type == SpecialCode.get_code('event_type','creature') &&
-       feature_event.event.event_creature.creature.number_alive != 0
-      @link_text = "Fight some " + feature_event.event.event_creature.creature.name.pluralize
-    elsif feature_event.event.event_type == SpecialCode.get_code('event_type','disease') 
-      if feature_event.event.event_disease.cures? 
-        @link_text = "Cure " + feature_event.event.event_disease.disease.name
-      else
-        @link_text = "Get infected with " + feature_event.event.event_disease.disease.name
-      end
-    elsif feature_event.event.event_type == SpecialCode.get_code('event_type','item')
-      @link_text = "Take " + feature_event.event.event_item.number.to_s + " " 
-      if feature_event.event.event_item.number > 1 
-        @link_text += feature_event.event.event_item.item.name.pluralize
-      else
-        @link_text += feature_event.event.event_item.item.name
-      end
-    elsif feature_event.event.event_type == SpecialCode.get_code('event_type','move') 
-      if feature_event.event.event_move.move_type == SpecialCode.get_code('move_type','local') &&
-          session[:player_character].in_kingdom.nil?
-        @link_text = "Enter " + feature_event.event.event_move.level.kingdom.name
-      elsif feature_event.event.event_move.move_type == SpecialCode.get_code('move_type','local')
-        @link_text = "Go to level " + feature_event.event.event_move.level.level.to_s
-      elsif feature_event.event.event_move.move_type == SpecialCode.get_code('move_type','world')
-        @link_text = "Journey onward into the wilderness"
-      end
-    elsif feature_event.event.event_type == SpecialCode.get_code('event_type','npc') &&
-        feature_event.event.event_npc.npc.health.HP > 0
-      @link_text = "Chat with " + feature_event.event.event_npc.npc.name
-    elsif feature_event.event.event_type == SpecialCode.get_code('event_type','pc') &&
-        feature_event.event.event_player_character.player_character.health.HP > 0
-      @link_text = "Chat with " + feature_event.event.event_player_character.player_character.name
-    elsif feature_event.event.event_type == SpecialCode.get_code('event_type','quest')
-      @link_text = feature_event.event.name + " (quest event)"
-    elsif feature_event.event.event_type == SpecialCode.get_code('event_type','stat')
-      @link_text = feature_event.event.event_stat.event.name + " (status changer)"
-    elsif feature_event.event.event_type == SpecialCode.get_code('event_type','throne')
-      @link_text = "Approach the throne of the king"
-    elsif feature_event.event.event_type == SpecialCode.get_code('event_type','castle')
-      @link_text = "Castle offices"
-    elsif feature_event.event.event_type == SpecialCode.get_code('event_type','spawn_kingdom')
-      if Kingdom.find(:first, :conditions => ['player_character_id = ?', session[:player_character].id])
-        @nonlink = "Character is already a king elsewhere."
-      elsif session[:player_character].level > 41
-        @link_text = "Found a new kingdom"
-      else
-        @nonlink = "Character not powerful enough to be a king"
-      end
-    elsif feature_event.event.event_type == SpecialCode.get_code('event_type','storm_gate')
-      @link_text = "Storm the gates"
-    else
-      @nonlink = "unknown event (" + feature_event.event.name + ")"
-      @chone = "Continue"
-    end %>
+<% for fev in @feature_events do %>
 <p>
-<% if @link_text %>
-<%= link_to @link_text, {:action => 'do_choose', :id => feature_event.event } , :method => :post %>
-<% else %>
-<%=h @nonlink %>
-<% end %>
+<%= link_to fev.event.as_option_text(@pc), {:action => 'do_choose', :id => fev.event_id } , :method => :post %>
 </p>
-
 <% end %>
-<p><%= link_to @chone, {:action => 'do_choose'}, :method => :post %></p>
+
+<p><%= link_to "None of the above", {:action => 'do_choose'}, :method => :post %></p>

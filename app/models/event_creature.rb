@@ -25,4 +25,8 @@ class EventCreature < Event
 			errors.add(" ", " high must be between 1 and 500.")
 		end
 	end
+	
+	def as_option_text(pc=nil)
+		"Fight some " + creature.name.pluralize
+	end
 end
