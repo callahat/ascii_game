@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100313002707) do
+ActiveRecord::Schema.define(:version => 20100314003846) do
 
   create_table "attack_spells", :force => true do |t|
     t.string  "name",         :limit => 32,  :default => "", :null => false
@@ -136,6 +136,23 @@ ActiveRecord::Schema.define(:version => 20100313002707) do
   add_index "creatures", ["player_id"], :name => "player_id"
   add_index "creatures", ["public"], :name => "public"
 
+  create_table "current_events", :force => true do |t|
+    t.integer  "player_character_id",                 :null => false
+    t.integer  "event_id",                            :null => false
+    t.integer  "location_id",                         :null => false
+    t.string   "kind",                :default => "", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "current_events", ["event_id"], :name => "event_id"
+  add_index "current_events", ["kind", "event_id", "location_id"], :name => "kind_event_id_location_id"
+  add_index "current_events", ["kind", "player_character_id", "event_id", "location_id"], :name => "kind_player_character_id_event_id_location_id"
+  add_index "current_events", ["kind"], :name => "kind"
+  add_index "current_events", ["location_id"], :name => "location_id"
+  add_index "current_events", ["player_character_id", "kind"], :name => "player_character_id_kind"
+  add_index "current_events", ["player_character_id"], :name => "player_character_id"
+
   create_table "diseases", :force => true do |t|
     t.string  "name",             :limit => 32,  :default => "", :null => false
     t.string  "description",      :limit => 256
@@ -151,20 +168,22 @@ ActiveRecord::Schema.define(:version => 20100313002707) do
   add_index "diseases", ["name"], :name => "name"
 
   create_table "done_events", :force => true do |t|
-    t.integer  "event_id",            :null => false
-    t.integer  "player_character_id", :null => false
-    t.datetime "datetime",            :null => false
-    t.integer  "level_map_id"
-    t.integer  "world_map_id"
+    t.integer  "event_id",                            :null => false
+    t.integer  "player_character_id",                 :null => false
+    t.datetime "datetime",                            :null => false
+    t.integer  "location_id",                         :null => false
+    t.string   "kind",                :default => "", :null => false
   end
 
-  add_index "done_events", ["event_id", "player_character_id", "level_map_id"], :name => "event_id_player_id_level_map_id"
   add_index "done_events", ["event_id", "player_character_id"], :name => "event_id_player_character_id"
+  add_index "done_events", ["event_id", "player_character_id"], :name => "event_id_player_id_level_map_id"
   add_index "done_events", ["event_id"], :name => "event_id"
-  add_index "done_events", ["level_map_id"], :name => "level_map_id"
-  add_index "done_events", ["player_character_id", "world_map_id"], :name => "player_character_id_world_map_id"
+  add_index "done_events", ["kind", "player_character_id", "location_id", "event_id"], :name => "kind_player_character_id_location_id_event_id"
+  add_index "done_events", ["kind", "player_character_id", "location_id"], :name => "kind_player_character_id_location_id"
+  add_index "done_events", ["kind"], :name => "kind"
+  add_index "done_events", ["location_id"], :name => "location_id"
   add_index "done_events", ["player_character_id"], :name => "player_character_id"
-  add_index "done_events", ["world_map_id"], :name => "world_map_id"
+  add_index "done_events", ["player_character_id"], :name => "player_character_id_world_map_id"
 
   create_table "done_quests", :force => true do |t|
     t.integer  "quest_id",            :null => false

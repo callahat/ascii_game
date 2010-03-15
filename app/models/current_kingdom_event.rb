@@ -1,0 +1,2 @@
+class CurrentKingdomEvent < CurrentEvent
+end

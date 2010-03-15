@@ -4,7 +4,8 @@ class GameController < ApplicationController
 	layout 'main'
 
 		# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-	verify :method => :post, :only => [ :do_heal, :do_choose, :do_train ],				 :redirect_to => { :action => :feature }
+	verify :method => :post,:only => [ :do_heal, :do_choose, :do_train ],
+													:redirect_to => { :action => :feature }
 	
 	def main
 		flash[:notice] = flash[:notice]
@@ -409,6 +410,24 @@ class GameController < ApplicationController
 			session[:fe_curpri] = nil
 			
 			redirect_to :action => 'main' 
+		end
+	end
+	
+	
+	def spawn_kingdom
+		@kingdom = Kingdom.new
+	end
+	
+	def do_spawn
+		@wm = session[:last_action]
+		
+		@kingdom, @msg = Kingdom.spawn(session[:player_character], @wm, params[:kingdom][:name])
+		if @kingdom
+			render :action => 'spawn'
+		else
+			flash[:notice] = @msg
+			session[:completed] = true
+			redirect_to :controller => '/game', :action => 'complete'
 		end
 	end
 	

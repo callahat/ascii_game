@@ -112,7 +112,7 @@ class Maintenance < ActiveRecord::Base
 				else
 					npc.health.HP = npc.health.base_HP
 					npc.health.HP -= @disease_damage
-					npc.health.HP = [@npc.health.HP,1].max
+					npc.health.HP = [npc.health.HP,1].max
 				end
 		npc.save!
 				npc.stat.save!
