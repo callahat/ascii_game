@@ -1,10 +1,11 @@
 class CreateCurrentEvents < ActiveRecord::Migration
 	def self.up
 		create_table :current_events do |t|
-			t.integer		"player_character_id",					:null => false
-			t.integer		"event_id",											:null => false
-			t.integer		"location_id",									:null => false
-			t.string		"kind",													:null => false
+			t.integer		"player_character_id",									:null => false
+			t.integer		"event_id",															:null => false
+			t.integer		"location_id",													:null => false
+			t.integer		"priority",							:default => 0,	:null => false
+			t.string		"kind",																	:null => false
 
 			t.timestamps
 		end
@@ -30,10 +31,10 @@ class CreateCurrentEvents < ActiveRecord::Migration
 		#update the done events
 		DoneEvent.all.each{|de|
 			if de.level_map_id
-				de.update_attribute(:kind, "DoneEventKingdom")
+				de.update_attribute(:kind, "DoneLocalEvent")
 				de.update_attribute(:location_id, de.level_map_id)
 			elsif de.world_map_id
-				de.update_attribute(:kind, "DoneEventWorld")
+				de.update_attribute(:kind, "DoneWorldEvent")
 				de.update_attribute(:location_id, de.world_map_id)
 			else
 				p "Unknown done event, id:" + de.id.to_s

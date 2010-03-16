@@ -30,6 +30,28 @@ class Feature < ActiveRecord::Base
 		return @sys_gen_feature
 	end
 	
+	#returns two arrays, 1st: events user can choose from, 2nd: events user cannot choose
+	def available_events(p, ch, loc, pid)
+		[true, false].inject([]) {|ret, c|
+			conds = {:conditions => ['priority = ? and chance <= ? and choice = ?', p, ch, c]}
+			p feature_events.find(:all, conds)
+			p "!!!"
+			ret << feature_events.find(:all, conds).inject([]){|a,fe|
+				e = fe.event.dup
+				case e.event_rep_type
+					when SpecialCode.get_code('event_rep_type','unlimited')
+						a << e
+					when SpecialCode.get_code('event_rep_type','limited')
+						( loc.done_events.count(:conditions => {:event_id => e.id}) < e.event_reps ?
+								a << e : a )
+					when SpecialCode.get_code('event_rep_type','limited_per_char')
+						( loc.done_events.count(:conditions => {:player_character_id => pid, :event_id => e.id}) < e.event_reps ?
+								a << e : a )
+				end
+			}
+		}
+	end
+	
 	#Pagination related stuff
 	def self.per_page
 		15

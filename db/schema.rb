@@ -140,6 +140,7 @@ ActiveRecord::Schema.define(:version => 20100314003846) do
     t.integer  "player_character_id",                 :null => false
     t.integer  "event_id",                            :null => false
     t.integer  "location_id",                         :null => false
+    t.integer  "priority",            :default => 0,  :null => false
     t.string   "kind",                :default => "", :null => false
     t.datetime "created_at"
     t.datetime "updated_at"

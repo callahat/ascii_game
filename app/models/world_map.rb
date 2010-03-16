@@ -2,7 +2,7 @@ class WorldMap < ActiveRecord::Base
 	belongs_to :world
 	belongs_to :feature
 	
-	has_many :done_events
+	has_many :done_events, :foreign_key => 'location_id', :class_name => 'DoneWorldEvent'
 	
 	def self.current_tile(bigy, bigx, y, x)
 		find(:last, :conditions => ['bigypos = ? and bigxpos = ? and ypos = ? and xpos = ?', bigy, bigx, y, x])

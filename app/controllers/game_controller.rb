@@ -119,7 +119,7 @@ class GameController < ApplicationController
 			 ((session[:fe_chain].nil? || session[:fe_curpri] == 42 || session[:fe_curpri].nil?) &&
 			 (params[:id] && params[:id] != session[:last_action].id))
 			#make sure player has enough "moves" left
-		PlayerCharacter.transaction do
+			PlayerCharacter.transaction do
 				session[:player_character].lock!
 			
 				if session[:player_character].in_kingdom && params[:id]
@@ -138,11 +138,9 @@ class GameController < ApplicationController
 					session[:player_character].save!
 				end
 			end
-			print "\ncreating a new feature event chain"
-			session[:last_action] = @last_action
-			session[:fe_chain] = session[:last_action].feature.feature_events
-			session[:fe_curpri] = -1
 			
+			next_event = session[:current_event].next_event
+
 			#get the first priority level
 			#when this event is completed sucessfully, then the protected controller will advance to the next priority.
 			if !advance_fe_curpri
@@ -151,36 +149,17 @@ class GameController < ApplicationController
 			end
 		end
 		
-		#prune the events that have already been done, do not include events that are not in the range
-		@fes = prune_done_events(session[:fe_chain].find(:all, :conditions => ['priority = ? and choice = ? and chance > ?', session[:fe_curpri], false, rand(100)] ))
-		@choices = prune_done_events( session[:fe_chain].find(:all, :conditions => ['priority = ? and choice = ? and chance > ?', session[:fe_curpri], true, rand(100)] ))
-		
-		print "\n" + @fes.size.to_s + " compulsories, " + @choices.size.to_s + " choices"
-		
-		if @fes.size > 0 && @choices.size > 0
-			#There are a number of mandatory and choice events
-			@pick = rand(@fes.size + @choices.size)
-			if @pick < @fes.size
-				session[:current_event] = @fes[@pick].event
-				redirect_to :action => 'exec_event'
-			else
-				session[:current_event] = @choices
-				redirect_to :action => 'choose'
-				return
-			end
-		elsif @fes.size > 0 && @choices.size == 0
-			session[:current_event] = @fes[rand(@fes.size).to_i].event
-			redirect_to :action => 'exec_event'
-			return
-		elsif @fes.size == 0 && @choices.size > 0
-			@rnd = 100 - rand(100)
-			session[:current_event] = []
-			for choice in @choices
-				if choice.chance >= @rnd
-					session[:current_event] << choice
-				end
-			end
+
+		next_event = session[:current_event].next_event
+		if next_event.class == Array
+			session[:current_event] = next_event #clean up later
 			redirect_to :action => 'choose'
+			return
+		elsif next_event.class.base_class == Event
+			session[:current_event].destroy
+			session[:current_event].event_id = next_event
+			session[:current_event].class.create(session[:current_event])
+			redirect_to :action => 'exec_event'
 			return
 		else
 			#this could happen if all events t this priority were limited and all done with regards to the character.
@@ -441,45 +420,5 @@ protected
 		@notice.text = text
 		@notice.signed = "Captain of the Guard"
 		@notice.save
-	end
-
-	def prune_done_events(fes)
-		@active_events = []
-		
-		if session[:player_character].in_kingdom
-			accessor = 'level_map_id'
-		else
-			accessor = 'world_map_id'
-		end
-		
-		for fe in fes
-			#print "\nevent ID:" + fe.event.id.to_s + "\nrep type:" + SpecialCode.get_text('event_rep_type',fe.event.event_rep_type)
-			if fe.event.event_rep_type == SpecialCode.get_code('event_rep_type','limited')
-				if DoneEvent.find(:all, :conditions => [accessor + ' = ? and event_id = ?', session[:last_action].id, fe.event.id]).size < fe.event.event_reps
-					@active_events << fe
-				end
-			elsif fe.event.event_rep_type == SpecialCode.get_code('event_rep_type','limited_per_char')
-				if DoneEvent.find(:all, :conditions => ['player_character_id = ? and ' + accessor + ' = ? and event_id = ?', session[:player_character][:id], session[:last_action].id, fe.event.id]).size < fe.event.event_reps
-					@active_events << fe
-				end
-			elsif fe.event.event_rep_type == SpecialCode.get_code('event_rep_type','unlimited')
-				@active_events << fe
-			end
-		end	
-	
-		return @active_events
-	end
-
-	def advance_fe_curpri
-		session[:fe_curpri] = session[:fe_chain].find(:first, :conditions => ['priority > ?', session[:fe_curpri]])
-		print "\nCurrent priority1:" + session[:fe_curpri].to_s + " " + session[:fe_curpri].nil?.to_s
-		#are there more featuers in the chain?
-		if session[:fe_curpri].nil?
-			session[:fe_chain] = nil
-			return false
-		end
-		session[:fe_curpri] = session[:fe_curpri].priority
-		print "\nCurrent priority2:" + session[:fe_curpri].to_s
-		return true
 	end
 end
