@@ -22,3 +22,11 @@ npc_image:
   <<: *char_img_defs
   name: "guard image"
   image_text: "^_^"
+
+feature_image: &feature_img_defs
+  name: "Feature image"
+  player_id: -1
+  kingdom_id: -1
+  public: 0
+  image_text: "[_]"
+  image_type: <%= SpecialCode.get_code('image_type','kingdom') %>

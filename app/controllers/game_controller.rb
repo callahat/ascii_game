@@ -81,7 +81,7 @@ class GameController < ApplicationController
 			elsif params[:id] == 'west' && WorldMap.find(:first, :conditions => ['bigxpos = ? and bigypos = ?', @pc[:bigx] - 1, @pc[:bigy]])
 				flash[:notice] = "Moved West"
 				@pc[:bigx] -= 1
-			elsif params[:id] == 'east' && WorldMap.find(:first, :conditions => ['bigxpos = ? and bigypos = ?', @pc[:bigx] + 1, @pc])
+			elsif params[:id] == 'east' && WorldMap.find(:first, :conditions => ['bigxpos = ? and bigypos = ?', @pc[:bigx] + 1, @pc[:bigy]])
 				flash[:notice] = "Moved East"
 				@pc[:bigx] += 1
 			else

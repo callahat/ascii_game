@@ -126,3 +126,13 @@ castle_event:
   kind: "EventCastle"
   armed: 1
   cost: 0
+quest_event_done:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','limited') %>
+  event_reps: 1
+  name: "Quest event done"
+  kind: "EventQuest"
+  armed: 1
+  cost: 50
+  text: "Some text here that probably wont appear since the quest is done."

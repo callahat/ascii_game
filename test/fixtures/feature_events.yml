@@ -1,5 +1,70 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
-  id: 1
-two:
-  id: 2
+fe_one:
+  feature: feature_creature_one
+  event: creature_event
+  chance: 100
+  priority: 1
+  choice: false
+
+fe_two_a:
+  feature: feature_multi_event
+  event: npc_event
+  chance: 100
+  priority: 1
+  choice: true
+fe_two_b:
+  feature: feature_multi_event
+  event: pc_event
+  chance: 100
+  priority: 1
+  choice: true
+	
+fe_two_c:
+  feature: feature_multi_event
+  event: disease_event
+  chance: 100
+  priority: 2
+  choice: false
+fe_two_d:
+  feature: feature_multi_event
+  event: stat_event
+  chance: 100
+  priority: 2
+  choice: false
+
+fe_two_e:
+  feature: feature_multi_event
+  event: npc_event
+  chance: 100
+  priority: 3
+  choice: false
+fe_two_f:
+  feature: feature_multi_event
+  event: creature_event
+  chance: 100
+  priority: 3
+  choice: false
+fe_two_g:
+  feature: feature_multi_event
+  event: pc_event
+  chance: 100
+  priority: 3
+  choice: true
+
+fe_two_h:
+  feature: feature_multi_event
+  event: throne_event
+  chance: 0
+  priority: 4
+  choice: false
+fe_two_i:
+  feature: feature_multi_event
+  event: quest_event_done
+  chance: 100
+  priority: 5
+  choice: false
+fe_two_j:
+  feature: feature_multi_event
+  event: quest_event
+  chance: 100
+  priority: 7
+  choice: false

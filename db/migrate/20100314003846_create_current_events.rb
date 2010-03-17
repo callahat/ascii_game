@@ -2,7 +2,7 @@ class CreateCurrentEvents < ActiveRecord::Migration
 	def self.up
 		create_table :current_events do |t|
 			t.integer		"player_character_id",									:null => false
-			t.integer		"event_id",															:null => false
+			t.integer		"event_id"
 			t.integer		"location_id",													:null => false
 			t.integer		"priority",							:default => 0,	:null => false
 			t.string		"kind",																	:null => false

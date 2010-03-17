@@ -1,5 +1,6 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
-  id: 1
-two:
-  id: 2
+done_event_1:
+  event: quest_event_done
+  player_character: test_pc_one
+  location: test_level_map_0_0
+  kind: "DoneLocalEvent"
