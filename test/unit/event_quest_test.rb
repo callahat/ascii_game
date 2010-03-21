@@ -14,7 +14,7 @@ class EventQuestTest < ActiveSupport::TestCase
 	test "quest event" do
 		eq = EventQuest.find_by_name("Quest event")
 		direct, comp, msg = eq.happens(@pc)
-		assert comp == true
+		assert comp == EVENT_COMPLETED
 		assert msg =~ /thunderous/
 		assert eq.quest.name == "Quest One"
 		

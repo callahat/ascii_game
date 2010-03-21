@@ -22,7 +22,7 @@ class EventDiseaseTest < ActiveSupport::TestCase
 		assert @pc.illnesses.size == 0
 		assert_difference ['@pc.stat.str','@pc.stat.mag','@pc.stat.dex'], -5 do
 			direct,comp,msg = ed.happens(@pc)
-			assert comp == true
+			assert comp == EVENT_COMPLETED
 			@pc.stat.reload
 		end
 		assert @pc.illnesses.size == 1

@@ -17,10 +17,10 @@ class Inventory < ActiveRecord::Base
 	 	inv.transaction do
 			inv.lock!
 			if inv.quantity < (-1) * amount
-		return inv.save! && false
+				return inv.save! && false
 			else
 				inv.quantity += amount
-		return inv.save!
+				return inv.save!
 			end
 		end
 	end
@@ -31,12 +31,12 @@ class Inventory < ActiveRecord::Base
 		it = find(:first, :conditions => conds)
 		return it unless it.nil?
 	
-	TableLock.transaction do
-		tl = TableLock.find_by_name(self.sti_name, :lock => true)
-		it = find(:first, :conditions => conds) || create(conds)
-		tl.save!
-	end
-	return it
+		TableLock.transaction do
+			tl = TableLock.find_by_name(self.sti_name, :lock => true)
+			it = find(:first, :conditions => conds) || create(conds)
+			tl.save!
+		end
+		return it
 	end
 	
 	#Pagination related stuff
@@ -46,15 +46,15 @@ class Inventory < ActiveRecord::Base
 	
 	def self.get_page(page, oid = nil, rbt = nil)
 		parms = {:page => page,
-					 :joins => 'INNER JOIN items on inventories.item_id = items.id',
-			 :order => 'items.name'}
+						:joins => 'INNER JOIN items on inventories.item_id = items.id',
+						:order => 'items.name'}
 
 		if oid.nil?
-		paginate(parms)
-	elsif rbt.nil?
+			paginate(parms)
+		elsif rbt.nil?
 			paginate(parms.merge(:conditions => ['owner_id = ? and quantity > 0', oid]) )
 		else
-		paginate(parms.merge(:conditions => ['owner_id = ? and quantity > 0 and (items.race_body_type is null or items.race_body_type = ?)', oid, rbt]) )
+			paginate(parms.merge(:conditions => ['owner_id = ? and quantity > 0 and (items.race_body_type is null or items.race_body_type = ?)', oid, rbt]) )
 		end
 	end
 end

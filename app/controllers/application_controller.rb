@@ -321,14 +321,4 @@ protected
 			end
 		end
 	end
-	
-	def create_accession_notice(text, kingdom)
-		@notice = KingdomNotice.new
-		@notice.kingdom_id = kingdom.id
-		@notice.shown_to = SpecialCode.get_code('shown_to','everyone')
-		@notice.datetime = Time.now
-		@notice.text = text
-		@notice.signed = "Minister of the Interior"
-		@notice.save
-	end
 end

@@ -124,12 +124,19 @@ class Battle < ActiveRecord::Base
 	def victory
 		if self.enemies.size == 0
 			self.groups.destroy_all
+			if (@tax = (self.gold * self.owner.present_kingdom.tax_rate/100.0).to_i) > 0
+				Kingdom.pay_tax(@tax, self.owner.present_kingdom)
+				self.update_attribute(:gold, self.gold - @tax)
+			end
 			PlayerCharacter.transaction do
 				self.owner.lock!
 				self.owner.gold += self.gold
 				self.owner.save!
 			end
-			return self.gold
+			@items=[]
+			self.items.each{|i| PlayerCharacterItem.update_inventory(self.owner_id,i.item_id,i.quantity) 
+				@items << i.quantity.to_s + " " + (i.quantity > 1 ? i.item.name.pluralize : i.item.name) }
+			return {:gold => self.gold, :tax => @tax, :items => @items}
 		else
 			return false
 		end
@@ -145,7 +152,7 @@ class Battle < ActiveRecord::Base
 	end
 	
 	def run_away(chance)
-		if rand(100).to_i < chance
+		if rand(100) < chance
 			self.clear_battle
 			return true
 		else
@@ -187,11 +194,19 @@ class Battle < ActiveRecord::Base
 			self.update_attributes(:gold => self.gold + who.enemy.drop_nth_of_gold(8))
 		end
 		if who.class.base_class == BattleEnemy
-			LogQuestCreatureKill.complete_req(self.owner_id, who.enemy_id) if who.class == BattleCreature
-			LogQuestKillPc.complete_req(self.owner_id,who.enemy_id) if who.class == BattlePc
-			LogQuestKillSNpc.complete_req(self.owner_id,who.enemy_id) if who.class == BattleNpc
-			if who.class == BattleNpc || (who.class == BattleCreature && who.special == SpecialCode.get_code('npc_division','peasant'))
-				LogQuestKillNNpc.complete_req(self.owner_id,who.special, self.owner.in_kingdom)
+			case who.class.name
+				when "BattleCreature"
+					LogQuestCreatureKill.complete_req(self.owner_id, who.enemy_id)
+					peasant = (who.special == SpecialCode.get_code('npc_division','peasant'))
+					LogQuestKillNNpc.complete_req(self.owner_id,who.special, self.owner.in_kingdom) if peasant
+					CreatureKill.log_kill(self.owner_id,who.enemy_id,1)
+				when "BattlePc"
+					LogQuestKillPc.complete_req(self.owner_id,who.enemy_id)
+					PlayerCharacterKiller.create(:player_character_id => self.owner_id, :killed_id => who.enemy_id)
+				when "BattleNpc"
+					LogQuestKillSNpc.complete_req(self.owner_id,who.enemy_id)
+					LogQuestKillNNpc.complete_req(self.owner_id,who.special, self.owner.in_kingdom)
+					NonplayerCharacterKiller.create(:player_character_id => self.owner_id, :npc_id => who.enemy_id)
 			end
 			group = who.battle_group
 			who.destroy

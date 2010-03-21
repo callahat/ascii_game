@@ -34,6 +34,7 @@ class EventMoveLocalTest < ActiveSupport::TestCase
 		@pc.health.update_attribute(:wellness, SpecialCode.get_code('wellness','dead'))
 		direct, comp, msg = e.happens(@pc)
 		assert msg !~ /you are dead/
+		assert comp == EVENT_COMPLETED
 		@pc.reload
 		assert @pc.present_level == e.level, @pc.kingdom_level.to_s + " " + e.level.to_s
 	end

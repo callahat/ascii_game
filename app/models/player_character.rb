@@ -11,7 +11,8 @@ class PlayerCharacter < ActiveRecord::Base
 
 	has_many :quest_kill_pcs
 	has_many :creature_kills
-	has_many :done_events
+	has_many :done_local_events
+	has_many :done_world_events
 	has_many :done_quests
 	has_many :genocides
 	has_many :illnesses, :foreign_key => 'owner_id', :class_name => 'Infection'
@@ -33,6 +34,9 @@ class PlayerCharacter < ActiveRecord::Base
 	has_one :trn_stat,	:foreign_key => 'owner_id', :class_name => 'StatPcTrn'
 	has_one :base_stat, :foreign_key => 'owner_id', :class_name => 'StatPcBase'
 	has_one :level_zero, :foreign_key => 'owner_id', :class_name => 'StatPcLevelZero'
+	
+	has_one :current_event
+	has_one :battle, :foreign_key => 'owner_id'
 	
 	validates_presence_of :name, :race, :c_class, :player_id, :c_class_id, :race_id, :char_stat
 	validates_length_of :name, :in => 1..32

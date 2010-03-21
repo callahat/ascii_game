@@ -19,6 +19,7 @@ class EventCreatureTest < ActiveSupport::TestCase
 		end
 		assert @direct.class == Hash
 		assert @direct[:controller] == 'game/battle'
+		assert @comp == EVENT_INPROGRESS
 		
 		#test where there are no living creatures
 		ec.creature.update_attribute(:number_alive, 0)
@@ -26,11 +27,13 @@ class EventCreatureTest < ActiveSupport::TestCase
 			@direct, @comp, @msg = ec.happens(PlayerCharacter.find(1))
 		end
 		ec.creature.update_attribute(:number_alive, 1000)
+		assert @comp == EVENT_COMPLETED
 		
 		#assert fails if pc dead
 		@pc.health.update_attribute(:wellness, SpecialCode.get_code('wellness','dead'))
 		direct, comp, msg = ec.happens(@pc)
 		assert msg =~ /you are dead/
+		assert comp == EVENT_FAILED
 	end
 	
 	test "create creature event" do

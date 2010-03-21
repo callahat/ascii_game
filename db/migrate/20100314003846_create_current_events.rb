@@ -5,6 +5,7 @@ class CreateCurrentEvents < ActiveRecord::Migration
 			t.integer		"event_id"
 			t.integer		"location_id",													:null => false
 			t.integer		"priority",							:default => 0,	:null => false
+			t.integer		"completed",						:default => -1
 			t.string		"kind",																	:null => false
 
 			t.timestamps

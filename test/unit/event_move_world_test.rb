@@ -16,7 +16,7 @@ class EventMoveWorldTest < ActiveSupport::TestCase
 		direct, comp, msg = el.happens(@pc)
 		assert @pc.in_kingdom.nil?
 		assert @pc.kingdom_level.nil?
-		assert comp == true
+		assert comp == EVENT_COMPLETED
 	end
 	
 	test "world move event when pc dead" do
@@ -29,7 +29,7 @@ class EventMoveWorldTest < ActiveSupport::TestCase
 		
 		assert @pc.in_kingdom.nil?
 		assert @pc.kingdom_level.nil?
-		assert comp == true
+		assert comp == EVENT_COMPLETED
 	end
 	
 	test "create world move event" do

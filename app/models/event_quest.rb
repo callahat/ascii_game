@@ -4,7 +4,7 @@ class EventQuest < Event
 	#validates_presence_of :thing_id
 
 	def make_happen(ig=nil)
-		return nil, true, text
+		return nil, EVENT_COMPLETED, text
 	end
 	
 	def as_option_text(pc=nil)

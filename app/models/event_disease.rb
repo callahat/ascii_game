@@ -18,7 +18,7 @@ class EventDisease < Event
 			@message = 'This place feels unhealthy'
 		end
 		
-		return nil, true, @message
+		return nil, EVENT_COMPLETED, @message
 	end
 	
 	def as_option_text(pc=nil)

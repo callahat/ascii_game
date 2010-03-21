@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100314003846) do
+ActiveRecord::Schema.define(:version => 20100319030511) do
 
   create_table "attack_spells", :force => true do |t|
     t.string  "name",         :limit => 32,  :default => "", :null => false
@@ -101,9 +101,10 @@ ActiveRecord::Schema.define(:version => 20100314003846) do
   add_index "c_classes", ["name"], :name => "name"
 
   create_table "creature_kills", :force => true do |t|
-    t.integer "player_character_id",                :null => false
-    t.integer "creature_id",                        :null => false
-    t.integer "number",              :default => 0, :null => false
+    t.integer  "player_character_id",                :null => false
+    t.integer  "creature_id",                        :null => false
+    t.integer  "number",              :default => 0, :null => false
+    t.datetime "updated_at"
   end
 
   add_index "creature_kills", ["creature_id"], :name => "creature_id"
@@ -141,6 +142,7 @@ ActiveRecord::Schema.define(:version => 20100314003846) do
     t.integer  "event_id"
     t.integer  "location_id",                         :null => false
     t.integer  "priority",            :default => 0,  :null => false
+    t.integer  "completed",           :default => -1
     t.string   "kind",                :default => "", :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -171,9 +173,9 @@ ActiveRecord::Schema.define(:version => 20100314003846) do
   create_table "done_events", :force => true do |t|
     t.integer  "event_id",                            :null => false
     t.integer  "player_character_id",                 :null => false
-    t.datetime "datetime",                            :null => false
     t.integer  "location_id",                         :null => false
     t.string   "kind",                :default => "", :null => false
+    t.datetime "created_at"
   end
 
   add_index "done_events", ["event_id", "player_character_id"], :name => "event_id_player_character_id"
@@ -435,13 +437,13 @@ ActiveRecord::Schema.define(:version => 20100314003846) do
   create_table "kingdom_notices", :force => true do |t|
     t.integer  "kingdom_id",               :null => false
     t.integer  "shown_to",                 :null => false
-    t.datetime "datetime",                 :null => false
     t.text     "text"
     t.string   "signed",     :limit => 64
+    t.datetime "created_at"
   end
 
-  add_index "kingdom_notices", ["kingdom_id", "datetime"], :name => "kingdom_datetime_id"
   add_index "kingdom_notices", ["kingdom_id", "shown_to"], :name => "kingdom_shown_to_id"
+  add_index "kingdom_notices", ["kingdom_id"], :name => "kingdom_datetime_id"
   add_index "kingdom_notices", ["kingdom_id"], :name => "kingdom_id"
   add_index "kingdom_notices", ["signed"], :name => "signed"
 
@@ -535,9 +537,9 @@ ActiveRecord::Schema.define(:version => 20100314003846) do
   end
 
   create_table "nonplayer_character_killers", :force => true do |t|
-    t.integer   "player_character_id", :null => false
-    t.integer   "npc_id"
-    t.timestamp "when",                :null => false
+    t.integer  "player_character_id", :null => false
+    t.integer  "npc_id"
+    t.datetime "created_at"
   end
 
   add_index "nonplayer_character_killers", ["npc_id"], :name => "npc_id"
@@ -593,9 +595,9 @@ ActiveRecord::Schema.define(:version => 20100314003846) do
   add_index "player_character_equip_locs", ["player_character_id"], :name => "player_character_id"
 
   create_table "player_character_killers", :force => true do |t|
-    t.integer   "player_character_id", :null => false
-    t.integer   "killed_id",           :null => false
-    t.timestamp "when",                :null => false
+    t.integer  "player_character_id", :null => false
+    t.integer  "killed_id",           :null => false
+    t.datetime "created_at"
   end
 
   add_index "player_character_killers", ["killed_id"], :name => "killed_id"

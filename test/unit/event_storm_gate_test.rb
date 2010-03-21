@@ -21,19 +21,31 @@ class EventStormGateTest < ActiveSupport::TestCase
 		end
 		assert @direct.class == Hash
 		assert @direct[:controller] == 'game/battle'
+		assert @comp == EVENT_INPROGRESS
 		
 		#test where there are no guards
 		es.level.kingdom.npcs.destroy_all
 		assert_difference 'Battle.count', +0 do
 			@direct, @comp, @msg = es.happens(PlayerCharacter.find(1))
 		end
-		assert @comp == true
+		assert @comp == EVENT_COMPLETED
 		assert @msg =~ /no resistance/
 		
 		#assert fails if pc dead
 		@pc.health.update_attribute(:wellness, SpecialCode.get_code('wellness','dead'))
 		direct, comp, msg = es.happens(@pc)
 		assert msg =~ /you are dead/
+		assert comp == EVENT_FAILED
+	end
+	
+	test "storm gate completes" do
+		es = EventStormGate.find_by_name("Storm Kingdom 1 Gate event")
+		
+		assert @pc.in_kingdom.nil?
+		assert @pc.kingdom_level.nil?
+		es.completes(@pc)
+		assert @pc.in_kingdom
+		assert @pc.kingdom_level
 	end
 	
 	test "create storm gate" do

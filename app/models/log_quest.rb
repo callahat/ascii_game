@@ -29,7 +29,7 @@ class LogQuest < ActiveRecord::Base
 		elsif @quest.quest_id &&
 				DoneQuest.find(:first,:conditions => ['quest_id = ? and player_character_id = ?', @quest.quest_id, pc[:id] ]).nil?
 			return false, "Have not completed " + @quest.quest.name + ", a prerequisite for this quest"
-			end
+		end
 			
 		new_log = create(:player_character_id => pc[:id], :quest_id => qid)
 		return false, "Failed to create the log for some reason" unless new_log

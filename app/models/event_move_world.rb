@@ -9,7 +9,7 @@ class EventMoveWorld < EventLifeNeutral
 			@message = "Left the kingdom"
 			who.save!
 		end
-		return {:action => 'complete'}, true, @message
+		return {:action => 'complete'}, EVENT_COMPLETED, @message
 	end
 	
 	def as_option_text(pc=nil)

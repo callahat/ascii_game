@@ -18,7 +18,7 @@ class EventStatTest < ActiveSupport::TestCase
 				assert_difference '@pc.experience', +10 do
 					assert_difference ['@pc.health.MP','@pc.health.HP'], +30 do
 						direct,comp,msg = es.happens(@pc)
-						assert comp == true
+						assert comp == EVENT_COMPLETED
 						assert msg =~ /explaining/
 						@pc.stat.reload
 						@pc.health.reload
@@ -31,6 +31,7 @@ class EventStatTest < ActiveSupport::TestCase
 		@pc.health.update_attribute(:wellness, SpecialCode.get_code('wellness','dead'))
 		direct, comp, msg = es.happens(@pc)
 		assert msg =~ /you are dead/
+		assert comp == EVENT_FAILED
 	end
 	
 	test "create stat event" do

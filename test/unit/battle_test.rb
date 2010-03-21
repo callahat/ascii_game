@@ -536,7 +536,7 @@ class BattleTest < ActiveSupport::TestCase
 		
 		assert battle.fighter_killed(battle.enemies.first)
 		assert @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.size == 1
-		assert @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.first.quantity == 9
+		assert @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.first.quantity == 9, @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.first.quantity
 	end
 	
 	test "test quest log completion for kill creature" do
@@ -555,7 +555,7 @@ class BattleTest < ActiveSupport::TestCase
 		battle.enemies.reload
 		assert battle.enemies.size == 0, battle.enemies.size
 		assert @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.size == 1
-		assert @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.first.quantity == 1
+		assert @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.first.quantity == 1, @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.first.quantity
 		assert battle.victory
 		
 		battle, msg = Battle.new_creature_battle(@pc, @wild_foo, 3, 3, @pc.in_kingdom)
@@ -576,7 +576,7 @@ class BattleTest < ActiveSupport::TestCase
 		assert battle.enemies.size == 1
 		battle.phys_damage_enemies(@pc, battle.groups.first.enemies)
 		assert battle.enemies.size == 0
-		assert @pc.log_quests.find_by_quest_id(@quest.id).kill_pcs.size == 0
+		assert @pc.log_quests.find_by_quest_id(@quest.id).kill_pcs.size == 0, @pc.log_quests.find_by_quest_id(@quest.id).kill_pcs.size
 	end
 	
 	test "test quest log completion for kill specific npc" do
@@ -590,7 +590,7 @@ class BattleTest < ActiveSupport::TestCase
 		assert battle.merchants.size == 1, battle.merchants.size
 		battle.phys_damage_enemies(@pc, battle.merchants)
 		assert battle.merchants.size == 0
-		assert @pc.log_quests.find_by_quest_id(@quest.id).kill_s_npcs.size == 0
+		assert @pc.log_quests.find_by_quest_id(@quest.id).kill_s_npcs.size == 0, @pc.log_quests.find_by_quest_id(@quest.id).kill_s_npcs.size
 	end
 	
 	test "test quest log completion for kill number of npcs" do
@@ -609,7 +609,7 @@ class BattleTest < ActiveSupport::TestCase
 		battle.enemies.reload
 		assert battle.enemies.size == 0, battle.enemies.size
 		assert @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.size == 1
-		assert @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.first.quantity == 4
+		assert @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.first.quantity == 4, @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.first.quantity
 		assert battle.victory
 		
 		battle, msg = Battle.new_creature_battle(@pc, @peasants, 8, 8, @pc.present_kingdom)
@@ -619,4 +619,33 @@ class BattleTest < ActiveSupport::TestCase
 		assert @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.size == 0
 	end
 	
+	test "defeated enemy tallies" do
+		#CREATURE
+		battle1, msg = Battle.new_creature_battle(@pc, @wild_foo, 5, 5, nil)
+		battle1.report={}
+		battle1.phys_damage_enemies(@pc, battle1.groups.first.enemies)
+		assert @pc.creature_kills.find(:first, :conditions => ['creature_id = ?', @wild_foo.id]).nil?
+		
+		battle2, msg = Battle.new_creature_battle(@pc, @wimp_c, 10, 10, nil)
+		battle2.report={}
+		battle2.phys_damage_enemies(@pc, battle2.groups.first.enemies)
+		assert @pc.creature_kills.find(:first, :conditions => ['creature_id = ?', @wimp_c.id]).number == 1
+		battle2.phys_damage_enemies(@pc, battle2.groups.first.enemies)
+		assert @pc.creature_kills.find(:first, :conditions => ['creature_id = ?', @wimp_c.id]).number == 2
+		
+		#NPC
+		battle, msg = Battle.new_npc_battle(@pc, @sick_npc)
+		battle.report = {}
+
+		assert @pc.nonplayer_character_killers.count(:conditions => ['npc_id = ?', @sick_npc.id]) == 0
+		battle.phys_damage_enemies(@pc, battle.merchants)
+		assert @pc.nonplayer_character_killers.count(:conditions => ['npc_id = ?', @sick_npc.id]) == 1
+		
+		#PC
+		battle, msg = Battle.new_pc_battle(@pc, @sickpc)
+		battle.report = {}
+		assert @pc.player_character_killers.count(:conditions => ['killed_id = ?', @sickpc.id]) == 0
+		battle.phys_damage_enemies(@pc, battle.groups.first.enemies)
+		assert @pc.player_character_killers.count(:conditions => ['killed_id = ?', @sickpc.id]) == 1
+	end
 end

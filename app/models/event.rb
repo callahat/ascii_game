@@ -37,12 +37,17 @@ class Event < ActiveRecord::Base
 		return @sys_gen_event
 	end
 
+	#Returns <redirection>, <completion code>, <message>
 	def happens(who)
 		if who.health.wellness == SpecialCode.get_code('wellness','dead')
-			return {:controller => '/game', :action => 'complete'}, nil, 'You can\'t do that since you are dead.'
+			return {:controller => '/game', :action => 'complete'}, EVENT_FAILED, 'You can\'t do that since you are dead.'
 		else
 			return self.make_happen(who)
 		end
+	end
+
+	def completes(who)
+		#noop for most event types
 	end
 
 	#Pagination related stuff

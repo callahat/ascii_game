@@ -17,11 +17,13 @@ class EventMoveRelativeTest < ActiveSupport::TestCase
 		direct, comp, msg = e.happens(@pc)
 		@pc.reload
 		assert @pc.present_level.level == -1
+		assert comp == EVENT_COMPLETED
 		
 		direct, comp, msg = e.happens(@pc)
 		@pc.reload
 		assert msg =~ /UNDER CONSTRUCTION/
 		assert @pc.present_level.level == -1
+		assert comp == EVENT_COMPLETED
 	end
 	
 	test "when relative move pc dead" do
@@ -32,6 +34,7 @@ class EventMoveRelativeTest < ActiveSupport::TestCase
 		@pc.health.update_attribute(:wellness, SpecialCode.get_code('wellness','dead'))
 		direct, comp, msg = e.happens(@pc)
 		assert msg !~ /you are dead/
+		assert comp == EVENT_COMPLETED
 	end
 	
 	test "relative move event when in world" do
@@ -40,6 +43,7 @@ class EventMoveRelativeTest < ActiveSupport::TestCase
 		e = EventMoveRelative.find_by_name("relative move event")
 		direct, comp, msg = e.happens(@pc)
 		assert msg =~ /in the world/,msg
+		assert comp == EVENT_COMPLETED
 	end
 	
 	test "create relative move event" do

@@ -49,7 +49,7 @@ class EventMoveLocal < EventLifeNeutral
 
 			who.save!
 		end
-		return {:action => 'complete'}, true, @message
+		return {:action => 'complete'}, EVENT_COMPLETED, @message
 	end
 	
 	def as_option_text(pc=nil)

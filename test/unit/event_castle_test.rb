@@ -20,13 +20,13 @@ class EventCastleTest < ActiveSupport::TestCase
 		direct, comp, msg = e.happens(@pc)
 		
 		assert direct.class == Hash
-		assert comp.nil?
+		assert EVENT_COMPLETED
 		
 		#assert does not fail if pc dead
 		@pc.health.update_attribute(:wellness, SpecialCode.get_code('wellness','dead'))
 		direct, comp, msg = e.happens(@pc)
 		assert msg !~ /you are dead/
-		assert comp.nil?
+		assert EVENT_COMPLETED
 	end
 	
 	test "create castle event" do

@@ -24,7 +24,7 @@ class EventStat < Event
 			who.stat.add_stats(self.stat)
 			who.stat.save!
 		end
-		return nil, true, self.text
+		return nil, EVENT_COMPLETED, self.text
 	end
 	
 	def as_option_text(pc=nil)

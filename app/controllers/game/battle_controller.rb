@@ -94,7 +94,7 @@ class Game::BattleController < ApplicationController
 		@pc = session[:player_character]
 
 		if @battle.run_away(75)
-			session[:completed] = nil
+			@pc.current_event.update_attribute(:completed, EVENT_FAILED)
 			@message = 'You ran away.'
 			render 'game/complete'
 		else

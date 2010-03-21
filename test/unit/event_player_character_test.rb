@@ -15,7 +15,7 @@ class EventPlayerCharacterTest < ActiveSupport::TestCase
 		ep = EventPlayerCharacter.find_by_name("Sick PC encounter")
 		assert ep.player_character.name == "sick pc"
 		direct, comp, msg = ep.happens(@pc)
-		assert comp == true
+		assert comp == EVENT_COMPLETED
 		
 		ep.player_character.health.update_attribute(:HP, 0)
 		direct, comp, msg = ep.happens(@pc)
@@ -26,7 +26,7 @@ class EventPlayerCharacterTest < ActiveSupport::TestCase
 		#assert not fails if pc dead
 		@pc.health.update_attribute(:wellness, SpecialCode.get_code('wellness','dead'))
 		direct, comp, msg = ep.happens(@pc)
-		assert comp == true
+		assert comp == EVENT_COMPLETED
 	end
 	
 	test "create pc event" do

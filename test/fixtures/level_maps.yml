@@ -14,3 +14,8 @@ test_level_map_2_2:
   xpos: 2
   ypos: 2
   feature: feature_no_events
+test_level_map_0_2:
+  level: first_kingdom_level_one
+  xpos: 0
+  ypos: 2
+  feature: throne_event

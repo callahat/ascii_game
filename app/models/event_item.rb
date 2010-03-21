@@ -8,7 +8,7 @@ class EventItem < Event
 		#the inventory stuff should probably be modified to use who.inventory.update_items
 		PlayerCharacterItem.update_inventory(who.id,self.thing_id,self.flex.to_i)
 
-		return nil, true, 'Found ' + self.flex + ' ' + self.item.name
+		return nil, EVENT_COMPLETED, 'Found ' + self.flex + ' ' + self.item.name
 	end
 	
 	def as_option_text(pc=nil)

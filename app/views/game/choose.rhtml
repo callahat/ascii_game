@@ -1,8 +1,8 @@
 <p><b>There are several things you can do here:</b></p>
 
-<% for fev in @feature_events do %>
+<% for ev in @events do %>
 <p>
-<%= link_to fev.event.as_option_text(@pc), {:action => 'do_choose', :id => fev.event_id } , :method => :post %>
+<%= link_to ev.as_option_text(@pc), {:action => 'do_choose', :id => ev.id } , :method => :post %>
 </p>
 <% end %>
 

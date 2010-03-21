@@ -1,5 +1,10 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
-  id: 1
-two:
-  id: 2
+world_one:
+  name: "WorldOne"
+  minbigx: -3
+  minbigy: -3
+  maxbigx: 3
+  maxbigy: 3
+  maxx: 6
+  maxy: 6
+  text: "This world is used in the test environment"
