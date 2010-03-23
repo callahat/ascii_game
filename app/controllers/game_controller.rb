@@ -1,5 +1,5 @@
 class GameController < ApplicationController
-	before_filter :authenticate, :except => ['main', 'feature', 'demo', 'world']
+	before_filter :authenticate, :except => ['main', 'feature', 'demo']
 
 	layout 'main'
 
@@ -15,73 +15,48 @@ class GameController < ApplicationController
 			return
 		end
 		
-		session[:player_character].reload
 		#this is the main game controller. Find out where the person is,
-		if !session[:player_character].present_kingdom.nil?
-			redirect_to :action => 'kingdom'
-		elsif !session[:player_character].present_world.nil?
-			redirect_to :action => 'world'
+		if session[:player_character].present_kingdom
+			@where = session[:player_character].present_level
+		elsif session[:player_character].present_world
+			@where = [session[:player_character].present_world,
+								session[:player_character].bigx,
+								session[:player_character].bigy]
 		else
 			flash[:notice] = 'You find yourself floating in empty space. There is nothing of interest anywhere.'
 		end
 	end
 
-	def demo
-	end
-
-	#Exploring the kingdom
-	def kingdom
-		@empty_image = Feature.find(:first, :conditions => ['kingdom_id = ? and player_id = ? and name = ?', -1, -1, "\nEmpty"]).image.image_text
-		if session[:player_character].present_level.nil?
-			session[:player_character].kingdom_level = PlayerCharacter.find(session[:player_character][:id]).present_kingdom.levels.find(:first, :conditions => ['level = ?', '0']).id
-			session[:player_character].save
-		end
-
-		@level = session[:player_character].present_level
-		@y,@x = 0,0
-	end
-
 	def leave_kingdom
-		PlayerCharacter.transaction do
-			session[:player_character].lock!
-			session[:player_character].in_kingdom = nil
-			session[:player_character].kingdom_level = nil
-			session[:player_character].save!
+		if session[:player_character].present_level && session[:player_character].present_level.level == 0
+			PlayerCharacter.transaction do
+				session[:player_character].lock!
+				session[:player_character].in_kingdom = nil
+				session[:player_character].kingdom_level = nil
+				session[:player_character].save!
+			end
+			@message = "Left the kingdom"
 		end
-
-		@message = "Left the kingdom"
+		
 		redirect_to :action => 'main'
 	end
 
-	#exploring the world
-	def world
-		@empty_image = Feature.find(:first, :conditions => ['kingdom_id = ? and player_id = ? and name = ?', -1, -1, "\nEmpty"]).image.image_text
-		@world = session[:player_character].present_world
-		print session[:player_character].bigx.to_s + " " + session[:player_character].bigy.to_s
-		@x,@y = 1,1
-		
-		@north = WorldMap.find(:first, :conditions => ['bigxpos = ? and bigypos = ?', session[:player_character][:bigx], session[:player_character][:bigy] -1])
-		@south = WorldMap.find(:first, :conditions => ['bigxpos = ? and bigypos = ?', session[:player_character][:bigx], session[:player_character][:bigy] +1])
-		@east = WorldMap.find(:first, :conditions => ['bigxpos = ? and bigypos = ?', session[:player_character][:bigx] + 1, session[:player_character][:bigy]])
-		@west = WorldMap.find(:first, :conditions => ['bigxpos = ? and bigypos = ?', session[:player_character][:bigx] - 1, session[:player_character][:bigy]])
-	end
-	
 	#moving in the world, by just walking. no need for an event
 	def world_move
 		@pc = session[:player_character]
 		PlayerCharacter.transaction do
 			@pc.lock!
 		
-			if params[:id] == 'north' && WorldMap.find(:first, :conditions => ['bigxpos = ? and bigypos = ?', @pc[:bigx], @pc[:bigy] -1])
+			if params[:id] == 'north' && WorldMap.exists?(:bigxpos => @pc[:bigx], :bigypos => @pc[:bigy] -1)
 				flash[:notice] = "Moved North"
 				@pc[:bigy] -= 1
-			elsif params[:id] == 'south' && WorldMap.find(:first, :conditions => ['bigxpos = ? and bigypos = ?', @pc[:bigx], @pc[:bigy] +1])
+			elsif params[:id] == 'south' && WorldMap.exists?(:bigxpos => @pc[:bigx], :bigypos => @pc[:bigy] +1)
 				flash[:notice] = "Moved South"
 				@pc[:bigy] += 1
-			elsif params[:id] == 'west' && WorldMap.find(:first, :conditions => ['bigxpos = ? and bigypos = ?', @pc[:bigx] - 1, @pc[:bigy]])
+			elsif params[:id] == 'west' && WorldMap.exists?(:bigxpos => @pc[:bigx] - 1, :bigypos => @pc[:bigy])
 				flash[:notice] = "Moved West"
 				@pc[:bigx] -= 1
-			elsif params[:id] == 'east' && WorldMap.find(:first, :conditions => ['bigxpos = ? and bigypos = ?', @pc[:bigx] + 1, @pc[:bigy]])
+			elsif params[:id] == 'east' && WorldMap.exists?(:bigxpos => @pc[:bigx] + 1,:bigypos => @pc[:bigy])
 				flash[:notice] = "Moved East"
 				@pc[:bigx] += 1
 			else
@@ -89,24 +64,21 @@ class GameController < ApplicationController
 			end
 			@pc.save!
 		end
-		redirect_to :action => 'world'
+		redirect_to :action => 'main'
 	end
 
 	#deal with the feature, set up the session feature_event chain
 	def feature
 		flash[:notice] = flash[:notice]
 
-		#yeah, temporary redirection hack.
 		if session[:player].nil?
-			redirect_to :action => 'demo'
+			render 'demo'
 		elsif session[:player_character].nil?
 			redirect_to :controller => 'character', :action => 'choose' #???
 		elsif session[:player_character].battle
-			redirect_to :controller => 'battle', :action => 'battle'
+			redirect_to :controller => 'game/battle', :action => 'battle'
 		else #check for current event
-			@pc = session[:player_character].reload
-			@pc.reload
-			p (@current_event = @pc.current_event)
+			@pc = session[:player_character]
 
 			if (@events = session[:ev_choices])
 				render :action => 'choose'
@@ -117,7 +89,6 @@ class GameController < ApplicationController
 					@current_event.destroy
 					redirect_to :action => 'main'
 				else #skipped or completed, get the next event for the feature
-					#figure out the next event, wether user chooses, is assigned, or there is nothing else
 					next_event_helper(@current_event)
 				end
 			elsif params[:id]
@@ -146,7 +117,12 @@ class GameController < ApplicationController
 			@current_event.update_attribute(:event_id, params[:id])
 			session[:ev_choices] = nil
 			exec_event(@current_event)
-		else #id is null, player didnt choose any event, or they attempted a hack
+		elsif params[:id]
+			flash[:notice] = "Invalid choice"
+			@events = session[:ev_choices]
+			@pc = session[:player_character]
+			render :action => 'choose'
+		else#id is null, player didnt choose any event, or they attempted a hack
 			@current_event.update_attribute(:completed, EVENT_SKIPPED)
 			session[:ev_choices] = nil
 			flash[:notice] = 'You slink on by without anything interesting happening.'
@@ -201,12 +177,12 @@ class GameController < ApplicationController
 		redirect_to :controller => '/game', :action => 'main'
 	end
 	
-	def completeA
-		@pc = session[:player_character]
-		session[:regicide] = false
-		create_accession_notice("The former king was slain by " + @pc.name + ". The realm is left without a king.",@pc.present_kingdom)
-		redirect_to :action => 'complete'
-	end
+	#def completeA
+	#	@pc = session[:player_character]
+	#	session[:regicide] = false
+	#	create_accession_notice("The former king was slain by " + @pc.name + ". The realm is left without a king.",@pc.present_kingdom)
+	#	redirect_to :action => 'complete'
+	#end
 	
 	def complete
 		@current_event = session[:player_character].current_event
@@ -239,7 +215,6 @@ class GameController < ApplicationController
 	
 protected
 	def exec_event(ce)
-		p ce.inspect
 		@direction, @completed, @message = ce.event.happens(session[:player_character])
 		ce.update_attribute(:completed, @completed)
 		
@@ -251,7 +226,6 @@ protected
 	end
 	
 	def next_event_helper(ce)
-		p "Next event helper"
 		@next, @it = ce.next_event
 		
 		if @next.nil?
@@ -261,6 +235,7 @@ protected
 		elsif @it.class == Array
 			ce.update_attributes(:priority => @next)
 			@events = @it
+			@pc = session[:player_character]
 			session[:ev_choices] = @events.dup #simplify whats a valid choice or not
 			render :action => 'choose'
 		else #must be an event

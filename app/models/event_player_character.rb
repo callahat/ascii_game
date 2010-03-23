@@ -13,7 +13,7 @@ class EventPlayerCharacter < EventLifeNeutral
 	end
 	
 	def as_option_text(pc=nil)
-		if player_chracter.health.wellness != SpecialCode.get_code('wellness','dead')
+		if player_character.health.wellness != SpecialCode.get_code('wellness','dead')
 			"Look at " + player_character.name + "'s corpse"
 		else
 			"Chat with " + player_character.name

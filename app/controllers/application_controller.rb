@@ -86,18 +86,7 @@ class ApplicationController < ActionController::Base
 			return true
 		end
 	end
-	
-	#check that player is still alive
-	#def pc_alive
-	#	if session[:player_character].health.wellness == SpecialCode.get_code('wellness','dead')
-	#		flash[:notice] = 'You can\'t do that since you are dead.'
-	#		redirect_to :controller => '/game', :action => 'complete'
-	#		return false
-	#	else
-	#		return true
-	#	end
-	#end
-	
+		
 	#Its ok to make all this stuff protected right?
 protected
 	def debuggery(crap)

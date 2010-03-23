@@ -1,17 +1,3 @@
-<p><b>LevelMap:</b></p>
-<table>
-<% while @y < @level.maxy %>
-<tr>
-<% while @x < @level.maxx %>
-  <td><% @feature = @level.level_maps.find(:all,:conditions => ['ypos = ? AND xpos = ?', @y, @x]).last.feature
-         if !@feature.nil? %>
-   <%= @pretag %><%=h @feature.image.image_text %></pre>
-         <% end %>
-  </td>
-<%     @x += 1 
-     end 
-     @x = 0 
-     @y += 1 %>
-</tr>
+<% if @where %>
+<%= draw_map(@where) %>
 <% end %>
-</table>

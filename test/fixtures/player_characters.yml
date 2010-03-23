@@ -34,5 +34,5 @@ test_pc_one:
   image_id: 0
   bigx: 0
   bigy: 0
-  in_world: 1
+  present_world: world_one
   image: pc_image

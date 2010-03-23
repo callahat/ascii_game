@@ -124,7 +124,7 @@ class Battle < ActiveRecord::Base
 	def victory
 		if self.enemies.size == 0
 			self.groups.destroy_all
-			if (@tax = (self.gold * self.owner.present_kingdom.tax_rate/100.0).to_i) > 0
+			if self.owner.present_kingdom && (@tax = (self.gold * self.owner.present_kingdom.tax_rate/100.0).to_i) > 0
 				Kingdom.pay_tax(@tax, self.owner.present_kingdom)
 				self.update_attribute(:gold, self.gold - @tax)
 			end
