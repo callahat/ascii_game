@@ -26,6 +26,7 @@ class ApplicationController < ActionController::Base
 			return false
 		else
 			#set the kingbit so player can manage their kingdoms if tehy are king
+			
 			is_king
 			return true
 		end
@@ -50,7 +51,7 @@ class ApplicationController < ActionController::Base
 		@pcs = PlayerCharacter.find(:all, :conditions => ['player_id = ?', session[:player][:id]])
 		for pc in @pcs
 			if Kingdom.find(:first, :conditions => ['player_character_id = ?', pc.id])
-				@kingbit = true
+				session[:kingbit] = true
 				return true
 			end
 		 end

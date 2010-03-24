@@ -14,32 +14,11 @@ class Management::EventsController < ApplicationController
 	public
 	def index
 		#design events
-		#@events = Event.find_by_sql(['select * from events where player_id = ? or kingdom_id = ? order by armed,event_type,name',session[:player][:id],session[:kingdom][:id]])
 		@events = Event.get_page(params[:page], session[:player][:id], session[:kingdom][:id])
 	end
 
 	def show
 		@event = Event.find(params[:id])
-
-		if @event.event_type == SpecialCode.get_code('event_type','creature')
-			@event_sub = @event.event_creature
-		elsif @event.event_type == SpecialCode.get_code('event_type','disease')
-			@event_sub = @event.event_disease
-		elsif @event.event_type == SpecialCode.get_code('event_type','item') 
-			@event_sub = @event.event_item
-		elsif @event.event_type == SpecialCode.get_code('event_type','move')
-			@event_sub = @event.event_move
-		#elsif @event.event_type == SpecialCode.get_code('event_type','npc')
-		#	@event_sub = @event.event_npc
-		elsif @event.event_type == SpecialCode.get_code('event_type','pc') 
-			@event_sub = @event.event_player_character
-		elsif @event.event_type == SpecialCode.get_code('event_type','quest')
-			@event_sub = @event.event_quest
-		elsif @event.event_type == SpecialCode.get_code('event_type','stat')
-			@event_sub = @event.event_stat
-		else
-			flash[:notice] = 'Invalid type! Quit trying to hack it!'
-		end
 	end
 
 	def new
@@ -171,37 +150,10 @@ class Management::EventsController < ApplicationController
 
 	def destroy
 		@event = Event.find(params[:id])
-
 		
 		if !verify_event_not_in_use || !verify_event_owner
 			redirect_to :action => 'index'
 			return
-		end
-
-		#logic to find and destroy all sub events
-		if @event.event_creature
-			@event.event_creature.destroy
-		end
-		if @event.event_disease
-			@event.event_disease.destroy
-		end
-		if @event.event_item
-			@event.event_item.destroy
-		end
-		if @event.event_move
-			@event.event_move.destroy
-		end
-		if @event.event_npc
-			@event.event_npc.destroy
-		end
-		if @event.event_player_character
-			@event.event_player_character.destroy
-		end
-		if @event.event_quest
-			@event.event_quest.destroy
-		end
-		if @event.event_stat
-			@event.event_stat.destroy
 		end
 
 		if @event.feature_events.size > 0
@@ -221,42 +173,6 @@ class Management::EventsController < ApplicationController
 		if !verify_event_not_in_use || !verify_event_owner
 			redirect_to :action => 'index'
 			return
-		end
-
-		#eliminate the extra sub events created if the event type was changed
-		#during editing.
-		#logic to find and destroy all lonely sub events
-		if @event.event_creature &&
-			 @event.event_type != SpecialCode.get_code('event_type','creature')
-			@event.event_creature.destroy
-		end
-		if @event.event_disease &&
-			 @event.event_type != SpecialCode.get_code('event_type','disease')
-			@event.event_disease.destroy
-		end
-		if @event.event_item &&
-			 @event.event_type != SpecialCode.get_code('event_type','item') 
-			@event.event_item.destroy
-		end
-		if @event.event_move &&
-			 @event.event_type != SpecialCode.get_code('event_type','move')
-			@event.event_move.destroy
-		end
-		if @event.event_npc &&
-			 @event.event_type != SpecialCode.get_code('event_type','npc')
-			@event.event_npc.destroy
-		end
-		if @event.event_player_character &&
-			 @event.event_type != SpecialCode.get_code('event_type','pc') 
-			@event.event_player_character.destroy
-		end
-		if @event.event_quest &&
-			 @event.event_type != SpecialCode.get_code('event_type','quest')
-			@event.event_quest.destroy
-		end
-		if @event.event_stat &&
-			 @event.event_type != SpecialCode.get_code('event_type','stat')
-			@event.event_stat.destroy
 		end
 
 		if @event.update_attribute(:armed, true)
@@ -284,8 +200,8 @@ class Management::EventsController < ApplicationController
 	
 protected
 	def verify_valid_event_sub_params
-		if @event.event_type == SpecialCode.get_code('event_type','creature')
-			if Creature.find(:first,:conditions => ['armed = true AND (public = true or kingdom_id = ? or player_id	= ?) AND id = ?', session[:kingdom][:id], session[:player][:id],params[:event_sub][:creature_id]])
+		if @event.class == EventCreature
+			if Creature.find(:first,:conditions => ['armed = true AND (public = true or kingdom_id = ? or player_id	= ?) AND id = ?', session[:kingdom][:id], session[:player][:id],params[:event][:thing_id]])
 				return true
 			else
 				flash[:notice] = "You can't use that creature"
@@ -318,21 +234,21 @@ protected
 
 	def get_event_types
 		#set up the event types king can edit
-		#@event_types = SpecialCode.find_all(:spec_col_type => 'event_type')
-		@event_types = []
 		if session[:player].admin 
 			#only admins have access to certain things. Regular kings have a limited subset of things they can edit
-			@event_types << ['creature', SpecialCode.get_code('event_type', 'creature')]
-			@event_types << ['disease', SpecialCode.get_code('event_type', 'disease')]
-			@event_types << ['item', SpecialCode.get_code('event_type', 'item')]
-			@event_types << ['move', SpecialCode.get_code('event_type', 'move')]
-			@event_types << ['quest', SpecialCode.get_code('event_type', 'quest')]
-			@event_types << ['stat', SpecialCode.get_code('event_type', 'stat')]
+			@event_types = [ ['creature', EventCreature ],
+											 ['disease', EventDisease ],
+											 ['item', EventItem ],
+											 ['move', EventMoveLocal],
+											 ['move', EventMoveRelative],
+											 ['quest', EventQuest],
+											 ['stat', EventStat] ]
 		else
-			@event_types << ['creature', SpecialCode.get_code('event_type', 'creature')]
-			@event_types << ['item', SpecialCode.get_code('event_type', 'item')]
-			@event_types << ['move', SpecialCode.get_code('event_type', 'move')]
-			@event_types << ['quest', SpecialCode.get_code('event_type', 'quest')]
+			@event_types = [ ['creature', EventCreature ],
+											 ['item', EventItem ],
+											 ['move', EventMoveLocal],
+											 ['move', EventMoveRelative],
+											 ['quest', EventQuest] ]
 		end
 	end
 	
@@ -363,16 +279,12 @@ protected
 		else
 			flash[:notice] = 'Invalid type! Quit trying to hack it!'
 			@cost = 0
-		end	
+		end
 	end
 	
 	def pop_sub_event
 		#Populate the sub_event and whatever variables that particular sub event needs for its form.
 		if @event.event_type == SpecialCode.get_code('event_type','creature')
-			#@creatures = Creature.find_all(:kingdom_id => session[:kingdom][:id])
-			#@creatures << Creature.find_all(:public => 'true')
-			#@creatures.flatten!.uniq!
-			#@creatures = Creature.find_by_sql(['select * from creatures where (kingdom_id = ? or public = true) and armed = true and number_alive != 0 order by name',session[:kingdom][:id]])
 			@list = session[:kingdom].creature_pref_list
 			
 			@creatures = []

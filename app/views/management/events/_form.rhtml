@@ -8,7 +8,6 @@
 <%= text_field 'event', 'text'  %></p>
 
 <% p @event_rep_types %>
-<% p @event_types %>
 
 <p><label for="event_event_rep_type">Event rep type</label><br/>
 <%= select('event', 'event_rep_type', @event_rep_types)  %></p>
@@ -17,7 +16,7 @@
 <%= text_field 'event', 'event_reps'  %></p>
 
 <p><label for="event_event_type">Event type</label><br/>
-<%= select('event', 'event_type', @event_types)  %></p>
+<%= select('event', 'kind', @event_types)  %></p>
 
 <!--[eoform:event]-->
 

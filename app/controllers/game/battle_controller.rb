@@ -7,7 +7,7 @@ class Game::BattleController < ApplicationController
 	verify :method => :post, :only => [ :do_heal, :do_choose, :do_train ],				 :redirect_to => { :action => :feature }
 
 	def fight_pc
-		@enemy_pc = session[:current_event].player_character
+		@enemy_pc = @pc.current_event.player_character
 		@pc = session[:player_character]
 		result, msg = Battle.new_pc_battle(@pc, @enemy_pc)
 
@@ -16,7 +16,7 @@ class Game::BattleController < ApplicationController
 
 	def fight_npc
 		@pc = session[:player_character]
-		@npc = session[:current_event].npc
+		@npc = @pc.current_event.npc
 		result, msg = Battle.new_npc_battle(@pc, @npc)
 
 		pre_battle_director(result, msg)
@@ -40,12 +40,12 @@ class Game::BattleController < ApplicationController
 			session[:keep_fighting] = true
 			@pc.present_kingdom.change_king(nil)
 			redirect_to :action => 'regicide'
-		elsif @batgld = @battle.victory
-			@message = "The enemy host has been defeated!<br/>Found " + @batgld.to_s + " gold."
+		elsif @booty = @battle.victory
+			@message = "The enemy host has been defeated!<br/>Found " + @booty[:gold].to_s + " gold."
 			if @pc.in_kingdom
-				@message += " Taxman takes " + (@batgld * (@pc.present_kingdom.tax_rate / 100.0)).to_i.to_s + " of it."
+				@message += " Taxman takes " + @booty[:tax].to_s + " of it."
 			end
-			session[:completed] = true
+			@pc.current_event.update_attribute(:completed, EVENT_COMPLETED) if @pc.current_event
 			@battle.clear_battle
 			render 'game/complete'
 		elsif @pc.health.HP <= 0
@@ -94,7 +94,7 @@ class Game::BattleController < ApplicationController
 		@pc = session[:player_character]
 
 		if @battle.run_away(75)
-			@pc.current_event.update_attribute(:completed, EVENT_FAILED)
+			@pc.current_event.update_attribute(:completed, EVENT_FAILED) if @pc.current_event
 			@message = 'You ran away.'
 			render 'game/complete'
 		else

@@ -5,52 +5,52 @@
 <p><b>player: </b><%= @event.player.handle %></p>
 <p><b>event rep type: </b><%= SpecialCode.get_text('event_rep_type',@event.event_rep_type) %></p>
 <p><b>event reps: </b><%= @event.event_reps %></p>
-<p><b>event type: </b><%= SpecialCode.get_text('event_type',@event.event_type) %></p>
+<p><b>event type: </b><%= @event.kind %></p>
 
 <p><b>Consequences:</b></p>
 
-<% if @event.event_type == SpecialCode.get_code('event_type','creature') && @event.event_creature %>
-<p><b>creature: </b><%= @event_sub.creature.name %></p>
-<p><b>low: </b><%= @event_sub.low %></p>
-<p><b>high: </b><%= @event_sub.high %></p>
+<% if @event.class == EventCreature && @event.creature %>
+<p><b>creature: </b><%= @event.creature.name %></p>
+<p><b>low: </b><%= @event.flex.split(";")[0] %></p>
+<p><b>high: </b><%= @event.flex.split(";")[1] %></p>
 
-<% elsif @event.event_type == SpecialCode.get_code('event_type','disease') %>
-<p><b>disease: </b><%= @event_sub.disease.name %></p>
-<p><b>cures?: </b><%= @event_sub.cures? %></p>
+<% elsif @event.class == EventDisease %>
+<p><b>disease: </b><%= @event.disease.name %></p>
+<p><b>cures?: </b><%= (@event.flex == 1 ? "Yes" : "No") %></p>
 
-<% elsif @event.event_type == SpecialCode.get_code('event_type','item') %>
-<p><b>item: </b><%= @event_sub.item.name %></p>
-<p><b>number: </b><%= @event_sub.number %></p>
+<% elsif @event.class == EventItem %>
+<p><b>item: </b><%= @event.item.name %></p>
+<p><b>number: </b><%= @event.flex %></p>
 
-<% elsif @event.event_type == SpecialCode.get_code('event_type','move') %>
-<p><b>move type: </b><%= SpecialCode.get_text('move_type',@event_sub.move_type) %></p>
+<% elsif @event.class.to_s =~ /EventMove(.*)/ %>
+<p><b>move type: </b><%= $1 %></p>
 
-<% elsif @event.event_type == SpecialCode.get_code('event_type','npc') %>
-<p><b>npc: </b><%= @event_sub.npc.name %></p>
+<% elsif @event.class == EventNpc %>
+<p><b>npc: </b><%= @event.npc.name %></p>
 
-<% elsif @event.event_type == SpecialCode.get_code('event_type','pc') %>
-<p><b>player character: </b><%= @event_sub.player_character.name %></p>
+<% elsif @event.class == EventPlayerCharacter %>
+<p><b>player character: </b><%= @event.player_character.name %></p>
 
-<% elsif @event.event_type == SpecialCode.get_code('event_type','quest') %>
-<p><b>quest: </b><%= @event_sub.quest.name %></p>
-<p><b>text: </b><%= @event_sub.text %></p>
+<% elsif @event.class == EventQuest %>
+<p><b>quest: </b><%= @event.quest.name %></p>
+<p><b>text: </b><%= @event.text %></p>
 
-<% elsif @event.event_type == SpecialCode.get_code('event_type','stat') %>
-<p><b>text: </b><%= @event_sub.text %></p>
-<p><b>HP: </b><%= @event_sub.health.HP %></p>
-<p><b>MP: </b><%= @event_sub.health.MP %></p>
-<p><b>str: </b><%= @event_sub.stat.str %></p>
-<p><b>dex: </b><%= @event_sub.stat.dex %></p>
-<p><b>int: </b><%= @event_sub.stat.int %></p>
-<p><b>mag: </b><%= @event_sub.stat.mag %></p>
-<p><b>con: </b><%= @event_sub.stat.con %></p>
-<p><b>dam: </b><%= @event_sub.stat.dam %></p>
-<p><b>dfn: </b><%= @event_sub.stat.dfn %></p>
-<p><b>gold: </b><%= @event_sub.gold %></p>
-<p><b>experience: </b><%= @event_sub.experience %></p>
+<% elsif @event.class == EventStat %>
+<p><b>text: </b><%= @event.text %></p>
+<p><b>HP: </b><%= @event.health.HP %></p>
+<p><b>MP: </b><%= @event.health.MP %></p>
+<p><b>str: </b><%= @event.stat.str %></p>
+<p><b>dex: </b><%= @event.stat.dex %></p>
+<p><b>int: </b><%= @event.stat.int %></p>
+<p><b>mag: </b><%= @event.stat.mag %></p>
+<p><b>con: </b><%= @event.stat.con %></p>
+<p><b>dam: </b><%= @event.stat.dam %></p>
+<p><b>dfn: </b><%= @event.stat.dfn %></p>
+<p><b>gold: </b><%= @event.flex.split(";")[0] %></p>
+<p><b>experience: </b><%= @event.flex.split(";")[1] %></p>
 
 <% else %>
-<p>Nothing to set; Something isn't working for event type #: <%= @event.event_type %></p>
+<p>Nothing to set; Something isn't working for event type #: <%= @event.class %></p>
 
 <% end %>
 

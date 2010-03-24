@@ -75,7 +75,7 @@ class GameController < ApplicationController
 			render 'demo'
 		elsif session[:player_character].nil?
 			redirect_to :controller => 'character', :action => 'choose' #???
-		elsif session[:player_character].battle
+		elsif session[:player_character].reload && session[:player_character].battle
 			redirect_to :controller => 'game/battle', :action => 'battle'
 		else #check for current event
 			@pc = session[:player_character]
@@ -201,9 +201,10 @@ class GameController < ApplicationController
 	end
 	
 	def do_spawn
-		@wm = session[:last_action]
+		@pc = session[:player_character]
+		@wm = @pc.current_event.location
 		
-		@kingdom, @msg = Kingdom.spawn(session[:player_character], @wm, params[:kingdom][:name])
+		@kingdom, @msg = Kingdom.spawn_new(session[:player_character], params[:kingdom][:name], @wm)
 		if @kingdom
 			render :action => 'spawn'
 		else
@@ -215,10 +216,12 @@ class GameController < ApplicationController
 	
 protected
 	def exec_event(ce)
+	p "executing: " + ce.event.name
 		@direction, @completed, @message = ce.event.happens(session[:player_character])
 		ce.update_attribute(:completed, @completed)
 		
 		if @direction
+			flash[:notice] = @message
 			redirect_to @direction
 		else
 			render 'game/complete'

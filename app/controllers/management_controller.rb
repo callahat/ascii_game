@@ -93,7 +93,7 @@ class ManagementController < ApplicationController
 				flash[:notice] = 'You have relinquished the crown of ' + @kingdom.name
 			
 				#New kingdom notice
-				create_accession_notice(@message, @kingdom)
+				KingdomNotice.create_accession_notice(@message, @kingdom.id)
 			end
 			
 			session[:kingdom] = nil

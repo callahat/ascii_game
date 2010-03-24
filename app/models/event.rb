@@ -57,9 +57,9 @@ class Event < ActiveRecord::Base
 
 	def self.get_page(page, pcid = nil, kid = nil)
 		if pcid.nil? && kid.nil?
-			paginate(:page => page, :order => 'armed,event_type,name' )
+			paginate(:page => page, :order => 'armed,kind,name' )
 		else
-			paginate(:page => page, :conditions => ['player_id = ? or kingdom_id = ?', pcid, kid], :order => 'armed,event_type,name' )
+			paginate(:page => page, :conditions => ['player_id = ? or kingdom_id = ?', pcid, kid], :order => 'armed,kind,name' )
 		end
 	end
 end

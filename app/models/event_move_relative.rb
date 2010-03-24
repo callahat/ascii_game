@@ -21,6 +21,6 @@ class EventMoveRelative < EventLifeNeutral
 	end
 	
 	def as_option_text(pc=nil)
-		"Go to level " + level.level.to_s
+		"Change level by " + flex.to_s
 	end
 end
