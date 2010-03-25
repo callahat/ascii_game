@@ -27,9 +27,9 @@ class Kingdom < ActiveRecord::Base
 	has_many :kingdom_empty_shops
 	has_many :kingdom_notices, :order => '"datetime DESC"'
 	
-	has_many :creature_pref_list, :include => 'creature', :conditions => ['pref_list_type = ?', SpecialCode.get_code('pref_list_type','creatures')], :order => 'creatures.public,creatures.name', :class_name => 'PrefList'
-	has_many :event_pref_list, :include => 'event', :conditions => ['pref_list_type = ?', SpecialCode.get_code('pref_list_type','events')], :order => 'events.name', :class_name => 'PrefList'
-	has_many :feature_pref_list, :include => 'feature', :conditions => ['pref_list_type = ?', SpecialCode.get_code('pref_list_type','features')], :order => 'features.public,features.name', :class_name => 'PrefList'
+	has_many :pref_list_creatures, :include => 'creature', :order => 'creatures.public,creatures.name'
+	has_many :pref_list_events, :include => 'event',  :order => 'events.name'
+	has_many :pref_list_features, :include => 'feature', :order => 'features.public,features.name'
 	
 	has_many :pref_lists
 	

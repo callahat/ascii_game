@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100319030511) do
+ActiveRecord::Schema.define(:version => 20100325003222) do
 
   create_table "attack_spells", :force => true do |t|
     t.string  "name",         :limit => 32,  :default => "", :null => false
@@ -661,13 +661,14 @@ ActiveRecord::Schema.define(:version => 20100319030511) do
   add_index "players", ["state"], :name => "state"
 
   create_table "pref_lists", :force => true do |t|
-    t.integer "kingdom_id",     :null => false
-    t.integer "pref_list_type", :null => false
-    t.integer "thing_id",       :null => false
+    t.integer "kingdom_id",               :null => false
+    t.integer "thing_id",                 :null => false
+    t.string  "kind",       :limit => 20
   end
 
-  add_index "pref_lists", ["kingdom_id", "pref_list_type"], :name => "kingdom_id_pref_list_type"
+  add_index "pref_lists", ["kind"], :name => "kind"
   add_index "pref_lists", ["kingdom_id"], :name => "kingdom_id"
+  add_index "pref_lists", ["kingdom_id"], :name => "kingdom_id_pref_list_type"
   add_index "pref_lists", ["thing_id"], :name => "thing_id"
 
   create_table "quest_reqs", :force => true do |t|

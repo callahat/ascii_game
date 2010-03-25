@@ -1,9 +1,8 @@
 class PrefList < ActiveRecord::Base
+	self.inheritance_column = 'kind'
+
 	belongs_to :kingdom
-	belongs_to :event, :foreign_key => 'thing_id', :class_name => 'Event'
-	belongs_to :creature, :foreign_key => 'thing_id', :class_name => 'Creature'
-	belongs_to :feature, :foreign_key => 'thing_id', :class_name => 'Feature'
-	
+
 	def self.add(where,what,thing)
 		@pref_list = self.new
 		@pref_list.kingdom_id = where
@@ -11,19 +10,7 @@ class PrefList < ActiveRecord::Base
 		@pref_list.thing_id = thing
 		return @pref_list.save
 	end
-	
-	def thing
-		case self.pref_list_type
-			when SpecialCode.get_code('pref_list_type','creatures')
-				self.creature
-			when SpecialCode.get_code('pref_list_type','events')
-				self.event
-			when SpecialCode.get_code('pref_list_type','features')
-				self.feature
-		end
-			
-	end
-	
+
 	#Pagination related stuff
 	def self.per_page
 		30

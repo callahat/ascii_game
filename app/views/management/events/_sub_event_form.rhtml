@@ -2,8 +2,6 @@
 
 <!--[form:event_sub]-->
 
-
-
 <% if @event.class == EventCreature %>
   <p><label for="event_thing_id">Creature</label><br/>
   <%= collection_select('event', 'thing_id', @creatures, 'id', 'name') %></p>
@@ -22,17 +20,21 @@
   <p><label for="event_thing_id">Item</label><br/>
   <%= collection_select('event', 'thing_id', @items, 'id', 'name') %></p>
   <p><label for="event_flex">Number</label><br/>
-  <%= text_field 'event', 'flex'  %></p>
+  <%= text_field 'event', 'flex' %></p>
   
-<% elsif @event.class.to_s =~ /EventMove/ %>
+<% elsif @event.class == EventMoveRelative %>
  <% if @event.class == EventMoveRelative %>
   <p><label for="event_flex">Move</label><br/>
   <%= text_field 'event', 'flex' %></p>
- <% else %>
+
+<% elsif @event.class == EventMoveLocal %>
   <p><label for="event_thing_id">Move</label><br/>
   <%= collection_select('event', 'thing_id', @levels, 'id', 'level') %></p>
- <% end %>
-  
+
+<% elsif @event.class == EventMoveWorld %>
+  <p><label for="event_thing_id">Move</label><br/>
+  <%= collection_select('event', 'thing_id', @worlds, 'id', 'level') %></p>
+
 <% elsif @event.class == EventNpc %>
   <p><label for="event_thing_id">NPC</label><br/>
   <%= collection_select('event', 'thing_id', @npcs, 'id', 'name') %></p>
@@ -73,6 +75,5 @@
 <% else %>
   <p>Nothing to set; Something isn't working for event type #: <%= @event.kind %></p>
 <% end %>
-
 
 <!--[eoform:event]-->

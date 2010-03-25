@@ -21,6 +21,38 @@ class Event < ActiveRecord::Base
 		end
 	end
 
+	def price
+		0
+	end
+	
+	def self.get_event_types(admin)
+		if admin
+			return [ ['creature', EventCreature ],
+							 ['disease', EventDisease ],
+							 ['item', EventItem ],
+							 ['move', EventMoveLocal],
+							 ['move', EventMoveRelative],
+							 ['quest', EventQuest],
+							 ['stat', EventStat] ]
+		else
+			return [ ['creature', EventCreature ],
+							 ['item', EventItem ],
+							 ['move', EventMoveLocal],
+							 ['move', EventMoveRelative],
+							 ['quest', EventQuest] ]
+		end
+	end
+	
+	def total_cost
+		if self.event_rep_type == SpecialCode.get_code('event_rep_type','unlimited') || self.event_reps > 9000
+			500 + self.price * 9000
+		elsif self.event_rep_type == SpecialCode.get_code('event_rep_type','limited') 
+			500 + self.price * self.event_reps * 2
+		else
+			500 + self.price * self.event_reps * 5
+		end
+	end
+
 	def self.sys_gen!(n)
 		@event = sys_gen(n)
 		@event.save!

@@ -3,6 +3,10 @@ class EventCreature < Event
 
 	validates_presence_of :thing_id,:flex
 	
+	def price
+		(creature.gold + (creature.experience / (creature.number_alive + 5))) * (high - low - 1)
+	end
+	
 	def make_happen(who)
 		low, high = flex.split(";")
 		result, msg = Battle.new_creature_battle(who, self.creature, low.to_i, high.to_i, who.present_kingdom)

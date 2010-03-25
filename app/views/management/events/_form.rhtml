@@ -1,13 +1,16 @@
-<%= error_messages_for 'event' %>
+<%= error_messages_for 'event','stat','health' %>
 
 <!--[form:event]-->
+<% form_tag :action => controller.action_name, :event => @event do %>
+<p><label for="event_event_type">Event type</label><br/>
+<%= select('event', 'kind', @event_types, {}, {:onchange => 'submit();' } )  %></p>
+<% end %>
+
 <p><label for="event_name">Event name</label><br/>
 <%= text_field 'event', 'name'  %></p>
 
 <p><label for="event_name">Event text</label><br/>
 <%= text_field 'event', 'text'  %></p>
-
-<% p @event_rep_types %>
 
 <p><label for="event_event_rep_type">Event rep type</label><br/>
 <%= select('event', 'event_rep_type', @event_rep_types)  %></p>
@@ -15,8 +18,79 @@
 <p><label for="event_event_reps">Event reps</label><br/>
 <%= text_field 'event', 'event_reps'  %></p>
 
-<p><label for="event_event_type">Event type</label><br/>
-<%= select('event', 'kind', @event_types)  %></p>
+<div id="event_detail">
+<% if @event.class == EventCreature %>
+  <p><label for="event_thing_id">Creature</label><br/>
+  <%= collection_select('event', 'thing_id', @creatures, 'id', 'name') %></p>
+  <p><label for="event_flex[0]">Least encountered</label><br/>
+  <%= text_field_tag 'flex[0]' %></p>
+  <p><label for="event_flex[1]">Most encountered</label><br/>
+  <%= text_field_tag 'flex[1]' %></p>
+  
+<% elsif @event.class == EventDisease %>
+  <p><label for="event_thing_id">Disease</label><br/>
+  <%= collection_select('event', 'thing_id', @diseases, 'id', 'name') %></p>
+  <p><label for="event_flex">Cures?</label><br/>
+  <%= check_box 'event','flex' %></p>
+  
+<% elsif @event.class == EventItem %>
+  <p><label for="event_thing_id">Item</label><br/>
+  <%= collection_select('event', 'thing_id', @items, 'id', 'name') %></p>
+  <p><label for="event_flex">Number</label><br/>
+  <%= text_field 'event', 'flex' %></p>
+  
+<% elsif @event.class == EventMoveRelative %>
+  <p><label for="event_flex">Move</label><br/>
+  <%= text_field 'event', 'flex' %></p>
+
+<% elsif @event.class == EventMoveLocal %>
+  <p><label for="event_thing_id">Move</label><br/>
+  <%= collection_select('event', 'thing_id', @levels, 'id', 'level') %></p>
+
+<% elsif @event.class == EventMoveWorld %>
+  <p><label for="event_thing_id">Move</label><br/>
+  <%= collection_select('event', 'thing_id', @worlds, 'id', 'level') %></p>
+
+<% elsif @event.class == EventNpc %>
+  <p><label for="event_thing_id">NPC</label><br/>
+  <%= collection_select('event', 'thing_id', @npcs, 'id', 'name') %></p>
+  
+<% elsif @event.class == EventPlayerCharacter %>
+  <p><label for="event_thing_id">Player Character</label><br/>
+  <%= collection_select('event', 'thing_id', @pcs, 'id', 'name') %></p>
+  
+<% elsif @event.class == EventQuest %>
+  <p><label for="event_text">Text</label><br/>
+  <%= text_area 'event', 'text', :rows => '10', :wrap => 'hard'  %></p>
+  
+<% elsif @event.class == EventStat %>
+  <p><label for="event_text">Text</label><br/>
+  <%= text_area 'event', 'text', :rows => '10', :wrap => 'hard' %></p>
+  <p><label for="health_hp">HP</label><br/>
+  <%= text_field 'health', 'HP'  %></p>
+  <p><label for="health_mp">MP</label><br/>
+  <%= text_field 'health', 'MP'  %></p>
+  <p><label for="stat_str">Str</label><br/>
+  <%= text_field 'stat', 'str'  %></p>
+  <p><label for="stat_dex">Dex</label><br/>
+  <%= text_field 'stat', 'dex'  %></p>
+  <p><label for="stat_int">Int</label><br/>
+  <%= text_field 'stat', 'int'  %></p>
+  <p><label for="stat_mag">Mag</label><br/>
+  <%= text_field 'stat', 'mag'  %></p>
+  <p><label for="stat_con">Con</label><br/>
+  <%= text_field 'stat', 'con'  %></p>
+  <p><label for="stat_dam">Dam</label><br/>
+  <%= text_field 'stat', 'dam'  %></p>
+  <p><label for="stat_def">Dfn</label><br/>
+  <%= text_field 'stat', 'dfn'  %></p>
+  <p><label for="event_flex[0]">Gold</label><br/>
+  <%= text_field_tag 'event', 'flex[0]'  %></p>
+  <p><label for="event_flex[1]">Experience</label><br/>
+  <%= text_field_tag 'event', 'flex[1]'  %></p>
+<% else %>
+  <p>Please choose an event type</p>
+<% end %>
+</div>
 
 <!--[eoform:event]-->
-

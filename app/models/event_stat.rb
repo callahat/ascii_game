@@ -4,6 +4,10 @@ class EventStat < Event
 
 	validates_presence_of :flex
 	
+	def price
+		stat.abs_sum_points + health.HP.abs + health.MP.abs
+	end
+	
 	def make_happen(who)
 		gold,exp = flex.split(";").collect{|c| c.to_i}
 		PlayerCharacter.transaction do
