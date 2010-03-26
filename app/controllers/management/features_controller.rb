@@ -210,7 +210,7 @@ class Management::FeaturesController < ApplicationController
 	end
 	
 	def pref_lists
-		session[:pref_list_type] = :feature
+		session[:pref_list_type] = PrefListFeature
 		
 		redirect_to :controller => '/management/pref_list'
 	end

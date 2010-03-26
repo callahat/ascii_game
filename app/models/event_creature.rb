@@ -22,10 +22,10 @@ class EventCreature < Event
 		if !low.nil? && !high.nil? && (low > high)
 			errors.add(" ", " low must be less than or equal to high.")
 		end
-		if low < 1 || low > 500
+		if low.nil? || low < 1 || low > 500
 			errors.add(" ", " low must be between 1 and 500.")
 		end
-		if high < 1 || high > 500
+		if high.nil? || high < 1 || high > 500
 			errors.add(" ", " high must be between 1 and 500.")
 		end
 	end

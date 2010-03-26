@@ -5,7 +5,7 @@ class Management::EventsController < ApplicationController
 	layout 'main'
 
 	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-	verify :method => :post, :only => [ :destroy, :create, :update, :update_sub_event, :arm_event ],				 :redirect_to => { :action => :index }
+	verify :method => :post, :only => [ :destroy, :create, :update, :arm_event ], :redirect_to => { :action => :index }
 
 
 	#**********************************************************************
@@ -13,45 +13,41 @@ class Management::EventsController < ApplicationController
 	#**********************************************************************
 	public
 	def index
-		#design events
 		@events = Event.get_page(params[:page], session[:player][:id], session[:kingdom][:id])
 	end
 
 	def show
 		@event = Event.find(params[:id])
+		p @event
 	end
 
 	def new
 		@event = Event.new(params[:event])
 		@event_types = Event.get_event_types(session[:player].admin )
+		@event.kind = params[:event][:kind] if params[:event]  #make sure its a type the user can use
 		@event_rep_types = SPEC_CODET['event_rep_type'].to_a
 		
 		pop_sub_event
 	end
 
 	def create
-		@event = Event.new(params[:event])
+		new
+		
 		@event.player_id = session[:player][:id]
 		@event.kingdom_id = session[:kingdom][:id]
+		p @event
+		if @event.kind == "EventCreature" || @event.kind == "EventStat"
+			@event.flex = params[:flex][0].to_s + ";" + params[:flex][0].to_s
+		end
 		
 		@event.cost = 500
-		
-		@event_types = Event.get_event_types(session[:player].admin )
-		@event_rep_types = SPEC_CODET['event_rep_type'].to_a
 
-		pop_sub_event
-
-		if verify_event_not_in_use & verify_event_owner & verify_valid_event_params & @event.save!
+		if verify_event_not_in_use & verify_event_owner & verify_valid_event_params & 
+				@event.save
 			@extras=true
 			if @stat || @health
-				#if @stat.valid? & @health.valid? || @extras = false
 				@stat.create(params[:stat].merge(:owner_id => @event.id)) &
 					@health.create(params[:health].merge(:owner_id => @event.id)) || @extras = false
-				#	@stat.owner_id = @event.id
-				#	@health.owner_id = @event.id
-				#	@stat.save!
-				#	@health.save!
-				#end
 			end
 			
 			if @extras
@@ -66,23 +62,26 @@ class Management::EventsController < ApplicationController
 
 	def edit
 		@event = Event.find(params[:id])
-		@event_types = Event.get_event_types(session[:player].admin )
 		@event_rep_types = SPEC_CODET['event_rep_type'].to_a
-		
 		pop_sub_event
 	end
 
 	def update
-		@event = Event.find(params[:id])
-		@event_types = Event.get_event_types(session[:player].admin )
-		@event_rep_types = SPEC_CODET['event_rep_type'].to_a
+		edit
 		
-		pop_sub_event
-
-		if verify_event_not_in_use & verify_event_owner & verify_valid_event_params & @event.save
+		if @event.kind == "EventCreature" || @event.kind == "EventStat"
+			@flex = params[:flex][0].to_s + ";" + params[:flex][0].to_s
+		end
+		
+		p @event
+		p @flex
+		
+		if verify_event_not_in_use & verify_event_owner & verify_valid_event_params &
+				@event.update_attributes(params[:event].merge(:flex => @flex))
 			@extras=true
 			if @stat || @health
-				@stat.update_attributes(params[:stat]) & @health.update_attributes(params[:health]) || @extras = false
+				@stat.update_attributes(params[:stat].merge(:owner_id => @event.id)) & 
+					@health.update_attributes(params[:health].merge(:owner_id => @event.id)) || @extras = false
 			end
 			
 			if @extras
@@ -139,7 +138,7 @@ class Management::EventsController < ApplicationController
 	end
 
 	def pref_lists
-		session[:pref_list_type] = :event
+		session[:pref_list_type] = PrefListEvent
 		
 		redirect_to :controller => '/management/pref_list'
 	end
@@ -202,9 +201,9 @@ protected
 	def pop_sub_event
 		#Populate the sub_event and whatever variables that particular sub event needs for its form.
 		@kingdom = session[:kingdom]
-		case @event.class.to_s
+		case @event.kind
 			when "EventCreature"
-				@creatures = @kingdom.pref_list_creatures.collect{|plc| plc.creature}
+				@creatures = @kingdom.pref_list_creatures.reload.collect{|plc| plc.creature}
 			when "EventDisease"
 				@diseases = Disease.find(:all)
 			when "EventItem"

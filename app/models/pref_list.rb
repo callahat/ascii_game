@@ -3,12 +3,12 @@ class PrefList < ActiveRecord::Base
 
 	belongs_to :kingdom
 
-	def self.add(where,what,thing)
-		@pref_list = self.new
-		@pref_list.kingdom_id = where
-		@pref_list.pref_list_type = SpecialCode.get_code('pref_list_type',what)
-		@pref_list.thing_id = thing
-		return @pref_list.save
+	def self.add(where,thing)
+		self.create(:kingdom_id => where, :thing_id => thing) unless self.exists?(:kingdom_id => where, :thing_id => thing)
+	end
+	
+	def self.drop(where, thing)
+		self.destroy_all(:kingdom_id => where, :thing_id => thing)
 	end
 
 	#Pagination related stuff

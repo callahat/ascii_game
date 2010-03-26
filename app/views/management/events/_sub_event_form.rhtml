@@ -1,7 +1,6 @@
-<%= error_messages_for 'event','stat','health' %>
-
 <!--[form:event_sub]-->
 
+<div id="event_detail">
 <% if @event.class == EventCreature %>
   <p><label for="event_thing_id">Creature</label><br/>
   <%= collection_select('event', 'thing_id', @creatures, 'id', 'name') %></p>
@@ -23,7 +22,6 @@
   <%= text_field 'event', 'flex' %></p>
   
 <% elsif @event.class == EventMoveRelative %>
- <% if @event.class == EventMoveRelative %>
   <p><label for="event_flex">Move</label><br/>
   <%= text_field 'event', 'flex' %></p>
 
@@ -71,9 +69,10 @@
   <p><label for="event_flex[0]">Gold</label><br/>
   <%= text_field_tag 'event', 'flex[0]'  %></p>
   <p><label for="event_flex[1]">Experience</label><br/>
-  <%= text_field 'event', 'flex[1]'  %></p>
+  <%= text_field_tag 'event', 'flex[1]'  %></p>
 <% else %>
-  <p>Nothing to set; Something isn't working for event type #: <%= @event.kind %></p>
+  <p>Please choose an event type</p>
 <% end %>
+</div>
 
 <!--[eoform:event]-->

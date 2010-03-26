@@ -14,7 +14,7 @@ class Management::CreaturesController < ApplicationController
 	#**********************************************************************
 	def index
 		#design creatures
-	@creatures = Creature.get_page(params[:page], session[:player][:id], session[:kingdom][:id])
+		@creatures = Creature.get_page(params[:page], session[:player][:id], session[:kingdom][:id])
 	end
 
 	def new
@@ -134,8 +134,7 @@ class Management::CreaturesController < ApplicationController
 	end
 
 	def pref_lists
-		session[:pref_list_type] = :creature
-		
+		session[:pref_list_type] = PrefListCreature
 		redirect_to :controller => '/management/pref_list'
 	end
 

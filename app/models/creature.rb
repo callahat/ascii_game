@@ -83,8 +83,8 @@ class Creature < ActiveRecord::Base
 	def self.get_page(page, pid = nil, kid = nil)
 		if pid.nil? && kid.nil?
 			paginate(:page => page, :order => 'armed,name')
-	else
-		paginate(:page => page,:conditions =>['player_id = ? or kingdom_id = ?', pid, kid], :order => 'armed,name' )
-	end
+		else
+			paginate(:page => page,:conditions =>['player_id = ? or kingdom_id = ?', pid, kid], :order => 'armed,name' )
+		end
 	end
 end

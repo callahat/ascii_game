@@ -2,8 +2,6 @@ class EventStat < Event
 	has_one :stat, :foreign_key => 'owner_id', :class_name => 'StatEventStat'
 	has_one :health, :foreign_key => 'owner_id', :class_name => 'HealthEventStat'
 
-	validates_presence_of :flex
-	
 	def price
 		stat.abs_sum_points + health.HP.abs + health.MP.abs
 	end
