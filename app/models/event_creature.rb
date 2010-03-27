@@ -4,11 +4,12 @@ class EventCreature < Event
 	validates_presence_of :thing_id,:flex
 	
 	def price
-		(creature.gold + (creature.experience / (creature.number_alive + 5))) * (high - low - 1)
+		low, high = flex.split(";")
+		(creature.gold + (creature.experience / (creature.number_alive + 5))) * (high.to_i - low.to_i - 1)
 	end
 	
 	def make_happen(who)
-		low, high = flex.split(";")
+		low, high = flex.split(";").collect{|c| c.to_i}
 		result, msg = Battle.new_creature_battle(who, self.creature, low.to_i, high.to_i, who.present_kingdom)
 		if result
 			return {:controller => 'game/battle', :action => 'battle'}, EVENT_INPROGRESS, "message seen anywhere for the creature event?"

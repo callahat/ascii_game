@@ -36,5 +36,7 @@ class EventMoveWorldTest < ActiveSupport::TestCase
 		e = EventMoveWorld.new(@standard_new)
 		assert e.valid?
 		assert e.save!
+		assert e.price == 0, e.price
+		assert e.total_cost == 500, e.total_cost
 	end
 end

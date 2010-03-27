@@ -36,11 +36,15 @@ class EventStatTest < ActiveSupport::TestCase
 	
 	test "create stat event" do
 		e = EventStat.new(@standard_new)
-		assert !e.valid?
+		assert !e.valid?, e.errors.full_messages
 		assert e.errors.full_messages.size == 1
 		e.flex = "9001;25"
 		assert e.valid?
 		assert e.errors.full_messages.size == 0
 		assert e.save!
+		StatEventStat.create(:owner_id => e.id, :str => 10)
+		HealthEventStat.create(:owner_id => e.id, :HP => 10, :MP => 5)
+		assert e.price > 0, e.price
+		assert e.total_cost > 500, e.total_cost
 	end
 end

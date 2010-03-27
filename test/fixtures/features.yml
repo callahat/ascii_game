@@ -1,6 +1,6 @@
 feature_creature_one: &default_feature
   name: "Creature Feature One"
-  description: "A feature with several creatures attacking"
+  description: "A feature with a creatures attacking"
   action_cost: 1
   image: feature_image
   player: test_player_one 

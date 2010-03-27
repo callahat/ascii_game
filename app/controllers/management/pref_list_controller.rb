@@ -8,7 +8,7 @@ class Management::PrefListController < ApplicationController
 	verify :method => :post, :only => [ :drop_from_list, :add_to_list ], :redirect_to => { :action => :index }
 
 	def index
-		@stuff = session[:pref_list_type].eligible_list(session[:player_id], session[:kingdom_id])
+		@stuff = session[:pref_list_type].eligible_list(session[:player][:id], session[:kingdom][:id])
 		@pref_list = session[:pref_list_type].current_list(session[:kingdom])
 		session[:cur_pref_list_class] = @stuff.collect{|s| s.id}
 

@@ -70,8 +70,7 @@ module GameHelper
 		else
 			@ret += "South"
 		end
-		@ret += "  </td>\n  <td>X</td>\n</tr>\n</table>\n"
-		return @ret
+		return @ret + "  </td>\n  <td>X</td>\n</tr>\n</table>\n"
 	end
 	
 	def world_map_table(where)

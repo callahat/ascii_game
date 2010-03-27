@@ -22,31 +22,30 @@ class GameHelperTest < ActionView::TestCase
 		assert output =~ /Wimp Monsters/
 	end
 
-	test "draw kingdom map" do
-		get 'feature'
-		output = draw_map(@level)
-		assert output =~ /<table>/
-		assert output !~ /<tr>North<\/td>/
-		
+	test "draw the kingdom map" do
+		get 'main'
+		output1 = draw_map(@level)
+		assert output1 =~ /<table>/
+		assert output1 !~ /<tr>North<\/td>/
+
 		output2 = draw_kingdom_map(@level)
 		assert output2 =~ /<table>/
 		assert output2 !~ /<tr>North<\/td>/
-		assert output == output2
+		assert output1 == output2
 	end
 	
-	test "draw world map" do
+	test "draw the world map" do
 		@pc.update_attributes(:in_kingdom => nil, :kingdom_level => nil)
-		get 'feature'
+		get 'main'
 		wmt = world_map_table([@world,0,0])
-		
-		output = draw_map([@world,0,0])
-		assert output =~ /<table>/
-		assert output !~ /<tr>North<\/td>/
-		assert output.index(wmt)
+		output1 = draw_map([@world,0,0])
+		assert output1 =~ /<table>/
+		assert output1 !~ /<tr>North<\/td>/
+		assert output1.index(wmt)
 		
 		output2 = draw_world_map([@world,0,0])
 		assert output2 =~ /<table>/
 		assert output2 !~ /<tr>North<\/td>/
-		assert output == output2
+		assert output1 == output2
 	end
 end

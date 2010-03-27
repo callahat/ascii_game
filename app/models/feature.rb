@@ -52,9 +52,9 @@ class Feature < ActiveRecord::Base
 	
 	#get the next priority 
 	def next_priority(priority)
-		p = feature_events.find(:first, :conditions => ['priority > ?', priority])
-		return nil unless p
-		p.priority
+		pri = feature_events.find(:first, :conditions => ['priority > ?', priority])
+		return nil unless pri
+		pri.priority
 	end
 	
 	#Pagination related stuff

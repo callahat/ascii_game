@@ -29,9 +29,9 @@ wimp_monster:
   gold: 5
   number_alive: -1
   armed: 1
-  player_id: -1
+  player: test_player_one
   fecundity: 10
-  kingdom_id: -1
+  kingdom_id: 1
   image: creature_image
 tough_monster:
   name: "Tough Monster"
@@ -40,7 +40,7 @@ tough_monster:
   gold: 50
   number_alive: -1
   armed: 1
-  player_id: -1
+  player: test_player_one
   fecundity: 4
-  kingdom_id: -1
+  kingdom_id: 1
   image: creature_image

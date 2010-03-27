@@ -49,6 +49,11 @@ class EventTest < ActiveSupport::TestCase
 		@event.errors.clear
 	end
 	
+	test "get event types" do
+		assert Event.get_event_types(false)
+		assert Event.get_event_types(true)
+	end
+	
 	test "sys gen event function" do
 		assert e = Event.sys_gen(:name => 'Test Sys Gen',
 															:event_rep_type => SpecialCode.get_code('event_rep_type','unlimited'))

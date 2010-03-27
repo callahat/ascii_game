@@ -301,7 +301,6 @@ class Battle < ActiveRecord::Base
 	end
 	
 	def init_report_for(name)
-	p name if self.report.nil?
 		self.report[name] = [] unless self.report[name].class == Array
 	end
 	

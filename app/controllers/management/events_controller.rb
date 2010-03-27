@@ -125,7 +125,7 @@ class Management::EventsController < ApplicationController
 			flash[:notice] = @event.name + ' sucessfully armed.'
 			
 			#add it to the pref list
-			if PrefList.add(session[:kingdom][:id],'events',@event.id)
+			if PrefList.add(session[:kingdom][:id],@event.id)
 				flash[:notice]+= '<br/>Added to preference list'
 			else
 				flash[:notice]+= '<br/>Could not be added to preference list'

@@ -177,7 +177,7 @@ class Management::FeaturesController < ApplicationController
 			flash[:notice] += @feature.name + ' sucessfully armed.'
 			#add it to the pref list
 			if !@feature.world_feature
-				if PrefList.add(session[:kingdom][:id],'features',@feature.id)
+				if PrefList.add(session[:kingdom][:id],@feature.id)
 					flash[:notice]+= '<br/>Added to preference list'
 				else
 					flash[:notice]+= '<br/>Could not be added to preference list'

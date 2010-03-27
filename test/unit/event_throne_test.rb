@@ -55,5 +55,7 @@ class EventThroneTest < ActiveSupport::TestCase
 		e.completes(@pc)
 		@kingdom.reload
 		assert @kingdom.player_character_id == @pc.id,@kingdom.player_character_id
+		assert e.price == 0, e.price
+		assert e.total_cost == 500, e.total_cost
 	end
 end

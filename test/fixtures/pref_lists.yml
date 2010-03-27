@@ -1,5 +1,15 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
-  id: 1
-two:
-  id: 2
+pref_list_creature_1:
+  kingdom_id: 1
+  thing: wimp_monster
+  kind: "PrefListCreature"
+
+pref_list_event_1:
+  kingdom_id: 1
+  thing: creature_event
+  kind: "PrefListEvent"
+
+pref_list_feature_1:
+  kingdom_id: 1
+  thing: feature_creature_one
+  kind: "PrefListFeature"
