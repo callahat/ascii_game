@@ -82,7 +82,7 @@ class GameController < ApplicationController
 
 			if (@events = session[:ev_choices])
 				render :action => 'choose'
-			elsif (@current_event = @pc.current_event)
+			elsif @current_event = @pc.current_event
 				if @current_event.completed == EVENT_INPROGRESS #already have an event in progress
 					exec_event(@current_event)
 				elsif @current_event.completed == EVENT_FAILED
@@ -216,7 +216,7 @@ class GameController < ApplicationController
 	
 protected
 	def exec_event(ce)
-	p "executing: " + ce.event.name
+	#p "executing: " + ce.event.name
 		@direction, @completed, @message = ce.event.happens(session[:player_character])
 		ce.update_attribute(:completed, @completed)
 		

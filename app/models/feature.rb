@@ -31,7 +31,7 @@ class Feature < ActiveRecord::Base
 	end
 	
 	#returns two arrays, 1st: events user can choose from, 2nd: events user cannot choose
-	def available_events(p, loc, pid, chance=rand(100))
+	def available_events(p, loc, pid, chance=(rand(100)+1) )
 		[true, false].inject([]) {|ret, c|
 			conds = {:conditions => ['priority = ? and chance >= ? and choice = ?', p, chance, c]}
 			ret << feature_events.find(:all, conds).inject([]){|a,fe|

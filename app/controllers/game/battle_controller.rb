@@ -7,7 +7,8 @@ class Game::BattleController < ApplicationController
 	verify :method => :post, :only => [ :do_heal, :do_choose, :do_train ],				 :redirect_to => { :action => :feature }
 
 	def fight_pc
-		@enemy_pc = @pc.current_event.player_character
+		@pc = session[:player_character]
+		@enemy_pc = @pc.current_event.event.player_character
 		@pc = session[:player_character]
 		result, msg = Battle.new_pc_battle(@pc, @enemy_pc)
 
@@ -16,7 +17,7 @@ class Game::BattleController < ApplicationController
 
 	def fight_npc
 		@pc = session[:player_character]
-		@npc = @pc.current_event.npc
+		@npc = @pc.current_event.event.npc
 		result, msg = Battle.new_npc_battle(@pc, @npc)
 
 		pre_battle_director(result, msg)
