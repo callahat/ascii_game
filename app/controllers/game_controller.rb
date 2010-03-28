@@ -1,5 +1,5 @@
 class GameController < ApplicationController
-	before_filter :authenticate, :except => ['main', 'feature', 'demo']
+	before_filter :authenticate, :except => ['main', 'feature']
 
 	layout 'main'
 
@@ -38,7 +38,7 @@ class GameController < ApplicationController
 			@message = "Left the kingdom"
 		end
 		
-		redirect_to :action => 'main'
+		redirect_to :controller => 'game', :action => 'main'
 	end
 
 	#moving in the world, by just walking. no need for an event
@@ -64,15 +64,14 @@ class GameController < ApplicationController
 			end
 			@pc.save!
 		end
-		redirect_to :action => 'main'
+		redirect_to :controller => 'game', :action => 'main'
 	end
 
 	#deal with the feature, set up the session feature_event chain
 	def feature
 		flash[:notice] = flash[:notice]
-
 		if session[:player].nil?
-			render 'demo'
+			render :file => 'game/demo.rhtml', :layout => true
 		elsif session[:player_character].nil?
 			redirect_to :controller => 'character', :action => 'choose' #???
 		elsif session[:player_character].reload && session[:player_character].battle
@@ -81,13 +80,13 @@ class GameController < ApplicationController
 			@pc = session[:player_character]
 
 			if (@events = session[:ev_choices])
-				render :action => 'choose'
+				render :file => 'game/choose.rhtml', :layout => true
 			elsif @current_event = @pc.current_event
 				if @current_event.completed == EVENT_INPROGRESS #already have an event in progress
 					exec_event(@current_event)
 				elsif @current_event.completed == EVENT_FAILED
 					@current_event.destroy
-					redirect_to :action => 'main'
+					redirect_to :controller => 'game', :action => 'main'
 				else #skipped or completed, get the next event for the feature
 					next_event_helper(@current_event)
 				end
@@ -96,7 +95,7 @@ class GameController < ApplicationController
 				@current_event = CurrentEvent.make_new(session[:player_character], params[:id])
 				if @pc.turns < @current_event.location.feature.action_cost
 					flash[:notice] = 'Too tired for that, out of turns.'
-					redirect_to :action => 'main'
+					redirect_to :controller => 'game', :action => 'main'
 				else
 					PlayerCharacter.transaction do
 						@pc.lock!
@@ -106,14 +105,14 @@ class GameController < ApplicationController
 					next_event_helper(@current_event)
 				end
 			else #no current event and no feature id
-				redirect_to :action => 'main'
+				redirect_to :controller => 'game', :action => 'main'
 			end
 		end
 	end
 
 	def do_choose
 		@current_event = session[:player_character].current_event
-		if Event.exists?(params[:id]) && session[:ev_choices].index(Event.find(params[:id])) > -1
+		if Event.exists?(params[:id]) && session[:ev_choices].index(Event.find(params[:id]))
 			@current_event.update_attribute(:event_id, params[:id])
 			session[:ev_choices] = nil
 			exec_event(@current_event)
@@ -121,12 +120,12 @@ class GameController < ApplicationController
 			flash[:notice] = "Invalid choice"
 			@events = session[:ev_choices]
 			@pc = session[:player_character]
-			render :action => 'choose'
+			render :file => 'game/choose.rhtml', :layout => true
 		else#id is null, player didnt choose any event, or they attempted a hack
 			@current_event.update_attribute(:completed, EVENT_SKIPPED)
 			session[:ev_choices] = nil
 			flash[:notice] = 'You slink on by without anything interesting happening.'
-			redirect_to :action => 'complete'
+			redirect_to :controller => 'game', :action => 'complete'
 		end
 	end
 
@@ -174,7 +173,7 @@ class GameController < ApplicationController
 			flash[:notice] = "Cannot rest while in midst of action!"
 		end
 		session[:player_character] = @pc
-		redirect_to :controller => '/game', :action => 'main'
+		redirect_to :controller => 'game', :action => 'main'
 	end
 	
 	#def completeA
@@ -190,9 +189,9 @@ class GameController < ApplicationController
 		
 		if @next.nil?
 			@current_event.destroy
-			redirect_to :action => 'main'
+			redirect_to :controller => 'game', :action => 'main'
 		else
-			redirect_to :action => 'feature'
+			redirect_to :controller => 'game', :action => 'feature'
 		end
 	end
 	
@@ -206,17 +205,16 @@ class GameController < ApplicationController
 		
 		@kingdom, @msg = Kingdom.spawn_new(session[:player_character], params[:kingdom][:name], @wm)
 		if @kingdom
-			render :action => 'spawn'
+			render :controller => 'game', :action => 'spawn_kingdom'
 		else
 			flash[:notice] = @msg
 			session[:completed] = true
-			redirect_to :controller => '/game', :action => 'complete'
+			redirect_to :controller => 'game', :action => 'complete'
 		end
 	end
 	
 protected
 	def exec_event(ce)
-	#p "executing: " + ce.event.name
 		@direction, @completed, @message = ce.event.happens(session[:player_character])
 		ce.update_attribute(:completed, @completed)
 		
@@ -224,7 +222,7 @@ protected
 			flash[:notice] = @message
 			redirect_to @direction
 		else
-			render 'game/complete'
+			render :file => 'game/complete.rhtml', :layout => true
 		end
 	end
 	
@@ -234,13 +232,13 @@ protected
 		if @next.nil?
 			flash[:notice] = "Nothing happens"
 			@current_event.destroy
-			redirect_to :action => 'main'
+			redirect_to :controller => 'game', :action => 'main'
 		elsif @it.class == Array
 			ce.update_attributes(:priority => @next)
 			@events = @it
 			@pc = session[:player_character]
 			session[:ev_choices] = @events.dup #simplify whats a valid choice or not
-			render :action => 'choose'
+			render :file => 'game/choose.rhtml', :layout => true
 		else #must be an event
 			ce.update_attributes(:event_id => @it.id, :priority => @next)
 			exec_event(ce)

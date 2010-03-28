@@ -28,11 +28,11 @@
   Player:<%= session[:player][:handle] %>
   <% end %>
   </td>
-  <td width=45><%= link_to 'Home', :controller => '/home' %></td>
+  <td width=45><%= link_to 'Home', :controller => 'home' %></td>
   <td width=55><%= link_to 'Forums', :controller => '/forum', :action => 'boards' %></td>
   <td width=90><%= link_to 'Characters', :controller => '/character', :action => 'menu' %></td>
   <td width=50><%= link_to 'Game', :controller => '/game', :action => 'feature' %></td>
-  <td width=260><% p session[:kingbit] %><% if session[:kingbit] %><%= link_to 'Kingdom Management', :controller => '/management', :action => 'index'%><% end %></td>
+  <td width=260><% if session[:kingbit] %><%= link_to 'Kingdom Management', :controller => '/management', :action => 'index'%><% end %></td>
   <td width=110><% if session[:player].nil? %><%= link_to 'Login', :controller => '/account', :action => 'login' %><% else %><%= link_to 'Logout', :controller => '/account', :action => 'logout' %><% end %></td>
  </tr>
  

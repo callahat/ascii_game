@@ -67,6 +67,6 @@ class Feature < ActiveRecord::Base
 			paginate(:page => page, :order => 'armed,name' )
 		else
 			paginate(:page => page, :conditions => ['player_id = ? or kingdom_id = ?', pcid, kid], :order => 'armed,name' )
-	end
+		end
 	end
 end

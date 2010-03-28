@@ -2,6 +2,10 @@ require 'test_helper'
 
 class GameControllerTest < ActionController::TestCase
 	def setup
+		@controller = GameController.new
+		@request  = ActionController::TestRequest.new
+		@response = ActionController::TestResponse.new
+	
 		@creature = Creature.find_by_name("Wimp Monster")
 		@level = Level.find(:first, :conditions =>['kingdom_id = ? and level = 0', 1])
 		@level_map = @level.level_maps.find(:first, :conditions => ['feature_id is not null'])
@@ -12,13 +16,16 @@ class GameControllerTest < ActionController::TestCase
 	end
 
 	test "game controller main" do
+		#p "game controller main"
 		session[:player_character] = nil
 		get 'main', {}, session
 		assert_response :redirect
 		assert_redirected_to :controller => 'character'
 		
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
+		#p "WAAA"
 		get 'main', {}, session
+		#p "AAAW"
 		assert_response :success
 		assert_not_nil assigns(:where)
 		assert_template 'main'
@@ -27,7 +34,7 @@ class GameControllerTest < ActionController::TestCase
 	test "game controller leave kingdom" do
 		get 'leave_kingdom', {}, session
 		assert_response :redirect
-		assert_redirected_to :action => 'main'
+		assert_redirected_to :controller => 'game', :action => 'main'
 		assert session[:player_character].in_kingdom.nil?
 		assert session[:player_character].kingdom_level.nil?
 	end
@@ -38,49 +45,49 @@ class GameControllerTest < ActionController::TestCase
 		
 		post 'world_move', {:id => 'north'}, session
 		assert_response :redirect
-		assert_redirected_to :action => 'main'
+		assert_redirected_to :controller => 'game', :action => 'main'
 		assert session[:player_character].bigx == 0
 		assert session[:player_character].bigy == -1
 		assert flash[:notice] =~ /[Nn]orth/
 		
 		post 'world_move', {:id => 'north'}, session
 		assert_response :redirect
-		assert_redirected_to :action => 'main'
+		assert_redirected_to :controller => 'game', :action => 'main'
 		assert session[:player_character].bigx == 0
 		assert session[:player_character].bigy == -1
 		assert flash[:notice] =~ /invalid/
 		
 		post 'world_move', {:id => 'west'}, session
 		assert_response :redirect
-		assert_redirected_to :action => 'main'
+		assert_redirected_to :controller => 'game', :action => 'main'
 		assert session[:player_character].bigx == 0
 		assert session[:player_character].bigy == -1
 		assert flash[:notice] =~ /invalid/
 		
 		post 'world_move', {:id => 'south'}, session
 		assert_response :redirect
-		assert_redirected_to :action => 'main'
+		assert_redirected_to :controller => 'game', :action => 'main'
 		assert session[:player_character].bigx == 0
 		assert session[:player_character].bigy == 0
 		assert flash[:notice] =~ /[Ss]outh/
 		
 		post 'world_move', {:id => 'east'}, session
 		assert_response :redirect
-		assert_redirected_to :action => 'main'
+		assert_redirected_to :controller => 'game', :action => 'main'
 		assert session[:player_character].bigx == 1
 		assert session[:player_character].bigy == 0
 		assert flash[:notice] =~ /[Ee]ast/
 		
 		post 'world_move', {:id => 'east'}, session
 		assert_response :redirect
-		assert_redirected_to :action => 'main'
+		assert_redirected_to :controller => 'game', :action => 'main'
 		assert session[:player_character].bigx == 1
 		assert session[:player_character].bigy == 0
 		assert flash[:notice] =~ /invalid/
 		
 		post 'world_move', {:id => 'west'}, session
 		assert_response :redirect
-		assert_redirected_to :action => 'main'
+		assert_redirected_to :controller => 'game', :action => 'main'
 		assert session[:player_character].bigx == 0
 		assert session[:player_character].bigy == 0
 		assert flash[:notice] =~ /[Ww]est/
@@ -107,7 +114,7 @@ class GameControllerTest < ActionController::TestCase
 		
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
 		get 'feature', {}, session
-		assert_redirected_to :action => 'main'
+		assert_redirected_to :controller => 'game', :action => 'main'
 	end
 	
 	test "game controller feature action when battle exists" do

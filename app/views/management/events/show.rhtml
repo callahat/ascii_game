@@ -32,7 +32,7 @@
 <p><b>player character: </b><%= @event.player_character.name %></p>
 
 <% elsif @event.class == EventQuest %>
-<p><b>quest: </b><%= @event.quest.name %></p>
+<p><b>quest: </b><%= @event.quest.name if @event.quest %></p>
 <p><b>text: </b><%= @event.text %></p>
 
 <% elsif @event.class == EventStat %>

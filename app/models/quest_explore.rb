@@ -7,5 +7,5 @@ class QuestExplore < QuestReq
 	
 	def to_sentence
 		"Journey to " + self.event.name
-end
+	end
 end

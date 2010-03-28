@@ -76,13 +76,13 @@ class Management::FeaturesController < ApplicationController
 	def new_feature_event
 		@feature_event = FeatureEvent.new
 		@feature_event.feature_id = params[:id]
-		setup_events_array
+		@events = session[:kingdom].pref_list_events.reload.collect{|pf| pf.event}
 	end
 	
 	def create_feature_event
 		@feature_event = FeatureEvent.new(params[:feature_event])
 		@feature = Feature.find(params[:id])
-		setup_events_array
+		@events = session[:kingdom].pref_list_events.reload.collect{|pf| pf.event}
 		
 		if !verify_valid_event || !verify_feature_owner
 			redirect_to :action => 'new_feature_event', :id => params[:id]
@@ -100,7 +100,7 @@ class Management::FeaturesController < ApplicationController
 	
 	def edit_feature_event
 		@feature_event = FeatureEvent.find(params[:id])
-		setup_events_array
+		@events = session[:kingdom].pref_list_events.reload.collect{|pf| pf.event}
 	end
 	
 	def update_feature_event
@@ -116,7 +116,7 @@ class Management::FeaturesController < ApplicationController
 			return
 		end
 		
-		setup_events_array
+		@events = session[:kingdom].pref_list_events.reload.collect{|pf| pf.event}
 		if @feature_event.update_attributes(params[:feature_event])
 			flash[:notice] = 'Feature event updated.'
 			update_feature_cost
@@ -300,13 +300,6 @@ protected
 	end
 	
 	def setup_events_array
-		#@events = Event.find_by_sql(['select * from events where armed = true AND (player_id = ? or kingdom_id = ?) order by name',session[:player][:id],session[:kingdom][:id]])
-		@list = session[:kingdom].event_pref_list
-		
-		@events = []
-		
-		for l in @list
-			@events << l.event
-		end
+		@events = session[:kingdom].pref_list_events.reload.collect{|pf| pf.event}
 	end
 end

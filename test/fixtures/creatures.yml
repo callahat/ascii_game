@@ -44,3 +44,14 @@ tough_monster:
   fecundity: 4
   kingdom_id: 1
   image: creature_image
+unarmed_monster:
+  name: "Unarmed Monster"
+  experience: 3
+  HP: 2
+  gold: 5
+  number_alive: -1
+  armed: 0
+  player: test_player_one
+  fecundity: 10
+  kingdom_id: 1
+  image: creature_image

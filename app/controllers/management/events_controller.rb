@@ -11,14 +11,12 @@ class Management::EventsController < ApplicationController
 	#**********************************************************************
 	#EVENT MANAGEMENT
 	#**********************************************************************
-	public
 	def index
 		@events = Event.get_page(params[:page], session[:player][:id], session[:kingdom][:id])
 	end
 
 	def show
 		@event = Event.find(params[:id])
-		p @event
 	end
 
 	def new
@@ -35,15 +33,13 @@ class Management::EventsController < ApplicationController
 		
 		@event.player_id = session[:player][:id]
 		@event.kingdom_id = session[:kingdom][:id]
-		p @event
 		if @event.kind == "EventCreature" || @event.kind == "EventStat"
 			@event.flex = params[:flex][0].to_s + ";" + params[:flex][0].to_s
 		end
 		
 		@event.cost = 500
 
-		if verify_event_not_in_use & verify_event_owner & verify_valid_event_params & 
-				@event.save
+		if verify_event_owner & verify_valid_event_params & @event.save
 			@extras=true
 			if @stat || @health
 				@stat.create(params[:stat].merge(:owner_id => @event.id)) &
@@ -72,9 +68,6 @@ class Management::EventsController < ApplicationController
 		if @event.kind == "EventCreature" || @event.kind == "EventStat"
 			@flex = params[:flex][0].to_s + ";" + params[:flex][0].to_s
 		end
-		
-		p @event
-		p @flex
 		
 		if verify_event_not_in_use & verify_event_owner & verify_valid_event_params &
 				@event.update_attributes(params[:event].merge(:flex => @flex))
@@ -175,26 +168,6 @@ protected
 			false
 		else
 			true
-		end
-	end
-
-	def get_event_types
-		#set up the event types king can edit
-		if session[:player].admin 
-			#only admins have access to certain things. Regular kings have a limited subset of things they can edit
-			@event_types = [ ['creature', EventCreature ],
-											 ['disease', EventDisease ],
-											 ['item', EventItem ],
-											 ['move', EventMoveLocal],
-											 ['move', EventMoveRelative],
-											 ['quest', EventQuest],
-											 ['stat', EventStat] ]
-		else
-			@event_types = [ ['creature', EventCreature ],
-											 ['item', EventItem ],
-											 ['move', EventMoveLocal],
-											 ['move', EventMoveRelative],
-											 ['quest', EventQuest] ]
 		end
 	end
 	

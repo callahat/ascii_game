@@ -9,14 +9,14 @@ module GameHelper
 			ret += "</tr><tr>\n" if c % 5 == 0
 			c+=1
 		}
-		ret + "</tr></table>\n"
+		return ret + "</tr></table>\n"
 	end
 	
 	def draw_map(where)
 		if where.class == Level
-			draw_kingdom_map(where)
+			return draw_kingdom_map(where)
 		else
-			draw_world_map(where)
+			return draw_world_map(where)
 		end
 	end
 	
@@ -31,9 +31,9 @@ module GameHelper
 				@ret += "<td>\n"
 				level_map = where.level_maps.find(:last,:conditions => ['ypos = ? AND xpos = ?', y, x])
 				if level_map && feature = level_map.feature
-					@ret += "<span title=\"" + feature.name + "\">" + 
+					@ret += "<span title=\"" + h(feature.name) + "\">" + 
 									"<a href=\"/game/feature?id=" + level_map.id.to_s + "\" class=\"map\">" + 
-									"<pre class=\"feature\">" + feature.image.image_text + "</pre>\n</a></span>"
+									"<pre class=\"feature\">" + h(feature.image.image_text) + "</pre>\n</a></span>"
 				else
 					@ret += "<span title=\"Empty\">" + 
 									"<a href=\"#\" class=\"map\"><pre class=\"feature\">" +
@@ -46,7 +46,7 @@ module GameHelper
 	
 	#expects [world, bigx, bigy]
 	def draw_world_map(where)
-		@ret =	"<table>\n  <tr>\n  <td>X</td>\n  <td align=\"center\">\n"
+		@ret = "<table>\n  <tr>\n  <td>X</td>\n  <td align=\"center\">\n"
 		if WorldMap.exists?(:bigxpos => where[1], :bigypos => where[2] - 1)
 			@ret += link_to('|North|', {:action => 'world_move', :id => 'north'},:method => :post)
 		else
@@ -80,13 +80,13 @@ module GameHelper
 			1.upto(where[0].maxx){|x|
 				wm = where[0].world_maps.find(:last, :conditions => ['bigypos = ? and bigxpos = ? and ypos = ? and xpos = ?', where[2], where[1], y, x])
 				if wm && f = wm.feature
-					@ret += "<td><span title=\"" + f.name + "\"<a href=\"/game/feature?id=" +
-									wm .id.to_s + "\" class=\"map\">" +
-									"<pre class=\"world_feature\">" + f.image.image_text + "</pre>" +
+					@ret += "<td><span title=\"" + h(f.name) + "\"<a href=\"/game/feature?id=" +
+									wm.id.to_s + "\" class=\"map\">" +
+									"<pre class=\"world_feature\">" + h(f.image.image_text) + "</pre>" +
 									"</a></span></td>"
 				else
 					@ret += "<td><span title=\"Empty\"><a href=# class=\"map\">" +
-									"<pre class=\"world_feature\">" + EMPTY_IMAGE + "</pre>" +
+									"<pre class=\"world_feature\">" + h(EMPTY_IMAGE) + "</pre>" +
 									"</a></span></td>"
 				end
 			}

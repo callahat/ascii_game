@@ -9,6 +9,16 @@ creature_event:
   armed: 1
   cost: 500
   flex: "7;7"
+creature2_event:
+  kingdom_id: 1
+  player: test_player_one
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Tough Monster encounter"
+  creature: tough_monster
+  kind: "EventCreature"
+  armed: 1
+  cost: 500
+  flex: "7;7"
 pc_event:
   kingdom_id: 1
   player: test_player_one
@@ -136,3 +146,15 @@ quest_event_done:
   armed: 1
   cost: 50
   text: "Some text here that probably wont appear since the quest is done."
+  quest: quest_one
+unarmed_quest_event:
+  id: 1
+  kingdom_id: 1
+  player: test_player_one
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Unarmed Quest Event"
+  kind: "EventQuest"
+  quest: quest_one
+  armed: 0
+  cost: 50
+  text: "Unarmed event"

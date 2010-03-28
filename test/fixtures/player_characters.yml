@@ -10,6 +10,7 @@ sick_pc:
 
 test_king:
   name: "Test King"
+  player: test_player_one
   c_class_id: 1
   race_id: 1
   kingdom_id: 1
