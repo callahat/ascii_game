@@ -19,3 +19,8 @@ feature_multi_event:
   <<: *default_feature
   name: "Feature Multi"
   description: "Feature with many events of different priorities"
+unarmed_feature:
+  <<: *default_feature
+  name: "Unarmed Feature"
+  description: "An unarmed feature for testing the controllers"
+  armed: 0

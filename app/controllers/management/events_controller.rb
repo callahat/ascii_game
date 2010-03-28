@@ -39,7 +39,7 @@ class Management::EventsController < ApplicationController
 		
 		@event.cost = 500
 
-		if verify_event_owner & verify_valid_event_params & @event.save
+		if verify_valid_event_params & @event.save
 			@extras=true
 			if @stat || @health
 				@stat.create(params[:stat].merge(:owner_id => @event.id)) &
