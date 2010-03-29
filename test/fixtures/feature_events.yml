@@ -68,3 +68,10 @@ fe_two_j:
   chance: 100
   priority: 7
   choice: false
+
+fe_for_unarmed:
+  feature: unarmed_feature
+  event: creature2_event
+  chance: 100
+  priority: 1
+  choice: false

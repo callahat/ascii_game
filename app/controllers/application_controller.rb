@@ -119,7 +119,6 @@ protected
 	end
 
 	def handle_image(thing,row,col)
-	p params[:image].inspect
 		if params[:image][:image_text] != ""
 			@image = Image.new
 			resize_image(row,col)

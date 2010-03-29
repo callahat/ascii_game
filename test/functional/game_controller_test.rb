@@ -236,4 +236,8 @@ class GameControllerTest < ActionController::TestCase
 		assert_response :success
 		assert session[:player_character].current_event.event_id
 	end
+	
+	test "game controller spawn kingdom" do
+		
+	end
 end

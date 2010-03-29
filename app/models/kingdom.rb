@@ -151,7 +151,7 @@ class Kingdom < ActiveRecord::Base
 		@new_kingdom = WorldMap.copy(wm)
 		@new_kingdom.feature_id = @kingdom_entrance_feature.id
 		@new_kingdom.save!
-		1.upto(5){ Npc.gen_stock_guard(@kingdom.id) }
+		5.times { Npc.gen_stock_guard(@kingdom.id) }
 		KingdomEntry.create(:kingdom_id => @kingdom.id,
 												:allowed_entry => SpecialCode.get_code('entry_limitations','everyone') )
 		PlayerCharacter.transaction do
@@ -159,6 +159,5 @@ class Kingdom < ActiveRecord::Base
 			who.kingdom_id = @kingdom.id
 			who.save!
 		end
-		
 	end
 end
