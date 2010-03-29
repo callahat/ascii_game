@@ -14,7 +14,6 @@ class Management::FeaturesController < ApplicationController
 	public
 	def index
 		#design features
-		#@features = Feature.find_by_sql(['select * from features where player_id = ? or kingdom_id = ? order by armed,world_feature,name',session[:player][:id],session[:kingdom][:id]])
 		@features = Feature.get_page(params[:page], session[:player][:id], session[:kingdom][:id])
 	end
 
@@ -40,7 +39,7 @@ class Management::FeaturesController < ApplicationController
 			flash[:notice] = @feature.name + ' was sucessfully created.'
 			redirect_to :action => 'index'
 		else
-			flash[:notice] = @feature.name + ' was not created.'
+			flash[:notice] = 'Feature was not created.'
 			render :action => 'new'
 		end
 	end
@@ -52,9 +51,8 @@ class Management::FeaturesController < ApplicationController
 	end
 	
 	def update
-		@feature = Feature.find(params[:id])
-		@image = @feature.image
-		handle_feature_init_vars
+		edit
+		
 		if !verify_feature_owner || !verify_feature_not_in_use
 			redirect_to :action => 'index'
 			return
@@ -74,15 +72,14 @@ class Management::FeaturesController < ApplicationController
 	end
 	
 	def new_feature_event
-		@feature_event = FeatureEvent.new
+		@feature = Feature.find(params[:id])
+		@feature_event = FeatureEvent.new(params[:feature_event])
 		@feature_event.feature_id = params[:id]
-		setup_events_array
+		@events = session[:kingdom].pref_list_events.reload.collect{|pf| pf.event}
 	end
 	
 	def create_feature_event
-		@feature_event = FeatureEvent.new(params[:feature_event])
-		@feature = Feature.find(params[:id])
-		setup_events_array
+		new_feature_event
 		
 		if !verify_valid_event || !verify_feature_owner
 			redirect_to :action => 'new_feature_event', :id => params[:id]
@@ -100,12 +97,13 @@ class Management::FeaturesController < ApplicationController
 	
 	def edit_feature_event
 		@feature_event = FeatureEvent.find(params[:id])
-		setup_events_array
+		@feature = @feature_event.feature
+		@events = session[:kingdom].pref_list_events.reload.collect{|pf| pf.event}
 	end
 	
 	def update_feature_event
 		@feature_event = FeatureEvent.find(params[:id])
-		@feature = Feature.find(@feature_event.feature_id)
+		@feature = @feature_event.feature
 		
 		if !verify_feature_owner || !verify_feature_not_in_use
 			redirect_to :action => 'index'
@@ -116,7 +114,7 @@ class Management::FeaturesController < ApplicationController
 			return
 		end
 		
-		setup_events_array
+		@events = session[:kingdom].pref_list_events.reload.collect{|pf| pf.event}
 		if @feature_event.update_attributes(params[:feature_event])
 			flash[:notice] = 'Feature event updated.'
 			update_feature_cost
@@ -135,23 +133,19 @@ class Management::FeaturesController < ApplicationController
 			return
 		end
 		
-		if @feature_event.destroy
-			flash[:notice] = 'Feature event destroyed.'
+		@feature_event.destroy
+		flash[:notice] = 'Feature event destroyed.'
 
-			#update feature cost
-			@feature = @feature_event.feature
-			calc_feature_cost
-			@feature.cost = @cost
-			if @feature.save
-				flash[:notice] += '<br />Feature cost updated.'
-			else
-				flash[:notice] += '<br />Feature cost failed to update.'
-			end
-			redirect_to :action => 'show', :id => @feature.id
+		#update feature cost
+		@feature = @feature_event.feature
+		calc_feature_cost
+		@feature.cost = @cost
+		if @feature.save
+			flash[:notice] += '<br />Feature cost updated.'
 		else
-			flash[:notice] = 'Could not destroy feature event.'
-			redirect_to :action => 'show', :id => @feature.id
+			flash[:notice] += '<br />Feature cost failed to update.'
 		end
+		redirect_to :action => 'show', :id => @feature.id
 	end
 	
 	def arm_feature
@@ -177,7 +171,7 @@ class Management::FeaturesController < ApplicationController
 			flash[:notice] += @feature.name + ' sucessfully armed.'
 			#add it to the pref list
 			if !@feature.world_feature
-				if PrefList.add(session[:kingdom][:id],'features',@feature.id)
+				if PrefList.add(session[:kingdom][:id],@feature.id)
 					flash[:notice]+= '<br/>Added to preference list'
 				else
 					flash[:notice]+= '<br/>Could not be added to preference list'
@@ -210,7 +204,7 @@ class Management::FeaturesController < ApplicationController
 	end
 	
 	def pref_lists
-		session[:pref_list_type] = :feature
+		session[:pref_list_type] = PrefListFeature
 		
 		redirect_to :controller => '/management/pref_list'
 	end
@@ -219,8 +213,6 @@ class Management::FeaturesController < ApplicationController
 	
 protected
 	def verify_valid_event
-		print "\n" + params[:feature_event][:event_id]
-	
 		if Event.find(:first,:conditions => ['armed = true AND (kingdom_id = ? or player_id	= ?) AND id = ?', session[:kingdom][:id], session[:player][:id], params[:feature_event][:event_id]])
 			return true
 		else
@@ -300,13 +292,6 @@ protected
 	end
 	
 	def setup_events_array
-		#@events = Event.find_by_sql(['select * from events where armed = true AND (player_id = ? or kingdom_id = ?) order by name',session[:player][:id],session[:kingdom][:id]])
-		@list = session[:kingdom].event_pref_list
-		
-		@events = []
-		
-		for l in @list
-			@events << l.event
-		end
+		@events = session[:kingdom].pref_list_events.reload.collect{|pf| pf.event}
 	end
 end

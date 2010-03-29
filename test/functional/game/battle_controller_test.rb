@@ -6,6 +6,8 @@ class Game::BattleControllerTest < ActionController::TestCase
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
 		session[:player_character][:in_kingdom] = 1
 		@creature = Creature.find_by_name("Wimp Monster")
+		@level = Level.find(:first, :conditions =>['kingdom_id = ? and level = 0', 1])
+		@kl = @level.level_maps.find(:first, :conditions => ['xpos = 2 and ypos = 2'])
 	end
 
 	test "king battle" do
@@ -16,13 +18,15 @@ class Game::BattleControllerTest < ActionController::TestCase
 		assert_redirected_to :action => 'battle'
 		
 		get 'battle', {}, session
+		assert_template 'battle'
 		
 		assert_response :success
 		assert_not_nil assigns(:battle)
 	end
 	
 	test "pc battle" do
-		session[:current_event] = Event.find_by_name("Sick PC encounter")
+		session[:current_event] = CurrentEvent.make_new(session[:player_character], @kl.id)
+		session[:current_event].update_attribute(:event_id, Event.find_by_name("Sick PC encounter").id)
 		get 'fight_pc', {}, session
 		assert_not_nil assigns(:pc)
 		assert_not_nil assigns(:enemy_pc)
@@ -30,13 +34,15 @@ class Game::BattleControllerTest < ActionController::TestCase
 		assert_redirected_to :action => 'battle'
 		
 		get 'battle', {}, session
+		assert_template 'battle'
 		
 		assert_response :success
 		assert_not_nil assigns(:battle)
 	end
 	
 	test "npc battle" do
-		session[:current_event] = Event.find_by_name("Healthy Npc encounter")
+		session[:current_event] = CurrentEvent.make_new(session[:player_character], @kl.id)
+		session[:current_event].update_attribute(:event_id, Event.find_by_name("Healthy Npc encounter").id)
 		get 'fight_npc', {}, session
 		assert_not_nil assigns(:pc)
 		assert_not_nil assigns(:npc)
@@ -44,48 +50,10 @@ class Game::BattleControllerTest < ActionController::TestCase
 		assert_redirected_to :action => 'battle'
 		
 		get 'battle', {}, session
+		assert_template 'battle'
 		
 		assert_response :success
 		assert_not_nil assigns(:battle)
-	end
-	
-	test "creature battle" do
-		session[:current_event] = Event.find_by_name("Weak Monster encounter")
-		get 'creature', {}, session
-		assert_not_nil assigns(:pc)
-		assert_not_nil assigns(:e)
-		assert_response :redirect
-		assert_redirected_to :action => 'battle'
-		
-		get 'battle', {}, session
-		
-		assert_response :success
-		assert_not_nil assigns(:battle)
-	end
-	
-	test "storm the gates" do
-		session[:current_event] = Event.find_by_name("Storm Kingdom 1 Gate event")
-		get 'storm_the_gates', {}, session
-		assert_not_nil assigns(:pc)
-		assert_not_nil assigns(:kingdom)
-		assert_not_nil assigns(:storm_move)
-		assert_response :redirect
-		assert_redirected_to :action => 'battle'
-		
-		get 'battle', {}, session
-		
-		assert_response :success
-		assert_not_nil assigns(:battle)
-	end
-	
-	test "storm the gates when no guards" do
-		session[:current_event] = Event.find_by_name("Storm Kingdom 1 Gate event")
-		session[:current_event].event_storm_gate.level.kingdom.guards.destroy_all
-		get 'storm_the_gates', {}, session
-		assert_not_nil assigns(:pc)
-		assert_not_nil assigns(:kingdom)
-		assert_not_nil assigns(:storm_move)
-		assert_response :success
 	end
 	
 	test "different valid fight options" do
@@ -96,9 +64,9 @@ class Game::BattleControllerTest < ActionController::TestCase
 		session[:player_character].update_attribute(:level, 300)
 		
 		session[:current_event] = Event.find_by_name("Weak Monster encounter")
-		get 'creature', {}, session
-		assert_redirected_to :action => 'battle'
+		session[:current_event].happens(session[:player_character])
 		get 'battle', {}, session
+		assert_template 'battle'
 		
 		#conventional
 		get 'fight', {:attack => nil}, session

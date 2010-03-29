@@ -26,6 +26,7 @@ class ApplicationController < ActionController::Base
 			return false
 		else
 			#set the kingbit so player can manage their kingdoms if tehy are king
+			
 			is_king
 			return true
 		end
@@ -50,7 +51,7 @@ class ApplicationController < ActionController::Base
 		@pcs = PlayerCharacter.find(:all, :conditions => ['player_id = ?', session[:player][:id]])
 		for pc in @pcs
 			if Kingdom.find(:first, :conditions => ['player_character_id = ?', pc.id])
-				@kingbit = true
+				session[:kingbit] = true
 				return true
 			end
 		 end
@@ -86,18 +87,7 @@ class ApplicationController < ActionController::Base
 			return true
 		end
 	end
-	
-	#check that player is still alive
-	def pc_alive
-		if session[:player_character].health.wellness == SpecialCode.get_code('wellness','dead')
-			flash[:notice] = 'You can\'t do that since you are dead.'
-			redirect_to :controller => '/game', :action => 'complete'
-			return false
-		else
-			return true
-		end
-	end
-	
+		
 	#Its ok to make all this stuff protected right?
 protected
 	def debuggery(crap)
@@ -320,15 +310,5 @@ protected
 		who.save!
 			end
 		end
-	end
-	
-	def create_accession_notice(text, kingdom)
-		@notice = KingdomNotice.new
-		@notice.kingdom_id = kingdom.id
-		@notice.shown_to = SpecialCode.get_code('shown_to','everyone')
-		@notice.datetime = Time.now
-		@notice.text = text
-		@notice.signed = "Minister of the Interior"
-		@notice.save
 	end
 end

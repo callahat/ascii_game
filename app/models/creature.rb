@@ -8,7 +8,7 @@ class Creature < ActiveRecord::Base
 	has_one :stat, :foreign_key => 'owner_id', :class_name => 'StatCreature'
 
 	has_many :creature_kills
-	has_many :event_creatures
+	has_many :event_creatures, :foreign_key => 'thing_id'
 	has_many :quest_creature_kills
 
 	validates_uniqueness_of :name
@@ -83,8 +83,8 @@ class Creature < ActiveRecord::Base
 	def self.get_page(page, pid = nil, kid = nil)
 		if pid.nil? && kid.nil?
 			paginate(:page => page, :order => 'armed,name')
-	else
-		paginate(:page => page,:conditions =>['player_id = ? or kingdom_id = ?', pid, kid], :order => 'armed,name' )
-	end
+		else
+			paginate(:page => page,:conditions =>['player_id = ? or kingdom_id = ?', pid, kid], :order => 'armed,name' )
+		end
 	end
 end

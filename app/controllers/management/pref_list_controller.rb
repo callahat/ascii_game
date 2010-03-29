@@ -5,54 +5,29 @@ class Management::PrefListController < ApplicationController
 	layout 'main'
 
 	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-	verify :method => :post, :only => [ :drop_from_list, :add_to_list ],				 :redirect_to => { :action => :index }
+	verify :method => :post, :only => [ :drop_from_list, :add_to_list ], :redirect_to => { :action => :index }
 
 	def index
-		if session[:pref_list_type] == :creature
-			@pref_list = session[:kingdom].creature_pref_list
-		elsif session[:pref_list_type] == :event
-			@pref_list = session[:kingdom].event_pref_list
-		elsif session[:pref_list_type] == :feature
-			@pref_list = session[:kingdom].feature_pref_list
-		else
-			redirect_to :controller => '/management'
-			return
-		end
-		
-		#@all_things = PrefList.get_page(params[:page], ['kingdom_id = ?', session[:kingdom][:id]])
-		@all_things = @pref_list.paginate(:page => params[:page])
+		@stuff = session[:pref_list_type].eligible_list(session[:player][:id], session[:kingdom][:id])
+		@pref_list = session[:pref_list_type].current_list(session[:kingdom])
+		session[:cur_pref_list_class] = @stuff.collect{|s| s.id}
+
+		@all_things = @stuff.paginate(:page => params[:page])
 	end
 	
 	def add_to_list
-		if !session[:cur_pref_list_class].exists?(params[:id])
+		if session[:cur_pref_list_class].index(params[:id].to_i).nil?
 			flash[:notice] = "Invalid ID number"
-		elsif find_thing_on_list.nil?
-			@new_list_thing = PrefList.new
-			@new_list_thing.kingdom_id = session[:kingdom][:id]
-			@new_list_thing.thing_id = params[:id]
-			@new_list_thing.pref_list_type = SpecialCode.get_code('pref_list_type',session[:cur_pref_list_class].table_name)
-			@new_list_thing.save
+		else
+			session[:pref_list_type].add(session[:kingdom][:id], params[:id])
 		end
 
 		redirect_to :action => 'index', :page => params[:page]
 	end
 	
 	def drop_from_list
-		if (@list_thing = find_thing_on_list)
-			@list_thing.destroy
-		end
+		session[:pref_list_type].drop(session[:kingdom][:id], params[:id])
 		
 		redirect_to :action => 'index', :page => params[:page]
-	end
-
-protected
-	def find_thing_on_list
-		if session[:pref_list_type] == :creatures
-			session[:kingdom].creature_pref_list.find(:first, :conditions => ['thing_id = ?', params[:id]])
-		elsif session[:pref_list_type] == :events
-			session[:kingdom].event_pref_list.find(:first, :conditions => ['thing_id = ?', params[:id]])
-		elsif session[:pref_list_type] == :features
-			session[:kingdom].feature_pref_list.find(:first, :conditions => ['thing_id = ?', params[:id]])
-		end
 	end
 end

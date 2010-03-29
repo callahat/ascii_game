@@ -10,6 +10,7 @@ sick_pc:
 
 test_king:
   name: "Test King"
+  player: test_player_one
   c_class_id: 1
   race_id: 1
   kingdom_id: 1
@@ -24,15 +25,15 @@ test_pc_one:
   next_level_at: 500
   experience: 6
   kingdom_id: 0
+  in_kingdom: 1
+  present_level: first_kingdom_level_one
   house_x: 1
   house_y: 1
   turns: 80
   freepts: 3
   gold: 14
   image_id: 0
-  in_kingdom: 1
   bigx: 0
   bigy: 0
-  kingdom_level:
-  in_world: 1
+  present_world: world_one
   image: pc_image

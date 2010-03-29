@@ -1,58 +1,53 @@
-<%= error_messages_for 'event_sub','stat','health' %>
-
 <!--[form:event_sub]-->
-<%= hidden_field 'event_sub','event_id', :value => @event.id %>
 
-<% if @event.event_type == SpecialCode.get_code('event_type','creature') %>
-  <p><label for="event_sub_creature_id">Creature</label><br/>
-  <%= collection_select('event_sub', 'creature_id', @creatures, 'id', 'name') %></p>
-  <p><label for="event_sub_creature_low">Least encountered</label><br/>
-  <%= text_field 'event_sub', 'low'  %></p>
-  <p><label for="event_sub_creature_high">Most encountered</label><br/>
-  <%= text_field 'event_sub', 'high'  %></p>
+<div id="event_detail">
+<% if @event.class == EventCreature %>
+  <p><label for="event_thing_id">Creature</label><br/>
+  <%= collection_select('event', 'thing_id', @creatures, 'id', 'name') %></p>
+  <p><label for="event_flex[0]">Least encountered</label><br/>
+  <%= text_field_tag 'flex[0]' %></p>
+  <p><label for="event_flex[1]">Most encountered</label><br/>
+  <%= text_field_tag 'flex[1]' %></p>
   
-<% elsif @event.event_type == SpecialCode.get_code('event_type','disease') %>
-  <p><label for="event_sub_disease_id">Disease</label><br/>
-  <%= collection_select('event_sub', 'disease_id', @diseases, 'id', 'name') %></p>
-  <p><label for="event_sub_disease_cures?">Cures?</label><br/>
-  <%= check_box 'event_sub','cures?' %></p>
+<% elsif @event.class == EventDisease %>
+  <p><label for="event_thing_id">Disease</label><br/>
+  <%= collection_select('event', 'thing_id', @diseases, 'id', 'name') %></p>
+  <p><label for="event_flex">Cures?</label><br/>
+  <%= check_box 'event','flex' %></p>
   
-<% elsif @event.event_type == SpecialCode.get_code('event_type','item') %>
-  <p><label for="event_sub_item_id">Item</label><br/>
-  <%= collection_select('event_sub', 'item_id', @items, 'id', 'name') %></p>
-  <p><label for="event_sub_item_number">Number</label><br/>
-  <%= text_field 'event_sub', 'number'  %></p>
+<% elsif @event.class == EventItem %>
+  <p><label for="event_thing_id">Item</label><br/>
+  <%= collection_select('event', 'thing_id', @items, 'id', 'name') %></p>
+  <p><label for="event_flex">Number</label><br/>
+  <%= text_field 'event', 'flex' %></p>
   
-<% elsif @event.event_type == SpecialCode.get_code('event_type','move') %>
- <% if @event_sub.move_type == SpecialCode.get_code('move_type','local_relative')%>
-  <p><label for="event_sub_move_type">Move Type</label><br/>
-  <%= collection_select('event_sub', 'move_type', @move_types, 'col_num', 'text',{},
-                         {:onchange => "window.location = '/management/events/edit_sub_event/?local_relative='+value;"}) %></p>
-  <p><label for="event_sub_move_id">Move</label><br/>
-  <%= text_field 'event_sub', 'move_id'  %></p>
- <% else %>
-  <p><label for="event_sub_move_type">Move Type</label><br/>
-  <%= collection_select('event_sub', 'move_type', @move_types, 'col_num', 'text',{},
-                         {:onchange => "window.location = '/management/events/edit_sub_event/?local_relative='+value;"}) %></p>
-  <p><label for="event_sub_move_id">Move</label><br/>
-  <%= collection_select('event_sub', 'move_id', @levels, 'id', 'level') %></p>
- <% end %>
+<% elsif @event.class == EventMoveRelative %>
+  <p><label for="event_flex">Move</label><br/>
+  <%= text_field 'event', 'flex' %></p>
+
+<% elsif @event.class == EventMoveLocal %>
+  <p><label for="event_thing_id">Move</label><br/>
+  <%= collection_select('event', 'thing_id', @levels, 'id', 'level') %></p>
+
+<% elsif @event.class == EventMoveWorld %>
+  <p><label for="event_thing_id">Move</label><br/>
+  <%= collection_select('event', 'thing_id', @worlds, 'id', 'level') %></p>
+
+<% elsif @event.class == EventNpc %>
+  <p><label for="event_thing_id">NPC</label><br/>
+  <%= collection_select('event', 'thing_id', @npcs, 'id', 'name') %></p>
   
-<% elsif @event.event_type == SpecialCode.get_code('event_type','npc') %>
-  <p><label for="event_sub_npc_id">NPC</label><br/>
-  <%= collection_select('event_sub', 'npc_id', @npcs, 'id', 'name') %></p>
+<% elsif @event.class == EventPlayerCharacter %>
+  <p><label for="event_thing_id">Player Character</label><br/>
+  <%= collection_select('event', 'thing_id', @pcs, 'id', 'name') %></p>
   
-<% elsif @event.event_type == SpecialCode.get_code('event_type','pc') %>
-  <p><label for="event_sub_player_character_id">Player Character</label><br/>
-  <%= collection_select('event_sub', 'player_character_id', @pcs, 'id', 'name') %></p>
+<% elsif @event.class == EventQuest %>
+  <p><label for="event_text">Text</label><br/>
+  <%= text_area 'event', 'text', :rows => '10', :wrap => 'hard'  %></p>
   
-<% elsif @event.event_type == SpecialCode.get_code('event_type','quest') %>
-  <p><label for="event_sub_quest_text">Text</label><br/>
-  <%= text_area 'event_sub', 'text', :rows => '10', :wrap => 'hard'  %></p>
-  
-<% elsif @event.event_type == SpecialCode.get_code('event_type','stat') %>
-  <p><label for="event_sub_text">Text</label><br/>
-  <%= text_area 'event_sub', 'text', :rows => '10', :wrap => 'hard' %></p>
+<% elsif @event.class == EventStat %>
+  <p><label for="event_text">Text</label><br/>
+  <%= text_area 'event', 'text', :rows => '10', :wrap => 'hard' %></p>
   <p><label for="health_hp">HP</label><br/>
   <%= text_field 'health', 'HP'  %></p>
   <p><label for="health_mp">MP</label><br/>
@@ -71,14 +66,13 @@
   <%= text_field 'stat', 'dam'  %></p>
   <p><label for="stat_def">Dfn</label><br/>
   <%= text_field 'stat', 'dfn'  %></p>
-  <p><label for="event_sub_gold">Gold</label><br/>
-  <%= text_field 'event_sub', 'gold'  %></p>
-  <p><label for="event_sub_experience">Experience</label><br/>
-  <%= text_field 'event_sub', 'experience'  %></p>
+  <p><label for="event_flex[0]">Gold</label><br/>
+  <%= text_field_tag 'event', 'flex[0]'  %></p>
+  <p><label for="event_flex[1]">Experience</label><br/>
+  <%= text_field_tag 'event', 'flex[1]'  %></p>
 <% else %>
-  <p>Nothing to set; Something isn't working for event type #: <%= @event.event_type %></p>
+  <p>Please choose an event type</p>
 <% end %>
-
+</div>
 
 <!--[eoform:event]-->
-

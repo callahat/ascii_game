@@ -1,5 +1,26 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
-  id: 1
-two:
-  id: 2
+feature_creature_one: &default_feature
+  name: "Creature Feature One"
+  description: "A feature with a creatures attacking"
+  action_cost: 1
+  image: feature_image
+  player: test_player_one 
+  world_feature: 0
+  kingdom_id: 1
+  public: 0
+  cost: 1000
+  num_occupants: 0
+  armed: 1
+  store_front_size: 0
+feature_no_events:
+  <<: *default_feature
+  name: "Feature Nothing"
+  description: "A feature with no events"
+feature_multi_event:
+  <<: *default_feature
+  name: "Feature Multi"
+  description: "Feature with many events of different priorities"
+unarmed_feature:
+  <<: *default_feature
+  name: "Unarmed Feature"
+  description: "An unarmed feature for testing the controllers"
+  armed: 0

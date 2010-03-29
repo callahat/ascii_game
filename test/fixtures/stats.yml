@@ -151,4 +151,13 @@ tough_monster_stat:
   dfn: 1000
   dam: 1000
   owner: tough_monster
-  kind: "StatCreature"	
+  kind: "StatCreature"
+unarmed_monster_stat:
+  <<: *default_stat10
+  kind: "StatCreature"
+  owner: unarmed_monster
+
+test_event_stat:
+  <<: *default_stat10
+  owner: stat_event
+  kind: "StatEventStat"

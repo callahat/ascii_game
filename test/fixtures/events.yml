@@ -1,33 +1,160 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 creature_event:
-  kingdom_id: -1
-  player_id: -1
+  kingdom_id: 1
+  player: test_player_one
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
   name: "Weak Monster encounter"
-  event_type: <%= SpecialCode.get_code('event_type','creature') %>
+  creature: wimp_monster
+  kind: "EventCreature"
   armed: 1
   cost: 500
+  flex: "7;7"
+creature2_event:
+  kingdom_id: 1
+  player: test_player_one
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Tough Monster encounter"
+  creature: tough_monster
+  kind: "EventCreature"
+  armed: 1
+  cost: 500
+  flex: "7;7"
 pc_event:
-  kingdom_id: -1
-  player_id: -1
+  kingdom_id: 1
+  player: test_player_one
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
   name: "Sick PC encounter"
-  event_type: <%= SpecialCode.get_code('event_type','pc') %>
+  kind: "EventPlayerCharacter"
   armed: 1
   cost: 500
+  thing_id: 2
 npc_event:
   kingdom_id: -1
   player_id: -1
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
   name: "Healthy Npc encounter"
-  event_type: <%= SpecialCode.get_code('event_type','npc') %>
+  kind: "EventNpc"
   armed: 1
   cost: 500
+  thing_id: 1
 storm_gate_event:
   kingdom_id: -1
   player_id: -1
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
   name: "Storm Kingdom 1 Gate event"
-  event_type: <%= SpecialCode.get_code('event_type','storm_gate') %>
+  kind: "EventStormGate"
   armed: 1
   cost: 50
+  level: first_kingdom_level_one
+quest_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Quest event"
+  kind: "EventQuest"
+  armed: 1
+  cost: 50
+  text: "A thunderous sound reverberates congratulatory words regarding your recent quest completion"
+  quest: quest_one
+item_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Item event"
+  kind: "EventItem"
+  armed: 1
+  cost: 50
+  item: cool_item
+  flex: 3
+disease_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Airborn disease event"
+  kind: "EventDisease"
+  armed: 1
+  cost: 50
+  disease: air_disease
+stat_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Stat event"
+  kind: "EventStat"
+  armed: 1
+  cost: 50
+  text: "Stat text explaining what happened"
+  flex: "500;10"
+	
+world_move_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "world move event"
+  kind: "EventMoveWorld"
+  armed: 1
+  cost: 50
+local_move_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "local move event"
+  kind: "EventMoveLocal"
+  armed: 1
+  cost: 50
+  level: first_kingdom_level_one
+relative_move_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "relative move event"
+  kind: "EventMoveRelative"
+  armed: 1
+  cost: 50
+  flex: -1
+throne_event:
+  kingdom_id: 1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "throne event"
+  kind: "EventThrone"
+  armed: 1
+  cost: 0
+spawn_kingdom_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "spawn kingdom event"
+  kind: "EventSpawnKingdom"
+  armed: 1
+  cost: 0
+castle_event:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "castle event"
+  kind: "EventCastle"
+  armed: 1
+  cost: 0
+quest_event_done:
+  kingdom_id: -1
+  player_id: -1
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','limited') %>
+  event_reps: 1
+  name: "Quest event done"
+  kind: "EventQuest"
+  armed: 1
+  cost: 50
+  text: "Some text here that probably wont appear since the quest is done."
+  quest: quest_one
+unarmed_quest_event:
+  id: 1
+  kingdom_id: 1
+  player: test_player_one
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Unarmed Quest Event"
+  kind: "EventQuest"
+  quest: quest_one
+  armed: 0
+  cost: 50
+  text: "Unarmed event"

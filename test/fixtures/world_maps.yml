@@ -1,5 +1,33 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
-  id: 1
-two:
-  id: 2
+test_world_map_1_1_0_0:
+  world: world_one
+  xpos: 1
+  ypos: 1
+  bigxpos: 0
+  bigypos: 0
+  feature: feature_creature_one
+
+test_world_map_0_0_0_1:
+  world: world_one
+  xpos: 1
+  ypos: 1
+  bigxpos: 0
+  bigypos: 1
+test_world_map_0_0_1_0:
+  world: world_one
+  xpos: 1
+  ypos: 1
+  bigxpos: 1
+  bigypos: 0
+test_world_map_0_0_-1_0:
+  world: world_one
+  xpos: 1
+  ypos: 1
+  bigxpos: -1
+  bigypos: 0
+test_world_map_0_0_0_-1:
+  world: world_one
+  xpos: 1
+  ypos: 1
+  bigxpos: 0
+  bigypos: -1

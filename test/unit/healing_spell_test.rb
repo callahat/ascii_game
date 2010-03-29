@@ -64,5 +64,5 @@ class HealingSpellTest < ActiveSupport::TestCase
 		assert @pc.health.HP == 30, @pc.health.HP
 		assert healed == 20
 		assert disease == @sars
-end
+	end
 end

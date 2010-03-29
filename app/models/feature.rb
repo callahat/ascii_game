@@ -6,7 +6,7 @@ class Feature < ActiveRecord::Base
 	has_many :feature_events, :order => 'priority'
 	has_many :level_maps
 	has_many :world_maps
-	
+
 	validates_presence_of :name,:action_cost,:image_id,:player_id,:kingdom_id,:cost,:num_occupants
 	validates_uniqueness_of :name
 	validates_numericality_of :action_cost,:cost
@@ -30,6 +30,33 @@ class Feature < ActiveRecord::Base
 		return @sys_gen_feature
 	end
 	
+	#returns two arrays, 1st: events user can choose from, 2nd: events user cannot choose
+	def available_events(p, loc, pid, chance=(rand(100)+1) )
+		[true, false].inject([]) {|ret, c|
+			conds = {:conditions => ['priority = ? and chance >= ? and choice = ?', p, chance, c]}
+			ret << feature_events.find(:all, conds).inject([]){|a,fe|
+				e = fe.event.dup
+				case e.event_rep_type
+					when SpecialCode.get_code('event_rep_type','unlimited')
+						a << e
+					when SpecialCode.get_code('event_rep_type','limited')
+						( loc.done_events.count(:conditions => {:event_id => e.id}) < e.event_reps ?
+								a << e : a )
+					when SpecialCode.get_code('event_rep_type','limited_per_char')
+						( loc.done_events.count(:conditions => {:player_character_id => pid, :event_id => e.id}) < e.event_reps ?
+								a << e : a )
+				end
+			}
+		}
+	end
+	
+	#get the next priority 
+	def next_priority(priority)
+		pri = feature_events.find(:first, :conditions => ['priority > ?', priority])
+		return nil unless pri
+		pri.priority
+	end
+	
 	#Pagination related stuff
 	def self.per_page
 		15
@@ -37,9 +64,9 @@ class Feature < ActiveRecord::Base
 	
 	def self.get_page(page, pcid = nil, kid = nil)
 		if pcid.nil? && kid.nil?
-		paginate(:page => page, :order => 'armed,event_type,name' )
-	else
-			paginate(:page => page, :conditions => ['player_id = ? or kingdom_id = ?', pcid, kid], :order => 'armed,event_type,name' )
-	end
+			paginate(:page => page, :order => 'armed,name' )
+		else
+			paginate(:page => page, :conditions => ['player_id = ? or kingdom_id = ?', pcid, kid], :order => 'armed,name' )
+		end
 	end
 end

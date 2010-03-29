@@ -53,3 +53,10 @@ guard_<%= i %>_health:
   owner: guard_<%= i.to_s %>
   kind: "HealthNpc"
 <% } %>
+
+test_event_stat_health:
+  HP: 30
+  MP: 30
+  wellness: <%= SpecialCode.get_code('wellness','alive') %>
+  owner: stat_event
+  kind: "HealthEventStat"

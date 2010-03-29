@@ -8,9 +8,6 @@ class Game::CourtController < ApplicationController
 	
 	def throne
 		@king = session[:player_character].present_kingdom.player_character
-		if @king && @king.health.HP > 0 && @king.health.wellness != SpecialCode.get_code('wellness','dead')
-			session[:completed] = true
-		end
 	end
 	
 	def join_king
@@ -177,7 +174,7 @@ class Game::CourtController < ApplicationController
 			flash[:notice] = msg
 			redirect_to :action => 'quest_office'
 		end
-			end
+	end
 		
 	def abandon_quest
 		abandoned, msg = LogQuest.abandon(session[:player_character], params[:qid])

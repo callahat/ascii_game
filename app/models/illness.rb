@@ -11,7 +11,7 @@ class Illness < ActiveRecord::Base
 			@disease = illness.disease
 			caught +=1 if Illness.infect(target, @disease)
 		end
-	return caught > 0
+		return caught > 0
 	end
 	
 	def self.infect(who, disease)
@@ -32,10 +32,25 @@ class Illness < ActiveRecord::Base
 					end
 				end
 			end
-		who.save!
-		@tl.save!
-	end
+			who.save!
+			@tl.save!
+		end
 		return @ret
+	end
+	
+	def self.cure(what, who)
+		if (illness = who.illnesses.find(:first, :conditions => ['disease_id = ?', what.id])) &&
+				illness.destroy
+			who.transaction do
+				who.stat.lock!
+				who.health.wellness = SpecialCode.get_code('wellness','alive') if who.illnesses.size == 0 
+				who.stat.add_stats(what.stat)
+				who.stat.save!
+			end
+			return true
+		else
+			return false
+		end
 	end
 	
 	#Pagination related stuff
@@ -51,6 +66,6 @@ class Illness < ActiveRecord::Base
 			paginate(:page => page,
 						 :joins => 'INNER JOIN diseases on disease_id = diseases.id',
 				 :conditions => ['owner_id = ?', oid], :order => 'name' )
-	end
+		end
 	end
 end

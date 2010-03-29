@@ -103,13 +103,13 @@ class Stat < ActiveRecord::Base
 	
 	#How many experience points it would require for level
 	def exp_for_level(l)
-		def self.point_cost(p, l)
+		def self.point_cost(pt, l)
 			if l < 20
-				p*l*3
+				pt*l*3
 			elsif l < 100
-				60*p + ((p*(l-20))*4.0**(1.0 + l/100.0)).round
+				60*pt + ((pt*(l-20))*4.0**(1.0 + l/100.0)).round
 			else
-				1340*p + (p*(l-100)*5.0**(1.0 + l/100.0)).round
+				1340*pt + (pt*(l-100)*5.0**(1.0 + l/100.0)).round
 			end
 		end
 		cost = 0

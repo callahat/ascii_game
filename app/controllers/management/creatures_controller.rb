@@ -14,7 +14,7 @@ class Management::CreaturesController < ApplicationController
 	#**********************************************************************
 	def index
 		#design creatures
-	@creatures = Creature.get_page(params[:page], session[:player][:id], session[:kingdom][:id])
+		@creatures = Creature.get_page(params[:page], session[:player][:id], session[:kingdom][:id])
 	end
 
 	def new
@@ -59,8 +59,8 @@ class Management::CreaturesController < ApplicationController
 		if !verify_creature_owner || !verify_creature_not_in_use
 			redirect_to :action => 'index'
 		else
-		handle_creature_init_vars
-	end
+			handle_creature_init_vars
+		end
 	end
 
 	def update
@@ -121,7 +121,7 @@ class Management::CreaturesController < ApplicationController
 		if @creature.update_attribute(:armed, true)
 			flash[:notice] = @creature.name + ' sucessfully armed.'
 			#add it to the pref list
-			if PrefList.add(session[:kingdom][:id],'creatures',@creature.id)
+			if PrefListCreature.add(session[:kingdom][:id],@creature.id)
 				flash[:notice]+= '<br/>Added to preference list'
 			else
 				flash[:notice]+= '<br/>Could not be added to preference list'
@@ -134,8 +134,7 @@ class Management::CreaturesController < ApplicationController
 	end
 
 	def pref_lists
-		session[:pref_list_type] = :creature
-		
+		session[:pref_list_type] = PrefListCreature
 		redirect_to :controller => '/management/pref_list'
 	end
 
