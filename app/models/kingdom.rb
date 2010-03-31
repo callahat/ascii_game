@@ -17,8 +17,12 @@ class Kingdom < ActiveRecord::Base
 	has_many :guards, :class_name => 'Npc', :include => :health,
 										:conditions => ['is_hired = true AND npc_division = ? and healths.wellness != ?',
 										SpecialCode.get_code('npc_division','guard'), SpecialCode.get_code('wellness','dead')]
+	has_many :merchants, :class_name => 'Npc', :include => :health,
+										:conditions => ['is_hired = true AND npc_division = ? and healths.wellness != ?',
+										SpecialCode.get_code('npc_division','merchant'), SpecialCode.get_code('wellness','dead')]
 	has_many :live_npcs, :class_name => 'Npc', :include => :health,
-											 :conditions => ['healths.wellness != ?', SpecialCode.get_code('wellness','dead')], :order => 'name'
+											 :conditions => ['is_hired = true AND healths.wellness != ?',
+											 SpecialCode.get_code('wellness','dead')], :order => 'name'
 	has_many :pandemics, :foreign_key => 'owner_id'
 	has_many :illnesses, :foreign_key => 'owner_id', :class_name => 'Pandemic'
 	has_many :player_characters
@@ -33,14 +37,9 @@ class Kingdom < ActiveRecord::Base
 	
 	has_many :pref_lists
 	
-	def valid_name
-		if name.nil? || name == ""
-			errors.add('name', 'cannot be empty')
-		elsif Kingdom.find_by_name(name)
-			errors.add('name', 'is already taken')
-		end
-		errors.size == 0
-	end
+	
+	validates_presence_of :name, :bigx, :bigy, :world_id
+	validates_uniqueness_of :name
 	
 	def self.pay_tax(tax, kingdom_id)
 		Kingdom.transaction do
@@ -80,21 +79,20 @@ class Kingdom < ActiveRecord::Base
 		end
 	end
 	
-	#returns nil 
+	#returns nil if successful
 	def self.spawn_new(who, kname, wm)
-		@kingdom = Kingdom.new(:name => kname)
 		@ret_kingdom = nil
-		@msg = ""
 		
 		WorldMap.transaction do
 			wm.lock!
-
 			unless @msg = Kingdom.cannot_spawn(who)
 				if wm.id != (WorldMap.current_tile(wm.bigypos, wm.bigxpos, wm.ypos, wm.xpos)).id
 					@msg = "Someone has already founded a kingdom here!"
-				elsif @kingdom.valid_name
-					make_new_kingdom(who, kname, wm)
+				elsif ( @kingdom = Kingdom.build_foundation(who, kname, wm) ).valid?
+					@kingdom.build_the_rest(wm)
+					@msg = "test1"
 				else
+					@msg = "test2"
 					@ret_kingdom = @kingdom
 				end
 			end
@@ -104,29 +102,32 @@ class Kingdom < ActiveRecord::Base
 		return @ret_kingdom, @msg
 	end
 
-	def self.make_new_kingdom(who, kname, wm)
-		@emtpy_feature = Feature.find(:first, :conditions => ['name = ? and kingdom_id = ? and player_id = ?', "\nEmpty", -1, -1])
+	def self.build_foundation(who, kname, wm)
+		create(:name => kname,
+					 :player_character_id => who.id,
+					 :num_peasants => rand(400) + 100,
+					 :gold => 55000,
+					 :tax_rate => 5,
+					 :world_id => wm.world_id,
+					 :bigx => wm.bigxpos,
+					 :bigy => wm.bigypos)
+	end
+
+	def build_the_rest(wm)
+		@emtpy_feature = Feature.find(:first, :conditions => ['name = ? and kingdom_id = -1 and player_id = -1', "\nEmpty"])
 		@unlimited = SpecialCode.get_code('event_rep_type','unlimited')
-		@kingdom = Kingdom.create(:name => kname,
-															:player_character_id => who.id,
-															:num_peasants => rand(400) + 100,
-															:gold => 55000,
-															:tax_rate => 5,
-															:world_id => wm.world_id,
-															:bigx => wm.bigxpos,
-															:bigy => wm.bigypos)
-		@ec = EventCastle.sys_gen!(:name => "\nCastle #{@kingdom.name} event",
+		@ec = EventCastle.sys_gen!(:name => "\nCastle #{self.name} event",
 															:event_rep_type => @unlimited)
-		@et = EventThrone.sys_gen!(:name => "\nThrone #{@kingdom.name} event",
+		@et = EventThrone.sys_gen!(:name => "\nThrone #{self.name} event",
 															:event_rep_type => @unlimited)
-		@castle_img = Image.new_castle(@kingdom)
-		@castle_feature = Feature.sys_gen("\nCastle #{@kingdom.name}", @castle_img.id)
+		@castle_img = Image.new_castle(self)
+		@castle_feature = Feature.sys_gen("\nCastle #{self.name}", @castle_img.id)
 		@castle_feature.save!
 		@castle_fe = FeatureEvent.spawn_gen(:feature_id => @castle_feature.id,
 																				:event_id => @ec.id )
 		@throne_fe = FeatureEvent.spawn_gen(:feature_id => @castle_feature.id,
 																				:event_id => @et.id )
-		@level = Level.create(:kingdom_id => @kingdom.id,
+		@level = Level.create(:kingdom_id => self.id,
 													:level => 0,
 													:maxy => 3,
 													:maxx => 5)
@@ -135,13 +136,13 @@ class Kingdom < ActiveRecord::Base
 																				:xpos => 2,
 																				:ypos => 1,
 																				:feature_id => @castle_feature.id)
-		@entrance = EventMoveLocal.sys_gen!(:name => "\nKingdom #{@kingdom.name} entrance",
+		@entrance = EventMoveLocal.sys_gen!(:name => "\nKingdom #{self.name} entrance",
 																				:event_rep_type => @unlimited,
 																				:thing_id => @level.id )
-		@storm_event = EventStormGate.sys_gen!(:name => "\nKingdom #{@kingdom.name} storm event",
+		@storm_event = EventStormGate.sys_gen!(:name => "\nKingdom #{self.name} storm event",
 																					:event_rep_type => @unlimited,
 																					:thing_id => @level.id )
-		@kingdom_entrance_feature = Feature.sys_gen("\nKingdom #{@kingdom.name} entrance", @castle_img.id)
+		@kingdom_entrance_feature = Feature.sys_gen("\nKingdom #{self.name} entrance", @castle_img.id)
 		@kingdom_entrance_feature.world_feature = true
 		@kingdom_entrance_feature.save!
 		@entrance_fe = FeatureEvent.spawn_gen(:feature_id => @kingdom_entrance_feature.id,
@@ -151,13 +152,13 @@ class Kingdom < ActiveRecord::Base
 		@new_kingdom = WorldMap.copy(wm)
 		@new_kingdom.feature_id = @kingdom_entrance_feature.id
 		@new_kingdom.save!
-		5.times { Npc.gen_stock_guard(@kingdom.id) }
-		KingdomEntry.create(:kingdom_id => @kingdom.id,
+		5.times { Npc.gen_stock_guard(self.id) }
+		KingdomEntry.create(:kingdom_id => self.id,
 												:allowed_entry => SpecialCode.get_code('entry_limitations','everyone') )
 		PlayerCharacter.transaction do
-			who.lock!
-			who.kingdom_id = @kingdom.id
-			who.save!
+			self.player_character.lock!
+			self.player_character.kingdom_id = self.id
+			self.player_character.save!
 		end
 	end
 end

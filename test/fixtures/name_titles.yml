@@ -1,5 +1,65 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
-  id: 1
-two:
-  id: 2
+name_title_one:
+  title: "Weak"
+  stat: "all"
+  points: 0
+name_title_two:
+  title: "Strong"
+  stat: "all"
+  points: 20
+name_title_three:
+  title: "Sickly"
+  stat: "con"
+  points: 0
+name_title_four:
+  title: "Robust"
+  stat: "con"
+  points: 20
+name_title_five:
+  title: "Blunt"
+  stat: "dam"
+  points: 0
+name_title_six:
+  title: "Sharp"
+  stat: "dam"
+  points: 20
+name_title_seven:
+  title: "Clumsy"
+  stat: "dex"
+  points: 0
+name_title_eight:
+  title: "Nimble"
+  stat: "dex"
+  points: 20
+name_title_nine:
+  title: "Permeable"
+  stat: "dfn"
+  points: 0
+name_title_ten:
+  title: "Hard"
+  stat: "dfn"
+  points: 20
+name_title_eleven:
+  title: "Dumb"
+  stat: "int"
+  points: 0
+name_title_twelve:
+  title: "Clever"
+  stat: "int"
+  points: 20
+name_title_thirteen:
+  title: "Mundane"
+  stat: "mag"
+  points: 0
+name_title_fourteen:
+  title: "Wise"
+  stat: "mag"
+  points: 20
+name_title_fifteen:
+  title: "Puny"
+  stat: "str"
+  points: 0
+name_title_sixteen:
+  title: "Muscles"
+  stat: "str"
+  points: 20

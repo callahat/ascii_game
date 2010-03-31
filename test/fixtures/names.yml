@@ -1,5 +1,15 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
-  id: 1
-two:
-  id: 2
+name_one:
+  name: "Bjorn"
+name_two:
+  name: "Hans"
+name_three:
+  name: "Mike"
+name_four:
+  name: "Jane"
+name_five:
+  name: "Samantha"
+name_six:
+  name: "Jill"
+name_seven:
+  name: "Jack"

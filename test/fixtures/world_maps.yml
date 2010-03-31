@@ -31,3 +31,4 @@ test_world_map_0_0_0_-1:
   ypos: 1
   bigxpos: 0
   bigypos: -1
+  feature: kingdom_spawn_feature

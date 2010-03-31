@@ -238,6 +238,6 @@ class GameControllerTest < ActionController::TestCase
 	end
 	
 	test "game controller spawn kingdom" do
-		
+		flunk "add spawn kingdom functional test"
 	end
 end
