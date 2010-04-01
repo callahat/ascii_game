@@ -75,3 +75,10 @@ fe_for_unarmed:
   chance: 100
   priority: 1
   choice: false
+
+world_kingdom_spawn:
+  feature: kingdom_spawn_feature
+  event: spawn_kingdom_event
+  chance: 100
+  priority: 1
+  choice: false

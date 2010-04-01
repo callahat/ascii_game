@@ -238,6 +238,36 @@ class GameControllerTest < ActionController::TestCase
 	end
 	
 	test "game controller spawn kingdom" do
-		flunk "add spawn kingdom functional test"
+		session[:player_character].update_attribute(:in_kingdom, nil)
+		session[:player_character].update_attribute(:kingdom_level, nil)
+		@world_map = WorldMap.find(:last, :conditions => ['xpos = 1 and ypos = 1 and bigxpos = 0 and bigypos = -1'])
+		get 'spawn_kingdom', {}, session
+		assert_response :success
+		assert_template 'spawn_kingdom'
+		
+		##no current event
+		assert_no_difference 'Kingdom.count' do
+			post 'do_spawn', {:kingdom => {:name => 'Awesomeland'}}, session
+		end
+		assert_redirected_to :controller => 'game', :action => 'feature'
+		
+		#Try feature even when level too low
+		get 'feature', {:id => @world_map.id}, session
+		assert_redirected_to :controller => 'game', :action => 'complete'
+		assert flash[:notice] =~ /not yet powerful/
+		session[:player_character].current_event.destroy
+		
+		#try feature with high enough level
+		session[:player_character].update_attribute(:level, 50)
+		get 'feature', {:id => @world_map.id}, session
+		assert_redirected_to :controller => 'game', :action => 'spawn_kingdom'
+		assert_no_difference 'Kingdom.count' do
+			post 'do_spawn', {:kingdom => {:name => 'HealthyTestKingdom'}}, session
+		end
+		assert_template 'spawn_kingdom'
+		assert_difference 'Kingdom.count', +1 do
+			post 'do_spawn', {:kingdom => {:name => 'Awesomeland'}}, session
+		end
+		assert_redirected_to :controller => 'game', :action => 'complete'
 	end
 end
