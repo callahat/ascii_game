@@ -2,7 +2,7 @@
 
 <table>
   <tr>
-    <th>thumbnail</th>
+    <th></th>
     <th>name</th>
     <th>image type</th>  
     <th>public</th>
@@ -12,7 +12,7 @@
   
 <% for image in @images %>
   <tr>
-    <td><pre class="image_index"><%= image.image_text %></pre></td>
+    <td><span class="image_index image"><%= image.image_text %></span></td>
     <td><%= image.name %></td>
     <td><% if image.image_type.nil? %>*NONE*<% else %><%=h SpecialCode.get_text('image_type',image.image_type) %><% end %></td>
     <td><%= image.public %></td>

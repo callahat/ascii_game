@@ -4,7 +4,7 @@ module GameHelper
 		c = 0
 		battle.groups.each{|bg|
 			ret += "<td>"
-			ret += "<pre class=\"creature\">" + bg.enemies[0].enemy.image.image_text + "</pre>\n"
+			ret += "<span class=\"creature image\">" + h(bg.enemies[0].enemy.image.image_text) + "</span>\n"
 			ret += submit_tag(bg.name) + "</td>\n"
 			ret += "</tr><tr>\n" if c % 5 == 0
 			c+=1
@@ -28,20 +28,18 @@ module GameHelper
 		0.upto(where.maxy-1){|y|
 			@ret += "<tr>\n"
 			0.upto(where.maxx-1){|x|
-				@ret += "<td>\n"
 				level_map = where.level_maps.find(:last,:conditions => ['ypos = ? AND xpos = ?', y, x])
 				if level_map && feature = level_map.feature
-					@ret += "<span title=\"" + h(feature.name) + "\">" + 
-									"<a href=\"/game/feature?id=" + level_map.id.to_s + "\" class=\"map\">" + 
-									"<pre class=\"feature\">" + h(feature.image.image_text) + "</pre>\n</a></span>"
+					@ret += "<td>\n<a href=\"/game/feature?id=" + level_map.id.to_s + "\" class=\"map\">" + 
+									"<span class=\"feature image\" title=\"" + h(feature.name) + "\">"  + h(feature.image.image_text) + "</span>\n</a></td>\n"
 				else
-					@ret += "<span title=\"Empty\">" + 
-									"<a href=\"#\" class=\"map\"><pre class=\"feature\">" +
-									EMPTY_IMAGE + "</pre></a></span>"
+					@ret += "<td>\n<a href=\"#\" class=\"map\"><pre class=\"feature image\" title=\"Empty\">" +
+									h(EMPTY_IMAGE) + "</span></a></td>\n"
 				end
 			}
+			@ret += "</tr>\n"
 		}
-		return @ret + "</tr>\n</table>\n"
+		return @ret + "\n</table>\n"
 	end
 	
 	#expects [world, bigx, bigy]
@@ -80,14 +78,13 @@ module GameHelper
 			1.upto(where[0].maxx){|x|
 				wm = where[0].world_maps.find(:last, :conditions => ['bigypos = ? and bigxpos = ? and ypos = ? and xpos = ?', where[2], where[1], y, x])
 				if wm && f = wm.feature
-					@ret += "<td><span title=\"" + h(f.name) + "\"<a href=\"/game/feature?id=" +
-									wm.id.to_s + "\" class=\"map\">" +
-									"<pre class=\"world_feature\">" + h(f.image.image_text) + "</pre>" +
-									"</a></span></td>"
+					@ret += "<td><a href=\"/game/feature?id=" + wm.id.to_s + "\" class=\"map\">" +
+									"<span class=\"world_feature image\" title=\"" + h(f.name) + "\">" + h(f.image.image_text) + "</span>" +
+									"</a></td>"
 				else
-					@ret += "<td><span title=\"Empty\"><a href=# class=\"map\">" +
-									"<pre class=\"world_feature\">" + h(EMPTY_IMAGE) + "</pre>" +
-									"</a></span></td>"
+					@ret += "<td><a href=# class=\"map\">" +
+									"<span class=\"world_feature image\" title=\"Empty\">" + h(EMPTY_IMAGE) + "</span>" +
+									"</a></td>"
 				end
 			}
 			@ret += "</tr>"

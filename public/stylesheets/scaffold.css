@@ -6,36 +6,38 @@ body, p, ol, ul {
   line-height: 16px;
 }
 
-pre {
+span.image {
+  white-space: pre;
   background-color: #eee;
   margin:0;
   text-decoration: none;
   font-family:Courier New;
+  display:block;
 }
 
-pre.creature {
+span.creature {
   font-size:8pt;
   line-height:10pt;
 }
 
-pre.feature {
+span.feature {
   font-size:7pt;
   line-height:8pt;
 }
 
-pre.world_feature {
+span.world_feature {
   font-size:7pt;
   line-height:6pt;
   background-color: #fff
   font-color: #000
 }
 
-pre.image_index {
+span.image_index {
   font-size:3pt;
   line-height:4pt;
 }
 
-pre.char_thumb {
+span.char_thumb {
   font-size:4pt;
   line-height:4pt;
 }
@@ -72,10 +74,14 @@ td.board_info {
 
 
 a { color: #000; }
-a:visited { color: #666; decoration:none;}
-a:hover { color: #fff; background-color:#000; }
+a.map {text-decoration:none;}
+a.map:visited { color: #000; }
+a.map:hover { color:#f00; background-color:transparent;}
 
-a.map:hover { color:#f00; decoration:none; }
+a:visited { color: #666; }
+a:hover { color: #fff; background-color: #000;}
+
+
 
 .fieldWithErrors {
   padding: 2px;

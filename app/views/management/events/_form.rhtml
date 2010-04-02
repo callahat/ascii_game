@@ -37,8 +37,8 @@
   <%= text_field 'event', 'flex' %></p>
   
 <% elsif @event.kind == "EventMoveRelative" %>
-  <p><label for="event_flex">Move</label><br/>
-  <%= text_field 'event', 'flex' %></p>
+  <p><label for="event_thing_id">Move</label><br/>
+  <%= text_field 'event', 'thing_id' %></p>
 
 <% elsif @event.kind == "EventMoveLocal" %>
   <p><label for="event_thing_id">Move</label><br/>

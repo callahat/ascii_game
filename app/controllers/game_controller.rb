@@ -219,6 +219,7 @@ protected
 	def exec_event(ce)
 		@direction, @completed, @message = ce.event.happens(session[:player_character])
 		ce.update_attribute(:completed, @completed)
+		session[:player_character].reload
 		
 		if @direction
 			flash[:notice] = @message
