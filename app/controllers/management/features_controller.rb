@@ -23,19 +23,29 @@ class Management::FeaturesController < ApplicationController
 	end
 	
 	def new
-		@feature = Feature.new
-		handle_feature_init_vars
+		@feature = Feature.new(params[:feature])
+		@kingdom_id = session[:kingdom][:id]
+		@player_id = session[:player][:id]
+		@image = @feature.image || Image.new(params[:image])
+		@images = Image.find(:all,
+								:conditions => ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
+								@player_id,@kingdom_id,SpecialCode.get_code('image_type', 'kingdom')], :order => 'name')
 	end
 	
 	def create
-		@feature = Feature.new(params[:feature])
-		handle_feature_init_vars
+		new
+		@feature.image_id = 0 unless @feature.image
 		calc_feature_cost
 		@feature.cost = @cost
 		
-		handle_feature_image
-		
-		if @feature.save
+		if @feature.valid?
+			if params[:feature][:image_id].nil? || params[:feature][:image_id] == ""
+				@image.resize_image(10,15)
+				@image.save! 
+				@feature.image_id = @image.id
+			end
+			@feature.save
+			
 			flash[:notice] = @feature.name + ' was sucessfully created.'
 			redirect_to :action => 'index'
 		else
@@ -47,19 +57,23 @@ class Management::FeaturesController < ApplicationController
 	def edit
 		@feature = Feature.find(params[:id])
 		@image = @feature.image
-		handle_feature_init_vars
+		@kingdom_id = session[:kingdom][:id]
+		@player_id = session[:player][:id]
+		@images = Image.find(:all,
+								:conditions => ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
+								@player_id,@kingdom_id,SpecialCode.get_code('image_type', 'kingdom')], :order => 'name')
+		if !verify_feature_owner || !verify_feature_not_in_use
+			redirect_to :action => 'index'
+			return
+		end
 	end
 	
 	def update
 		edit
 		
-		if !verify_feature_owner || !verify_feature_not_in_use
-			redirect_to :action => 'index'
-			return
-		end
-		update_feature_image
+		@image.update_image(params[:image][:image_text],10,15) unless params[:image][:image_text] == ""
 		
-		if @feature.update_attributes(params[:feature])
+		if @feature.update_attributes(params[:feature]) & @image.save
 			calc_feature_cost
 			@feature.cost = @cost
 			@feature.save
