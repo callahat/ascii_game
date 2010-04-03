@@ -70,7 +70,6 @@ class Management::ImagesController < ApplicationController
 
 	def update
 		edit
-		p params[:image][:image_text]
 		
 		if @image.update_attributes(params[:image])
 			if @image.image_type == SpecialCode.get_code('image_type','kingdom') || 
