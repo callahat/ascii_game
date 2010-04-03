@@ -35,7 +35,13 @@
 <%= hidden_field 'feature','world_feature', :value => 'false' %>
 <% end %>
 
-<%= hidden_field 'feature','player_id', :value => session[:player][:id] %>
-<%= hidden_field 'feature','kingdom_id', :value => session[:kingdom][:id] %>
+<%= hidden_field 'feature','player_id', :value => @player_id %>
+<%= hidden_field 'feature','kingdom_id', :value => @kingdom_id %>
+
+<%= hidden_field 'image','player_id', :value => @player_id %>
+<%= hidden_field 'image','kingdom_id', :value => @kingdom_id %>
+<%= hidden_field 'image','public', :value => false %>
+<%= hidden_field 'image','image_type', :value => SpecialCode.get_code('image_type','kingdom') %>
+
 
 <!--[eoform:event]-->

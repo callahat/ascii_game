@@ -1,10 +1,10 @@
 <p><b>name: </b><%= @image.name %></p>
-<table><tr><td><pre class="<%=h @type %>"><%=h @image.image_text %></pre></td></tr></table>
+<table><tr><td><span class="<%=h @type %> image"><%=h @image.image_text %></span></td></tr></table>
 <p><b>image_type: </b><% if @image.image_type.nil? %>*NONE*<% else %><%=h SpecialCode.get_text('image_type',@image.image_type) %><% end %></p>
 <p><b>player_id: </b><%= @image.player_id %></p>
 <p><b>public: </b><%= @image.public %></p>
 <p><b>kingdom: </b><%= @image.kingdom.name %></p>
-<p><b>picture: </b><%= @image.picture %></p>
+<p><b>picture: </b><span class="creature image"><%= @image.picture %></span></p>
 
 
 <%= link_to 'Edit', :action => 'edit', :id => @image %> |

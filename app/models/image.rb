@@ -7,6 +7,8 @@ class Image < ActiveRecord::Base
 	has_many :features
 	has_many :player_characters
 	
+	validates_presence_of :image_type
+	
 	def self.deep_copy(image)
 		@copy_image = Image.new
 		@copy_image.image_text = image.image_text
@@ -28,6 +30,22 @@ class Image < ActiveRecord::Base
 		@new_image
 	end
 	
+	def update_image(new_image_text, rowcap=0, colcap=0)
+		self.image_text = new_image_text
+		self.resize_image(rowcap,colcap)
+	end
+	
+	def resize_image(rowcap,colcap)
+		return self.image_text if rowcap < 1 || colcap < 1
+		it = self.image_text
+		it.gsub!(/\r/,"") #ie adds this character, it must go
+		it = it.split("\n")
+		(rowcap < it.size ? rowcap : it.size).times{|r|
+			it[r] = ( it[r].length <= colcap ? it[r] + " "*(colcap-it[r].length) : it[r][0..colcap-1] ) }
+		it = ( it.size <= rowcap ? it + Array.new(rowcap-it.size, (" "*colcap)) : it[0..rowcap-1] )
+		self.image_text = it.join "\n"
+	end
+	
 	#Pagination related stuff
 	def self.per_page
 		10
@@ -38,6 +56,6 @@ class Image < ActiveRecord::Base
 		paginate(:page => page, :order => 'image_type,name' )
 	else
 			paginate(:page => page, :conditions => ['kingdom_id = ?', kid], :order => 'image_type,name' )
-	end
+		end
 	end
 end

@@ -11,7 +11,8 @@ class Management::FeaturesControllerTest < ActionController::TestCase
 		@f = Feature.find_by_name("Unarmed Feature")
 		@f_hash = {:name => "New Feature Name", :action_cost => 1, :world_feature => 0,
 								:kingdom_id => session[:kingdom][:id], :player_id => session[:player][:id]}
-		@i_hash = {:image_text => "###\n###\n#H#"}
+		@i_hash = {:image_text => "###\n###\n#H#", :image_type => SpecialCode.get_code('image_type','kingdom'),
+							:player_id => session[:player][:id], :kingdom_id => session[:kingdom][:id]}
 		@e = Event.find_by_name("Weak Monster encounter")
 		@fe_hash = {:event_id => @e.id, :chance => 100, :priority => 1, :feature_id => @f.id}
 	end
@@ -32,7 +33,7 @@ class Management::FeaturesControllerTest < ActionController::TestCase
 		get 'new', {}, session
 		assert_response :success
 		
-		post 'create', {:event => {}, :image => {:image_text => ""}}, session
+		post 'create', {:feature => {}, :image => {:image_text => ""}}, session
 		assert_response :success
 		assert_template 'new'
 		
@@ -41,6 +42,10 @@ class Management::FeaturesControllerTest < ActionController::TestCase
 			assert_response :redirect
 			assert_redirected_to :controller => 'management/features', :action => 'index'
 		end
+		@new_f_image = Feature.find_by_name("New Feature Name").image
+		assert @new_f_image.image_text.split("\n").size == 10
+		@new_f_image.image_text.split("\n").each{|r|
+			assert r.length == 15 }
 	end
 	
 	test "mgmt feature controller edit and update" do
@@ -53,6 +58,11 @@ class Management::FeaturesControllerTest < ActionController::TestCase
 		assert_response :redirect
 		assert_redirected_to :controller => 'management/features', :action => 'show', :id => @f.id
 		assert flash[:notice] =~ /updated/
+		
+		@new_f_image = Feature.find(@f.id).image
+		assert @new_f_image.image_text.split("\n").size == 10
+		@new_f_image.image_text.split("\n").each{|r|
+			assert r.length == 15 }
 	end
 	
 	test "mgmt feature controller destroy" do

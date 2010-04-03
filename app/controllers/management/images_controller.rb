@@ -26,56 +26,58 @@ class Management::ImagesController < ApplicationController
 	end
 
 	def new
-		@image = Image.new
-		if session[:player][:admin]
-			@types = SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'image_type'])
-		else
-			@types = SpecialCode.find(:all, :conditions => ['spec_col_type = "image_type" and (text = ? or text = ?)','kingdom','creature'])
+		@image = Image.new(params[:image])
+		@image.player_id = session[:player][:id]
+		@image.kingdom_id = session[:kingdom][:id]
+		@types = SPEC_CODET['image_type']
+		unless session[:player][:admin]
+			@types.delete('world')
+			@types.delete('character')
 		end
 		set_image_box_size
 	end
 
 	def create
-		@image = Image.new(params[:image])
-		@image.player_id = session[:player][:id]
-		@image.kingdom_id = session[:kingdom][:id]
+		new
 		
 		#take care of cropping the image
-		crop_ascii_image
-		
-		@image.image_text = params[:image][:image_text]
+		if @image.image_type == SpecialCode.get_code('image_type','kingdom') || 
+			 @image.image_type == SpecialCode.get_code('image_type','world')
+			@image.resize_image(10,15)
+		end
 		
 		if @image.save
 			flash[:notice] = @image.name + ' was successfully created.'
 			redirect_to :action => 'index'
 		else
-			new
 			render :action => 'new'
 		end
 	end
 
 	def edit
 		@image = Image.find(params[:id])
-		verify_image_owner
 		set_image_box_size
-		if session[:player][:admin]
-			@types = SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'image_type'])
-		else
-			@types = SpecialCode.find(:all, :conditions => ['spec_col_type = "image_type" and (text = ? or text = ?)','kingdom','creature'])
+		@types = SPEC_CODET['image_type']
+		unless session[:player][:admin]
+			@types.delete('world')
+			@types.delete('character')
 		end
-	end
-
-	def update
-		@image = Image.find(params[:id])
 		if !verify_image_owner
 			redirect_to :action => 'index'
 			return
 		end
-		
-		#take care of cropping the image
-		crop_ascii_image
+	end
+
+	def update
+		edit
+		p params[:image][:image_text]
 		
 		if @image.update_attributes(params[:image])
+			if @image.image_type == SpecialCode.get_code('image_type','kingdom') || 
+				 @image.image_type == SpecialCode.get_code('image_type','world')
+				@image.resize_image(10,15)
+				@image.save!
+			end
 			flash[:notice] = @image.name + ' was successfully updated.'
 			redirect_to :action => 'show', :id => @image
 		else
@@ -99,8 +101,8 @@ class Management::ImagesController < ApplicationController
 	
 protected
 	def set_image_box_size
-		if !@image.image_type.nil? &&(@image.image_type == SpecialCode.get_code('image_type','kingdom') || 
-																	@image.image_type == SpecialCode.get_code('image_type','world'))
+		if @image.image_type && (@image.image_type == SpecialCode.get_code('image_type','kingdom') || 
+															@image.image_type == SpecialCode.get_code('image_type','world'))
 			@image_box = 2
 		else
 			@image_box = 1
@@ -124,15 +126,6 @@ protected
 			false
 		else
 			true
-		end
-	end
-	
-	def crop_ascii_image
-		if @image.image_type == SpecialCode.get_code('image_type','kingdom') || 
-			 @image.image_type == SpecialCode.get_code('image_type','world')
-			resize_image(10,15)
-		else
-			resize_image(0,0)
 		end
 	end
 end

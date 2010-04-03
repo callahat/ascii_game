@@ -1,5 +1,9 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
-  id: 1
-two:
-  id: 2
+surfix_one:
+  name_surfixes: "O'-"
+surfix_two:
+  name_surfixes: "-son"
+surfix_three:
+  name_surfixes: "-stein"
+surfix_four:
+  name_surfixes: "Mc-"

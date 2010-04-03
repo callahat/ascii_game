@@ -42,7 +42,7 @@
   <% else %>
   <td valign="top" align=left>
   <table width=140>
-    <% if session[:player_character].image_id != nil %><tr><td colspan=2><table><tr><td><pre class="char_thumb"><%= session[:player_character].image.image_text %></pre></td></tr></table></td></tr><% end %>
+    <% if session[:player_character].image_id != nil %><tr><td colspan=2><table><tr><td><span class="char_thumb image"><%= session[:player_character].image.image_text %></span></td></tr></table></td></tr><% end %>
     <% if session[:player_character][:experience] >= session[:player_character][:next_level_at] %>
     <tr><td><%= link_to 'GAIN LEVEL', :controller => '/character', :action => 'raise_level' %></td></tr>
     <% end %>

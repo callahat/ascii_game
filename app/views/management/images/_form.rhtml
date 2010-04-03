@@ -16,7 +16,7 @@
 
 <% if @image.image_type.nil? %>
 <p><label for="image_image_type">Image type</label><br/>
-<%= collection_select 'image', 'image_type', @types, 'col_num','text' %></p>
+<%= select 'image', 'image_type', @types %></p>
 <% else %>
 <p><label for="image_image_type">Image type</label><br/>
 <b><%= SpecialCode.get_text('image_type',@image.image_type) %></b></p>

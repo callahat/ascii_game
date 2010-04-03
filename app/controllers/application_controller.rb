@@ -94,151 +94,6 @@ protected
 		print "\n" + crap.to_s
 	end
 
-	#******************************************************************************************
-	#HELPER ROUTINES FOR THE QUEST MANAGEMENT CONTROLLERS
-	#MAINLY IMAGES AND INITIALIZING OF VARIABLES
-	#******************************************************************************************
-	def handle_creature_image
-		if @creature[:image_id].nil?
-			@image_type = SpecialCode.get_code('image_type','creature')
-			#@new_thing = 'new_creature'
-			handle_image(@creature,0,0)
-		else
-			flash[:notice] = 'An image was selected from the dropdown.<br/>'
-		end
-	end
-		
-	def handle_feature_image
-		if @feature[:image_id].nil?
-			@image_type = SpecialCode.get_code('image_type','kingdom')
-			#@new_thing = 'new_feature'
-			handle_image(@feature,10,15)
-		else
-			flash[:notice] = 'An image was selected from the dropdown.<br/>'
-		end
-	end
-
-	def handle_image(thing,row,col)
-		if params[:image][:image_text] != ""
-			@image = Image.new
-			resize_image(row,col)
-			@image.image_text = params[:image][:image_text]
-			@image.player_id = session[:player][:id]
-			@image.kingdom_id = session[:kingdom][:id]
-			@image.public = false
-			@image.image_type = @image_type
-			@image.name = thing.name + ' image'
-			if !@image.save
-				flash[:notice] = 'Could not create image.<br />'
-				#render :action => @new_thing
-				render :action => 'new'
-			else
-				flash[:notice] = 'Made new image.<br />'
-				thing.image_id = @image.id
-				@images << @image
-			end
-		end
-	end
-
-	def resize_image(row,col)
-		if row == 0 && col == 0
-			return
-		end
-		#because IE sucks and adds the \r character to the text area lines, possibly due to 
-		#the text area beinga hard stop
-		@foo = params[:image][:image_text].gsub(/\r/,"")
-		
-		@foo = @foo.split("\n")
-		
-		@bim = ""
-		
-		if @foo.size < row
-			while @foo.size < row
-				@foo << " " * col
-			end
-		elsif @foo.size > row
-			@foo = @foo[0..(row-1)]
-		end
-		
-		for fo in @foo
-			if @bim.length > 0
-				@bim += "\n"
-			end
-			if fo.length < col
-				fo += " " * (col - fo.length)
-			else
-				fo = fo[0..(col-1)]
-			end
-			@bim += fo
-		end
-
-		params[:image][:image_text] = @bim
-	end
-	
-	def update_creature_image
-		if !@creature[:image_id].nil? && params[:image][:image_text] != ""
-			#@edit_thing = 'edit_creature'
-			@image_type = SpecialCode.get_code('image_type','creature')
-			update_image(@creature,0,0)
-			params[:creature][:image_id] = @creature.image_id
-		else
-			flash[:notice] = 'An image was selected from the dropdown.<br/>'
-		end
-	end
- 
-	def update_feature_image
-		if !@feature[:image_id].nil? && params[:image][:image_text] != ""
-			#@edit_thing = 'edit_feature'
-			@image_type = SpecialCode.get_code('image_type','kingdom')
-			update_image(@feature,10,15)
-			params[:feature][:image_id] = @feature.image_id
-		else
-			flash[:notice] = 'An image was selected from the dropdown.<br/>'
-		end
-	end
-
-	def update_image(thing,row,col)
-		@image = Image.find(:first, :conditions => ['name = ?', thing.name + ' image'])
-		if @image.nil?
-			handle_image(thing,row,col)
-		else
-			resize_image(row,col)
-			@image.image_text = params[:image][:image_text]
-			if !@image.save
-				flash[:notice] = 'Could not update image.<br />'
-				render :action => @edit_thing
-			else
-				thing.image_id = @image.id
-				flash[:notice] = 'Updated image.<br />'
-			end
-		end
-	end
-
-	def handle_creature_init_vars
-		@crit = SpecialCode.get_code('image_type', 'creature')	
-		handle_init_vars
-	end
-	
-	def handle_feature_init_vars
-		@crit = SpecialCode.get_code('image_type', 'kingdom')
-		handle_init_vars
-	end
-	
-	#only available to teh administrators, for building the outer world
-	def handle_world_feature_init_vars
-		@crit = SpecialCode.get_code('image_type', 'world')
-		handle_init_vars	
-	end
-	
-	def handle_init_vars
-		@kingdom_id = session[:kingdom][:id]
-		@player_id = session[:player][:id]
-		#@images = Image.find_all(:player_id => @player_id, :image_type => @crit)
-		#@images << Image.find_all(:kingdom_id => @kingdom_id, :image_type => @crit)
-		#@images.flatten!.uniq!
-		@images = Image.find_by_sql(['select * from images where (public = true or player_id = ? or kingdom_id = ?) and image_type = ? order by name',@player_id,@kingdom_id,@crit])
-	end
-	
 	#Delete the event for an NPC that is either fired or is killed
 	def destroy_npc_event(npc)
 		#delete that event
@@ -304,10 +159,10 @@ protected
 	
 	def gain_xp(who,xp)
 		if who.class != Creature #Creatures dont gain XP
-		who.transaction do
-			who.lock!
+			who.transaction do
+				who.lock!
 				who.experience += xp
-		who.save!
+				who.save!
 			end
 		end
 	end

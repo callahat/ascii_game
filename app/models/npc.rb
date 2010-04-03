@@ -20,7 +20,6 @@ class Npc < ActiveRecord::Base
     @image = Image.find(:first, :conditions => ['name = ? and kingdom_id = ?', @kingdom_name + " Guard Image", kingdom_id])
     
     if @image.nil?
-      print "\nHad to make a copy of the guard image"
       @base_image = Image.find(:first, :conditions => ['name = ? and kingdom_id = ? and player_id = ?', "GUARD IMAGE", -1, -1])
       @image = Image.deep_copy(@base_image)
       @image.kingdom_id = kingdom_id

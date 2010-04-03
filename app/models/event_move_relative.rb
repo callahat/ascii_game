@@ -5,7 +5,7 @@ class EventMoveRelative < EventLifeNeutral
 		PlayerCharacter.transaction do
 			who.lock!
 			if who.in_kingdom
-				@next_level = Level.find(:first, :conditions => ['kingdom_id = ? and level = ?', who.in_kingdom, who.present_level.level + self.flex.to_i])
+				@next_level = Level.find(:first, :conditions => ['kingdom_id = ? and level = ?', who.in_kingdom, who.present_level.level.to_i + self.thing_id])
 				if @next_level.nil?
 					@message = "The passage is maked \"UNDER CONSTRUCTION\", and comlpetely sealed off"
 				else
@@ -21,6 +21,6 @@ class EventMoveRelative < EventLifeNeutral
 	end
 	
 	def as_option_text(pc=nil)
-		"Change level by " + flex.to_s
+		"Change level by " + thing_id.to_s
 	end
 end

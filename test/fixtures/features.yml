@@ -24,3 +24,21 @@ unarmed_feature:
   name: "Unarmed Feature"
   description: "An unarmed feature for testing the controllers"
   armed: 0
+kingdom_spawn_feature:
+  <<: *default_feature
+  name: "Kingdom Spawn Feature"
+  description: "An unarmed feature for testing the controllers"
+empty_feature:
+  name: "\nEmpty"
+  player_id: -1
+  kingdom_id: -1
+  world_feature: 1
+  description: "A feature with a creatures attacking"
+  action_cost: 1
+  image: feature_image
+  world_feature: 0
+  public: 0
+  cost: 1000
+  num_occupants: 0
+  armed: 1
+  store_front_size: 0

@@ -18,7 +18,7 @@ class Player < ActiveRecord::Base
 	#	 @user = User.authenticate('bob', 'bobpass')
 	#
 	def self.authenticate(name, pass)
-		print sha1(pass).inspect
+		#print sha1(pass).inspect
 		find(:first, :conditions => ["handle = ? AND passwd = ?", name, sha1(pass)])
 	end
 	

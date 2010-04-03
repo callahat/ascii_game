@@ -50,11 +50,11 @@
   </tr>
   <tr>
     <td><label for="creature_disease_id">Disease carried</label></td>
-    <td><%= collection_select 'creature', 'disease_id', @diseases, 'id', 'name', {:include_blank => 'true'} %></td>
+    <td><%= collection_select 'creature', 'disease_id', @diseases, 'id', 'name', {:include_blank => ''} %></td>
   </tr>
   <tr>
     <td><label for="creature_image_id">Choose Image</label></td>
-    <td><%= collection_select 'creature', 'image_id', @images, 'id', 'name', {:include_blank => 'true'}  %></td>
+    <td><%= collection_select 'creature', 'image_id', @images, 'id', 'name', {:include_blank => ''}  %></td>
   </tr>
 </table>
 
@@ -66,8 +66,13 @@
 <p><label for="creature_public">Public</label><br/>
 <%= check_box 'creature','public' %></p>
 
-<%= hidden_field 'creature','player_id', :value => session[:player][:id] %>
-<%= hidden_field 'creature','kingdom_id', :value => session[:kingdom][:id] %>
+<%= hidden_field 'creature','player_id', :value => @player_id %>
+<%= hidden_field 'creature','kingdom_id', :value => @kingdom_id %>
+
+<%= hidden_field 'image','player_id', :value => @player_id %>
+<%= hidden_field 'image','kingdom_id', :value => @kingdom_id %>
+<%= hidden_field 'image','public', :value => false %>
+<%= hidden_field 'image','image_type', :value => SpecialCode.get_code('image_type','creature') %>
 
 <!--[eoform:creature]-->
 

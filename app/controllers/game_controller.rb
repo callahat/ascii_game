@@ -4,7 +4,7 @@ class GameController < ApplicationController
 	layout 'main'
 
 		# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-	verify :method => :post,:only => [ :do_heal, :do_choose, :do_train ],
+	verify :method => :post,:only => [ :do_heal, :do_choose, :do_train, :do_spawn ],
 													:redirect_to => { :action => :feature }
 
 	def main
@@ -201,6 +201,8 @@ class GameController < ApplicationController
 	
 	def do_spawn
 		@pc = session[:player_character]
+		redirect_to(:action=>'feature') && return \
+			unless @pc.current_event && @pc.current_event.event.class == EventSpawnKingdom
 		@wm = @pc.current_event.location
 		
 		@kingdom, @msg = Kingdom.spawn_new(session[:player_character], params[:kingdom][:name], @wm)
@@ -217,6 +219,7 @@ protected
 	def exec_event(ce)
 		@direction, @completed, @message = ce.event.happens(session[:player_character])
 		ce.update_attribute(:completed, @completed)
+		session[:player_character].reload
 		
 		if @direction
 			flash[:notice] = @message

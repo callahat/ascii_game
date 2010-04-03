@@ -19,31 +19,38 @@ class Admin::CreaturesController < ApplicationController
 	end
 
 	def new
-		@creature = Creature.new
-		@stat = StatCreature.new
-		@diseases = Disease.find(:all)
-		handle_creature_init_vars
-	end
-
-	def create
-		handle_creature_init_vars
-
 		@creature = Creature.new(params[:creature])
 		@stat = StatCreature.new(params[:stat])
 		@diseases = Disease.find(:all)
+		@kingdom_id = -1
+		@player_id = -1
+		@image = @creature.image || Image.new(params[:image])
+		@images = Image.find(:all,
+								:conditions => ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
+								@player_id,@kingdom_id,SpecialCode.get_code('image_type', 'creature')], :order => 'name')
+	end
+
+	def create
+		new
+		@creature.image_id = 0 unless @creature.image
+		@image.name = @creature.name + ' image'
+		
 		exp = Creature.exp_worth(@stat.dam,@stat.dfn,@creature.HP,@creature.fecundity)
 		exp = 0 if exp.nil?
 
 		@creature.experience = exp
 
-		handle_creature_image
-
 		if @stat.valid? && @creature.valid?
+			if params[:creature][:image_id].nil? || params[:creature][:image_id] == ""
+				@image.save! 
+				@creature.image_id = @image.id
+			end
+		
 			@creature.save
 			@stat.owner_id = @creature.id
 			@stat.save
 
-			flash[:notice] += @creature.name + ' was successfully created.'
+			flash[:notice] = @creature.name + ' was successfully created.'
 			redirect_to :action => 'index'
 		else
 			render :action => 'new'
@@ -59,19 +66,17 @@ class Admin::CreaturesController < ApplicationController
 		@stat = @creature.stat
 		@diseases = Disease.find(:all)
 		@image = @creature.image
-
-		handle_creature_init_vars
+		@kingdom_id = -1
+		@player_id = -1
+		@images = Image.find(:all,
+								:conditions => ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
+								@player_id,@kingdom_id,SpecialCode.get_code('image_type', 'creature')], :order => 'name')
 	end
 
 	def update
-		@creature = Creature.find(params[:id])
-		@diseases = Disease.find(:all)
-		@stat = @creature.stat
-		#@image = @creature.image
+		edit
+		@image.update_image(params[:image][:image_text]) unless params[:image][:image_text] == ""
 
-		update_creature_image
-		handle_creature_init_vars
-		
 		exp = Creature.exp_worth(params[:stat][:dam].to_i,
 														 params[:stat][:dfn].to_i,
 														 params[:creature][:HP].to_i,
@@ -80,8 +85,8 @@ class Admin::CreaturesController < ApplicationController
 
 		params[:creature][:experience] = exp
 		
-		if @stat.update_attributes(params[:stat]) & @creature.update_attributes(params[:creature])
-			flash[:notice] += @creature.name + ' was successfully updated.'
+		if @stat.update_attributes(params[:stat]) & @creature.update_attributes(params[:creature]) & @image.save
+			flash[:notice] = @creature.name + ' was successfully updated.'
 			redirect_to :action => 'index'
 		else
 			render :action => 'edit'
