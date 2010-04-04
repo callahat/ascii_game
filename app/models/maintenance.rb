@@ -104,7 +104,6 @@ class Maintenance < ActiveRecord::Base
 						@notice = KingdomNotice.new
 						@notice.kingdom_id = kingdom.name
 						@notice.shown_to = SpecialCode.get_code('shown_to','everyone')
-						@notice.datetime = Time.now
 						@notice.text = npc.name + " died from " + @terminal_diseases[rand(@terminal_diseases.size)].disease.name + "."
 						@notice.signed = "Minister of Health and Sanitation"
 						@notice.save
@@ -302,7 +301,6 @@ class Maintenance < ActiveRecord::Base
 		@notice = KingdomNotice.new
 		@notice.kingdom_id = kingdom.name
 		@notice.shown_to = SpecialCode.get_code('shown_to','everyone')
-		@notice.datetime = Time.now
 		@notice.text = text
 		@notice.signed = "Minister of Health and Sanitation"
 		@notice.save
@@ -312,7 +310,6 @@ class Maintenance < ActiveRecord::Base
 		@notice = KingdomNotice.new
 		@notice.kingdom_id = kingdom.name
 		@notice.shown_to = SpecialCode.get_code('shown_to','everyone')
-		@notice.datetime = Time.now
 		@notice.text = "Population trends:<br/>Births: " + births.to_s +
 																		 "<br/>Immigrants: " + immigrants.to_s +
 																		 "<br/>Emmigrants: " + emmigrants.to_s +
