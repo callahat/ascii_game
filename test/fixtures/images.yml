@@ -22,6 +22,10 @@ npc_image:
   <<: *char_img_defs
   name: "guard image"
   image_text: "^_^"
+default_npc:
+  <<: *char_img_defs
+  name: "DEFAULT NPC"
+  image_text: "8P"
 
 feature_image: &feature_img_defs
   name: "Feature image"

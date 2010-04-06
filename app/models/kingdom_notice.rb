@@ -18,11 +18,11 @@ class KingdomNotice < ActiveRecord::Base
 						:signed => "Minister of the Interior")
 	end
 	
-	def self.create_notice(text, kid)
+	def self.create_notice(text, kid, signor="Minister of the Interior")
 		create(	:kingdom_id => kid,
 						:shown_to => SpecialCode.get_code('shown_to','everyone'),
 						:text => text,
-						:signed => "Minister of the Interior")
+						:signed => signor)
 	end
 	
 	#Pagination related stuff

@@ -1,34 +1,40 @@
 namespace :maintenance do
-  desc "This will run the nightly maintenance on all stuff, run this instead of the other two"
-  task(:full_maintenance => :environment) do
-    puts "\nTime is now: " + Time.now.to_s
-    puts "\nRunning the nightly kingdom maintenance, bringing down system  . . ."
-	@start = Time.now
-    SystemStatus.stop(1)
-    Maintenance.kingdom_maintenance
-    Maintenance.player_character_maintenance
-	puts "\n\n" + (Time.now - @start).to_s + " elapsed seconds.\n"
-    puts "\nNightly kingdom maintenance complete, bringing up system  . . ."
-    SystemStatus.start(1)
-  end
+	desc "This will run the nightly maintenance on all stuff, run this instead of the other two"
+	task(:full_maintenance => :environment) do
+		puts "\nTime is now: " + Time.now.to_s
+		puts "\nRunning the nightly kingdom maintenance, bringing down system  . . ."
+		@start = Time.now
+		SystemStatus.stop(1)
+		Maintenance.clear_report
+		Maintenance.kingdom_maintenance
+		Maintenance.player_character_maintenance
+		puts Maintenance.report.join("\n")
+		puts "\n\n" + (Time.now - @start).to_s + " elapsed seconds.\n"
+		puts "\nNightly kingdom maintenance complete, bringing up system  . . ."
+		SystemStatus.start(1)
+	end
 
-  desc "This will run the nightly kingdom maintenance"
-  task(:kingdom_maintenance => :environment) do
-    puts "\nRunning the nightly kingdom maintenance, bringing down system  . . ."
-    SystemStatus.stop(1)
-    Maintenance.kingdom_maintenance
-    puts "\nNightly kingdom maintenance complete, bringing up system  . . ."
-    SystemStatus.start(1)
-  end
+	desc "This will run the nightly kingdom maintenance"
+	task(:kingdom_maintenance => :environment) do
+		puts "\nRunning the nightly kingdom maintenance, bringing down system  . . ."
+		SystemStatus.stop(1)
+		Maintenance.clear_report
+		Maintenance.kingdom_maintenance
+		puts Maintenance.report.join("\n")
+		puts "\nNightly kingdom maintenance complete, bringing up system  . . ."
+		SystemStatus.start(1)
+	end
   
-  desc "This will run the nightly player character maintenance"
-  task(:player_character_maintenance => :environment) do
-    puts "\nRunning the nightly player character maintenance, bringing down system . . ."
-    SystemStatus.stop(1)
-    Maintenance.player_character_maintenance
-    puts "\nNightly player character maintenance complete, bringing up system  . . ."
-    SystemStatus.start(1)
-  end
+	desc "This will run the nightly player character maintenance"
+	task(:player_character_maintenance => :environment) do
+		puts "\nRunning the nightly player character maintenance, bringing down system . . ."
+		SystemStatus.stop(1)
+		Maintenance.clear_report
+		Maintenance.player_character_maintenance
+		puts Maintenance.report.join("\n")
+		puts "\nNightly player character maintenance complete, bringing up system  . . ."
+		SystemStatus.start(1)
+	end
 
   desc "This will remove a kingdom from the database, including all rows directly associated with it (ie, events). Use with caution."
   task(:nuke_kingdom => :environment) do
@@ -52,7 +58,6 @@ namespace :maintenance do
     puts "wiping all done events, done quests"
     nuke_array(DoneEvent.find_all)
     nuke_array(DoneQuest.find_all)
-  
   
     kingdoms=Kingdom.find(:all, :conditions => ['id > 0'])
     for kingdom in kingdoms do

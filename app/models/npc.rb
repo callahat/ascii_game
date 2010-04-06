@@ -65,7 +65,7 @@ class Npc < ActiveRecord::Base
     @new_merch.name = Name.gen_name
      
     if rand > 0.65   #NPC gets a title
-      @new_merch.name += " the " + NameTitle.get_title(@new_merch.con, @new_merch.dam, @new_merch.dex,                                                       @new_merch.dfn, @new_merch.int, @new_merch.mag,                                                       @new_merch.str).capitalize
+      @new_merch.name += " the " + NameTitle.get_title(@new_merch.stat.con, @new_merch.stat.dam, @new_merch.stat.dex,                                                       @new_merch.stat.dfn, @new_merch.stat.int, @new_merch.stat.mag,                                                       @new_merch.stat.str).capitalize
     end
     
     if !@new_merch.save
