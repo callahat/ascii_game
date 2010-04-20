@@ -37,7 +37,7 @@ class EventMoveLocal < EventLifeNeutral
 					@inf_flag = true
 				end
 			end
-			p who.save!
+			who.save!
 		end
 		
 		#diseases spread!
