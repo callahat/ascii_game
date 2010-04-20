@@ -94,6 +94,7 @@ class GameController < ApplicationController
 				#start new current event
 				@current_event = CurrentEvent.make_new(session[:player_character], params[:id])
 				if @pc.turns < @current_event.location.feature.action_cost
+					@current_event.destroy
 					flash[:notice] = 'Too tired for that, out of turns.'
 					redirect_to :controller => 'game', :action => 'main'
 				else
