@@ -36,19 +36,19 @@ class EventMoveLocal < EventLifeNeutral
 					@message = "Entered " + self.level.kingdom.name
 					@inf_flag = true
 				end
-			
-				#diseases spread!
-				if @inf_flag
-					@kingdom = who.present_kingdom
-					Illness.spread(who, @kingdom, SpecialCode.get_code('trans_method','air'))
-					if Illness.spread(@kingdom, who, SpecialCode.get_code('trans_method','air'))
-						@message += "\nYou don't feel so good ..."
-					end
-				end
 			end
-
-			who.save!
+			p who.save!
 		end
+		
+		#diseases spread!
+		if @inf_flag
+			@kingdom = who.present_kingdom
+			Illness.spread(who, @kingdom, SpecialCode.get_code('trans_method','air'))
+			if Illness.spread(@kingdom, who, SpecialCode.get_code('trans_method','air'))
+				@message += "\nYou don't feel so good ..."
+			end
+		end
+		
 		return {:action => 'complete'}, EVENT_COMPLETED, @message
 	end
 	

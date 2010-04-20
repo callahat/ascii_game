@@ -112,7 +112,7 @@ class Game::BattleController < ApplicationController
 			session[:completed] = true
 			@kingdom = session[:player_character].present_kingdom
 		else
-			redirect_to :controller => '/game', :action => 'feature'
+			redirect_to :controller => 'game', :action => 'feature'
 		end
 	end
 protected
