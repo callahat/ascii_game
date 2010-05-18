@@ -50,30 +50,7 @@ class Game::CourtController < ApplicationController
 	end
 	
 	def bulletin
-		# step 1: read and set the variables you'll need
-		page = (params[:page] ||= 1).to_i
-		notices_per_page = 10
-		offset = (page - 1) * notices_per_page
-
-		
-		# step 2: do your custom find without doing any kind of limits or offsets
-		#	i.e. get everything on every page, don't worry about pagination yet
-		if session[:player_character][:id] == session[:player_character].present_kingdom.player_character_id
-			#if king
-			@notices = session[:player_character].present_kingdom.kingdom_notices
-		elsif session[:player_character].kingdom_id == session[:player_character].in_kingdom
-			#if ally
-			@notices = session[:player_character].present_kingdom.kingdom_notices.find(:all, :conditions => ['shown_to = ? OR shown_to = ?', SpecialCode.get_code('shown_to','everyone'),SpecialCode.get_code('shown_to','allies')])
-		else #if a passer by
-			@notices = session[:player_character].present_kingdom.kingdom_notices.find(:all, :conditions => ['shown_to = ?', SpecialCode.get_code('shown_to','everyone')])
-		end
-
-		# step 3: create a Paginator, the second variable has to be the number of ALL items on all pages
-		@notice_pages = Paginator.new(self, @notices.length, notices_per_page, page)
-
-		# step 4: only send a subset of @items to the view
-		# this is where the magic happens... and you don't have to do another find
-		@notices = @notices[offset..(offset + notices_per_page - 1)]
+		@notices = KingdomNotice.get_page(params[:page], session[:player_character], session[:player_character].present_kingdom)
 	end
 	
 	

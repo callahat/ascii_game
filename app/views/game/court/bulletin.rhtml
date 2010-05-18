@@ -8,8 +8,8 @@
   
 <% for notice in @notices %>
   <tr>
-    <td><%=h notice.datetime.strftime("%I:%M%p %m/%d/%Y") %></td>
-    <td><%=h notice.text %><br/><i>Signed:<% if notice.signed.nil? %>anonymous<% else %><%=h notice.signed %><% end %></i></td>
+    <td><%=h notice.created_at.strftime("%I:%M%p %m/%d/%Y") %></td>
+    <td><%= notice.text %><br/><i>Signed:<% if notice.signed.nil? %>anonymous<% else %><%=h notice.signed %><% end %></i></td>
   </tr>
 <% end %>
 </table>

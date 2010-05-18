@@ -73,7 +73,7 @@ class GameController < ApplicationController
 		if session[:player].nil?
 			render :file => 'game/demo.rhtml', :layout => true
 		elsif session[:player_character].nil?
-			redirect_to :controller => 'character', :action => 'choose' #???
+			redirect_to :controller => 'character', :action => 'choose_character'
 		elsif session[:player_character].reload && session[:player_character].battle
 			redirect_to :controller => 'game/battle', :action => 'battle'
 		else #check for current event

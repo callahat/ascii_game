@@ -30,11 +30,20 @@ class KingdomNotice < ActiveRecord::Base
 		20
 	end
 	
-	def self.get_page(page, kid = nil)
-		if kid.nil?
-		paginate(:page => page, :order => '"datetime DESC"' )
-	else
-			paginate(:page => page, :conditions => ['kingdom_id = ?', kid], :order => '"datetime DESC"' )
-	end
+	def self.get_page(page, pc = nil, k = nil)
+		if k.nil?
+			paginate(:page => page, :order => '"datetime DESC"' )
+		elsif pc.nil? || pc.id == k.player_character_id
+			paginate(:page => page, :conditions => ['kingdom_id = ?', k.id], :order => '"datetime DESC"' )
+		elsif pc.kingdom_id == pc.in_kingdom
+			paginate(:page => page, :conditions => ['kingdom_id = ? AND (shown_to = ? OR shown_to = ?)',
+																							k.id,
+																							SpecialCode.get_code('shown_to','everyone'),
+																							SpecialCode.get_code('shown_to','allies')])
+		else
+			paginate(:page => page, :conditions => ['kingdom_id = ? AND shown_to = ?',
+																							k.id,
+																							SpecialCode.get_code('shown_to','everyone')])
+		end
 	end
 end
