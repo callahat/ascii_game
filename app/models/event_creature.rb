@@ -12,7 +12,7 @@ class EventCreature < Event
 		low, high = flex.split(";").collect{|c| c.to_i}
 		result, msg = Battle.new_creature_battle(who, self.creature, low.to_i, high.to_i, who.present_kingdom)
 		if result
-			return {:controller => 'game/battle', :action => 'battle'}, EVENT_INPROGRESS, "message seen anywhere for the creature event?"
+			return {:controller => 'game/battle', :action => 'battle'}, EVENT_INPROGRESS, "You encounter monsters!"
 		else
 			return nil, EVENT_COMPLETED, msg
 		end

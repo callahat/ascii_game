@@ -4,100 +4,44 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-  <title>MAIN LAYOUT::<%= controller.controller_name + ":" + controller.action_name %></title>
-  <%= stylesheet_link_tag 'scaffold' %>
-  <!-- setup javascript goodness -->
-  <% if controller.controller_name == 'character' && controller.action_name == 'new' %>
+  <title>Ascii Game the MMORPG</title>
+  <%= stylesheet_link_tag 'main' %>
   <script type="text/javascript" src="/javascripts/jquery.js"></script>
-  <script type="text/javascript" src="/javascripts/charnew.js"></script>
-  <% elsif controller.controller_name == 'character' && controller.action_name == 'raise_level' %>
-  <script type="text/javascript" src="/javascripts/jquery.js"></script>
-  <script type="text/javascript" src="/javascripts/raiselevel.js"></script>
-  <% end %>
-  
-  
 </head>
 <body>
 
-<table width=750 border="3">
- <tr>
-  <td width=140>
-  <% if session[:player].nil? %>
-  XX FILLER XX
-  <% else %>
-  Player:<%= session[:player][:handle] %>
-  <% end %>
-  </td>
-  <td width=45><%= link_to 'Home', :controller => 'home' %></td>
-  <td width=55><%= link_to 'Forums', :controller => '/forum', :action => 'boards' %></td>
-  <td width=90><%= link_to 'Characters', :controller => '/character', :action => 'menu' %></td>
-  <td width=50><%= link_to 'Game', :controller => '/game', :action => 'feature' %></td>
-  <td width=260><% if session[:kingbit] %><%= link_to 'Kingdom Management', :controller => '/management', :action => 'index'%><% end %></td>
-  <td width=110><% if session[:player].nil? %><%= link_to 'Login', :controller => '/account', :action => 'login' %><% else %><%= link_to 'Logout', :controller => '/account', :action => 'logout' %><% end %></td>
- </tr>
- 
- <tr>
-  <% if session[:player_character].nil? %>
-  <td>No character selected</td>
-  <% else %>
-  <td valign="top" align=left>
-  <table width=140>
-    <% if session[:player_character].image_id != nil %><tr><td colspan=2><table><tr><td><span class="char_thumb image"><%= session[:player_character].image.image_text %></span></td></tr></table></td></tr><% end %>
-    <% if session[:player_character][:experience] >= session[:player_character][:next_level_at] %>
-    <tr><td><%= link_to 'GAIN LEVEL', :controller => '/character', :action => 'raise_level' %></td></tr>
-    <% end %>
-    <% if session[:current_event].nil? %>
-    <tr><td colspan=2><%= link_to 'Camp', :controller => '/game' , :action => 'make_camp' %></td></tr>
-    <% end %>
-    <tr><td colspan=2><%= link_to 'Stats & Equip', :controller => '/characterse', :action => 'menu' %></td></tr>
-    <tr><td colspan=2>Current char stats</td></tr>
-    <tr><td>Name:</td><td><%= session[:player_character].name %></td></tr>
-    <tr><td>Home:</td><td><%= (session[:player_character].kingdom ? session[:player_character].kingdom.name : "None" )%></td></tr>
-    <tr><td>Turns:</td><td><%= session[:player_character].turns %></td></tr>
-    <tr><td>Class:</td><td><%= session[:player_character].c_class.name %></td></tr>
-    <tr><td>Race:</td><td><%= session[:player_character].race.name %></td></tr>
-    <tr><td>Level:</td><td><%= session[:player_character].level %></td></tr>
-    <tr><td>Health:</td><td><%= SpecialCode.get_text('wellness',session[:player_character].health.wellness) %></td></tr>
-    <tr><td>XP:</td><td><%= session[:player_character].experience %></td></tr>
-    <tr><td>GL:</td><td><%= session[:player_character].gold %></td></tr>
-    <tr><td>HP:</td><td><%= session[:player_character].health.HP %>/<%= session[:player_character].health.base_HP %></td></tr>
-    <tr><td>MP:</td><td><%= session[:player_character].health.MP %>/<%= session[:player_character].health.base_MP %></td></tr>
-    <tr><td>STR:</td><td><%= session[:player_character].stat.str %></td></tr>
-    <tr><td>DEX:</td><td><%= session[:player_character].stat.dex %></td></tr>
-    <tr><td>MAG:</td><td><%= session[:player_character].stat.mag %></td></tr>
-    <tr><td>INT:</td><td><%= session[:player_character].stat.int %></td></tr>
-    <tr><td>CON:</td><td><%= session[:player_character].stat.con %></td></tr>
-    <tr><td>DFN:</td><td><%= session[:player_character].stat.dfn %></td></tr>
-    <tr><td>DAM:</td><td><%= session[:player_character].stat.dam %></td></tr>
-  </table>
-  </td>
-  <% end %>
-  <td colspan=5 valign="top" align="left">
-   <p style="color: green"><%= flash[:notice] %></p>
-   <%= yield  %>
-  </td>
-  <td valign="top">
-  <table width=110>
-    <tr><td>
-<script type="text/javascript"><!--
-google_ad_client = "pub-3928035645761607";
-/* 120x600, created 5/17/10 */
-google_ad_slot = "0512113450";
-google_ad_width = 120;
-google_ad_height = 600;
-//-->
-</script>
-<script type="text/javascript"
-src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>
-    </td></tr>
-  </table>
-  </td>
- </tr>
- <tr>
-  <td colspan=7 align="center">Footer</td>
- </tr>
-</table>
+<div id="header">
+	<!-- 140px -->
+	
+	<ul class="nav_tabs">
+		<li><span class="user_tab"><%= ( session[:player] ? "Player:#{session[:player][:handle]}" : "Welcome, guest" ) %></span></li>
+		<li><%= link_to 'Home', :controller => 'home' %></li>
+		<li><%= link_to 'Forums', :controller => '/forum', :action => 'boards' %></li>
+		<li><%= link_to 'Characters', :controller => '/character', :action => 'menu' %></li>
+		<li><%= link_to('Game', :controller => '/game', :action => 'feature') if session[:player] %></li>
+		<li><%= link_to('Kingdom Management', :controller => '/management', :action => 'index') if session[:kingbit] %></li>
+		<li><%= session[:player] ? link_to('Logout', logout_url()) :
+															 link_to('Login', login_url()) + ' or ' + link_to('Register', register_url()) %></li>
+	</ul>
+</div>
+
+<div id="mid">
+	<div id="center_col">
+		<%= yield  %>
+	</div>
+	<div id="left_col" class="side_col">
+		<%= ( session[:player_character] ?  render(:partial => '/layouts/character_stats') : "No character selected" ) %>
+	</div>
+	<div id="right_col" class="side_col">
+		<div style="height:200px;color:green;background-color:#EDFCED; padding:3px;"><%= flash[:notice] %></div>
+	google stuff goes here
+		<%#= google_ad() %>
+	</div>
+</div>
+
+<div id="footer">
+	Footer
+</div>
 
 </body>
 </html>

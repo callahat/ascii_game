@@ -71,7 +71,7 @@ class GameController < ApplicationController
 	def feature
 		flash[:notice] = flash[:notice]
 		if session[:player].nil?
-			render :file => 'game/demo.rhtml', :layout => true
+			redirect_to login_url()
 		elsif session[:player_character].nil?
 			redirect_to :controller => 'character', :action => 'choose_character'
 		elsif session[:player_character].reload && session[:player_character].battle
@@ -176,13 +176,6 @@ class GameController < ApplicationController
 		session[:player_character] = @pc
 		redirect_to :controller => 'game', :action => 'main'
 	end
-	
-	#def completeA
-	#	@pc = session[:player_character]
-	#	session[:regicide] = false
-	#	create_accession_notice("The former king was slain by " + @pc.name + ". The realm is left without a king.",@pc.present_kingdom)
-	#	redirect_to :action => 'complete'
-	#end
 	
 	def complete
 		@current_event = session[:player_character].current_event

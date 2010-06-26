@@ -102,7 +102,7 @@ class Game::BattleController < ApplicationController
 			@message = 'could not run away'
 			@battle.for_this_round(@pc, nil)
 			flash[:notice] = 'Could not run away'
-			flash[:notice] += @battle.report.to_s
+			flash[:battle_report] = @battle.report
 			redirect_to :action => 'battle'
 		end
 	end
