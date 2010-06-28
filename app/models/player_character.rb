@@ -62,13 +62,13 @@ class PlayerCharacter < ActiveRecord::Base
 			base_stat.add_stats(freedist)
 			base_stat.save!
 
-			lock!
-			level += 1
-			next_level_at = self.exp_for_level(level + 1)
-			freepts -= freedist.sum_points
-			freepts += (self.freepts * 0.05).to_i
-			freepts += c_class.freepts + race.freepts
-			save!
+			self.lock!
+			self.level += 1
+			self.next_level_at = self.exp_for_level(level + 1)
+			self.freepts -= freedist.sum_points
+			self.freepts += (self.freepts * 0.05).to_i
+			self.freepts += c_class.freepts + race.freepts
+			self.save!
 			
 			health.lock!
 			health.adjust_for_stats(base_stat, level)

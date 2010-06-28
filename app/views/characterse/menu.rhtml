@@ -21,72 +21,72 @@
 </tr>
 <tr>
   <td><b>Damage</b></td>
-  <td><%= @player_character.stat.dam %></td>
-  <td><%= @player_character.base_stat.dam %></td>
-  <td><%= @player_character.trn_stat.dam  %></td>
+  <td><%= @pc.stat.dam %></td>
+  <td><%= @pc.base_stat.dam %></td>
+  <td><%= @pc.trn_stat.dam  %></td>
 </tr>
 <tr>
   <td><b>Defense</b></td>
-  <td><%= @player_character.stat.dfn %></td>
-  <td><%= @player_character.base_stat.dfn %></td>
-  <td><%= @player_character.trn_stat.dfn  %></td>
+  <td><%= @pc.stat.dfn %></td>
+  <td><%= @pc.base_stat.dfn %></td>
+  <td><%= @pc.trn_stat.dfn  %></td>
 </tr>
 <tr>
   <td><b>Strength</b></td>
-  <td><%= @player_character.stat.str %></td>
-  <td><%= @player_character.base_stat.str %></td>
-  <td><%= @player_character.trn_stat.str  %></td>
+  <td><%= @pc.stat.str %></td>
+  <td><%= @pc.base_stat.str %></td>
+  <td><%= @pc.trn_stat.str  %></td>
 </tr>
 <tr>
   <td><b>Dexterity</b></td>
-  <td><%= @player_character.stat.dex %></td>
-  <td><%= @player_character.base_stat.dex %></td>
-  <td><%= @player_character.trn_stat.dex  %></td>
+  <td><%= @pc.stat.dex %></td>
+  <td><%= @pc.base_stat.dex %></td>
+  <td><%= @pc.trn_stat.dex  %></td>
 </tr>
 <tr>
   <td><b>Magic</b></td>
-  <td><%= @player_character.stat.mag %></td>
-  <td><%= @player_character.base_stat.mag %></td>
-  <td><%= @player_character.trn_stat.mag  %></td>
+  <td><%= @pc.stat.mag %></td>
+  <td><%= @pc.base_stat.mag %></td>
+  <td><%= @pc.trn_stat.mag  %></td>
 </tr>
 <tr>
   <td><b>Intelligence</b></td>
-  <td><%= @player_character.stat.int %></td>
-  <td><%= @player_character.base_stat.int %></td>
-  <td><%= @player_character.trn_stat.int  %></td>
+  <td><%= @pc.stat.int %></td>
+  <td><%= @pc.base_stat.int %></td>
+  <td><%= @pc.trn_stat.int  %></td>
 </tr>
 <tr>
   <td><b>Constitution</b></td>
-  <td><%= @player_character.stat.con %></td>
-  <td><%= @player_character.base_stat.con %></td>
-  <td><%= @player_character.trn_stat.con  %></td>
+  <td><%= @pc.stat.con %></td>
+  <td><%= @pc.base_stat.con %></td>
+  <td><%= @pc.trn_stat.con  %></td>
 </tr>
 <tr>
   <td><b>Freepoints</b></td>
-  <td><%= @player_character.freepts %></td>
+  <td><%= @pc.freepts %></td>
 </tr>
 </table>
 
 <table>
-<% if @player_character.c_class.attack_spells %>
+<% if @pc.c_class.attack_spells %>
 <tr><td><%= link_to 'Attack Spells', :action => 'attack_spells' %></td></tr>
 <% end %>
-<% if @player_character.c_class.healing_spells %>
+<% if @pc.c_class.healing_spells %>
 <tr><td><%= link_to 'Healing Spells', :action => 'healing_spells' %></td></tr>
 <% end %>
-<% if @player_character.illnesses.size > 0 %>
+<% if @pc.illnesses.size > 0 %>
 <tr><td><%= link_to 'Infections', :action => 'infections' %></td></tr>
 <% end %>
-<% if @player_character.player_character_killers.size > 0 %>
+<% if @pc.player_character_killers.size > 0 %>
 <tr><td><%= link_to 'PC kills', :action => 'pc_kills' %></td></tr>
 <% end %>
-<% if @player_character.nonplayer_character_killers.size > 0 %>
+<% if @pc.nonplayer_character_killers.size > 0 %>
 <tr><td><%= link_to 'NPC kills', :action => 'npc_kills' %></td></tr>
 <% end %>
-<% if @player_character.genocides.size > 0 %>
+<% if @pc.genocides.size > 0 %>
 <tr><td><%= link_to 'Genocides', :action => 'genocides' %></td></tr>
 <% end %>
-<% if @player_character.done_quests.size > 0 %>
+<% if @pc.done_quests.size > 0 %>
 <tr><td><%= link_to 'Completed Quests', :action => 'done_quests' %></td></tr>
 <% end %>
 <tr><td><%= link_to 'Inventory/Equip', :action => 'inventory' %></td></tr>
