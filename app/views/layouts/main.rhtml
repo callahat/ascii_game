@@ -30,7 +30,7 @@
 		<%= yield  %>
 	</div>
 	<div id="left_col" class="side_col">
-		<%= ( session[:player_character] ?  render(:partial => '/layouts/character_stats') : "No character selected" ) %>
+		<%= ( @pc ?  render(:partial => '/layouts/character_stats') : "No character selected" ) %>
 	</div>
 	<div id="right_col" class="side_col">
 		<div style="height:200px;color:green;background-color:#EDFCED; padding:3px;"><%= flash[:notice] %></div>

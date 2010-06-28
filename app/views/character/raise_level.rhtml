@@ -4,9 +4,9 @@
 
 <!--[form:distributed_freepts]-->
 <% form_tag :action => 'gainlevel' do %>
-<input type="hidden" id="total_freepts" value="<%= session[:player_character][:freepts] %>">
+<input type="hidden" id="total_freepts" value="<%= @pc.freepts %>">
 
-<p>Available freepoints: <label id=freepoint_sum><%= session[:player_character][:freepts] %></label></p>
+<p>Available freepoints: <label id=freepoint_sum><%= @pc.freepts %></label></p>
 <table>
 <tr>
   <td><b>Attribute</b></td>

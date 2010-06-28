@@ -15,7 +15,7 @@ Quest not attempted.
  <% end %>
 
  <% for qi in @quest.items %>
- <% @pc_inv = session[:player_character].items.find(:first, :conditions => ['item_id = ?', qi.detail])
+ <% @pc_inv = @pc.items.find(:first, :conditions => ['item_id = ?', qi.detail])
     @pc_inv = ( @pc_inv ? @pc_inv.quantity : 0 )
     @diff = (qi.quantity - @pc_inv) %>
  <% if @diff > 0 %>

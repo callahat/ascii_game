@@ -58,7 +58,7 @@ class AccountController < ApplicationController
 		end
 	end
 
-	#Accounts won't eb able to be destroyed, but deleted. Keep the data, restrict the access.
+	#Accounts won't be able to be destroyed, but deleted. Keep the data, restrict the access.
 	#def destroy
 	#	Player.find(params[:id]).destroy
 	#	redirect_to :action => 'list'

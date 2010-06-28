@@ -50,30 +50,29 @@ class PlayerCharacter < ActiveRecord::Base
 		@delta.subtract_stats(self.level_zero.to_level(level))
 		p"HIT"
 		Stat.transaction do
-			@pc = self.dup
-			p self
-			p @pc
-			@pc.stat.lock!
-			@pc.stat.add_stats(@delta)
-			@pc.stat.add_stats(freedist)
-			@pc.stat.save!
+			#pc = self
 			
-			@pc.base_stat.lock!
-			@pc.base_stat.add_stats(@delta)
-			@pc.base_stat.add_stats(freedist)
-			@pc.base_stat.save!
+			stat.lock!
+			stat.add_stats(@delta)
+			stat.add_stats(freedist)
+			stat.save!
+			
+			base_stat.lock!
+			base_stat.add_stats(@delta)
+			base_stat.add_stats(freedist)
+			base_stat.save!
 
-			@pc.lock!
-			@pc.level += 1
-			@pc.next_level_at = self.exp_for_level(level + 1)
-			@pc.freepts -= freedist.sum_points
-			@pc.freepts += (self.freepts * 0.05).to_i
-			@pc.freepts += c_class.freepts + race.freepts
-			@pc.save!
+			lock!
+			level += 1
+			next_level_at = self.exp_for_level(level + 1)
+			freepts -= freedist.sum_points
+			freepts += (self.freepts * 0.05).to_i
+			freepts += c_class.freepts + race.freepts
+			save!
 			
-			@pc.health.lock!
-			@pc.health.adjust_for_stats(base_stat, level)
-			@pc.health.save!
+			health.lock!
+			health.adjust_for_stats(base_stat, level)
+			health.save!
 		end
 		return 1, "Your power grows!"
 	end

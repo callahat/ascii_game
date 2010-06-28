@@ -1,5 +1,6 @@
 class CharacterseController < ApplicationController
-	before_filter :authenticate
+	#before_filter :authenticate
+	before_filter :setup_pc_vars
 
 	#figure out caching later. It seems to work faster if the boot file has the cacheing
 	#to true, but I can't find a cache of this pages where the books says it should be.
@@ -15,63 +16,59 @@ class CharacterseController < ApplicationController
 	end
 
 	def menu
-		@player_character = session[:player_character]
 	end
 	
 	def attack_spells
-		@attack_spells = AttackSpell.get_page(params[:page], session[:player_character].level)
+		@attack_spells = AttackSpell.get_page(params[:page], @pc.level)
 	end
 	
 	def healing_spells
-		@healing_spells = HealingSpell.get_page(params[:page], session[:player_character].level)
+		@healing_spells = HealingSpell.get_page(params[:page], @pc.level)
 	end
 	
 	def infections
-		@infections = Infection.get_page(params[:page], session[:player_character].id)
+		@infections = Infection.get_page(params[:page], @pc.id)
 	end
 	
 	def pc_kills
-		@pc_kills = PlayerCharacterKiller.get_page(params[:page], session[:player_character].id)
+		@pc_kills = PlayerCharacterKiller.get_page(params[:page], @pc.id)
 	end
 	
 	def npc_kills
-		@npc_kills = NonplayerCharacterKiller.get_page(params[:page], session[:player_character].id)
+		@npc_kills = NonplayerCharacterKiller.get_page(params[:page], @pc.id)
 	end
 
 	def genocides
-		@genocides = Genocide.get_page(params[:page], session[:player_character].id)
+		@genocides = Genocide.get_page(params[:page], @pc.id)
 	end
 
 	def done_quests
-		@done_quests = DoneQuest.get_page(params[:page], session[:player_character].id)
+		@done_quests = DoneQuest.get_page(params[:page], @pc.id)
 	end
 	
 	def inventory
-		@pc_items = PlayerCharacterItem.get_page(params[:page], session[:player_character].id)
-		@equip_locs = session[:player_character].player_character_equip_locs
+		@pc_items = PlayerCharacterItem.get_page(params[:page], @pc.id)
+		@equip_locs = @pc.player_character_equip_locs
 	end
 	
 	def equip
-		#session[:player_character] = PlayerCharacter.find(session[:player_character][:id])
-		
-		@loc = session[:player_character].player_character_equip_locs.find(params[:id])
+		@loc = @pc.player_character_equip_locs.find(params[:id])
 		@item = @loc.item
 		if @loc.nil?
 			flash[:notice] = "Invalid equip location"
 			redirect_to :action => 'inventory'
 			return
 		elsif !@item.nil?
-			do_unequip(session[:player_character], @loc.id)
-			#session[:player_character] = PlayerCharacter.find(session[:player_character][:id])
+			do_unequip(@pc, @loc.id)
 		end
 		
-		@pc_items = PlayerCharacterItem.get_page(params[:page], session[:player_character].id, session[:player_character].race.race_body_type)
+		@pc_items = PlayerCharacterItem.get_page(params[:page], @pc.id, @pc.race.race_body_type)
 	end
 	
 	def do_equip
 		equip
 		
-		@pc_item = session[:player_character].items.find(:first, :conditions => ['id = ?', params[:iid]])
+		@pc_item = @pc.items.find(:first, :conditions => ['id = ?', params[:iid]])
 	
 		if @pc_item.nil?
 			flash[:notice] = "You don't have any of those to equip"
@@ -81,14 +78,14 @@ class CharacterseController < ApplicationController
 		
 		@item = @pc_item.item
 		
-		if @item.race_body_type != nil && @item.race_body_type != session[:player_character].race.race_body_type
+		if @item.race_body_type != nil && @item.race_body_type != @pc.race.race_body_type
 			flash[:notice] = "That item cannot be equipped; you have an incompatible body type"
 			redirect_to :action => 'inventory'
 			return
 		end
 		
-		if PlayerCharacterItem.update_inventory(session[:player_character].id,@item.id,-1)
-			if update_equip_loc(session[:player_character],@loc, @item, 1)
+		if PlayerCharacterItem.update_inventory(@pc.id, @item.id,-1)
+			if update_equip_loc(@pc, @loc, @item, 1)
 				flash[:notice] = @item.name + " equipped on " + SpecialCode.get_text('equip_loc',@loc.equip_loc)
 			else
 				print "\nOH NOES FAILED TO UPDATE PLAYER EQUIP LOC/ PLAYER CHAR STATS!"
@@ -100,7 +97,7 @@ class CharacterseController < ApplicationController
 	end
 	
 	def unequip
-		do_unequip(session[:player_character], params[:id])
+		do_unequip(@pc, params[:id])
 		redirect_to :action => 'inventory'
 	end
 	
@@ -153,10 +150,10 @@ protected
 				@stat.add_stats(what.stat)
 			else
 				@stat.subtract_stats(what.stat)
-	end
+			end
 			print "nstr:" + @stat.str.to_s + "\ndex:" + @stat.dex.to_s + "\ncon:" + @stat.con.to_s + "\nint:" + @stat.int.to_s + "\nmag:" + @stat.mag.to_s + "\ndfn:" + @stat.dfn.to_s + "\ndam:" + @stat.dam.to_s + "\n"
 			@stat.save!
-	end
+		end
 		return true
 	end
 end

@@ -1,5 +1,7 @@
-<p>You encounter <%= @pc.name %></p>
-<table><tr><td><pre class="creature"><%=h @pc.image.image_text %></pre></td></tr></table>
+<p>You encounter <%= @player_character.name %></p>
+<table><tr><td><pre class="creature"><%=h @player_character.image.image_text %></pre></td></tr></table>
+
+I dont think this page actually shows up anywhere ever.
 
 <p><%= link_to 'Wave', :action => 'wave_at_pc' %></p>
 <p><%= link_to 'Attack!', :controller => 'game/battle', :action => 'fight_pc' %></p>

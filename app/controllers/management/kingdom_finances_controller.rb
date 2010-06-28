@@ -1,5 +1,5 @@
 class Management::KingdomFinancesController < ApplicationController
-	before_filter :authenticate
+	before_filter :setup_pc_vars
 	before_filter :king_filter
 
 	layout 'main'
@@ -24,40 +24,24 @@ class Management::KingdomFinancesController < ApplicationController
 	end
 
 	def withdraw
-		Kingdom.transaction do
-		session[:kingdom].lock!
-		session[:player_character].lock!
-			@withdraw = params[:withdraw][0].to_i
-			@coffers = session[:kingdom].gold.to_i
-			if @withdraw > @coffers
-				flash[:notice] = 'Amount to withdrawl cannot exceed the gold in the coffers.'
-			else
-				session[:kingdom].gold -= @withdraw
-				session[:player_character].gold += @withdraw
-				flash[:notice] = 'Withdrawl successful.'
-			end
-		session[:kingdom].save!
-			session[:player_character].save!
-	end
+		@withdraw = params[:withdraw][0].to_i
+		if TxWrapper.take(session[:kingdom], :gold, @withdraw)
+			flash[:notice] = 'Amount to withdrawl cannot exceed the gold in the coffers.'
+		else
+			TxWrapper.give(@pc, :gold, @withdraw)
+			flash[:notice] = 'Withdrawl successful.'
+		end
 		redirect_to :action => 'edit'
 	end
 	
 	def deposit
-		Kingdom.transaction do
-		session[:kingdom].lock!
-			session[:player_character].lock!
-			@deposit = params[:deposit][0].to_i
-			@personal = session[:player_character].gold
-			if @deposit > @personal
-				flash[:notice] = 'Amount to withdrawl cannot exceed the gold in the coffers.'
-			else
-				session[:player_character].gold -= @deposit
-				session[:kingdom].gold += @deposit
-				flash[:notice] = 'Withdrawl successful.'
-			end
-		session[:kingdom].save!
-			session[:player_character].save!
-	end
+		@deposit = params[:deposit][0].to_i
+		if TxWrapper.take(@pc, :gold, @deposit)
+			flash[:notice] = 'Amount to withdrawl cannot exceed the gold in the coffers.'
+		else
+			TxWrapper.give(session[:kingdom], :gold, @deposit)
+			flash[:notice] = 'Withdrawl successful.'
+		end
 		redirect_to :action => 'edit'
 	end
 	
@@ -66,7 +50,7 @@ class Management::KingdomFinancesController < ApplicationController
 			flash[:notice] = 'Tax rate must be between 0% and 100%'
 		else
 			session[:kingdom].tax_rate = params[:taxes][0].to_f
-			session[:kingdom].save
+			session[:kingdom].save!
 			flash[:notice] = 'Tax rate updated.'
 		end
 		redirect_to :action => 'edit'

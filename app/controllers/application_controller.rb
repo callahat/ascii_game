@@ -8,7 +8,6 @@ class ApplicationController < ActionController::Base
 	# Scrub sensitive parameters from your log
 	# filter_parameter_logging :password
 	
-		
 	before_filter :system_up
 	
 	def system_up
@@ -19,16 +18,23 @@ class ApplicationController < ActionController::Base
 		end
 	end
 	
-	def authenticate
-		if session[:player].nil? ||
-				(Player.find(:first, :conditions => ["handle = ?", session[:player][:handle]]).passwd != session[:player][:passwd])
-			redirect_to :controller => '/account', :action => 'verify'
-			return false
+	def setup_pc_vars
+		return(false) unless authenticate
+		if @pc = session[:player_character]
+			true
 		else
-			#set the kingbit so player can manage their kingdoms if tehy are king
-			
+			redirect_to character_url()
+			false
+		end
+	end
+	
+	def authenticate
+		unless @player = session[:player]
+			redirect_to login_url()
+			false
+		else
 			is_king
-			return true
+			true
 		end
 	end
 
@@ -48,8 +54,8 @@ class ApplicationController < ActionController::Base
 	
 	#Checks that the player is a king
 	def is_king
-		@pcs = PlayerCharacter.find(:all, :conditions => ['player_id = ?', session[:player][:id]])
-		for pc in @pcs
+		pcs = PlayerCharacter.find(:all, :conditions => ['player_id = ? AND char_stat = ?', session[:player][:id], SpecialCode.get_code('char_stat','active')])
+		for pc in pcs
 			if Kingdom.find(:first, :conditions => ['player_character_id = ?', pc.id])
 				session[:kingbit] = true
 				return true

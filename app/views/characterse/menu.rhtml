@@ -1,12 +1,12 @@
 <p>Stats and Equipment</p>
 <table>
-<tr><td>Name: </td><td><%= @player_character.name %></td></tr>
-<tr><td><span title="<%= @player_character.race.description %>">Race: </td><td><%= @player_character.race.name %></span></td></tr>
-<tr><td><span title="<%= @player_character.c_class.description %>">Class: </td><td><%= @player_character.c_class.name %></span></td></tr>
-<tr><td>Body Type: </td><td><%= SpecialCode.get_text('race_body_type',@player_character.race.race_body_type) %></td></tr>
-<tr><td>Level: </td><td><%= session[:player_character].level %></td></tr>
-<tr><td>XP: </td><td><%= session[:player_character].experience %></td></tr>
-<tr><td>Next Lvl @ </td><td><%= session[:player_character].next_level_at %></td></tr>
+<tr><td>Name: </td><td><%= @pc.name %></td></tr>
+<tr><td><span title="<%= @pc.race.description %>">Race: </td><td><%= @pc.race.name %></span></td></tr>
+<tr><td><span title="<%= @pc.c_class.description %>">Class: </td><td><%= @pc.c_class.name %></span></td></tr>
+<tr><td>Body Type: </td><td><%= SpecialCode.get_text('race_body_type',@pc.race.race_body_type) %></td></tr>
+<tr><td>Level: </td><td><%= @pc.level %></td></tr>
+<tr><td>XP: </td><td><%= @pc.experience %></td></tr>
+<tr><td>Next Lvl @ </td><td><%= @pc.next_level_at %></td></tr>
 </table>
 <br/>
 
