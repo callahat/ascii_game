@@ -99,22 +99,20 @@ class GameControllerTest < ActionController::TestCase
 		session[:player_character] = nil
 		
 		get 'feature', {:id => @level_map.id}, session
-		assert_response :success
-		assert_template 'demo'
+		assert_response :redirect
 		
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
 		get 'feature', {:id => @level_map.id}, session
-		assert_response :success
-		assert_template 'demo'
+		assert_response :redirect
 		
 		session[:player_character] = nil
 		session[:player] = Player.find_by_handle("Test Player One")
 		get 'feature', {:id => @level_map.id}, session
-		assert_redirected_to :controller => 'character', :action => 'choose'
+		assert_redirected_to :controller => 'character'
 		
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
 		get 'feature', {}, session
-		assert_redirected_to :controller => 'game', :action => 'main'
+		assert_redirected_to game_main_url()
 	end
 	
 	test "game controller feature action when battle exists" do
@@ -255,11 +253,14 @@ class GameControllerTest < ActionController::TestCase
 		get 'feature', {:id => @world_map.id}, session
 		assert_redirected_to :controller => 'game', :action => 'complete'
 		assert flash[:notice] =~ /not yet powerful/
-		session[:player_character].current_event.destroy
+		
+		get 'complete', {}, session
+		assert_redirected_to game_main_url()
 		
 		#try feature with high enough level
 		session[:player_character].update_attribute(:level, 50)
 		get 'feature', {:id => @world_map.id}, session
+		
 		assert_redirected_to :controller => 'game', :action => 'spawn_kingdom'
 		assert_no_difference 'Kingdom.count' do
 			post 'do_spawn', {:kingdom => {:name => 'HealthyTestKingdom'}}, session

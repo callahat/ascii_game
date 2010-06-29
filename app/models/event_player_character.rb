@@ -4,11 +4,11 @@ class EventPlayerCharacter < EventLifeNeutral
 	validates_presence_of :thing_id
 	
 	def make_happen(ig=nil)
-		@pc = self.player_character
-		if @pc.health.HP > 0 && @pc.health.wellness != SpecialCode.get_code('wellness','dead')
+		pc = self.player_character
+		if pc.health.HP > 0 && pc.health.wellness != SpecialCode.get_code('wellness','dead')
 			return nil, EVENT_COMPLETED, ""
 		else
-			return {:action => 'complete'}, EVENT_COMPLETED, @pc.name + " has shuffled from this mortal coil"
+			return {:action => 'complete'}, EVENT_COMPLETED, pc.name + " has shuffled from this mortal coil"
 		end
 	end
 	

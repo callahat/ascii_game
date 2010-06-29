@@ -1,0 +1,35 @@
+<div>
+	<% if @pc.image_id != nil %>
+		<div class="lfcl">
+			<div class="char_thumb"><span class="image"><%= @pc.image.image_text %></span></div>
+		</div>
+	<% end %>
+	<div class="lfcl">
+		<% if @pc[:experience] >= @pc[:next_level_at] %>
+			<%= link_to 'GAIN LEVEL', :controller => '/character', :action => 'raise_level' %><br/>
+		<% end %>
+		<%= link_to('Camp', :controller => '/game' , :action => 'make_camp') unless session[:current_event] %><br/>
+		<%= link_to('Stats & Equip', :controller => '/characterse', :action => 'menu')%><br/>
+		Current char stats
+		<table class="side_col">
+			<tr><td>Name:</td><td><%= @pc.name %></td></tr>
+			<tr><td>Home:</td><td><%= (@pc.kingdom ? @pc.kingdom.name : "None" )%></td></tr>
+			<tr><td>Class:</td><td><%= @pc.c_class.name %></td></tr>
+			<tr><td>Race:</td><td><%= @pc.race.name %></td></tr>
+			<tr><td>Turns:</td><td class="numeric_stat"><%= @pc.turns %></td></tr>
+			<tr><td>Level:</td><td class="numeric_stat"><%= @pc.level %></td></tr>
+			<tr><td>Health:</td><td class="numeric_stat"><%= SpecialCode.get_text('wellness',@pc.health.wellness) %></td></tr>
+			<tr><td>XP:</td><td class="numeric_stat"><%= NumFmt.human(@pc.experience) %></td></tr>
+			<tr><td>GL:</td><td class="numeric_stat"><%= NumFmt.human(@pc.gold) %></td></tr>
+			<tr><td>HP:</td><td class="numeric_stat"><%= NumFmt.human(@pc.health.HP) %>/ <%= NumFmt.human(@pc.health.base_HP) %></td></tr>
+			<tr><td>MP:</td><td class="numeric_stat"><%= NumFmt.human(@pc.health.MP) %>/ <%= NumFmt.human(@pc.health.base_MP) %></td></tr>
+			<tr><td>STR:</td><td class="numeric_stat"><%= NumFmt.human(@pc.stat.str) %></td></tr>
+			<tr><td>DEX:</td><td class="numeric_stat"><%= NumFmt.human(@pc.stat.dex) %></td></tr>
+			<tr><td>MAG:</td><td class="numeric_stat"><%= NumFmt.human(@pc.stat.mag) %></td></tr>
+			<tr><td>INT:</td><td class="numeric_stat"><%= NumFmt.human(@pc.stat.int) %></td></tr>
+			<tr><td>CON:</td><td class="numeric_stat"><%= NumFmt.human(@pc.stat.con) %></td></tr>
+			<tr><td>DFN:</td><td class="numeric_stat"><%= NumFmt.human(@pc.stat.dfn) %></td></tr>
+			<tr><td>DAM:</td><td class="numeric_stat"><%= NumFmt.human(@pc.stat.dam) %></td></tr>
+		</table>
+	</div>
+</div>

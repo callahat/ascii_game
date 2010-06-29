@@ -1,8 +1,8 @@
 <p>Clinic</p>
-<% if session[:player_character].illnesses.size > 0 || @max_HP_heal || @max_MP_heal %>
+<% if @pc.illnesses.size > 0 || @max_HP_heal || @max_MP_heal %>
 <table>
 <% for cure in @diseases_cured do %>
-  <% if session[:player_character].illnesses.exists?(:disease_id => cure.disease_id) %>
+  <% if @pc.illnesses.exists?(:disease_id => cure.disease_id) %>
   <tr>
     <td>
       <%= link_to 'Cure ' + cure.disease.name, { :action => 'do_heal', :did => cure.disease_id } , :method => :post %>

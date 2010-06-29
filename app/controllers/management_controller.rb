@@ -13,7 +13,7 @@ class ManagementController < ApplicationController
 	end
 
 	def index
-		if session[:kingdom].nil? || session[:player_character].nil?
+		if session[:kingdom].nil? || @pc.nil?
 			#code for regular menu to do things
 			#Have the player pick a kingdom to manage, they mgith have multiple
 			#Kingdoms depending on their characters in play
@@ -57,14 +57,14 @@ class ManagementController < ApplicationController
 			@message = 'Really leave the kingdom without a monarch?'
 		elsif params[:new_king]
 			print "in here"
-			@pc = PlayerCharacter.find(:first, :conditions => ['name = ?', params[:new_king]])
-			session[:new_king] = @pc
-			if @pc.nil?
+			@player_character = PlayerCharacter.find(:first, :conditions => ['name = ?', params[:new_king]])
+			session[:new_king] = @player_character
+			if @player_character.nil?
 				@message = 'No such character by the name "' + params[:new_king] + '" was found.'
-			elsif @pc.kingdom
-				@message = 'Really hand the throne over to ' + @pc.name + ' of ' + @pc.kingdom.name + '?'
+			elsif @player_character.kingdom
+				@message = 'Really hand the throne over to ' + @player_character.name + ' of ' + @player_character.kingdom.name + '?'
 			else
-				@message = 'Really hand the throne over to ' + @pc.name + '?'
+				@message = 'Really hand the throne over to ' + @player_character.name + '?'
 			end
 		end
 	end
@@ -76,14 +76,14 @@ class ManagementController < ApplicationController
 			redirect_to :action => 'retire'
 		else
 			if session[:new_king]
-				@pc = PlayerCharacter.find(:first, :conditions => ['name = ?', session[:new_king].name])
+				@player_character = PlayerCharacter.find(:first, :conditions => ['name = ?', session[:new_king].name])
 			end
-			if @pc.nil?
+			if @player_character.nil?
 				@pc_id = nil
 				@message = session[:kingdom].player_character.name + " has abandonded their position as king of " + session[:kingdom].name + ", designating no sucessor."
 			else
-				@pc_id = @pc.id
-				@message = session[:kingdom].player_character.name + " has abdicated rule of " + session[:kingdom].name + " to " + @pc.name
+				@pc_id = @player_character.id
+				@message = session[:kingdom].player_character.name + " has abdicated rule of " + session[:kingdom].name + " to " + @player_character.name
 			end
 		
 			@kingdom = session[:kingdom]

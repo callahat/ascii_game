@@ -32,7 +32,11 @@ class AccountController < ApplicationController
 		if @player.save
 			flash[:notice] = 'Player was successfully created.'
 			session[:player] = @player
-			redirect_to :controller => 'character', :action => 'menu'
+			if params[:race_id] != "" || params[:c_class_id] != ""
+				redirect_to :controller => 'character', :action => 'namenew', :race_id => params[:race_id], :c_class_id => params[:c_class_id]
+			else
+				redirect_to :controller => 'character', :action => 'menu'
+			end
 		else
 			render :action => 'new'
 		end
@@ -58,7 +62,7 @@ class AccountController < ApplicationController
 		end
 	end
 
-	#Accounts won't eb able to be destroyed, but deleted. Keep the data, restrict the access.
+	#Accounts won't be able to be destroyed, but deleted. Keep the data, restrict the access.
 	#def destroy
 	#	Player.find(params[:id]).destroy
 	#	redirect_to :action => 'list'

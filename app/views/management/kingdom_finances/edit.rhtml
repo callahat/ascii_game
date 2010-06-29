@@ -1,6 +1,6 @@
 <h1>Editing kingdom_entry</h1>
 
-<% if !session[:player_character].nil? && session[:player_character][:id] == session[:kingdom][:player_character_id] %>
+<% if @pc && @pc.id == session[:kingdom][:player_character_id] %>
   <% form_tag :action => 'withdraw' do %>
     <p><label for="withdraw">Withdraw amount:</label>(<%= session[:kingdom].gold %> gold in coffers)<br/>
     <%= text_field 'withdraw',''  %></p>
@@ -8,7 +8,7 @@
   <% end %>
 
   <% form_tag :action => 'deposit' do %>
-    <p><label for="deposit">Deposit amount:</label>(<%= session[:player_character].gold %> gold on person)<br/>
+    <p><label for="deposit">Deposit amount:</label>(<%= @pc.gold %> gold on person)<br/>
     <%= text_field 'deposit',''  %></p>
     <%= submit_tag 'Deposit' %>
   <% end %>

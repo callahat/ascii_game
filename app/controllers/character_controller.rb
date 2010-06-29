@@ -1,5 +1,6 @@
 class CharacterController < ApplicationController
-	before_filter :authenticate, :except => ['new', 'menu']
+	before_filter :authenticate, :except => ['raise_level', 'gainlevel', 'new']
+	before_filter :setup_pc_vars, :only => ['raise_level', 'gainlevel']
 
 	#figure out caching later. It seems to work faster if the boot file has the cacheing
 	#to true, but I can't find a cache of this pages where the books says it should be.
@@ -15,14 +16,8 @@ class CharacterController < ApplicationController
 	end
 
 	def menu
-	p "menu"
-		if session[:player].nil?
-			redirect_to :action => 'new'
-			return
-		end
-	
 		#the menu for dealing with your character(s)
-		@player_characters = session[:player].player_characters
+		@player_characters = @player.player_characters
 		@active_chars = @player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","active")])
 		@retired_chars = @player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","retired")])
 		@dead_chars = @player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","final death")])
@@ -30,14 +25,14 @@ class CharacterController < ApplicationController
 
 	def choose_character
 		#code to load up a character into the session to play
-		@select_chars = session[:player].player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","active")])
+		@select_chars = @player.player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","active")])
 		@next_action = 'do_choose'
 	end
 
 	def do_choose
 		clear_fe_data
 		
-		@player_character = session[:player].player_characters.find(:first, :conditions => ['id = ?', params[:id]])
+		@player_character = @player.player_characters.find(:first, :conditions => ['id = ?', params[:id]])
 		if @player_character
 			session[:player_character] = nil
 			session[:player_character] = @player_character
@@ -51,24 +46,24 @@ class CharacterController < ApplicationController
 
 	def edit_character
 		#code to load up a character into the session to play
-		@select_chars = session[:player].player_characters.find(:all, :conditions => ['char_stat != ?', SpecialCode.get_code("char_stat","deleted")])
+		@select_chars = @player.player_characters.find(:all, :conditions => ['char_stat != ?', SpecialCode.get_code("char_stat","deleted")])
 		@next_action = 'do_image_update'
 	end
 
 	def do_image_update
-		@image = Image.find(session[:player].player_characters.find(params[:id]).image_id)
+		@image = Image.find(@player.player_characters.find(params[:id]).image_id)
 	end
 
 	def updateimage
-		@pc = session[:player].player_characters.find(params[:id])
-		@image = Image.find(@pc.image_id.to_i)
+		@player_character = @player.player_characters.find(params[:id])
+		@image = Image.find(@player_character.image_id.to_i)
 		if @image.id == 0
 			@image = Image.new
-			@image.player_id = session[:player][:id]
+			@image.player_id = @player.id
 			@image.image_text = params[:image][:image_text]
 			@image.public = 'false'
 			@image.image_type = SpecialCode.get_code('image_type','character')
-			@image.name = @pc.name + ' character image'
+			@image.name = @player_character.name + ' character image'
 			if @image.save
 				flash[:notice] = 'Created character image.'
 				redirect_to :action => 'menu'
@@ -96,27 +91,27 @@ class CharacterController < ApplicationController
 	end
 
 	def namenew
-		if params[:race] && params[:c_class]
-			session[:nplayer_character][:race_id] = params[:race][:id]
-			session[:nplayer_character][:c_class_id] = params[:c_class][:id]
-		elsif session[:nplayer_character].nil?
+		if session[:nplayer_character].nil?
 			flash[:notice] = 'Character being created expired. Please try again'
-			redirect_to :action => 'prenew'
+			redirect_to :action => 'new'
+		else
+			session[:nplayer_character][:race_id] = params[:race_id]
+			session[:nplayer_character][:c_class_id] = params[:c_class_id]
+		
+			#give the character a name, pick a kingdom, let the good tiems roll
+			#mainly create the player's character stats
+			@kingdoms = Kingdom.find(:all, :conditions => ['id > -1'])
+			@player_character = session[:nplayer_character]
+
+			@ori_image = Image.find(:first, :conditions => ['name = ? and kingdom_id = ? and player_id = ?', "DEFAULT PC IMAGE", -1, -1])
+			@image = Image.deep_copy(@ori_image)
 		end
-
-		#give the character a name, pick a kingdom, let the good tiems roll
-		#mainly create the player's character stats
-		@kingdoms = Kingdom.find(:all, :conditions => ['id > -1'])
-		@player_character = session[:nplayer_character]
-
-		@ori_image = Image.find(:first, :conditions => ['name = ? and kingdom_id = ? and player_id = ?', "DEFAULT PC IMAGE", -1, -1])
-		@image = Image.deep_copy(@ori_image)
 	end
 
 	def create
 		if session[:nplayer_character].nil?
 			flash[:notice] = 'Character being created expired. Please try again'
-			redirect_to :action => 'prenew'
+			redirect_to :action => 'new'
 		end
 	
 		flash[:notice] = " "
@@ -129,13 +124,12 @@ class CharacterController < ApplicationController
 		elsif params[:image][:image_text] != ""
 			if session[:nplayer_character][:image_id].to_i == 0
 				@image = Image.new
-				@image.player_id = session[:player][:id]
+				@image.player_id = @player.id
 				@image.public = 'false'
 				@image.kingdom_id = params[:kingdom][:id].to_i
 				@image.image_type = SpecialCode.get_code('image_type','character')
-				#@image.image_text = params[:player_character][:image]
 				@image.image_text = params[:image][:image_text]
-				@image.name = session[:player][:handle] + '\'s character image'
+				@image.name = @player.handle + '\'s character image'
 			
 				if @image.save
 					flash[:notice] += @image.name + ' was successfully created.<br/>'
@@ -148,14 +142,13 @@ class CharacterController < ApplicationController
 				end
 			else
 				@image = Image.find(session[:nplayer_character][:image_id])
-				#@image.image_text = params[:player_character][:image]
 				@image.image_text = params[:image][:image_text]
 				if @image.save
-					flash[:notice] += @image.name + ' was successfully update.<br/>'
+					flash[:notice] += @image.name + ' was successfully updated.<br/>'
 					session[:nplayer_character][:image_id] = @image.id
 					#redirect_to :action => 'create'
 				else
-					flash[:notice] += 'Image was not sucessfully update.<br/>'
+					flash[:notice] += 'Image was not sucessfully updated.<br/>'
 					redirect_to :action => 'namenew'
 					return
 				end
@@ -164,7 +157,7 @@ class CharacterController < ApplicationController
 		#end of image handling
 
 		session[:nplayer_character][:name] = params[:player_character][:name]
-		session[:nplayer_character][:player_id] = session[:player][:id]
+		session[:nplayer_character][:player_id] = @player.id
 
 		@kingdom = Kingdom.find(:first, :conditions => ['id = ?', params[:kingdom][:id].to_i])
 		session[:nplayer_character][:bigx] = @kingdom.bigx
@@ -177,7 +170,7 @@ class CharacterController < ApplicationController
 		
 		p session[:nplayer_character]
 		if (pc = PlayerCharacter.create(session[:nplayer_character].attributes)).errors.size == 0
-			flash[:notice] += 'Player character created sucessfully (we think)<br/>'
+			flash[:notice] += 'Player character created sucessfully<br/>'
 		else
 			session[:nplayer_character] = pc
 			redirect_to :action => 'namenew'
@@ -209,7 +202,6 @@ class CharacterController < ApplicationController
 
 
 	def raise_level
-		@pc = session[:player_character].dup
 		@base_stats = @pc.base_stat
 		@distributed_freepts = StatPc.new(params[:distributed_freepts])
 		
@@ -219,35 +211,34 @@ class CharacterController < ApplicationController
 	end
 
 	def gainlevel
-		@pc = session[:player_character].dup
 		@base_stats = @pc.base_stat
 		@distributed_freepts = StatPc.new(params[:distributed_freepts])
 		
 		@goback, @message = @pc.gain_level(@distributed_freepts)
-	if @goback == 0
-		render :action => 'raise_level'
-	else
+		if @goback == 0
+			render :action => 'raise_level'
+		else
 			flash[:notice] = @message
-		redirect_to :controller => 'game', :action => 'main'
-	end
+			redirect_to :controller => 'game', :action => 'main'
+		end
 	end
 
 	def destroy
 		#code to delete a character completely. Don't know why someone
 		#would want to do this, as they can have several chars. Unless
 		#its a soft game where characters never really die.
-		@select_chars = session[:player].player_characters.find(:all, :conditions => ['char_stat != ?', SpecialCode.get_code("char_stat","deleted")])
+		@select_chars = @player.player_characters.find(:all, :conditions => ['char_stat != ?', SpecialCode.get_code("char_stat","deleted")])
 		@next_action = 'do_destroy'
 	end
 
 	def do_destroy
 		clear_fe_data
 	
-		@c=session[:player].player_characters.find(params[:id])
+		@c=@player.player_characters.find(params[:id])
 		@c.char_stat = SpecialCode.get_code("char_stat","deleted")
 		
 		#unselect current character if its getting deleted
-		if !session[:player_character].nil? && @c.id == session[:player_character].id
+		if session[:player_character] && @c.id == session[:player_character].id
 			session[:player_character] = nil
 		end
 		if @c.save
@@ -279,23 +270,23 @@ class CharacterController < ApplicationController
 		#play them anymore. These players lose all their stuff, but keep
 		#their stats and other attributes, as well as what they are
 		#equipped with. All gold and inventory items are forfit though.
-		@select_chars = session[:player].player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","active")])
+		@select_chars = @player.player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","active")])
 		@next_action = 'do_retire'
 	end
 
 	def do_retire
 		clear_fe_data
 	
-		@c=session[:player].player_characters.find(params[:id])
+		@c=@player.player_characters.find(params[:id])
 		@c.char_stat = SpecialCode.get_code("char_stat","retired")
 		@c.gold = 0
 		
 		#unselect current character if its getting deleted
-		if !session[:player_character].nil? && @c.id == session[:player_character].id
+		if session[:player_character] && @c.id == session[:player_character].id
 			session[:player_character] = nil
 		end
 		
-		if @c.save	
+		if @c.save
 			flash[:notice] = 'Character "' + @c.name + '" has been retired.'
 			#call to the routien which clears out the character specific records which are removed
 			#when a character is retired.
@@ -311,18 +302,18 @@ class CharacterController < ApplicationController
 	def unretire
 		#Bring a character back into action. Make sure this won't bring
 		#the player's number of active characters over the limit though.
-		@select_chars = session[:player].player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","retired")])
+		@select_chars = @player.player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","retired")])
 		@next_action = 'do_unretire'
 	end
 
 	def do_unretire
-		if session[:player].player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","active")]).size >= 3
+		if @player.player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","active")]).size >= 3
 			flash[:notice] = 'Cannot have more than three active characters.'
 			redirect_to :action => 'menu'
 			return
 		end
 	
-		@c=session[:player].player_characters.find(params[:id])
+		@c=@player.player_characters.find(params[:id])
 		@c.char_stat = SpecialCode.get_code("char_stat","active")
 		if @c.save
 			flash[:notice] = 'Character "' + @c.name + '" has been brought back from retirement.'
@@ -358,4 +349,4 @@ protected
 		@c.log_quests.destroy_all
 		@c.illnesses.destroy_all
 	end
-	end
+end

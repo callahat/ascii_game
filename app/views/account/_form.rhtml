@@ -1,37 +1,25 @@
 <%= error_messages_for 'player' %>
 
 <!--[form:player]-->
-<% if @player.new_record? %>
-<p><label for="player_handle">Handle</label><br/>
-<%= text_field 'player', 'handle'  %></p>
-<% else %>
-<p><label for="player_handle">Handle</label><br/>
-<%= text_field 'player', 'handle', {:disabled => true}  %></p>
-<% end %>
-
-<p><label for="player_passwd">Passwd</label><br/>
-<%= password_field 'player', 'passwd'  %></p>
-
-<p><label for="player_city">City</label><br/>
-<%= text_field 'player', 'city'  %></p>
-
-<p><label for="player_state">State</label><br/>
-<%= text_field 'player', 'state'  %></p>
-
-<p><label for="player_country">Country</label><br/>
-<%= text_field 'player', 'country'  %></p>
-
-<p><label for="player_email">Email</label><br/>
-<%= text_field 'player', 'email'  %></p>
-
-<p><label for="player_AIM">Aim</label><br/>
-<%= text_field 'player', 'AIM'  %></p>
-
-<p><label for="player_yahoo_sn">Yahoo sn</label><br/>
-<%= text_field 'player', 'yahoo_sn'  %></p>
-
-<p><label for="player_bio">Bio</label><br/>
-<%= text_area 'player', 'bio'  %></p>
+<ul class="form">
+	<li><label for="player_handle">Handle</label>
+		<%= text_field 'player', 'handle', {:disabled => !@player.new_record?} %></li>
+	<li><label for="player_passwd">Passwd</label>
+		<%= password_field 'player', 'passwd'  %></li>
+	<li><label for="player_city">City</label>
+		<%= text_field 'player', 'city'  %></li>
+	<li><label for="player_state">State</label>
+		<%= text_field 'player', 'state'  %></li>
+	<li><label for="player_country">Country</label>
+		<%= text_field 'player', 'country'  %></li>
+	<li><label for="player_email">Email</label>
+		<%= text_field 'player', 'email'  %></li>
+	<li><label for="player_AIM">Aim</label>
+		<%= text_field 'player', 'AIM'  %></li>
+	<li><label for="player_yahoo_sn">Yahoo sn</label>
+		<%= text_field 'player', 'yahoo_sn'  %></li>
+	<li><label for="player_bio">Bio</label>
+		<%= text_area 'player', 'bio'  %></li>
+</ul>
 
 <!--[eoform:player]-->
-

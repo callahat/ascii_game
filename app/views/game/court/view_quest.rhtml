@@ -29,7 +29,7 @@
 <% if @done_quest.nil? %>
 <% if @log_quest %>
 <p><%= link_to 'Abandon quest',:action => 'abandon_quest', :qid => @quest.id %></p>
-<% elsif (@quest.quest_status == SpecialCode.get_code('quest_status','active')) && (@quest.max_level.nil? || session[:player_character][:level] < @quest.max_level) %>
+<% elsif (@quest.quest_status == SpecialCode.get_code('quest_status','active')) && (@quest.max_level.nil? || @pc.level < @quest.max_level) %>
 <p><%= link_to 'Join quest',:action => 'join_quest', :qid => @quest.id %></p>
 <% end %>
 <% end %>

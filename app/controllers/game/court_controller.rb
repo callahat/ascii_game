@@ -1,5 +1,6 @@
 class Game::CourtController < ApplicationController
-	before_filter :authenticate
+	#before_filter :authenticate
+	before_filter :setup_pc_vars
 
 	layout 'main'
 
@@ -7,37 +8,36 @@ class Game::CourtController < ApplicationController
 	verify :method => :post, :only => [ :do_heal, :do_choose, :do_train ],				 :redirect_to => { :action => :feature }
 	
 	def throne
-		@king = session[:player_character].present_kingdom.player_character
+		@king = @pc.present_kingdom.player_character
 	end
 	
 	def join_king
 		PlayerCharacter.transaction do 
-			@player_character = session[:player_character]
-			@player_character.lock!
-			@player_character.kingdom_id = session[:player_character].in_kingdom
+			@pc.lock!
+			@pc.kingdom_id = @pc.in_kingdom
 
-			flash[:notice] = 'You have joined the ranks of ' + session[:player_character].present_kingdom.player_character.name
-		@player_character.save!
+			flash[:notice] = 'You have joined the ranks of ' + @pc.present_kingdom.player_character.name
+			@pc.save!
 		end
 		render :action => '../complete'
 	end
 	
 	def king_me
 		Kingdom.transaction do 
-			@kingdom = session[:player_character].present_kingdom
-		@kingdom.lock!
+			@kingdom = @pc.present_kingdom
+			@kingdom.lock!
 			@king = @kingdom.player_character
 			if @king
 				@message = 'King ' + @king.name + ' glowers at your attempt to sit upon his throne.'
 				render :action => '../complete'
 			else
-				if session[:player_character].level < 15
+				if @pc.level < 15
 					@message = 'The steward approaches "You are yet not strong enough to claim the crown."'
 					render :action => '../complete'
 				else
-					@kingdom.player_character_id = session[:player_character][:id]
+					@kingdom.player_character_id = @pc[:id]
 					@message = 'You have claimed the crown'
-					create_accession_notice(session[:player_character].name + " has found the throne vacant, and claimed it for their own.", session[:player_character].present_kingdom)
+					create_accession_notice(@pc.name + " has found the throne vacant, and claimed it for their own.", @pc.present_kingdom)
 				end
 				render :action => '../complete'
 			end
@@ -46,34 +46,29 @@ class Game::CourtController < ApplicationController
 	end
 	
 	def castle
-		@kingdom = session[:player_character].present_kingdom
+		@kingdom = @pc.present_kingdom
 	end
 	
 	def bulletin
-		@notices = KingdomNotice.get_page(params[:page], session[:player_character], session[:player_character].present_kingdom)
+		@notices = KingdomNotice.get_page(params[:page], @pc, @pc.present_kingdom)
 	end
-	
-	
 	
 	def use_stairs
 		#move the player
-	PlayerCharacter.transaction do
-		session[:player_character].lock!
+		PlayerCharacter.transaction do
+			@pc.lock!
 	
-			@event = Feature.find(:first, :conditions => ['name = ?', "\nCastle #{session[:player_character].present_kingdom.name}"]).feature_events.find(:first, :conditions => ['event_id = ?', params[:id]])
+			@event = Feature.find(:first, :conditions => ['name = ?', "\nCastle #{@pc.present_kingdom.name}"]).feature_events.find(:first, :conditions => ['event_id = ?', params[:id]])
 
 			if @event
 				@event_move = @event.event.event_move
-			
-				session[:player_character][:kingdom_level] = @event_move.move_id
-				session[:player_character].save
+				@pc.kingdom_level = @event_move.move_id
 				@message = "You moved to level " + @event_move.level.level.to_s
-			
 				session[:completed] = true
 			else
 				@message = "You cannot move there"
 			end
-			session[:player_character].save!
+			@pc.save!
 		end
 
 		render :action => '../complete'
@@ -81,7 +76,7 @@ class Game::CourtController < ApplicationController
 	
 	def quest_office
 		#list the active quests of the kingdom
-		@allquests = session[:player_character].present_kingdom.quests.find(:all, :include => 'log_quests', :conditions => ['quests.quest_status = ? OR (quests.id = log_quests.quest_id and log_quests.player_character_id = ? and log_quests.completed = true)', SpecialCode.get_code('quest_status','active'), session[:player_character][:id]], :order => 'quest_status')
+		@allquests = @pc.present_kingdom.quests.find(:all, :include => 'log_quests', :conditions => ['quests.quest_status = ? OR (quests.id = log_quests.quest_id and log_quests.player_character_id = ? and log_quests.completed = true)', SpecialCode.get_code('quest_status','active'), @pc.id], :order => 'quest_status')
 		
 		@quests = []
 		print "\n"
@@ -89,27 +84,27 @@ class Game::CourtController < ApplicationController
 		print "\n" + q.name
 			if q.quest_id.nil?
 				@quests << q
-			elsif session[:player_character].done_quests.exists?(:quest_id => q.quest_id)
+			elsif @pc.done_quests.exists?(:quest_id => q.quest_id)
 				@quests << q
 			end
 		end
 	end
 	
 	def view_quest
-		@quest = session[:player_character].present_kingdom.quests.find(:first, :conditions => ['id = ?', params[:qid]])
-		@done_quest = @quest.done_quests.find(:first, :conditions => ['player_character_id = ?', session[:player_character][:id]])
+		@quest = @pc.present_kingdom.quests.find(:first, :conditions => ['id = ?', params[:qid]])
+		@done_quest = @quest.done_quests.find(:first, :conditions => ['player_character_id = ?', @pc.id])
 		if @quest.quest_status == SpecialCode.get_code('quest_status','design')
 			redirect_to :action => 'quest_office'
 		end
 		
 		@times_completed = LogQuest.find(:all, :conditions => ['quest_id = ? and completed = ?', @quest.id, true]).size
-		@log_quest = session[:player_character].log_quests.find(:first, :conditions => ['quest_id = ?', @quest.id])
+		@log_quest = @pc.log_quests.find(:first, :conditions => ['quest_id = ?', @quest.id])
 		
 		if @log_quest
 			@reqs_remaining = @log_quest.reqs.size
 		
 			for quest_item in @quest.items
-				@pc_inv = session[:player_character].items.find(:first, :conditions => ['item_id = ?', quest_item.detail])
+				@pc_inv = @pc.items.find(:first, :conditions => ['item_id = ?', quest_item.detail])
 				if @pc_inv
 					@pc_inv = @pc_inv.quantity
 				else
@@ -121,14 +116,14 @@ class Game::CourtController < ApplicationController
 				end
 			end
 		
-			if @reqs_remaining == 0 && session[:player_character].done_quests.find(:first, :conditions => ['quest_id = ?', @quest.id]).nil?
+			if @reqs_remaining == 0 && @pc.done_quests.find(:first, :conditions => ['quest_id = ?', @quest.id]).nil?
 				@log_quest.completed = true
 				@log_quest.save
 			
 				#create done quest
 				@done_quest = DoneQuest.new
 				@done_quest.quest_id = @quest.id
-				@done_quest.player_character_id = session[:player_character][:id]
+				@done_quest.player_character_id = @pc[:id]
 				@done_quest.date = Time.now
 				if !@done_quest.save
 					print "\nFailed to save done quest!"
@@ -142,11 +137,11 @@ class Game::CourtController < ApplicationController
 		#verify the player is eligible for th quest, they are not already signed up, they have not completed ti already,
 		#and the quest is still active and completeable
 		
-		joined, msg = LogQuest.join_quest(session[:player_character], params[:qid])
+		joined, msg = LogQuest.join_quest(@pc, params[:qid])
 		
 		if joined
-		flash[:notice] = "You have taken an oath to pursue the quest"
-		redirect_to :action => 'view_quest', :qid => params[:qid]
+			flash[:notice] = "You have taken an oath to pursue the quest"
+			redirect_to :action => 'view_quest', :qid => params[:qid]
 		else
 			flash[:notice] = msg
 			redirect_to :action => 'quest_office'
@@ -154,21 +149,21 @@ class Game::CourtController < ApplicationController
 	end
 		
 	def abandon_quest
-		abandoned, msg = LogQuest.abandon(session[:player_character], params[:qid])
+		abandoned, msg = LogQuest.abandon(@pc, params[:qid])
 		
 		if abandoned
-		flash[:notice] = "You have abandoned the pursuit of the quest."
-		redirect_to :action => 'view_quest', :qid => params[:qid]
+			flash[:notice] = "You have abandoned the pursuit of the quest."
+			redirect_to :action => 'view_quest', :qid => params[:qid]
 		else
 			flash[:notice] = msg
 			redirect_to :action => 'quest_office'
-	end
+		end
 	end
 
 	def collect_reward
 		if session[:viewing_quest]
 			@quest = session[:viewing_quest]
-			@log_quest = @quest.log_quests.find(:first, :conditions => ['player_character_id = ?', session[:player_character][:id]])
+			@log_quest = @quest.log_quests.find(:first, :conditions => ['player_character_id = ?', @pc.id])
 			
 			if @log_quest.nil?
 				redirect_to :action => 'view_quest', :qid => @quest.id
@@ -184,7 +179,7 @@ class Game::CourtController < ApplicationController
 			end
 			
 			@reward_item = @quest.item
-			@kingdom = session[:player_character].present_kingdom
+			@kingdom = @pc.present_kingdom
 			
 			if @reward_item
 				@kingdom_item = KingdomItem.find(:first, :conditions => ['kingdom_id = ? and item_id = ?', @kingdom.id, @reward_item.id])
@@ -201,39 +196,19 @@ class Game::CourtController < ApplicationController
 				end
 			end
 			
-		Kingdom.transaction do
-			@kingdom = session[:player_character].present_kingdom
+			@kingdom = @pc.present_kingdom
 			
-				@quest.gold = @quest.gold.to_i
+			@quest.gold = @quest.gold.to_i
 			
-				if @kingdom.gold < @quest.gold
-					flash[:notice] = "There is not enough gold in the coffers to pay your reward! Try collecting later."
-					@kingdom.save!
-				
-					if @reward_item #reutrn the item
-						KingdomItem.update_inventory(@kingdom.id,@reward_item.id,1)
-					end
-					redirect_to :action => 'view_quest', :qid => @quest.id
-					return
-				else
-					if @quest.gold > 0
-						@kingdom.gold -= @quest.gold
-						@kingdom.save!
-				
-						PlayerCharacter.transaction do
-							session[:player_character].lock!
-							session[:player_character].gold += @quest.gold
-				session[:player_character].save!
-						end
-					end
-				
-					PlayerCharacterItem.update_inventory(session[:player_character].id,@reward_item.id,1) if @reward_item
-					flash[:notice] = "You collected the reward"
-				
-					@log_quest.rewarded = true
-					@log_quest.save
-				end
-		end
+			if @quest.gold > 0 && !(TxWrapper.take(@kingdom, :gold, @quest.gold) && TxWrapper.give(@pc, :gold, @quest.gold))
+				flash[:notice] = "There is not enough gold in the coffers to pay your reward! Try collecting later."
+				redirect_to :action => 'view_quest', :qid => @quest.id
+				return
+			end
+			@log_quest.rewarded = true
+			@log_quest.save
+			PlayerCharacterItem.update_inventory(@pc.id,@reward_item.id,1) if @reward_item
+						flash[:notice] = "You collected the reward"
 			redirect_to :action => 'view_quest', :qid => @quest.id
 		else
 			redirect_to :action => 'quest_office'

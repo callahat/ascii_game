@@ -8,66 +8,66 @@
     <td>Max</td>
     <td>Gold per Point</td>
   </tr>
-  <% if (session[:player_character].base_str * ( @max_skill / 100.0)).to_i > session[:player_character].trn_str %>
+  <% if (@pc.base_stat.str * ( @max_skill / 100.0)).to_i > @pc.trn_stat.str %>
     <% @flag = true %>
   <tr>
     <td>Strength</td>
     <td><%= text_field 'atrib','str' %></td>
-    <td><%= (session[:player_character][:base_str] * (@max_skill / 100.0)).to_i - session[:player_character].trn_str %></td>
+    <td><%= (@pc.base_stat.str * (@max_skill / 100.0)).to_i - @pc.trn_stat.str %></td>
     <td><%= @cost_per_pt %></td>
   </tr>
   <% end %>
-  <% if (session[:player_character].base_dex * ( @max_skill / 100.0)).to_i > session[:player_character].trn_dex %>
+  <% if (@pc.base_stat.dex * ( @max_skill / 100.0)).to_i > @pc.trn_stat.dex %>
     <% @flag = true %>
   <tr>
     <td>Dexterity</td>
     <td><%= text_field 'atrib','dex' %></td>
-    <td><%= (session[:player_character][:base_dex] * (@max_skill / 100.0)).to_i - session[:player_character].trn_dex %></td>
+    <td><%= (@pc.base_stat.dex * (@max_skill / 100.0)).to_i - @pc.trn_stat.dex %></td>
     <td><%= @cost_per_pt %></td>
   </tr>
   <% end %>
-  <% if (session[:player_character].base_mag * ( @max_skill / 100.0)).to_i > session[:player_character].trn_mag %>
+  <% if (@pc.base_stat.mag * ( @max_skill / 100.0)).to_i > @pc.trn_stat.mag %>
     <% @flag = true %>
   <tr>
     <td>Magic</td>
     <td><%= text_field 'atrib','mag' %></td>
-    <td><%= (session[:player_character][:base_mag] * (@max_skill / 100.0)).to_i - session[:player_character].trn_mag %></td>
+    <td><%= (@pc.base_stat.mag * (@max_skill / 100.0)).to_i - @pc.trn_stat.mag %></td>
     <td><%= @cost_per_pt %></td>
   </tr>
   <% end %>
-  <% if (session[:player_character].base_int * ( @max_skill / 100.0)).to_i > session[:player_character].trn_int %>
+  <% if (@pc.base_stat.int * ( @max_skill / 100.0)).to_i > @pc.trn_stat.int %>
     <% @flag = true %>
   <tr>
     <td>Intelligence</td>
     <td><%= text_field 'atrib','int' %></td>
-    <td><%= (session[:player_character][:base_int] * (@max_skill / 100.0)).to_i - session[:player_character].trn_int %></td>
+    <td><%= (@pc.base_stat.int * (@max_skill / 100.0)).to_i - @pc.trn_stat.int %></td>
     <td><%= @cost_per_pt %></td>
   </tr>
   <% end %>
-  <% if (session[:player_character].base_con * ( @max_skill / 100.0)).to_i > session[:player_character].trn_con %>
+  <% if (@pc.base_stat.con * ( @max_skill / 100.0)).to_i > @pc.trn_stat.con %>
     <% @flag = true %>
   <tr>
     <td>Constitution</td>
     <td><%= text_field 'atrib','con' %></td>
-    <td><%= (session[:player_character][:base_con] * (@max_skill / 100.0)).to_i - session[:player_character].trn_con %></td>
+    <td><%= (@pc.base_stat.con * (@max_skill / 100.0)).to_i - @pc.trn_stat.con %></td>
     <td><%= @cost_per_pt %></td>
   </tr>
   <% end %>
-  <% if (session[:player_character].base_dfn * ( @max_skill / 100.0)).to_i > session[:player_character].trn_dfn %>
+  <% if (@pc.base_stat.dfn * ( @max_skill / 100.0)).to_i > @pc.trn_stat.dfn %>
     <% @flag = true %>
   <tr>
     <td>Defense</td>
     <td><%= text_field 'atrib','dfn' %></td>
-    <td><%= (session[:player_character][:base_dfn] * (@max_skill / 100.0)).to_i - session[:player_character].trn_dfn %></td>
+    <td><%= (@pc.base_stat.dfn * (@max_skill / 100.0)).to_i - @pc.trn_stat.dfn %></td>
     <td><%= @cost_per_pt %></td>
   </tr>
   <% end %>
-  <% if (session[:player_character].base_dam * ( @max_skill / 100.0)).to_i > session[:player_character].trn_dam %>
+  <% if (@pc.base_stat.dam * ( @max_skill / 100.0)).to_i > @pc.trn_stat.dam %>
     <% @flag = true %>
   <tr>
     <td>Damage</td>
     <td><%= text_field 'atrib','dam' %></td>
-    <td><%= (session[:player_character][:base_dam] * (@max_skill / 100)).to_i - session[:player_character].trn_dam %></td>
+    <td><%= (@pc.base_stat.dam * (@max_skill / 100)).to_i - @pc.trn_stat.dam %></td>
     <td><%= @cost_per_pt %></td>
   </tr>
   <% end %>

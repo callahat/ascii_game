@@ -46,25 +46,25 @@ module GameHelper
 	def draw_world_map(where)
 		@ret = "<table>\n  <tr>\n  <td>X</td>\n  <td align=\"center\">\n"
 		if WorldMap.exists?(:bigxpos => where[1], :bigypos => where[2] - 1)
-			@ret += link_to('|North|', {:action => 'world_move', :id => 'north'},:method => :post)
+			@ret += '<pre>' + link_to("|North|", {:action => 'world_move', :id => 'north'}) + '</pre>'
 		else
 			@ret += "North"
 		end %
 		@ret += "  </td>\n  <td>X</td>\n</tr>\n<tr>\n  <td>\n"
 		if WorldMap.exists?(:bigxpos => where[1] - 1, :bigypos => where[2]) 
-			@ret += link_to('|W|<br/>|e|<br/>|s|<br/>|t|<br/>', {:action => 'world_move', :id => 'west'},:method => :post)
+			@ret += '<pre>' + link_to("|W|\n|e|\n|s|\n|t|", {:action => 'world_move', :id => 'west'}) + '</pre>'
 		else 
 			@ret += "W<br/>e<br/>s<br/>t<br/>"
 		end
 		@ret += "  </td>\n  <td>\n" + world_map_table(where) + "  </td>\n  <td>\n"
 		if WorldMap.exists?(:bigxpos => where[1] + 1, :bigypos => where[2])
-			@ret += link_to('|E|<br/>|a|<br/>|s|<br/>|t|<br/>', {:action => 'world_move', :id => 'east'},:method => :post)
+			@ret += '<pre>' + link_to("|E|\n|a|\n|s|\n|t|", {:action => 'world_move', :id => 'east'}) + '</pre>'
 		else
 			@ret += "E<br/>a<br/>s<br/>t<br/>"
 		end
 		@ret += "  </td>\n</tr>\n<tr>\n  <td>X</td>\n  <td align=\"center\">\n"
 		if WorldMap.exists?(:bigxpos => where[1], :bigypos => where[2] + 1)
-			@ret += link_to('|South|', {:action => 'world_move', :id => 'south'},:method => :post)
+			@ret += '<pre>' + link_to("|South|", {:action => 'world_move', :id => 'south'}) + '</pre>'
 		else
 			@ret += "South"
 		end

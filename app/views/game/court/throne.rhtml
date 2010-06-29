@@ -1,5 +1,5 @@
 <% if @king %>
-<% if @king.id == session[:player_character][:id] %>
+<% if @king.id == @pc.id %>
 <p>You sit on your throne.</p>
 <% else %>
 

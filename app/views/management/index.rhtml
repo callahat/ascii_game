@@ -56,7 +56,7 @@
 <%= link_to 'Kingdom Finances', :controller => 'management/kingdom_finances' %>
 </td></tr>
 <tr><td>
-<% if session[:player_character] && session[:kingdom].player_character_id == session[:player_character][:id] %><%= link_to 'Kingdom Storerooms', :controller => 'management/kingdom_items' %><% end %>
+<% if @pc && session[:kingdom].player_character_id == @pc.id %><%= link_to 'Kingdom Storerooms', :controller => 'management/kingdom_items' %><% end %>
 </td></tr>
 <tr><td>
 <%= link_to 'NPC\'s of the kingdom', :controller => 'management/kingdom_npcs' %><% if session[:kingdom].npcs.exists?(:is_hired => false) %> (<%= session[:kingdom].npcs.find(:all, :conditions => ['is_hired = ?', false]).size %> new)<% end %>
