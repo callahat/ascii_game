@@ -1,5 +1,5 @@
 class CharacterController < ApplicationController
-	before_filter :authenticate, :except => ['raise_level', 'gainlevel']
+	before_filter :authenticate, :except => ['raise_level', 'gainlevel', 'new']
 	before_filter :setup_pc_vars, :only => ['raise_level', 'gainlevel']
 
 	#figure out caching later. It seems to work faster if the boot file has the cacheing
@@ -91,21 +91,21 @@ class CharacterController < ApplicationController
 	end
 
 	def namenew
-		if params[:race] && params[:c_class]
-			session[:nplayer_character][:race_id] = params[:race][:id]
-			session[:nplayer_character][:c_class_id] = params[:c_class][:id]
-		elsif session[:nplayer_character].nil?
+		if session[:nplayer_character].nil?
 			flash[:notice] = 'Character being created expired. Please try again'
 			redirect_to :action => 'new'
+		else
+			session[:nplayer_character][:race_id] = params[:race_id]
+			session[:nplayer_character][:c_class_id] = params[:c_class_id]
+		
+			#give the character a name, pick a kingdom, let the good tiems roll
+			#mainly create the player's character stats
+			@kingdoms = Kingdom.find(:all, :conditions => ['id > -1'])
+			@player_character = session[:nplayer_character]
+
+			@ori_image = Image.find(:first, :conditions => ['name = ? and kingdom_id = ? and player_id = ?', "DEFAULT PC IMAGE", -1, -1])
+			@image = Image.deep_copy(@ori_image)
 		end
-
-		#give the character a name, pick a kingdom, let the good tiems roll
-		#mainly create the player's character stats
-		@kingdoms = Kingdom.find(:all, :conditions => ['id > -1'])
-		@player_character = session[:nplayer_character]
-
-		@ori_image = Image.find(:first, :conditions => ['name = ? and kingdom_id = ? and player_id = ?', "DEFAULT PC IMAGE", -1, -1])
-		@image = Image.deep_copy(@ori_image)
 	end
 
 	def create

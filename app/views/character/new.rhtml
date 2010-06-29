@@ -1,8 +1,4 @@
-<% if session[:player]
-      @what = {:action => 'namenew'}
-	 else
-			@what = {:controller => 'account', :action => 'new'}
-	 end %>
+<% ( session[:player] ? @what = {:action => 'namenew'} : @what = {:controller => 'account', :action => 'new'} ) %>
 <script type="text/javascript" src="/javascripts/charnew.js"></script>
 
 <% form_tag @what do %>
@@ -15,11 +11,13 @@
  <tr>
   <td width='200'>
    <p><label for="player_character_race_id">Race:</label><br/>
-   <%= collection_select('race','id', @races, 'id', 'name') %></p>
+   <%#= collection_select('race','id', @races, 'id', 'name') %>
+	 <%= select_tag('race_id', options_for_select(@races.inject({}){|h,r| h.merge(r.name => r.id) }) ) %></p>
   </td>
   <td width='200'>
    <p><label for="player_character_c_class_id">Class:</label><br/>
-   <%= collection_select('c_class','id', @c_classes, 'id', 'name' ) %></p>
+   <%#= collection_select('c_class','id', @c_classes, 'id', 'name' ) %>
+	 <%= select_tag('c_class_id', options_for_select(@c_classes.inject({}){|h,c| h.merge(c.name => c.id) }) ) %></p>
   </td>
   <td width='200'>
    <b>Composite:<b>
@@ -90,9 +88,9 @@
   </tr>
   <tr><td>
 	 <% if session[:player] %>
-   <%= submit_tag "Accept" %>
+		<%= submit_tag "Accept" %>
 	 <% else %>
-	   <%= submit_tag "Register to play" %>
+		<%= submit_tag "Register to play" %>
 	 <% end %>
   </td></tr>
 </table>

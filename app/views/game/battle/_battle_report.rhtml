@@ -1,9 +1,7 @@
-<table>
+<ul class="battle_report">
 <% for duder in flash[:battle_report] 
-    print "\nduder:" + duder.inspect
     for hurt in duder[1] %>
-    <% print "\nhurt:" + hurt.inspect %>
-  <tr><td>
+  <li>
   <% if hurt.class == String %>
     <%=h duder[0] +" " + hurt %>
   <% elsif hurt[1].class == String %>
@@ -15,7 +13,7 @@
   <% else %>
     <%= duder[0] + " killed " + hurt[1].to_s + " " + hurt[0].pluralize %>
   <% end %>
-  </td></tr>
+  </li>
 <%  end
    end %>
-</table>
+</ul>

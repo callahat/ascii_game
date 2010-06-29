@@ -6,6 +6,7 @@ body, p, ol, ul {
   line-height: 16px;
 }
 
+div#nav_tabs{min-width:800px;}
 div#header{position:relative;}
 div#footer{position:relative;}
 div#mid{position:relative;
@@ -38,7 +39,10 @@ ul.nav_tabs{
 ul.nav_tabs li{
 	display:inline;
 	padding:5px;}
-
+ul.battle_report {
+	list-style-type:none;
+	padding:0px;}
+	
 .image {
   white-space: pre;
   background-color: #eee;
