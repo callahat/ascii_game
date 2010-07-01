@@ -95,6 +95,7 @@ class CharacterController < ApplicationController
 			flash[:notice] = 'Character being created expired. Please try again'
 			redirect_to :action => 'new'
 		else
+			@race = Race.find(params[:race_id])
 			session[:nplayer_character][:race_id] = params[:race_id]
 			session[:nplayer_character][:c_class_id] = params[:c_class_id]
 		
@@ -103,7 +104,7 @@ class CharacterController < ApplicationController
 			@kingdoms = Kingdom.find(:all, :conditions => ['id > -1'])
 			@player_character = session[:nplayer_character]
 
-			@ori_image = Image.find(:first, :conditions => ['name = ? and kingdom_id = ? and player_id = ?', "DEFAULT PC IMAGE", -1, -1])
+			@ori_image = @race.image
 			@image = Image.deep_copy(@ori_image)
 		end
 	end

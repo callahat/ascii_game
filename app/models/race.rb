@@ -1,5 +1,6 @@
 class Race < ActiveRecord::Base
 	belongs_to :kingdom
+	belongs_to :image
 
 	has_one :level_zero, :foreign_key => 'owner_id', :class_name => 'StatRace'
 	has_one :stat, :foreign_key => 'owner_id', :class_name => 'StatRace'

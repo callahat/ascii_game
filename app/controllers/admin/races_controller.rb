@@ -20,15 +20,20 @@ class Admin::RacesController < ApplicationController
 		@race = Race.new
 		@rls = Array.new(20,RaceEquipLoc.new)
 		@equip_locs = SPEC_CODEC['equip_loc'].collect{|c,t| ColnumText.new(c, t) }
-		@stat = Stat::Race.new
+		@stat = StatRace.new
+		@image = (params[:image].nil? || params[:image][:imag_text] == "" ? @race.image : Image.new(params[:image]) )
 	end
 
 	def create
 		@race = Race.new(params[:race])
 		@rls = params[:race_equip_loc].collect{|h| RaceEquipLoc.new(h[1]) }
 		@equip_locs = SPEC_CODEC['equip_loc'].collect{|c,t| ColnumText.new(c, t) }
-		@stat = Stat::Race.new(params[:stat])
-		if @stat.valid_for_level_zero && @stat.save && (@race.stat_id = @stat.id) && @race.save 
+		@stat = StatRace.new(params[:stat])
+		@image = Image.new(params[:image]) || @race.image
+		@image.id = 0 if @race.image_id != 140
+		@image.name = 'DEFAULT ' + @race.name + ' IMAGE'
+		
+		if @stat.valid_for_level_zero && @stat.save && (@race.stat_id = @stat.id) && @image.save && (@race.image_id = @image.id) && @race.save
 			#if the stat and race save, its safe to create the equip locations
 			@rls.each{|rl| next if rl.equip_loc.nil?
 					RaceEquipLoc.create(:race_id => @race.id, :equip_loc => rl.equip_loc) }
@@ -44,16 +49,25 @@ class Admin::RacesController < ApplicationController
 		@rls = @race.race_equip_locs
 		@rls = [@rls, Array.new(20-@rls.size, RaceEquipLoc.new)]
 		@rls.flatten!
+		@image = @race.image
 		@equip_locs = SPEC_CODEC['equip_loc'].collect{|c,t| ColnumText.new(c, t) }
 		@stat = @race.level_zero
 	end
 
 	def update
 		@race = Race.find(params[:id])
-		@stat = Stat::Race.new(params[:stat])
+		@stat = @race.stat
 		@equip_locs = SPEC_CODEC['equip_loc'].collect{|c,t| ColnumText.new(c, t) }
 		@rls = params[:race_equip_loc].collect{|h| RaceEquipLoc.new(h[1]) }
-		if @race.update_attributes(params[:race]) && @stat.valid_for_level_zero && @race.level_zero.update_attributes(params[:stat])
+		@image = @race.image
+		if @race.image_id == Image.find_by_name("DEFAULT PC IMAGE").id
+			@image = Image.create(@image.attributes)
+			@image.name = "DEFAULT " + @race.name + " IMAGE"
+			params[:race][:image_id] = @image.id
+		end
+		@image.update_image(params[:image][:image_text]) unless params[:image][:image_text] == ""
+		
+		if @stat.valid_for_level_zero & @stat.update_attributes(params[:stat]) & @race.update_attributes(params[:race]) & @image.save
 			@race.race_equip_locs.destroy_all
 			@rls.each{|rl| next if rl.equip_loc.nil?
 					RaceEquipLoc.create(:race_id => @race.id, :equip_loc => rl.equip_loc) }

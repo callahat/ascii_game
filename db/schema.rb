@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100403044500) do
+ActiveRecord::Schema.define(:version => 20100701033544) do
 
   create_table "attack_spells", :force => true do |t|
     t.string  "name",         :limit => 32,  :default => "", :null => false
@@ -712,11 +712,12 @@ ActiveRecord::Schema.define(:version => 20100403044500) do
   add_index "race_equip_locs", ["race_id"], :name => "race_id"
 
   create_table "races", :force => true do |t|
-    t.string  "name",           :limit => 32,  :default => "", :null => false
+    t.string  "name",           :limit => 32,  :default => "",  :null => false
     t.string  "description",    :limit => 256
     t.integer "kingdom_id"
-    t.integer "race_body_type",                                :null => false
-    t.integer "freepts",                                       :null => false
+    t.integer "race_body_type",                                 :null => false
+    t.integer "freepts",                                        :null => false
+    t.integer "image_id",                      :default => 140
   end
 
   add_index "races", ["kingdom_id"], :name => "kingdom_id"
