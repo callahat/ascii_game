@@ -1,0 +1,14 @@
+<%= error_messages_for 'image' %>
+
+<!--[form:image]-->
+<p><label for="image_image_text">Make New Image</label><br/>
+<%= text_area 'image','image_text' %>
+</p>
+
+<%= hidden_field 'image','player_id', :value => @player.id %>
+<%= hidden_field 'image','kingdom_id', :value => @player.id %>
+<%= hidden_field 'image','public', :value => false %>
+<%= hidden_field 'image','image_type', :value => SpecialCode.get_code('image_type','character') %>
+
+<!--[eoform:image]-->
+
