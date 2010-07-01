@@ -754,11 +754,14 @@ ActiveRecord::Schema.define(:version => 20100701033544) do
   end
 
   create_table "table_locks", :force => true do |t|
-    t.string  "name", :limit => 32, :default => "",    :null => false
-    t.boolean "lock",               :default => false
+    t.string   "name",       :default => "",    :null => false
+    t.boolean  "locked",     :default => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  add_index "table_locks", ["name"], :name => "name"
+  add_index "table_locks", ["name"], :name => "index_table_locks_on_name"
+  add_index "table_locks", ["updated_at"], :name => "index_table_locks_on_updated_at"
 
   create_table "trainer_skills", :force => true do |t|
     t.float   "max_skill_taught", :null => false

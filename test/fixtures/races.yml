@@ -3,7 +3,9 @@ one:
   id: 1
   name: "Race One"
   freepts: 10
+  image: pc_image
 two:
   id: 2
   name: "Race Two"
   freepts: 3
+  image: pc_image
