@@ -6,7 +6,7 @@
 <p><b>max number completeable: </b><%= @quest.max_completeable %></p>
 <p><b>quest status: </b><%= SpecialCode.get_text('quest_status',@quest.quest_status) %></p>
 <p><b>reward gold: </b><%= @quest.gold %></p>
-<p><b>item reward: </b><%= (@quest.item_id.nil? ? "none" : @quest.item.name %></p>
+<p><b>item reward: </b><%= (@quest.item_id.nil? ? "none" : @quest.item.name) %></p>
 <% if @quest.quest_id %>
 <p><b>Prerequisite: </b><%= @quest.quest.name %></p>
 <% end %>

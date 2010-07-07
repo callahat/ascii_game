@@ -36,6 +36,7 @@ class Feature < ActiveRecord::Base
 			conds = {:conditions => ['priority = ? and chance >= ? and choice = ?', p, chance, c]}
 			ret << feature_events.find(:all, conds).inject([]){|a,fe|
 				e = fe.event.dup
+				next if e.quest.done_quests.find(:first, :conditions => ['player_character_id = ?', pcid])
 				case e.event_rep_type
 					when SpecialCode.get_code('event_rep_type','unlimited')
 						a << e

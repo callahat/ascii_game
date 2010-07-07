@@ -17,10 +17,10 @@
 <%= text_field 'quest', 'gold'  %></p>
 
 <p><label for="quest_item_id">Item Reward</label><br/>
-<%= collection_select('quest', 'item_id', @items, 'id', 'name', {:include_blank => 'true'} )  %></p>
+<%= collection_select('quest', 'item_id', @items, 'id', 'name', {:include_blank => true} )  %></p>
 
 <p><label for="quest_quest_id">Prerequisite Quest</label><br/>
-<%= collection_select('quest', 'quest_id', @prereqs, 'id', 'name', {:include_blank => 'true'} )  %></p>
+<%= collection_select('quest', 'quest_id', @prereqs, 'id', 'name', {:include_blank => true} )  %></p>
 
 <!--[eoform:quest]-->
 

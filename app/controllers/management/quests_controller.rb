@@ -236,7 +236,7 @@ protected
 			@creatures = session[:kingdom].creatures
 		elsif params[:type] == 'explore'
 			@quest_req = QuestExplore.new(params[:quest_req])
-			@events = session[:kingdom].events.find(:all, :conditions => ['event_type = ? and armed = ?', SpecialCode.get_code('event_type','quest'), true])
+			@events = session[:kingdom].event_texts.find(:all, :conditions => ['armed = true'])
 		elsif params[:type] == 'item'
 			@quest_req = QuestItem.new(params[:quest_req])
 			@items = Item.find(:all)
@@ -254,7 +254,7 @@ protected
 												SpecialCode.get_code('wellness','alive'), SpecialCode.get_code('wellness','diseased')],:order => 'name')
 		else
 			flash[:notice] = 'Invalid type!'
-			redirect_to :action => 'show_quest',:id => params[:id]
+			redirect_to :action => 'show',:id => params[:id]
 		end	
 	end
 	

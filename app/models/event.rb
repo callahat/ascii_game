@@ -33,13 +33,15 @@ class Event < ActiveRecord::Base
 							 ['move', EventMoveLocal],
 							 ['move', EventMoveRelative],
 							 ['quest', EventQuest],
-							 ['stat', EventStat] ]
+							 ['stat', EventStat],
+							 ['text', EventText] ]
 		else
 			return [ ['creature', EventCreature ],
 							 ['item', EventItem ],
 							 ['move', EventMoveLocal],
 							 ['move', EventMoveRelative],
-							 ['quest', EventQuest] ]
+							 ['quest', EventQuest],
+							 ['text', EventText] ]
 		end
 	end
 	

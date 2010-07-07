@@ -7,9 +7,6 @@
 <p><label for="event_name">Event name</label><br/>
 <%= text_field 'event', 'name'  %></p>
 
-<p><label for="event_name">Event text</label><br/>
-<%= text_field 'event', 'text'  %></p>
-
 <p><label for="event_event_rep_type">Event rep type</label><br/>
 <%= select('event', 'event_rep_type', @event_rep_types)  %></p>
 
@@ -57,6 +54,9 @@
   <%= collection_select('event', 'thing_id', @pcs, 'id', 'name') %></p>
   
 <% elsif @event.kind == "EventQuest" %>
+  <p><label for="event_thing_id">Quest</label><br/>
+  <%= collection_select('event', 'thing_id', @quests, 'id', 'name') %></p>
+	
   <p><label for="event_text">Text</label><br/>
   <%= text_area 'event', 'text', :rows => '10', :wrap => 'hard'  %></p>
   
@@ -83,6 +83,11 @@
   <%= text_field_tag 'flex[0]'   %></p>
   <p><label for="event_flex[1]">Experience</label><br/>
   <%= text_field_tag 'flex[1]'  %></p>
+
+<% elsif @event.kind == "EventText" %>
+  <p><label for="event_text">Text</label><br/>
+  <%= text_area 'event', 'text', :rows => '10', :wrap => 'hard'  %></p>
+
 <% else %>
   <p>Please choose an event type</p>
 <% end %>

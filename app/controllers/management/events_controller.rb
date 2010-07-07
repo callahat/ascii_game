@@ -190,6 +190,8 @@ protected
 			when "EventStat"
 				@stat = @event.stat || StatEventStat.new(params[:stat])
 				@health = @event.health || HealthEventStat.new(params[:health])
+			when "EventQuest"
+				@quests = @kingdom.active_quests
 		end
 	end
 end
