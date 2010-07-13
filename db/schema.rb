@@ -191,7 +191,7 @@ ActiveRecord::Schema.define(:version => 20100703004220) do
   create_table "done_quests", :force => true do |t|
     t.integer  "quest_id",            :null => false
     t.integer  "player_character_id", :null => false
-    t.datetime "date",                :null => false
+    t.datetime "created_at",          :null => false
   end
 
   add_index "done_quests", ["player_character_id"], :name => "player_character_id"

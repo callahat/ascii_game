@@ -7,7 +7,7 @@ class LogQuestKillSNpc < LogQuestReq
 		
 		for lq in @lq
 			lq.destroy
-end
+		end
 	end
 	
 	def to_sentence

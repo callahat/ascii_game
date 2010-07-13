@@ -6,5 +6,5 @@ class QuestItem < QuestReq
 	
 	def to_sentence
 		"Retrieve" + self.quantity.to_s + " " + (self.quantity > 1 ? self.item.name.pluralize : self.item.name) +"."
-end
+	end
 end

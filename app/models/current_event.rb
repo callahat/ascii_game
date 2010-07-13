@@ -39,7 +39,7 @@ class CurrentEvent < ActiveRecord::Base
 			end
 		elsif @autos.size > 0
 			return @next, @autos[rand(@autos.size).to_i]
-		else # @choices.size > 0
+		else #@choices.size > 0
 			return @next, @choices
 		end
 	end

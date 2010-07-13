@@ -12,7 +12,7 @@ class LogQuestCreatureKill < LogQuestReq
 				lq.destroy
 			else
 				lq.save
-end
+			end
 		end
 	end
 	

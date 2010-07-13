@@ -242,7 +242,7 @@ protected
 	def setup_features_array
 		##make the list of features
 		#@lfeatures = Feature.find(:all, :conditions => ['world_feature = false AND armed = true AND (kingdom_id = ? OR public = true)', session[:kingdom][:id]], :order => 'name')
-		@lfeatures = session[:kingdom].feature_pref_list
+		@lfeatures = session[:kingdom].pref_list_features
 
 		@features = []
 		@lfeatures.each do |f| 

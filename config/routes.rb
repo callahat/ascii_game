@@ -24,8 +24,16 @@ ActionController::Routing::Routes.draw do |map|
 	map.choose_character	'choose_character',		:controller => 'character', :action => 'choose_character'
 	
 	
-	map.game_feature	'game',				:controller => 'game', :action => 'feature'
-	map.game_main			'game/main',				:controller => 'game', :action => 'main'
+	map.game_feature		'game',				:controller => 'game', :action => 'feature'
+	map.game_main				'game/main',				:controller => 'game', :action => 'main'
+	map.complete				'game/complete',		:controller => 'game', :action => 'complete'
+	
+	#QuestController
+	map.quest_index					'game/quests',							:controller => 'game/quests', :action => 'index'
+	map.do_decline					'game/quests/do_decline',		:controller => 'game/quests', :action => 'do_decline'
+	map.do_join_quest				'game/quests/do_join',			:controller => 'game/quests', :action => 'do_join'
+	map.do_complete_quest		'game/quests/do_complete',	:controller => 'game/quests', :action => 'do_complete'
+	map.do_reward_quest			'game/quests/do_reward',		:controller => 'game/quests', :action => 'do_reward'
 
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'

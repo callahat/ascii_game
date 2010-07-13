@@ -118,7 +118,8 @@ class Management::EventsController < ApplicationController
 			flash[:notice] = @event.name + ' sucessfully armed.'
 			
 			#add it to the pref list
-			if PrefList.add(session[:kingdom][:id],@event.id)
+			if PrefListEvent.add(session[:kingdom][:id],@event.id)
+				session[:kingdom].pref_list_events.reload
 				flash[:notice]+= '<br/>Added to preference list'
 			else
 				flash[:notice]+= '<br/>Could not be added to preference list'
@@ -191,7 +192,7 @@ protected
 				@stat = @event.stat || StatEventStat.new(params[:stat])
 				@health = @event.health || HealthEventStat.new(params[:health])
 			when "EventQuest"
-				@quests = @kingdom.active_quests
+				p @quests = @kingdom.active_quests.reload
 		end
 	end
 end

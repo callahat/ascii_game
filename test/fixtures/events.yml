@@ -50,12 +50,11 @@ quest_event:
   kingdom_id: -1
   player_id: -1
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
-  name: "Quest event"
-  kind: "EventQuest"
+  name: "Text event"
+  kind: "EventText"
   armed: 1
   cost: 50
   text: "A thunderous sound reverberates congratulatory words regarding your recent quest completion"
-  quest: quest_one
 item_event:
   kingdom_id: -1
   player_id: -1
@@ -142,19 +141,17 @@ quest_event_done:
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','limited') %>
   event_reps: 1
   name: "Quest event done"
-  kind: "EventQuest"
+  kind: "EventText"
   armed: 1
   cost: 50
   text: "Some text here that probably wont appear since the quest is done."
-  quest: quest_one
 unarmed_quest_event:
   id: 1
   kingdom_id: 1
   player: test_player_one
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
-  name: "Unarmed Quest Event"
-  kind: "EventQuest"
-  quest: quest_one
+  name: "Unarmed Text Event"
+  kind: "EventText"
   armed: 0
   cost: 50
   text: "Unarmed event"

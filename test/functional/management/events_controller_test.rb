@@ -7,8 +7,8 @@ class Management::EventsControllerTest < ActionController::TestCase
 		session[:kingdom] = Kingdom.find_by_name("HealthyTestKingdom")
 		
 		@e_armed = Event.find_by_name("Weak Monster encounter")
-		@e = Event.find_by_name("Unarmed Quest Event")
-		@e_hash = {:name => "New Quest Event Name", :kind => "EventQuest", :text => "Yay quest",
+		@e = Event.find_by_name("Unarmed Text Event")
+		@e_hash = {:name => "New Quest Event Name", :kind => "EventText", :text => "Yay quest (just text)",
 								:event_rep_type => SpecialCode.get_code('event_rep_type','unlimited') }
 	end
 	
