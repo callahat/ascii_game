@@ -58,13 +58,13 @@ fe_two_h:
   choice: false
 fe_two_i:
   feature: feature_multi_event
-  event: quest_event_done
+  event: text_event_done
   chance: 100
   priority: 5
   choice: false
 fe_two_j:
   feature: feature_multi_event
-  event: quest_event
+  event: text_event
   chance: 100
   priority: 7
   choice: false
@@ -79,6 +79,19 @@ fe_for_unarmed:
 world_kingdom_spawn:
   feature: kingdom_spawn_feature
   event: spawn_kingdom_event
+  chance: 100
+  priority: 1
+  choice: false
+
+fe_old_guy1:
+  feature: old_guy_1
+  event: quest_event_one
+  chance: 100
+  priority: 1
+  choice: false
+fe_old_guy2:
+  feature: old_guy_2
+  event: quest_event_two
   chance: 100
   priority: 1
   choice: false

@@ -46,7 +46,7 @@ storm_gate_event:
   armed: 1
   cost: 50
   level: first_kingdom_level_one
-quest_event:
+text_event:
   kingdom_id: -1
   player_id: -1
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
@@ -84,7 +84,7 @@ stat_event:
   cost: 50
   text: "Stat text explaining what happened"
   flex: "500;10"
-	
+
 world_move_event:
   kingdom_id: -1
   player_id: -1
@@ -135,7 +135,7 @@ castle_event:
   kind: "EventCastle"
   armed: 1
   cost: 0
-quest_event_done:
+text_event_done:
   kingdom_id: -1
   player_id: -1
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','limited') %>
@@ -145,7 +145,7 @@ quest_event_done:
   armed: 1
   cost: 50
   text: "Some text here that probably wont appear since the quest is done."
-unarmed_quest_event:
+unarmed_text_event:
   id: 1
   kingdom_id: 1
   player: test_player_one
@@ -155,3 +155,22 @@ unarmed_quest_event:
   armed: 0
   cost: 50
   text: "Unarmed event"
+
+quest_event_one:
+  kingdom_id: 1
+  player: test_player_one
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Quest One Event"
+  kind: "EventQuest"
+  armed: 1
+  cost: 500
+  quest: quest_one
+quest_event_two:
+  kingdom_id: 1
+  player: test_player_one
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Quest Two Event"
+  kind: "EventQuest"
+  armed: 1
+  cost: 500
+  quest: quest_two

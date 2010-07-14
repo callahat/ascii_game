@@ -271,4 +271,47 @@ class GameControllerTest < ActionController::TestCase
 		end
 		assert_redirected_to :controller => 'game', :action => 'complete'
 	end
+
+	test "game controller quest event" do
+		@quest_one = Quest.find_by_name("Quest One")
+		@kl1 = @level.level_maps.find(:first, :conditions => ['xpos = 1 and ypos = 0'])
+		@kl2 = @level.level_maps.find(:first, :conditions => ['xpos = 2 and ypos = 0'])
+		
+		get 'feature', {:id => @kl1.id}, session
+		assert_response :redirect
+		assert_redirected_to quest_index_url()
+		
+		session[:player_character].current_event.destroy
+		
+		get 'feature', {:id => @kl2.id}, session
+		assert_response :redirect
+		assert_redirected_to  :controller => 'game', :action => 'main'
+		assert session[:player_character].current_event.nil?
+		
+		LogQuest.join_quest(session[:player_character], @quest_one.id)
+		@lq = session[:player_character].log_quests.find(:first, :conditions => ['quest_id = ?', @quest_one.id])
+		@lq.reqs.destroy_all
+		
+		res, msg = @lq.complete_quest
+		assert res, msg
+		
+		get 'feature', {:id => @kl2.id}, session
+		assert_response :redirect
+		session[:player_character].current_event.destroy
+		
+		get 'feature', {:id => @kl1.id}, session
+		assert_response :redirect
+		assert_redirected_to do_complete_quest_url()
+		assert session[:player_character].current_event.completed == EVENT_COMPLETED
+		
+		@lq.quest.kingdom.update_attribute(:gold, 10000000)
+		
+		res, msg = @lq.collect_reward
+		
+		assert res, msg
+		get 'feature', {:id => @kl1.id}, session
+		assert_response :redirect
+		assert_redirected_to  :controller => 'game', :action => 'main'
+		assert session[:player_character].current_event.completed == EVENT_COMPLETED
+	end
 end

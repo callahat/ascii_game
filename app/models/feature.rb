@@ -36,7 +36,9 @@ class Feature < ActiveRecord::Base
 			conds = {:conditions => ['priority = ? and chance >= ? and choice = ?', p, chance, c]}
 			ret << feature_events.find(:all, conds).inject([]){|a,fe|
 				e = fe.event.dup
-				if e.class == EventQuest && (lq = e.quest.log_quests.find(:first, :conditions => ['player_character_id = ?', pid])) && lq.rewarded
+				if (e.class == EventQuest) && (q = e.quest) &&
+						(((lq = q.log_quests.find(:first, :conditions => ['player_character_id = ?', pid])) && lq.rewarded) ||
+						q.quest_id && DoneQuest.find(:first,:conditions => ['quest_id = ? and player_character_id = ?', q.quest_id, pid ]).nil?)
 					a
 				else
 					case e.event_rep_type

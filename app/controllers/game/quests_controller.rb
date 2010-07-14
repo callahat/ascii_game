@@ -17,8 +17,8 @@ class Game::QuestsController < ApplicationController
 	end
 	
 	def do_join
-		LogQuest.join_quest(@pc, @quest.id) unless @log_quest
-		@message = "You take an oath to pursue the Quest"
+		res, @message = LogQuest.join_quest(@pc, @quest.id) unless @log_quest
+		#@message = "You take an oath to pursue the Quest"
 		render :file => 'game/complete.rhtml', :layout => true
 	end
 	
@@ -29,10 +29,8 @@ class Game::QuestsController < ApplicationController
 	
 	def do_complete
 		if @log_quest.complete_quest
-			p "Failed to complete the quest for some reason"
 			redirect_to do_reward_quest_url()
 		else
-			p "Completed the quest"
 			redirect_to :action => 'index'
 		end
 	end

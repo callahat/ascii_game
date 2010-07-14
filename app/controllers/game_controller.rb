@@ -183,6 +183,7 @@ class GameController < ApplicationController
 	end
 	
 protected
+	#should these live in the event class?
 	def exec_event(ce)
 		@direction, @completed, @message = ce.event.happens(@pc)
 		ce.update_attribute(:completed, @completed)
