@@ -20,9 +20,8 @@ class Management::EventsController < ApplicationController
 	end
 
 	def new
-		@event = Event.new(params[:event])
+		@event = Event.new_of_kind(params[:event])
 		@event_types = Event.get_event_types(session[:player].admin )
-		@event.kind = params[:event][:kind] if params[:event]  #make sure its a type the user can use
 		@event_rep_types = SPEC_CODET['event_rep_type'].to_a
 		
 		pop_sub_event
@@ -42,10 +41,10 @@ class Management::EventsController < ApplicationController
 		if verify_valid_event_params & @event.save
 			@extras=true
 			if @stat || @health
-				@stat.create(params[:stat].merge(:owner_id => @event.id)) &
-					@health.create(params[:health].merge(:owner_id => @event.id)) || @extras = false
+				@stat.update_attributes(params[:stat].merge(:owner_id => @event.id)) &
+					@health.update_attributes(params[:health].merge(:owner_id => @event.id)) || @extras = false
 			end
-			
+			@event.reload #to refrsh the .stat and .health stuff
 			if @extras
 				@event.update_attribute(:cost, 500 + @event.total_cost)
 				flash[:notice] = @event.name + ' was successfully created.'
@@ -192,7 +191,7 @@ protected
 				@stat = @event.stat || StatEventStat.new(params[:stat])
 				@health = @event.health || HealthEventStat.new(params[:health])
 			when "EventQuest"
-				p @quests = @kingdom.active_quests.reload
+				@quests = @kingdom.active_quests.reload
 		end
 	end
 end

@@ -24,6 +24,18 @@ class Management::EventsControllerTest < ActionController::TestCase
 		assert_not_nil assigns(:event)
 	end
 	
+	test "mgmt event controller new all event types" do
+		["EventCreature","EventDisease","EventItem",
+		 "EventMoveLocal","EventMoveRelative","EventQuest",
+		 "EventStat","EventText"].each{|k|
+			#p k
+			get 'new', {:event => {:kind => k}}, session
+			assert_response :success
+			assert @response.body =~ Regexp.new(k), @response.body
+			assert @response.body !~ /First chose an event type/
+		}
+	end
+	
 	test "mgmt event controller new and create" do
 		get 'new', {}, session
 		assert_response :success
@@ -32,9 +44,13 @@ class Management::EventsControllerTest < ActionController::TestCase
 		assert_response :success
 		assert_template 'new'
 		
+		get 'new', {:event => {:kind => @e_hash[:kind]}}, session
+		assert_response :success
+		assert_template 'new'
+		
 		assert_difference 'Event.count', +1 do
 			post 'create', { :event => @e_hash }, session
-			assert_response :redirect
+			assert_response :redirect, @response.body
 			assert_redirected_to :controller => 'management/events', :action => 'index'
 		end
 	end

@@ -30,16 +30,16 @@ class Event < ActiveRecord::Base
 			return [ ['creature', EventCreature ],
 							 ['disease', EventDisease ],
 							 ['item', EventItem ],
-							 ['move', EventMoveLocal],
-							 ['move', EventMoveRelative],
+							 ['level move', EventMoveLocal],
+							 ['relative move', EventMoveRelative],
 							 ['quest', EventQuest],
 							 ['stat', EventStat],
 							 ['text', EventText] ]
 		else
 			return [ ['creature', EventCreature ],
 							 ['item', EventItem ],
-							 ['move', EventMoveLocal],
-							 ['move', EventMoveRelative],
+							 ['level move', EventMoveLocal],
+							 ['relative move', EventMoveRelative],
 							 ['quest', EventQuest],
 							 ['text', EventText] ]
 		end
@@ -84,6 +84,13 @@ class Event < ActiveRecord::Base
 		#noop for most event types
 	end
 
+	def self.new_of_kind(params)
+		return Event.new if params.class.to_s !~ /Hash/ && params.class.to_s !~ /Event/
+		return Event.new(params) unless params
+		params[:kind] =~ /^(Event(Creature|Disease|Item|MoveLocal|MoveRelative|Quest|Stat|Text)*$)/
+		return ($1 ? Rails.module_eval($1).new(params) : Event.new(params))
+	end
+	
 	#Pagination related stuff
 	def self.per_page
 		15

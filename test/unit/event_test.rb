@@ -65,4 +65,20 @@ class EventTest < ActiveSupport::TestCase
 															:event_rep_type => SpecialCode.get_code('event_rep_type','unlimited'))
 		assert e.id
 	end
+	
+	test "new_of_kind" do
+		params = {}
+		["EventCreature","EventDisease","EventItem",
+		 "EventMoveLocal","EventMoveRelative","EventQuest",
+		 "EventStat","EventText"].each{|k|
+			params[:kind] = k
+			e = Event.new_of_kind(params)
+			assert e.kind == k, e.kind.to_s + " != " + k
+			assert e.class.to_s == k, e.class.to_s + " != " + k
+		}
+		assert Event.new_of_kind(nil).class.to_s == "Event"
+		assert Event.new_of_kind("sdfgdfg").class.to_s == "Event"
+		params[:kind] = "sdfgdfg"
+		assert Event.new_of_kind(params).class.to_s == "Event"
+	end
 end
