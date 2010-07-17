@@ -93,42 +93,13 @@ class Game::CourtController < ApplicationController
 	def view_quest
 		@quest = @pc.present_kingdom.quests.find(:first, :conditions => ['id = ?', params[:qid]])
 		@done_quest = @quest.done_quests.find(:first, :conditions => ['player_character_id = ?', @pc.id])
-		if @quest.quest_status == SpecialCode.get_code('quest_status','design')
-			redirect_to :action => 'quest_office'
-		end
 		
 		@times_completed = LogQuest.find(:all, :conditions => ['quest_id = ? and completed = ?', @quest.id, true]).size
 		@log_quest = @pc.log_quests.find(:first, :conditions => ['quest_id = ?', @quest.id])
 		
-		if @log_quest
-			@reqs_remaining = @log_quest.reqs.size
-		
-			for quest_item in @quest.items
-				@pc_inv = @pc.items.find(:first, :conditions => ['item_id = ?', quest_item.detail])
-				if @pc_inv
-					@pc_inv = @pc_inv.quantity
-				else
-					@pc_inv = 0
-				end
-				@diff = (quest_item.quantity - @pc_inv) 
-				if quest_item.quantity - @pc_inv > 0
-					@reqs_remaining += 1
-				end
-			end
-		
-			if @reqs_remaining == 0 && @pc.done_quests.find(:first, :conditions => ['quest_id = ?', @quest.id]).nil?
-				@log_quest.completed = true
-				@log_quest.save
-			
-				#create done quest
-				@done_quest = DoneQuest.new
-				@done_quest.quest_id = @quest.id
-				@done_quest.player_character_id = @pc[:id]
-				@done_quest.date = Time.now
-				if !@done_quest.save
-					print "\nFailed to save done quest!"
-				end
-			end
+		if @log_quest && !@log_quest.completed
+			@log_quest.items.each{|lqi| lqi.complete_req }
+			@log_quest.complete_quest
 		end
 		session[:viewing_quest] = @quest
 	end
@@ -178,37 +149,12 @@ class Game::CourtController < ApplicationController
 				return
 			end
 			
-			@reward_item = @quest.item
-			@kingdom = @pc.present_kingdom
-			
-			if @reward_item
-				@kingdom_item = KingdomItem.find(:first, :conditions => ['kingdom_id = ? and item_id = ?', @kingdom.id, @reward_item.id])
-			
-				if @kingdom_item.nil?
-					flash[:notice] = "There are no reward items. Check back later."
-					return
-				else
-					if !KingdomItem.update_inventory(@kingdom.id,@reward_item.id,-1)
-						flash[:notice] = "The reward item is out of stock. Check back later"
-						redirect_to :action => 'view_quest', :qid => @quest.id
-						return
-					end
-				end
-			end
-			
-			@kingdom = @pc.present_kingdom
-			
-			@quest.gold = @quest.gold.to_i
-			
-			if @quest.gold > 0 && !(TxWrapper.take(@kingdom, :gold, @quest.gold) && TxWrapper.give(@pc, :gold, @quest.gold))
+			unless @log_quest.collect_reward
 				flash[:notice] = "There is not enough gold in the coffers to pay your reward! Try collecting later."
 				redirect_to :action => 'view_quest', :qid => @quest.id
 				return
 			end
-			@log_quest.rewarded = true
-			@log_quest.save
-			PlayerCharacterItem.update_inventory(@pc.id,@reward_item.id,1) if @reward_item
-						flash[:notice] = "You collected the reward"
+			flash[:notice] = "You collected the reward"
 			redirect_to :action => 'view_quest', :qid => @quest.id
 		else
 			redirect_to :action => 'quest_office'

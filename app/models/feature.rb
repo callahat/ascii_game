@@ -36,15 +36,21 @@ class Feature < ActiveRecord::Base
 			conds = {:conditions => ['priority = ? and chance >= ? and choice = ?', p, chance, c]}
 			ret << feature_events.find(:all, conds).inject([]){|a,fe|
 				e = fe.event.dup
-				case e.event_rep_type
-					when SpecialCode.get_code('event_rep_type','unlimited')
-						a << e
-					when SpecialCode.get_code('event_rep_type','limited')
-						( loc.done_events.count(:conditions => {:event_id => e.id}) < e.event_reps ?
-								a << e : a )
-					when SpecialCode.get_code('event_rep_type','limited_per_char')
-						( loc.done_events.count(:conditions => {:player_character_id => pid, :event_id => e.id}) < e.event_reps ?
-								a << e : a )
+				if (e.class == EventQuest) && (q = e.quest) &&
+						(((lq = q.log_quests.find(:first, :conditions => ['player_character_id = ?', pid])) && lq.rewarded) ||
+						q.quest_id && DoneQuest.find(:first,:conditions => ['quest_id = ? and player_character_id = ?', q.quest_id, pid ]).nil?)
+					a
+				else
+					case e.event_rep_type
+						when SpecialCode.get_code('event_rep_type','unlimited')
+							a << e
+						when SpecialCode.get_code('event_rep_type','limited')
+							( loc.done_events.count(:conditions => {:event_id => e.id}) < e.event_reps ?
+									a << e : a )
+						when SpecialCode.get_code('event_rep_type','limited_per_char')
+							( loc.done_events.count(:conditions => {:player_character_id => pid, :event_id => e.id}) < e.event_reps ?
+									a << e : a )
+					end
 				end
 			}
 		}

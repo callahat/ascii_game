@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100701033544) do
+ActiveRecord::Schema.define(:version => 20100703004220) do
 
   create_table "attack_spells", :force => true do |t|
     t.string  "name",         :limit => 32,  :default => "", :null => false
@@ -191,7 +191,7 @@ ActiveRecord::Schema.define(:version => 20100701033544) do
   create_table "done_quests", :force => true do |t|
     t.integer  "quest_id",            :null => false
     t.integer  "player_character_id", :null => false
-    t.datetime "date",                :null => false
+    t.datetime "created_at",          :null => false
   end
 
   add_index "done_quests", ["player_character_id"], :name => "player_character_id"
@@ -206,7 +206,7 @@ ActiveRecord::Schema.define(:version => 20100701033544) do
     t.string  "name",           :limit => 32,  :default => "",    :null => false
     t.boolean "armed",                         :default => false
     t.integer "cost",                                             :null => false
-    t.string  "text"
+    t.text    "text"
     t.string  "kind",           :limit => 20
     t.integer "thing_id"
     t.string  "flex",           :limit => 256

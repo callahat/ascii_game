@@ -45,8 +45,8 @@ class Quest < ActiveRecord::Base
 	def self.get_page(page, kid = nil)
 		if kid.nil?
 		paginate(:page => page, :order => 'quest_status,name' )
-	else
+		else
 			paginate(:page => page, :conditions => ['kingdom_id = ?', kid], :order => 'quest_status,name' )
-	end
+		end
 	end
 end

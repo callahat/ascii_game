@@ -117,10 +117,10 @@ class CurrentEventTest < ActiveSupport::TestCase
 		assert @next == 5, @next
 		assert @it.class.base_class == Event, @it.inspect
 		
-		QuestExplore
+		#QuestExplore
 		@pc.log_quests.find_by_quest_id(q.id).explores.first.update_attribute(:detail, @it.id)
 		#Test loging of quest, done events
-		assert @pc.log_quests.find_by_quest_id(q.id).reqs.size == 5 
+		assert @pc.log_quests.find_by_quest_id(q.id).reqs.size == 6
 		@current_loc_event.update_attributes(:event => @it, :priority => @next)
 		@current_loc_event.update_attribute(:completed, EVENT_COMPLETED)
 		@next, @it = @current_loc_event.complete
@@ -129,7 +129,7 @@ class CurrentEventTest < ActiveSupport::TestCase
 																			:conditions => ['event_id = ? and location_id = ?',
 																			@current_loc_event.event_id, @current_loc_event.location_id])
 		@pc.log_quests.find_by_quest_id(q.id).reqs.reload
-		assert @pc.log_quests.find_by_quest_id(q.id).reqs.size == 4, @pc.log_quests.find_by_quest_id(q.id).reqs.size
+		assert @pc.log_quests.find_by_quest_id(q.id).reqs.size == 5, @pc.log_quests.find_by_quest_id(q.id).reqs.size
 		assert @de
 		assert @de.class == DoneLocalEvent
 	end

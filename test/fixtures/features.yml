@@ -42,3 +42,9 @@ empty_feature:
   num_occupants: 0
   armed: 1
   store_front_size: 0
+old_guy_1:
+  <<: *default_feature
+  name: "First Old Guy"
+old_guy_2:
+  <<: *default_feature
+  name: "Second Old Guy"

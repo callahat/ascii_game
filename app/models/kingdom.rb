@@ -7,11 +7,12 @@ class Kingdom < ActiveRecord::Base
 	has_many :races
 	has_many :creatures, :order => 'name'
 	has_many :events
+	has_many :event_texts
 	has_many :features, :conditions => ['armed = true']
 	has_many :all_features, :foreign_key => "kingdom_id", :class_name => "Feature"
 	has_many :images, :order => 'name'
 	has_many :kingdom_bans
-	has_many :kingdom_items
+	has_many :kingdom_items, :foreign_key => "owner_id"
 	has_many :levels, :order => 'level'
 	has_many :npcs, :order => 'name'
 	has_many :guards, :class_name => 'Npc', :include => :health,
@@ -27,6 +28,7 @@ class Kingdom < ActiveRecord::Base
 	has_many :illnesses, :foreign_key => 'owner_id', :class_name => 'Pandemic'
 	has_many :player_characters
 	has_many :quests, :order => '\'quest_status\',\'name\''
+	has_many :active_quests, :class_name => 'Quest', :conditions => {:quest_status => SpecialCode.get_code('quest_status','active')}, :order => '\'quest_status\',\'name\''
 	has_many :quest_kill_n_npcs
 	has_many :kingdom_empty_shops
 	has_many :kingdom_notices, :order => '"datetime DESC"'

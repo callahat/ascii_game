@@ -42,6 +42,8 @@
   <%= collection_select('event', 'thing_id', @pcs, 'id', 'name') %></p>
   
 <% elsif @event.class == EventQuest %>
+  <p><label for="event_thing_id">Quest</label><br/>
+  <%= collection_select('event', 'thing_id', @quests, 'id', 'name') %></p>
   <p><label for="event_text">Text</label><br/>
   <%= text_area 'event', 'text', :rows => '10', :wrap => 'hard'  %></p>
   

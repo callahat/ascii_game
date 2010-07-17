@@ -46,16 +46,15 @@ storm_gate_event:
   armed: 1
   cost: 50
   level: first_kingdom_level_one
-quest_event:
+text_event:
   kingdom_id: -1
   player_id: -1
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
-  name: "Quest event"
-  kind: "EventQuest"
+  name: "Text event"
+  kind: "EventText"
   armed: 1
   cost: 50
   text: "A thunderous sound reverberates congratulatory words regarding your recent quest completion"
-  quest: quest_one
 item_event:
   kingdom_id: -1
   player_id: -1
@@ -85,7 +84,7 @@ stat_event:
   cost: 50
   text: "Stat text explaining what happened"
   flex: "500;10"
-	
+
 world_move_event:
   kingdom_id: -1
   player_id: -1
@@ -136,25 +135,42 @@ castle_event:
   kind: "EventCastle"
   armed: 1
   cost: 0
-quest_event_done:
+text_event_done:
   kingdom_id: -1
   player_id: -1
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','limited') %>
   event_reps: 1
   name: "Quest event done"
-  kind: "EventQuest"
+  kind: "EventText"
   armed: 1
   cost: 50
   text: "Some text here that probably wont appear since the quest is done."
-  quest: quest_one
-unarmed_quest_event:
+unarmed_text_event:
   id: 1
   kingdom_id: 1
   player: test_player_one
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
-  name: "Unarmed Quest Event"
-  kind: "EventQuest"
-  quest: quest_one
+  name: "Unarmed Text Event"
+  kind: "EventText"
   armed: 0
   cost: 50
   text: "Unarmed event"
+
+quest_event_one:
+  kingdom_id: 1
+  player: test_player_one
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Quest One Event"
+  kind: "EventQuest"
+  armed: 1
+  cost: 500
+  quest: quest_one
+quest_event_two:
+  kingdom_id: 1
+  player: test_player_one
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Quest Two Event"
+  kind: "EventQuest"
+  armed: 1
+  cost: 500
+  quest: quest_two

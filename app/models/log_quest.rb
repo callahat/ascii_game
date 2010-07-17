@@ -6,6 +6,7 @@ class LogQuest < ActiveRecord::Base
 	
 	has_many :creature_kills, :class_name => "LogQuestCreatureKill"
 	has_many :explores, :class_name => "LogQuestExplore"
+	has_many :items, :class_name => "LogQuestItem"
 	has_many :kill_n_npcs, :class_name => "LogQuestKillNNpc"
 	has_many :kill_pcs, :class_name => "LogQuestKillPc"
 	has_many :kill_s_npcs, :class_name => "LogQuestKillSNpc"
@@ -36,17 +37,16 @@ class LogQuest < ActiveRecord::Base
 	
 		#create the requirement logs
 		for req in @quest.reqs
-			next if req.kind == "QuestItem"
-			print "Failed to create requirement!" unless
+			print "Failed to create requirement!" unless\
 			Rails.module_eval("Log"+req.class.to_s).create(
 																								:log_quest_id => new_log.id,
 																								:owner_id => pc[:id],
 																								:quest_req_id => req.id,
 																								:quantity => req[:quantity],
 																								:detail => req.detail )
-			end
-		true
 		end
+		true
+	end
 	
 	def self.abandon(pc, qid)
 		log_quest = pc.log_quests.find(:first, :conditions => ['quest_id = ?', qid])
@@ -63,5 +63,39 @@ class LogQuest < ActiveRecord::Base
 	
 	def all_logs
 		return self.reqs 
+	end
+	
+	def reqs_met
+		reqs.size == 0
+	end
+	
+	def complete_quest
+		return false if !reqs_met || quest.quest_status != SpecialCode.get_code('quest_status','active')
+		unless completed
+			update_attribute(:completed, true)
+			player_character.done_quests.create(:quest_id => quest_id)
+			quest.quest_status.update_attribute(:quest_status, SpecialCode.get_code('quest_status','all completed'))\
+				if quest.max_completeable && quest.done_quests.size >= quest.max_completeable
+		end
+		true
+	end
+	
+	def collect_reward
+		return false, "Cannot collect if you haven't completed the quest, or have already collected" if !completed || rewarded
+		if TxWrapper.take(quest.kingdom, :gold, quest.gold.to_i)
+			if quest.item
+				if KingdomItem.update_inventory(quest.kingdom_id,quest.item_id,-1) || TxWrapper.take(quest.kingdom, :gold, quest.item.price * 50)
+					PlayerCharacterItem.update_inventory(player_character_id,quest.item_id,1)
+				else
+					TxWrapper.give(quest.kingdom, :gold, quest.gold)
+					return false, "Insufficient resources for your reward. Check back later."
+				end
+			end
+			TxWrapper.give(player_character, :gold, quest.gold.to_i)
+			self.update_attribute(:rewarded, true)
+		else
+			return false, "Not enough gold to pay your reward. Check again later."
+		end
+		return true, "You collected the reward"
 	end
 end

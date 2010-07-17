@@ -1,6 +1,5 @@
 <h1><%= @event.name %></h1>
 
-<p><b>Text:</b><%= @event.text %></p>
 <p><b>kingdom: </b><%= @event.kingdom.name %></p>
 <p><b>player: </b><%= @event.player.handle %></p>
 <p><b>event rep type: </b><%= SpecialCode.get_text('event_rep_type',@event.event_rep_type) %></p>
@@ -33,7 +32,9 @@
 
 <% elsif @event.class == EventQuest %>
 <p><b>quest: </b><%= @event.quest.name if @event.quest %></p>
-<p><b>text: </b><%= @event.text %></p>
+<p><b>Initial Text: </b><br/><%= @event.initial_text %></p>
+<p><b>Requirement Reminder Text: </b><br/><%= @event.req_text %></p>
+<p><b>Reward Text: </b><br/><%= @event.reward_text %></p>
 
 <% elsif @event.class == EventStat %>
 <p><b>text: </b><%= @event.text %></p>

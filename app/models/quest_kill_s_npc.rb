@@ -7,5 +7,5 @@ class QuestKillSNpc < QuestReq
 	
 	def to_sentence
 		"Kill " + self.npc.name + (self.npc.kingdom ? " of " + self.npc.kingdom.name : "" ) + "."
-end
+	end
 end

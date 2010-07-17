@@ -4,7 +4,7 @@
   <p>
   <select id="type" name="type">
     <% for req in @reqs %>
-      <option value="<%= req.text %>"><%= req.text %></option>
+      <option value="<%= req[0] %>"><%= req[0] %></option>
     <% end %>
   </select>
   </p>
