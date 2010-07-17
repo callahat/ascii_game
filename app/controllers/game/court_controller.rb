@@ -33,11 +33,10 @@ class Game::CourtController < ApplicationController
 			else
 				if @pc.level < 15
 					@message = 'The steward approaches "You are yet not strong enough to claim the crown."'
-					render :action => '../complete'
 				else
 					@kingdom.player_character_id = @pc[:id]
 					@message = 'You have claimed the crown'
-					create_accession_notice(@pc.name + " has found the throne vacant, and claimed it for their own.", @pc.present_kingdom)
+					KingdomNotice.create_notice(@pc.name + " has found the throne vacant, and claimed it for their own.", @pc.present_kingdom)
 				end
 				render :action => '../complete'
 			end

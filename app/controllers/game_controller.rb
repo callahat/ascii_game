@@ -77,6 +77,7 @@ class GameController < ApplicationController
 					@current_event.destroy
 					redirect_to :controller => 'game', :action => 'main'
 				else #skipped or completed, get the next event for the feature
+					p "Skipping: event completed code:" + @current_event.completed.to_s
 					next_event_helper(@current_event)
 				end
 			elsif params[:id]
