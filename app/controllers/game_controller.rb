@@ -152,11 +152,15 @@ class GameController < ApplicationController
 	
 	def complete
 		@current_event = @pc.current_event
-		@next,@events = @current_event.complete
+		if @current_event
+			@next,@events = @current_event.complete
+		else
+			print "No current event found for PC #{@pc.name} #{@pc.current_event}!\n"
+		end
 		@pc.reload
 		
 		if @next.nil?
-			@current_event.destroy
+			@current_event.destroy if @current_event
 			redirect_to :controller => 'game', :action => 'main'
 		else
 			redirect_to :controller => 'game', :action => 'feature'
