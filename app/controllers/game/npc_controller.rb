@@ -8,7 +8,7 @@ class Game::NpcController < ApplicationController
 	verify :method => :post, :only => [ :do_heal, :do_buy, :do_train, :do_buy_new, :do_sell ], :redirect_to => { :action => :npc }
 	
 	def npc
-		@npc = @pc.event_npc.npc
+		@npc = @pc.current_event.event.npc
 		
 		Illness.spread(@pc, @npc, SpecialCode.get_code('trans_method','air'))
 		Illness.spread(@npc, @pc, SpecialCode.get_code('trans_method','air'))
@@ -22,12 +22,12 @@ class Game::NpcController < ApplicationController
 	end
 	
 	def smithy
-		@npc = session[:current_event].event_npc.npc
+		@npc = @pc.current_event.event.npc
 		@can_make = @npc.npc_blacksmith_items
 	end
 	
 	def do_buy_new
-		@npc = session[:current_event].event_npc.npc
+		@npc = @pc.current_event.event.npc
 		@can_make = @npc.npc_blacksmith_items
 		@item = Item.find(params[:iid])
 		@tax = (@item.price * (@npc.kingdom.tax_rate / 100.0)).to_i
@@ -52,7 +52,7 @@ class Game::NpcController < ApplicationController
 	
 	
 	def heal
-		@npc = @pc.event_npc.npc
+		@npc = @pc.current_event.event.npc
 		@diseases_cured = []
 		@npc_healer_skills = HealerSkill.find(:all, :conditions => ['min_sales <= ?',@npc.npc_merchant.healing_sales], :order => '"min_sales DESC"')
 		
@@ -76,7 +76,7 @@ class Game::NpcController < ApplicationController
 	end
 	
 	def do_heal
-		@npc = @pc.event_npc.npc
+		@npc = @pc.current_event.event.npc
 		@tax, @pretax = 0,0
 	
 		if params[:did]
@@ -134,7 +134,7 @@ class Game::NpcController < ApplicationController
 	end
  
 	def train
-		@npc = session[:current_event].event_npc.npc
+		@npc = @pc.current_event.event.npc
 		@max_skill = TrainerSkill.find(:first, :conditions => ['min_sales <= ?',@npc.npc_merchant.trainer_sales], :order => '"min_sales DESC"').max_skill_taught
 		print "\nmax skill: " + @max_skill.inspect + "\n"
 		@atrib = CClassLevel.new
@@ -144,7 +144,7 @@ class Game::NpcController < ApplicationController
 	end
 	
 	def do_train
-		@npc = session[:current_event].event_npc.npc
+		@npc = @pc.current_event.event.npc
 		@tax, @pretax = 0,0
 		
 		@max_skill = TrainerSkill.find(:first, :conditions => ['min_sales <= ?',@npc.npc_merchant.trainer_sales], :order => '"min_sales DESC"').max_skill_taught
@@ -204,12 +204,12 @@ class Game::NpcController < ApplicationController
 	end
 	
 	def buy
-		@npc = session[:current_event].event_npc.npc
+		@npc = @pc.current_event.event.npc
 		@stocks = NpcStock.get_page(params[:page], @npc.id)
 	end
 	
 	def do_buy
-		@npc = session[:current_event].event_npc.npc
+		@npc = @pc.current_event.event.npc
 		@stock = @npc.npc_stocks.find(:first, :conditions => ['id = ?', params[:id]])
 		@tax,@pretax = 0,0
 		
@@ -239,12 +239,12 @@ class Game::NpcController < ApplicationController
 	end
 	
 	def sell
-		@npc = session[:current_event].event_npc.npc
+		@npc = @pc.current_event.event.npc
 		@player_character_items = PlayerCharacterItem.get_page(params[:page], @pc.id)
 	end
 	
 	def do_sell
-		@npc = session[:current_event].event_npc.npc
+		@npc = @pc.current_event.event.npc
 		@player_character_item = @pc.items.find(:first, :conditions => ['id = ?', params[:id]])
 	
 		if @player_character_item && PlayerCharacterItem.update_inventory(@pc.id,@player_character_item.item_id,-1)

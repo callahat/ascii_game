@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100703004220) do
+ActiveRecord::Schema.define(:version => 20100721125026) do
 
   create_table "attack_spells", :force => true do |t|
     t.string  "name",         :limit => 32,  :default => "", :null => false
@@ -317,14 +317,14 @@ ActiveRecord::Schema.define(:version => 20100703004220) do
   add_index "healer_skills", ["min_sales"], :name => "min_sales"
 
   create_table "healing_spells", :force => true do |t|
-    t.string  "name",            :limit => 32,  :default => "", :null => false
-    t.string  "description",     :limit => 256
+    t.string  "name",           :limit => 32,  :default => "", :null => false
+    t.string  "description",    :limit => 256
     t.integer "min_level"
     t.integer "min_heal"
     t.integer "max_heal"
     t.integer "disease_id"
     t.integer "mp_cost"
-    t.boolean "cast_on_others?"
+    t.boolean "cast_on_others"
   end
 
   add_index "healing_spells", ["disease_id"], :name => "disease_id"
