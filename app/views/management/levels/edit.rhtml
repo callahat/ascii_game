@@ -9,18 +9,18 @@
    <tr>
 <%   while @x < @level.maxx 
      #  square = session[:level_map][@y][@x] 
-        p square = @level.level_maps.find(:all, :conditions => ['ypos = ? and xpos = ?', @y, @x]).last.feature %>
+        square = @level.level_maps.find(:all, :conditions => ['ypos = ? and xpos = ?', @y, @x]).last.feature %>
     <td>
       <% if square.nil? || square.name == "\nEmpty" %>
-         <select name="<%= 'map[' + @y.to_s + '][' + @x.to_s + ']' %>">
+         <select name="<%= 'map[' + @y.to_s + '][' + @x.to_s + ']' %>" style="width:9em">
          <option value = ""></option>
          <%= options_from_collection_for_select(@features, 'id','name') %>
       <% elsif square.name[0..0] == "\n" %>
          <%=h square.name[1..12] %><% if square.name[13..13] %>...<% end %>
          <hidden value="<%= square.id %>" name="<%= 'map[' + @y.to_s + '][' + @x.to_s + ']' %>">
       <% else %>
-         <select name="<%= 'map[' + @y.to_s + '][' + @x.to_s + ']' %>">
-         <option value = ""><%=h square.name[0..12] %><% if square.name[13..13] %>...<% end %></option>
+         <select name="<%= 'map[' + @y.to_s + '][' + @x.to_s + ']' %>" style="width:9em">
+         <option value = ""><%=h "("+square.name+")" if square %></option>
          <%= options_from_collection_for_select(@features,'id','name', nil ) %>
       <% end %>
 
