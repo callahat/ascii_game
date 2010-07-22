@@ -48,7 +48,14 @@ protected
 		redirect_to game_feature_url() unless @pc.current_event.event.class == EventQuest
 		@event = @pc.current_event.event
 		@quest = @event.quest
-		@log_quest = @pc.log_quests.find(:first, :conditions => ['quest_id = ?', @quest.id])
+		if @quest.quest_id && 
+				DoneQuest.find(:first,:conditions => ['quest_id = ? and player_character_id = ?', @quest.quest_id, @pc.id ]).nil?
+			flash[:notice] = "Nothing happens"
+			 @pc.current_event.destroy
+			redirect_to :controller => '/game', :action => 'main'
+		else
+			@log_quest = @pc.log_quests.find(:first, :conditions => ['quest_id = ?', @quest.id])
+		end
 	end
 	
 	def verify_quest_log

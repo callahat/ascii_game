@@ -285,8 +285,11 @@ class GameControllerTest < ActionController::TestCase
 		
 		get 'feature', {:id => @kl2.id}, session
 		assert_response :redirect
-		assert_redirected_to  :controller => 'game', :action => 'main'
-		assert session[:player_character].current_event.nil?
+		assert_redirected_to  :controller => 'game/quests', :action => 'index'
+		#Will be nil when it hits the filter in the quests controller
+		#assert session[:player_character].current_event.nil?
+		
+		session[:player_character].current_event.destroy
 		
 		LogQuest.join_quest(session[:player_character], @quest_one.id)
 		@lq = session[:player_character].log_quests.find(:first, :conditions => ['quest_id = ?', @quest_one.id])
