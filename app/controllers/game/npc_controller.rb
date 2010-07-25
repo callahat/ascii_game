@@ -54,7 +54,7 @@ class Game::NpcController < ApplicationController
 	def heal
 		@npc = @pc.current_event.event.npc
 		@diseases_cured = []
-		@npc_healer_skills = HealerSkill.find(:all, :conditions => ['min_sales <= ?',@npc.npc_merchant.healing_sales], :order => '"min_sales DESC"')
+		@npc_healer_skills = HealerSkill.find(:all, :conditions => ['min_sales <= ?',@npc.npc_merchant_detail.healing_sales], :order => '"min_sales DESC"')
 		
 		#create the diseases cured array
 		for cure in @npc_healer_skills
@@ -95,7 +95,7 @@ class Game::NpcController < ApplicationController
 				flash[:notice] = 'Not enough gold to cure ' + @disease.name
 			end
 		elsif params[:HP]
-			@npc_healer_skills = HealerSkill.find(:all, :conditions => ['min_sales <= ?',@npc.npc_merchant.healing_sales], :order => '"min_sales DESC"')
+			@npc_healer_skills = HealerSkill.find(:all, :conditions => ['min_sales <= ?',@npc.npc_merchant_detail.healing_sales], :order => '"min_sales DESC"')
 			@max_HP_heal = minimum(@npc_healer_skills.first.max_HP_restore,@pc.health.base_HP - @pc.health.HP)
 			@pretax = calc_point_recovery_cost(@max_HP_heal)
 			@tax = (@pretax * (@npc.kingdom.tax_rate / 100.0)).to_i
@@ -109,7 +109,7 @@ class Game::NpcController < ApplicationController
 				flash[:notice] = 'Not enough gold to restore HP'
 			end
 		elsif params[:MP]
-			@npc_healer_skills = HealerSkill.find(:all, :conditions => ['min_sales <= ?',@npc.npc_merchant.healing_sales], :order => '"min_sales DESC"')
+			@npc_healer_skills = HealerSkill.find(:all, :conditions => ['min_sales <= ?',@npc.npc_merchant_detail.healing_sales], :order => '"min_sales DESC"')
 			@max_MP_heal = minimum(@npc_healer_skills.first.max_MP_restore,@pc.health.max_MP - @pc.health.MP)
 			@pretax = calc_point_recovery_cost(@max_MP_heal)
 			@tax = (@pretax * (@npc.kingdom.tax_rate / 100.0)).to_i
@@ -135,7 +135,7 @@ class Game::NpcController < ApplicationController
  
 	def train
 		@npc = @pc.current_event.event.npc
-		@max_skill = TrainerSkill.find(:first, :conditions => ['min_sales <= ?',@npc.npc_merchant.trainer_sales], :order => '"min_sales DESC"').max_skill_taught
+		@max_skill = TrainerSkill.find(:first, :conditions => ['min_sales <= ?',@npc.npc_merchant_detail.trainer_sales], :order => '"min_sales DESC"').max_skill_taught
 		print "\nmax skill: " + @max_skill.inspect + "\n"
 		@atrib = CClassLevel.new
 		
@@ -147,7 +147,7 @@ class Game::NpcController < ApplicationController
 		@npc = @pc.current_event.event.npc
 		@tax, @pretax = 0,0
 		
-		@max_skill = TrainerSkill.find(:first, :conditions => ['min_sales <= ?',@npc.npc_merchant.trainer_sales], :order => '"min_sales DESC"').max_skill_taught
+		@max_skill = TrainerSkill.find(:first, :conditions => ['min_sales <= ?',@npc.npc_merchant_detail.trainer_sales], :order => '"min_sales DESC"').max_skill_taught
 		@base_cost_per_point = @pc.level * 10
 		@tax_per_point = (@base_cost_per_point * (@npc.kingdom.tax_rate / 100.0)).to_i
 		@cost_per_pt = @base_cost_per_point + @tax_per_point
@@ -272,6 +272,6 @@ protected
 	
 	def pay_npc(npc, amount, sale_type)
 		TxWrapper.give(npc, :gold, amount)
-		TxWrapper.give(npc.npc_merchant, :sale_type, amount) if sale_type
+		TxWrapper.give(npc.npc_merchant_detail, :sale_type, amount) if sale_type
 	end
 end

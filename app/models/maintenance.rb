@@ -82,12 +82,12 @@ class Maintenance < ActiveRecord::Base
 			if npc.health.wellness == SpecialCode.get_code('wellness','dead')
 				@@report << "This is a dead NPC :'("
 			else
-				if npc.npc_merchant
-					if npc.npc_merchant.healing_sales.to_i > 0
+				if npc.npc_merchant_detail
+					if npc.npc_merchant_detail.healing_sales.to_i > 0
 						#can any pandemics be cured?
 						for pandemic in kingdom.pandemics
 							if HealerSkill.find(:first, :conditions => ['disease_id = ? AND min_sales <= ?',
-																	pandemic.disease_id, npc.npc_merchant.healing_sales]) &&
+																	pandemic.disease_id, npc.npc_merchant_detail.healing_sales]) &&
 									rand(pandemic.disease.virility) < npc.int / 10	#then NPC has cured the pandemic
 								text = npc.name + " has discovered a cure for the " + pandemic.disease.name +
 											 " pandemic which had been tormenting the kingdom for " + pandemic.day + " days."
@@ -96,8 +96,8 @@ class Maintenance < ActiveRecord::Base
 							end
 						end
 					end
-					if npc.npc_merchant.blacksmith_sales.to_i > 0
-						NpcBlacksmithItem.gen_blacksmith_items(npc, npc.npc_merchant.blacksmith_sales, rand(1))
+					if npc.npc_merchant_detail.blacksmith_sales.to_i > 0
+						NpcBlacksmithItem.gen_blacksmith_items(npc, npc.npc_merchant_detail.blacksmith_sales, rand(1))
 					end
 					#Nothing needs done if npc is trainer
 				end

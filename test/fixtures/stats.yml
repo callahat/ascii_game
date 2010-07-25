@@ -161,3 +161,18 @@ test_event_stat:
   <<: *default_stat10
   owner: stat_event
   kind: "StatEventStat"
+
+base_item_one_stat: &default_base_item_stat
+  dfn: 10
+  dam: 5
+  owner: base_item_one
+  kind: "StatBaseItem"
+base_item_one_b_stat:
+  <<: *default_base_item_stat
+  owner: base_item_one_b
+base_item_two_stat:
+  <<: *default_base_item_stat
+  owner: base_item_two
+base_item_three_stat:
+  <<: *default_base_item_stat
+  owner: base_item_three

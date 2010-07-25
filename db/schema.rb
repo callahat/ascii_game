@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100721125026) do
+ActiveRecord::Schema.define(:version => 20100725164109) do
 
   create_table "attack_spells", :force => true do |t|
     t.string  "name",         :limit => 32,  :default => "", :null => false
@@ -555,7 +555,7 @@ ActiveRecord::Schema.define(:version => 20100721125026) do
   add_index "npc_blacksmith_items", ["item_id"], :name => "item_id"
   add_index "npc_blacksmith_items", ["npc_id"], :name => "npc_id"
 
-  create_table "npc_merchants", :force => true do |t|
+  create_table "npc_merchant_details", :force => true do |t|
     t.integer "npc_id",                              :null => false
     t.integer "healing_sales"
     t.integer "blacksmith_sales"
@@ -565,7 +565,7 @@ ActiveRecord::Schema.define(:version => 20100721125026) do
     t.boolean "lock",             :default => false
   end
 
-  add_index "npc_merchants", ["npc_id"], :name => "npc_id"
+  add_index "npc_merchant_details", ["npc_id"], :name => "npc_id"
 
   create_table "npcs", :force => true do |t|
     t.string  "name",         :limit => 32, :default => "",    :null => false

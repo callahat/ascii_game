@@ -4,7 +4,7 @@ class Npc < ActiveRecord::Base
 
 	#has_one :event_npc
 	has_one :nonplayer_character_killer
-	has_one :npc_merchant
+	has_one :npc_merchant_detail
 	has_one :health,		:foreign_key => 'owner_id', :class_name => 'HealthNpc'
 	has_one :stat,			:foreign_key => 'owner_id', :class_name => 'StatNpc'
 

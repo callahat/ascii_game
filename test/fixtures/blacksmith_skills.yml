@@ -1,5 +1,21 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
-  id: 1
-two:
-  id: 2
+blacksmith_skill_initial1:
+  max_mod: 3
+  min_mod: 2
+  base_item: base_item_one
+  min_sales: 0
+blacksmith_skill_initial2:
+  max_mod: 3
+  min_mod: 2
+  base_item: base_item_two
+  min_sales: 0
+blacksmith_skill_initial3:
+  max_mod: 5
+  min_mod: 4
+  base_item: base_item_one_b
+  min_sales: 0
+
+blacksmith_skill_intermediate1:
+  max_mod: 10
+  min_mod: 5
+  base_item: base_item_three
+  min_sales: 500
