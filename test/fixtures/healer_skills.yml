@@ -1,5 +1,12 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
-  id: 1
-two:
-  id: 2
+healer_skill_one:
+  max_HP_restore: 10
+  max_MP_restore: 10
+  max_stat_restore: 0
+  min_sales: 5
+healer_skill_two:
+  max_HP_restore: 20
+  max_MP_restore: 20
+  max_stat_restore: 10
+  disease: air_disease
+  min_sales: 50

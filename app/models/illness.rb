@@ -23,10 +23,11 @@ class Illness < ActiveRecord::Base
 
 			if @illness.nil? && disease.virility > rand(100) && rand(who[:con].to_i) < 500
 				@ret = who.illnesses.create(:owner_id => who.id, :disease_id => disease.id)
-				if who.class == PlayerCharacter || who.class == Npc #only Npc and Pc have this attr
-					who.health.update_attributes( {'wellness', SpecialCode.get_code('wellness','diseased')} ) 
+				if who.class == PlayerCharacter || who.class.base_class == Npc #only Npc and Pc have this attr
+					who.health.update_attribute(:wellness, SpecialCode.get_code('wellness','diseased') ) \
+						if who.health.wellness != SpecialCode.get_code('wellness','dead')
 					who.transaction do
-					@stat = who.stat.lock!
+						@stat = who.stat.lock!
 						@stat.subtract_stats(disease.stat)
 						@stat.save!
 					end
@@ -38,14 +39,17 @@ class Illness < ActiveRecord::Base
 		return @ret
 	end
 	
-	def self.cure(what, who)
-		if (illness = who.illnesses.find(:first, :conditions => ['disease_id = ?', what.id])) &&
-				illness.destroy
-			who.transaction do
-				who.stat.lock!
-				who.health.wellness = SpecialCode.get_code('wellness','alive') if who.illnesses.size == 0 
-				who.stat.add_stats(what.stat)
-				who.stat.save!
+	def self.cure(who, what)
+		if (@illness = who.illnesses.find(:first, :conditions => ['disease_id = ?', what.id])) &&
+				@illness.destroy
+			if who.class == PlayerCharacter || who.class == Npc #only Npc and Pc have this attr
+				who.health.update_attribute(:wellness, SpecialCode.get_code('wellness','alive') ) \
+					if who.illnesses.size == 0 and who.health.wellness != SpecialCode.get_code('wellness','dead')
+				who.transaction do
+					who.stat.lock!
+					who.stat.add_stats(what.stat)
+					who.stat.save!
+				end
 			end
 			return true
 		else

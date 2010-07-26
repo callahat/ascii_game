@@ -23,21 +23,18 @@ class Maintenance < ActiveRecord::Base
 		@unhired_guards = kingdom.guards.find(:all, :conditions => ['is_hired = 0'])
 		
 		if @unhired_merchants.size < kingdom.kingdom_empty_shops.size * 1.5
-			npc_solicitation(kingdom,SpecialCode.get_code('npc_division','merchant'))
+			npc_solicitation(kingdom, NpcMerchant)
 		end
-		npc_solicitation(kingdom,SpecialCode.get_code('npc_division','guard')) if kingdom.player_character
+		npc_solicitation(kingdom, NpcGuard) if kingdom.player_character
 	end
 	
-	def self.npc_solicitation(kingdom,npc_division)
+	def self.npc_solicitation(kingdom, npc_class)
 		if @unhired_merchants.size < kingdom.player_character.level * 2
-			@npc_from_pool = Npc.find(:first,:conditions => ['kingdom_id is NULL AND npc_division = ?', npc_division],
-															:offset => Npc.count(:conditions => ['kingdom_id is NULL AND npc_division = ?', npc_division]))
+			@npc_from_pool = npc_class.find(:first, :conditions => ['kingdom_id is NULL'], :order => 'rand()')
 			if @npc_from_pool.nil? || rand > 0.75
-				if npc_division == SpecialCode.get_code('npc_division','guard')
-					@new_guy = Npc.gen_stock_guard(kingdom.id)
-				elsif npc_division == SpecialCode.get_code('npc_division','merchant')
-					@new_guy = Npc.gen_stock_merchant(kingdom.id)
-				end
+				
+				@new_guy = npc_class.generate(kingdom.id)
+				
 				@@report << @new_guy.name + " entered the job market"
 			else
 				@npc_from_pool.update_attribute(:kingdom_id, kingdom.id)

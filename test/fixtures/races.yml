@@ -4,8 +4,10 @@ one:
   name: "Race One"
   freepts: 10
   image: pc_image
+  race_body_type: <%= SpecialCode.get_code('race_body_type','human') %>
 two:
   id: 2
   name: "Race Two"
   freepts: 3
   image: pc_image
+  race_body_type: <%= SpecialCode.get_code('race_body_type','human') %>

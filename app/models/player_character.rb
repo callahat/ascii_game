@@ -16,6 +16,7 @@ class PlayerCharacter < ActiveRecord::Base
 	has_many :done_quests
 	has_many :genocides
 	has_many :illnesses, :foreign_key => 'owner_id', :class_name => 'Infection'
+	has_many :infections, :foreign_key => 'owner_id'
 	has_many :kingdoms
 	has_many :kingdom_bans
 	has_many :log_quests

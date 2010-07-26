@@ -26,16 +26,16 @@ class Admin::NpcsController < ApplicationController
 		@npc = Npc.new
 		@stat = StatNpc.new
 		@health = HealthNpc.new
-		@divisions = [ ['merchant', SpecialCode.get_code('npc_division', 'merchant')],
-									 ['guard', SpecialCode.get_code('npc_division', 'guard')] ]
+		@divisions = [ ['merchant', 'NpcMerchant'],
+									 ['guard', 'NpcGuard'] ]
 	end
 
 	def create
 		@npc = Npc.new(params[:npc])
 		@stat = StatNpc.new(params[:stat])
 		@health = HealthNpc.new(params[:health])
-		@divisions = [ ['merchant', SpecialCode.get_code('npc_division', 'merchant')],
-									 ['guard', SpecialCode.get_code('npc_division', 'guard')] ]
+		@divisions = [ ['merchant', 'NpcMerchant'],
+									 ['guard', 'NpcGuard'] ]
 		if @stat.valid? & @health.valid? & @npc.save
 			@stat.owner_id = @npc.id
 			@health.owner_id = @npc.id

@@ -57,7 +57,7 @@ test_king_stat_base:
 test_king_stat_trn:
   owner: test_king
   kind: "StatPcTrn"
-	
+
 air_disease_stat: &default_disease_stat5
   str: 5
   dex: 5

@@ -10,7 +10,7 @@ class EventDisease < Event
 	
 	def make_happen(who)
 		if self.flex
-			if Illness.cure(self.disease, who)
+			if Illness.cure(who, self.disease)
 				@message = 'Your case of ' + @disease.name + ' has cleared up!'
 			else
 				#no point in going on, player already healthy, nothing happens.

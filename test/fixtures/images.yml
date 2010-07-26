@@ -26,6 +26,11 @@ default_npc:
   <<: *char_img_defs
   name: "DEFAULT NPC"
   image_text: "8P"
+guard_image_kingdom_one:
+  <<: *char_img_defs
+  name: "HealthyTestKingdom Guard Image"
+  image_text: "v_v"
+  kingdom_id: 1
 
 feature_image: &feature_img_defs
   name: "Feature image"
