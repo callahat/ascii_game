@@ -96,9 +96,9 @@ class ApplicationController < ActionController::Base
 		
 	#Its ok to make all this stuff protected right?
 protected
-	def debuggery(crap)
-		print "\n" + crap.to_s
-	end
+	#def debuggery(crap)
+	#	print "\n" + crap.to_s
+	#end
 
 	#Delete the event for an NPC that is either fired or is killed
 	def destroy_npc_event(npc)
@@ -155,21 +155,21 @@ protected
 		@feature_event.save
 	end
 	
-	def minimum(x,y)
-		y > x ? x : y
-	end
+	#def minimum(x,y)
+	#	y > x ? x : y
+	#end
+	#
+	#def maximum(x,y)
+	#	x > y ? x : y
+	#end
 	
-	def maximum(x,y)
-		x > y ? x : y
-	end
-	
-	def gain_xp(who,xp)
-		if who.class != Creature #Creatures dont gain XP
-			who.transaction do
-				who.lock!
-				who.experience += xp
-				who.save!
-			end
-		end
-	end
+	#def gain_xp(who,xp)
+	#	if who.class != Creature #Creatures dont gain XP
+	#		who.transaction do
+	#			who.lock!
+	#			who.experience += xp
+	#			who.save!
+	#		end
+	#	end
+	#end
 end

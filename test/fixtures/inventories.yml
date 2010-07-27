@@ -31,7 +31,11 @@ pcinv_5:
   item_id:  3
   quantity: 9
   kind:     "PlayerCharacterItem"
- 
+pcinv_6:
+  player_character: test_pc_one
+  item_id:  1
+  quantity: 1
+  kind:     "PlayerCharacterItem"
 #
 #NpcStock
 # 

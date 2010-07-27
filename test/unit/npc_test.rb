@@ -5,7 +5,7 @@ class NpcTest < ActiveSupport::TestCase
 		@npc = Npc.find_by_name("Healthy Npc")
 		@npc2 = Npc.find_by_name("Sick NPC")
 		@kingdom = Kingdom.find(1)
-		@pc = PlayerCharacter.find_by_name("pc one")
+		@pc = PlayerCharacter.find_by_name("Test PC One")
 		@sick_pc = PlayerCharacter.find_by_name("sick pc")
 	end
 
@@ -200,10 +200,28 @@ class NpcTest < ActiveSupport::TestCase
 		assert @sick_pc.health.wellness == SpecialCode.get_code('wellness','alive')
 	end
 	
+	test "npc max head HP and MP" do
+		assert @npc.max_heal(@sick_pc, "HP") == 10, @npc.max_heal(@sick_pc, "HP")
+		assert @npc.max_heal(@sick_pc, "MP") == 0
+		
+		@sick_pc.health.update_attribute(:HP, 28)
+		@sick_pc.health.update_attribute(:MP, 23)
+		
+		assert @npc.max_heal(@sick_pc, "HP") == 2
+		assert @npc.max_heal(@sick_pc, "MP") == 7
+		
+		@sick_pc.health.update_attribute(:HP, 30)
+		@sick_pc.health.update_attribute(:MP, 35)
+		
+		assert @npc.max_heal(@sick_pc, "HP") == 0
+		assert @npc.max_heal(@sick_pc, "MP") == 0, @npc.max_heal(@sick_pc, "MP")
+	end
+	
 	test "npc heal HP and MP" do
 		@sick_pc.update_attribute(:gold, 0)
+		@sick_pc.health.update_attribute(:MP, 0)
 		assert_difference '@sick_pc.health.HP', +0 do
-			res, msg = @npc.heal(@sick_pc, "HP", 10)
+			res, msg = @npc.heal(@sick_pc, "HP")
 			assert !res
 			assert msg =~ /Not enough gold/
 		end
@@ -214,7 +232,7 @@ class NpcTest < ActiveSupport::TestCase
 		orig_kingdom_gold = @npc.kingdom.gold
 		assert_difference '@npc.gold', MiscMath.point_recovery_cost(10) do
 			assert_difference '@sick_pc.health.HP', +10 do
-				res, msg = @npc.heal(@sick_pc, "HP", 10)
+				res, msg = @npc.heal(@sick_pc, "HP")
 				assert res
 				assert msg =~ /Restored HP/
 			end
@@ -227,13 +245,110 @@ class NpcTest < ActiveSupport::TestCase
 		orig_kingdom_gold = @npc.kingdom.gold
 		assert_difference '@npc.gold', MiscMath.point_recovery_cost(10) do
 			assert_difference '@sick_pc.health.MP', +10 do
-				res, msg = @npc.heal(@sick_pc, "MP", 10)
+				res, msg = @npc.heal(@sick_pc, "MP")
 				assert res
 				assert msg =~ /Restored MP/
 			end
 		end
 		assert pc_orig_gold - @sick_pc.gold >= MiscMath.point_recovery_cost(10)
 		assert (orig_kingdom_gold + pc_orig_gold - @sick_pc.gold - MiscMath.point_recovery_cost(10)) == @npc.kingdom.gold
+	end
+	
+	test "npc train" do
+		max_train = @npc.npc_merchant_detail.max_skill_taught
+		
+		Stat.symbols.each{|at|
+			@stat = Stat.new
+			base_at = @pc.base_stat[at]
+			
+			#negative stat
+			@stat[at] = -1
+			res, msg = @npc.train(@pc, @stat)
+			assert !res
+			assert @stat.errors.size == 1
+			assert @stat.errors.full_messages.first =~ /negative/
+			@stat.errors.clear
+			
+			#greater than npc is able
+			@stat[at] = (base_at * max_train / 100.0).to_i + 1
+			res, msg = @npc.train(@pc, @stat)
+			assert !res
+			assert @stat.errors.size == 1
+			assert @stat.errors.full_messages.first =~ /cannot gain/
+			@stat.errors.clear
+			
+			#within limit, not enough cash
+			@pc.update_attribute(:gold, 0)
+			@stat[at] = (base_at * max_train / 100.0).to_i - 1
+			res, msg = @npc.train(@pc, @stat)
+			assert !res, msg
+			assert @stat.errors.size == 0, @stat.errors.full_messages
+			assert msg =~ /Not enough gold/
+			
+			#at limit, not enough cash
+			@stat[at] = (base_at * max_train / 100.0).to_i - 1
+			res, msg = @npc.train(@pc, @stat)
+			assert !res, msg
+			assert @stat.errors.size == 0, @stat.errors.full_messages
+			assert msg =~ /Not enough gold/
+			
+			#with limit, enough cash
+			@pc.update_attribute(:gold, 10000)
+			@stat[at] = (base_at * max_train / 100.0).to_i
+			@pretax = @stat.sum_points * @pc.level * 10
+			@tax = (@pretax * @npc.kingdom.tax_rate / 100.0).to_i
+			@total = @pretax + @tax
+			
+			assert_difference '@pc.base_stat[at]', +0 do
+				assert_difference '@pc.trn_stat[at]', +(base_at * max_train / 100.0).to_i do
+					assert_difference '@pc.stat[at]', +(base_at * max_train / 100.0).to_i do
+						assert_difference '@npc.gold', @pretax do
+							assert_difference '@npc.kingdom.gold', @tax do
+								assert_difference '@pc.gold', -@total do
+									res, msg = @npc.train(@pc, @stat)
+									assert res, msg
+									assert msg =~ /successful/
+								end
+							end
+						end
+					end
+				end
+			end
+		}
+		
+		#multi attribute update
+		#over
+		@sick_pc.update_attribute(:gold, 10000)
+		@stat = Stat.new
+		base_str = @sick_pc.base_stat[:str]
+		base_dex = @sick_pc.base_stat[:dex]
+		@stat[:str] = (base_str * max_train / 100.0).to_i + 1
+		@stat[:dex] = (base_dex * max_train / 100.0).to_i + 1
+		res, msg = @npc.train(@sick_pc, @stat)
+		assert !res, msg
+		assert @stat.errors.size == 2, msg
+		assert @stat.errors.full_messages.first =~ /cannot gain/
+		@stat.errors.clear
+		
+		#just right
+		@stat[:str] = (base_str * max_train / 200.0).to_i
+		@stat[:dex] = (base_dex * max_train / 200.0).to_i
+		
+		assert_difference '@sick_pc.base_stat[:str]', +0 do
+			assert_difference '@sick_pc.base_stat[:dex]', +0 do
+				assert_difference '@sick_pc.trn_stat[:str]', +(base_str * max_train / 200.0).to_i do
+					assert_difference '@sick_pc.stat[:str]', +(base_str * max_train / 200.0).to_i do
+						assert_difference '@sick_pc.trn_stat[:dex]', +(base_dex * max_train / 200.0).to_i do
+							assert_difference '@sick_pc.stat[:dex]', +(base_dex * max_train / 200.0).to_i do
+								res, msg = @npc.train(@sick_pc, @stat)
+								assert res, msg + @stat.errors.full_messages.inspect
+								assert msg =~ /successful/
+							end
+						end
+					end
+				end
+			end
+		end
 		
 	end
 end

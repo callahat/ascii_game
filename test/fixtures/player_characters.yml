@@ -5,12 +5,14 @@ one:
   c_class_id: 1
   race_id: 1
   image: pc_image
+  level: 1
 sick_pc:
   id: 2
   name: "sick pc"
   c_class_id: 1
   race_id: 1
   image: pc_image
+  level: 1
 
 test_king:
   name: "Test King"

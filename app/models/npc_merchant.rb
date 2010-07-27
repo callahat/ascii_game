@@ -109,7 +109,8 @@ class NpcMerchant < Npc
 		end
 	end
 	
-	def heal(pc, what, amount)
+	def heal(pc, what)
+		amount = self.max_heal(pc, what)
 		@pretax = MiscMath.point_recovery_cost(amount)
 		@tax = (@pretax * (self.kingdom.tax_rate / 100.0)).to_i
 		
@@ -120,6 +121,46 @@ class NpcMerchant < Npc
 			[true, 'Restored ' + what]
 		else
 			[false, 'Not enough gold to restore ' + what]
+		end
+	end
+	
+	def max_heal(pc, what)
+		return 0 if pc.health["base_#{what}".to_sym] < pc.health[what.to_sym]
+		MiscMath.min(
+				self.npc_merchant_detail.healer_skills.first["max_#{what}_restore".to_sym],
+				pc.health["base_#{what}".to_sym] - pc.health[what.to_sym]
+			)
+	end
+	
+	def train(pc, stats)
+		#double check the max skill taught from what was entered
+		Stat.symbols.each{|at|
+			if stats[at] < 0
+				stats.errors.add(at, "cannot be negative")
+			elsif (pc.base_stat[at] * ( self.npc_merchant_detail.max_skill_taught / 100.0)).to_i < (stats[at] + pc.trn_stat[at])
+				stats.errors.add(at, "cannot gain " + stats[at].to_s + " points") 
+			end
+		}
+		return false, "" if stats.errors.size > 0
+		
+		@pretax = stats.sum_points * pc.level * 10
+		@tax = (@pretax * self.kingdom.tax_rate / 100.0).to_i
+		
+		if TxWrapper.take(pc, :gold, @pretax + @tax)
+			StatPcTrn.transaction do
+				pc.trn_stat.lock!
+				pc.stat.lock!
+				pc.trn_stat.add_stats(stats)
+				pc.stat.add_stats(stats)
+				pc.trn_stat.save!
+				pc.stat.save!
+			end
+		
+			Kingdom.pay_tax(@tax, self.kingdom_id) unless @tax == 0
+			self.pay(@pretax, :trainer_sales) unless @pretax == 0
+			return true, "Training successful"
+		else
+			return false, "Not enough gold to train that much\n"
 		end
 	end
 end

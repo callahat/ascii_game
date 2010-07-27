@@ -34,14 +34,10 @@ class Game::NpcController < ApplicationController
 		
 		@diseases_cured = @npc_healer_skills.collect{|cure| cure.disease }.compact
 
-		if @pc.health.base_HP > @pc.health.HP && @npc_healer_skills.first.max_HP_restore > 0
-			@max_HP_heal = minimum(@npc_healer_skills.first.max_HP_restore, @pc.health.base_HP - @pc.health.HP)
-			@max_HP_heal_cost = (MiscMath.point_recovery_cost(@max_HP_heal) * (1 + @npc.kingdom.tax_rate / 100.0)).to_i
-		end
-		if @pc.health.base_MP > @pc.health.MP && @npc_healer_skills.first.max_MP_restore > 0
-			@max_MP_heal = minimum(@npc_healer_skills.first.max_MP_restore, @pc.health.base_MP - @pc.health.MP)
-			@max_MP_heal_cost = (MiscMath.point_recovery_cost(@max_MP_heal) * (1 + @npc.kingdom.tax_rate / 100.0)).to_i
-		end
+		@max_HP_heal = @npc.max_heal(@pc, "HP")
+		@max_HP_heal_cost = (MiscMath.point_recovery_cost(@max_HP_heal) * (1 + @npc.kingdom.tax_rate / 100.0)).to_i
+		@max_MP_heal = @npc.max_heal(@pc, "MP")
+		@max_MP_heal_cost = (MiscMath.point_recovery_cost(@max_MP_heal) * (1 + @npc.kingdom.tax_rate / 100.0)).to_i
 	end
 	
 	def do_heal
@@ -50,11 +46,10 @@ class Game::NpcController < ApplicationController
 		if params[:did]
 			res, flash[:notice] = @npc.cure_disease(@pc, params[:did])
 		elsif params[:HP]
-			res, flash[:notice] = @npc.heal(@pc, :HP, @max_HP_heal)
+			res, flash[:notice] = @npc.heal(@pc, "HP")
 		elsif params[:MP]
-			res, flash[:notice] = @npc.heal(@pc, :MP, @max_MP_heal)
+			res, flash[:notice] = @npc.heal(@pc, "MP")
 		else
-			#did not recognize what the player selected
 			flash[:notice] = 'Do what now?'
 		end
 
@@ -62,71 +57,23 @@ class Game::NpcController < ApplicationController
 	end
  
 	def train
-		@max_skill = TrainerSkill.find(:first, :conditions => ['min_sales <= ?',@npc.npc_merchant_detail.trainer_sales], :order => '"min_sales DESC"').max_skill_taught
-		print "\nmax skill: " + @max_skill.inspect + "\n"
-		@atrib = CClassLevel.new
+		@max_skill = @npc.npc_merchant_detail.max_skill_taught
+		@atrib = Stat.new(params[:atrib])
 		
 		@cost_per_pt = (@pclevel * 10 * (1 + @npc.kingdom.tax_rate / 100.0)).to_i
 		@flag = false
 	end
 	
 	def do_train
-		@tax, @pretax = 0,0
+		train
 		
-		@max_skill = TrainerSkill.find(:first, :conditions => ['min_sales <= ?',@npc.npc_merchant_detail.trainer_sales], :order => '"min_sales DESC"').max_skill_taught
-		@base_cost_per_point = @pc.level * 10
-		@tax_per_point = (@base_cost_per_point * (@npc.kingdom.tax_rate / 100.0)).to_i
-		@cost_per_pt = @base_cost_per_point + @tax_per_point
-		@flag = false
+		res, flash[:notice] = @npc.train(@pc, @attrib)
 		
-		#Just using this for the attributes
-		@atrib = Stat.new(params[:atrib])
-		
-		if !@atrib.valid?
-			@flag = true
-		end
-		#double check the max skill taught from what was entered
-		["str", "dex", "mag", "int", "con", "dfn", "dam"].each{|at|
-			if (@pc.base_stat[base_atr] * ( @max_skill / 100.0)).to_i < (@atrib[at.to_sym] + @pc.trn_stat[trn_atr])
-				@flag = true
-				@atrib.errors.add(at," cannot gain " + @atrib[at.to_sym].to_s + " points in strength")
-			end 
-		}
-		
-		@total_base = @atrib.str + @atrib.dex + @atrib.mag + @atrib.int + @atrib.con + @atrib.dam + @atrib.dfn
-		@pretax = @total_base * @base_cost_per_point
-		@tax = (@pretax * @tax_per_point).to_i
-		
-		@total_cost = @pretax + @tax
-		
-		unless TxWrapper.take(@pc, :gold, @total_cost)
-			@flag = true
-			flash[:notice] = "Not enough gold to train that much\n"
+		if res
+			redirect_to :action => 'train'
 		else
-			Kingdom.pay_tax(@tax, @npc.kingdom_id) unless @tax == 0
-			pay_npc(@npc, @pretax, :trainer_sales) unless @pretax == 0
+			render :action => 'train'
 		end
-		
-		#only save chanegs if no flag thrown
-		if !@flag
-			@trn = @pc.trn_stat
-			@stat = @pc.stat
-			@gain = Stat.new(@atrib)
-			StatPcTrn.transaction do
-				@trn.lock!
-				@trn.add_stats(@atrib)
-				@trn.save!
-			end
-			StatPc.transaction do
-				@stat.lock!
-				@stat.add_stats(@atrib)
-				@stat.save!
-			end
-			flash[:notice] = "Training sucessful."
-		else
-			print "Invalid numbers"
-		end
-		redirect_to :action => 'train'
 	end
 	
 	def buy
