@@ -349,6 +349,65 @@ class NpcTest < ActiveSupport::TestCase
 				end
 			end
 		end
+	end
+	
+	test "npc sell used to pc" do
+		@item4 = Item.find(4)
+		@item5 = Item.find(5)
+		res, msg = @npc.sell_used_to(@pc, @item5.id)
+		assert !res
+		assert msg =~ /does not have one/
 		
+		@pc.update_attribute(:gold, 0)
+		
+		assert @pc.items.find(:first, :conditions => ["item_id = ?", @item4.id]).nil?
+		assert_difference '@npc.gold', +0 do
+			assert_difference '@npc.npc_stocks.find(:first, :conditions => ["item_id = ?", @item4.id]).quantity', -0 do
+				res, msg = @npc.sell_used_to(@pc, @item4.id)
+				assert !res
+				assert msg =~ /price range/
+			end
+		end
+		assert @pc.items.find(:first, :conditions => ["item_id = ?", @item4.id]).nil?
+		
+		@pc.update_attribute(:gold, 1000)
+		npc_orig_gold = @npc.gold
+		pc_orig_gold = @pc.gold
+		orig_kingdom_gold = @npc.kingdom.gold
+		assert_difference '@npc.gold', +@item4.used_price do
+			assert_difference '@npc.npc_stocks.find(:first, :conditions => ["item_id = ?", @item4.id]).quantity', -1 do
+				res, msg = @npc.sell_used_to(@pc, @item4.id)
+				assert res
+				assert msg =~ /Bought a/
+			end
+		end
+		assert @pc.items.find(:first, :conditions => ["item_id = ?", @item4.id]).quantity == 1
+		@npc.reload
+		assert pc_orig_gold - @pc.gold == (@npc.gold - npc_orig_gold) + (@npc.kingdom.gold - orig_kingdom_gold)
+		
+		res, msg = @npc.sell_used_to(@pc, @item4.id)
+		assert !res
+		assert msg =~ /does not have a/
+	end
+	
+	test "npc buy from pc" do
+		@item1 = Item.find(1)
+		@item5 = Item.find(5)
+		
+		res, msg = @npc.buy_from(@pc, @item5.id)
+		assert !res
+		assert msg =~ /not have one/
+		
+		assert_difference '@pc.gold', +@item1.resell_value do
+			assert_difference '@npc.npc_stocks.find(:first, :conditions => ["item_id = ?", @item1.id]).quantity', +1 do
+				res, msg = @npc.buy_from(@pc, @item1.id)
+				assert res
+				assert msg =~ /Sold/
+			end
+		end
+		
+		res, msg = @npc.buy_from(@pc, @item1.id)
+		assert !res
+		assert msg =~ /not have a/
 	end
 end

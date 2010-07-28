@@ -36,6 +36,7 @@ pcinv_6:
   item_id:  1
   quantity: 1
   kind:     "PlayerCharacterItem"
+
 #
 #NpcStock
 # 
@@ -48,19 +49,19 @@ npcinv_1:
 npcinv_2:
   id:       7
   owner_id: 1
-  item_id:  1
+  item_id:  2
   quantity: 1
   kind:     "NpcStock"
 npcinv_3:
   id:       8
   owner_id: 1
-  item_id:  1
+  item_id:  3
   quantity: 1
   kind:     "NpcStock"
 npcinv_4:
   id:       9
   owner_id: 1
-  item_id:  1
+  item_id:  4
   quantity: 1
   kind:     "NpcStock"
  

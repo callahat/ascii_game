@@ -194,12 +194,9 @@ class Battle < ActiveRecord::Base
 		if who.class.base_class == BattleEnemy
 		#may need updated later.
 			case who.special
-				when "NpcPeasant"
-					@code = SpecialCode.get_code('npc_division','peasant')
-				when "NpcMerchant"
-					@code = SpecialCode.get_code('npc_division','merchant')
-				when "NpcGuard"
-					@code = SpecialCode.get_code('npc_division','guard')
+				when "NpcPeasant"		; @code = SpecialCode.get_code('npc_division','peasant')
+				when "NpcMerchant"	; @code = SpecialCode.get_code('npc_division','merchant')
+				when "NpcGuard"			; @code = SpecialCode.get_code('npc_division','guard')
 			end
 			case who.class.name
 				when "BattleCreature"

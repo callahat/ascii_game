@@ -163,4 +163,35 @@ class NpcMerchant < Npc
 			return false, "Not enough gold to train that much\n"
 		end
 	end
+	
+	def sell_used_to(pc, iid)
+		if @stock = self.npc_stocks.find(:first, :conditions => ['item_id = ?', iid]) and
+				NpcStock.update_inventory(self.id, @stock.item_id, -1)
+			@pretax = @stock.item.used_price
+			@tax = (@pretax * (self.kingdom.tax_rate / 100.0)).to_i
+			
+			if !TxWrapper.take(pc, :gold, @tax + @pretax)
+				NpcStock.update_inventory(self.id, @stock.item_id, 1)
+				[false, "Its out of your price range"]
+			elsif PlayerCharacterItem.update_inventory(pc.id,@stock.item_id,1)
+				Kingdom.pay_tax(@tax, self.kingdom_id)
+				TxWrapper.give(self, :gold, @pretax)
+				[true, "Bought a " + @stock.item.name + " for " + @cost.to_s + " gold." ]
+			end
+		else
+			[false, self.name + " does not have " + (@stock ? "a " + @stock.item.name : "one of those" ) + " for sale."]
+		end
+	end
+	
+	def buy_from(pc, iid)
+		if @pc_item = pc.items.find(:first, :conditions => ['item_id = ?', iid]) and
+				PlayerCharacterItem.update_inventory(pc.id,@pc_item.item_id,-1)
+			@cost = @pc_item.item.resell_value
+			NpcStock.update_inventory(self.id,@pc_item.item_id,1)
+			TxWrapper.give(pc, :gold, @cost)
+			[true, "Sold a " + @pc_item.item.name + " for " + @cost.to_s + " gold."]
+		else
+			[false, "You do not have " + (@pc_item ? "a " + @pc_item.item.name : "one of those") + " to sell."]
+		end
+	end
 end

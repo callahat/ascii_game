@@ -2,6 +2,7 @@ class Game::NpcController < ApplicationController
 	#before_filter :authenticate
 	before_filter :setup_pc_vars
 	before_filter :setup_npc_vars
+	before_filter :spread_contact_disease, :only => [:do_train, :do_buy, :do_buy_new, :do_sell ]
 
 	layout 'main'
 
@@ -20,15 +21,12 @@ class Game::NpcController < ApplicationController
 	def do_buy_new
 		smithy
 		
-		Illness.spread(@pc, @npc, SpecialCode.get_code('trans_method','contact') )
-		Illness.spread(@npc, @pc, SpecialCode.get_code('trans_method','contact') )
-		
 		res, msg = @npc.manufacture(@pc, params[:iid])
 		flash[:notice] = msg + ( flash[:notice] ? "<br/>" + flash[:notice] : "" )
 		
 		redirect_to :action => 'smithy'
 	end
-	
+
 	def heal
 		@npc_healer_skills = @npc.npc_merchant_detail.healer_skills 
 		
@@ -39,19 +37,20 @@ class Game::NpcController < ApplicationController
 		@max_MP_heal = @npc.max_heal(@pc, "MP")
 		@max_MP_heal_cost = (MiscMath.point_recovery_cost(@max_MP_heal) * (1 + @npc.kingdom.tax_rate / 100.0)).to_i
 	end
-	
+
 	def do_heal
 		heal
 
 		if params[:did]
-			res, flash[:notice] = @npc.cure_disease(@pc, params[:did])
+			res, @msg = @npc.cure_disease(@pc, params[:did])
 		elsif params[:HP]
-			res, flash[:notice] = @npc.heal(@pc, "HP")
+			res, @msg = @npc.heal(@pc, "HP")
 		elsif params[:MP]
-			res, flash[:notice] = @npc.heal(@pc, "MP")
+			res, @msg = @npc.heal(@pc, "MP")
 		else
-			flash[:notice] = 'Do what now?'
+			@msg = 'Do what now?'
 		end
+		flash[:notice] = @msg + ( flash[:notice] ? "<br/>" + flash[:notice] : "" )
 
 		redirect_to :action => 'heal'
 	end
@@ -66,9 +65,8 @@ class Game::NpcController < ApplicationController
 	
 	def do_train
 		train
-		
-		res, flash[:notice] = @npc.train(@pc, @attrib)
-		
+		res, msg = @npc.train(@pc, @attrib)
+		flash[:notice] = msg + ( flash[:notice] ? "<br/>" + flash[:notice] : "" )
 		if res
 			redirect_to :action => 'train'
 		else
@@ -81,31 +79,8 @@ class Game::NpcController < ApplicationController
 	end
 	
 	def do_buy
-		@stock = @npc.npc_stocks.find(:first, :conditions => ['id = ?', params[:id]])
-		@tax,@pretax = 0,0
-		
-		if @stock && !NpcStock.update_inventory(@npc.id, @stock.item_id, -1)
-			@pretax = @stock.item.price / 2
-			@tax = (@pretax * (@npc.kingdom.tax_rate / 100.0)).to_i
-			@cost = @tax + @pretax
-			
-			if !TxWrapper.take(@pc, :gold, @cost)
-				flash[:notice] = "Its out of your price range"
-				NpcStock.update_inventory(@npc.id, @stock.item_id, 1)
-			elsif PlayerCharacterItem.update_inventory(@pc.id,@stock.item_id,1)
-				flash[:notice] = "Bought a " + @stock.item.name + " for " + @cost.to_s + " gold."
-			end
-		
-			Kingdom.pay_tax(@tax, @npc.kingdom_id)
-			#gief monies plox
-			pay_npc(@npc, @pretax, nil)
-
-			Illness.spread(@player_character, @npc, SpecialCode.get_code('trans_method','contact') )
-			Illness.spread(@npc, @player_character, SpecialCode.get_code('trans_method','contact') )
-		else
-			flash[:notice] = @npc.name + " does not have a " + @stock.item.name + " for sale."
-		end
-		
+		res, msg = @npc.sell_used_to(@pc, params[:id])
+		flash[:notice] = msg + ( flash[:notice] ? "<br/>" + flash[:notice] : "" )
 		redirect_to :action => 'buy'
 	end
 	
@@ -120,8 +95,6 @@ class Game::NpcController < ApplicationController
 			NpcStock.update_inventory(@npc.id,@player_character_item.item_id,1)
 			@cost = (@player_character_item.item.price / 6.0).ceil
 			flash[:notice] = "Sold a " + @player_character_item.item.name + " for " + @cost.to_s + " gold."
-			Illness.spread(@pc, @npc, SpecialCode.get_code('trans_method','contact'))
-			Illness.spread(@npc, @pc, SpecialCode.get_code('trans_method','contact'))
 		else
 			flash[:notice] = "You do not have a " + @player_character_item.item.name + " to sell."
 		end
@@ -145,9 +118,8 @@ protected
 		end
 	end
 
-	
-	def pay_npc(npc, amount, sale_type)
-		TxWrapper.give(npc, :gold, amount)
-		TxWrapper.give(npc.npc_merchant_detail, :sale_type, amount) if sale_type
+	def spread_contact_disease
+		Illness.spread(@pc, @npc, SpecialCode.get_code('trans_method','contact'))
+		Illness.spread(@npc, @pc, SpecialCode.get_code('trans_method','contact'))
 	end
 end

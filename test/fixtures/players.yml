@@ -1,4 +1,11 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+test_system_player:
+  id: -1
+  handle: "System"
+  account_status: 1
+  admin: 1
+  table_editor_access: 1
+  mod_level: 9
 test_player_one:
   handle: "Test Player One"
   account_status: 1

@@ -7,11 +7,7 @@ class LogQuestKillNNpc < LogQuestReq
 		#shouldn't need to wrap this in a transaction
 		for lq in @lq
 			lq.quantity -= kills
-			if lq.quantity < 1
-				lq.destroy
-			else
-				lq.save
-end
+			( lq.quantity < 1 ? lq.destroy : lq.save )
 		end
 	end
 	

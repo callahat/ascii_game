@@ -242,7 +242,7 @@ protected
 			@items = Item.find(:all)
 		elsif params[:type] == 'kill_any_npc'
 			@quest_req = QuestKillNNpc.new(params[:quest_req])
-			@npc_types = SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'npc_division'])
+			@npc_types = [ ['merchant', 'NpcMerchant'], ['guard', 'NpcGuard'] ]
 			@kingdoms = Kingdom.find(:all,:order => 'name')
 		elsif params[:type] == 'kill_pc'
 			@quest_req = QuestKillPc.new(params[:quest_req])
@@ -267,7 +267,7 @@ protected
 		elsif @quest_req.kind == 'QuestItem'
 			@items = Item.find(:all)
 		elsif @quest_req.kind == 'QuestKillNNpc'
-			@npc_types = SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'npc_division'])
+			@npc_types = [ ['merchant', 'NpcMerchant'], ['guard', 'NpcGuard'] ]
 			@kingdoms = Kingdom.find(:all,:order => 'name')
 		elsif @quest_req.kind == 'QuestKillPc'
 			@pcs = PlayerCharacter.find(:all,:order => 'name')

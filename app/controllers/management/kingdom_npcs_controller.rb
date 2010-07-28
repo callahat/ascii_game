@@ -23,7 +23,7 @@ class Management::KingdomNpcsController < ApplicationController
 
 	def assign_store
 		@npc = session[:kingdom].npcs.find(params[:id])
-		if session[:kingdom].kingdom_empty_shops.size == 0 && @npc.npc_division == SpecialCode.get_code('npc_division','merchant')
+		if session[:kingdom].kingdom_empty_shops.size == 0 && @npc.kind == "NpcMerchant"
 			flash[:notice] = 'No available storefronts for the merchants.'
 			redirect_to :action => 'list'
 		elsif @npc.is_hired
@@ -77,7 +77,7 @@ class Management::KingdomNpcsController < ApplicationController
 	def turn_away
 		@npc = session[:kingdom].npcs.find(params[:id])
 		if npc_is_allied
-			if @npc.is_hired && @npc.npc_division == SpecialCode.get_code('npc_division','merchant')
+			if @npc.is_hired && @npc.kind == "NpcMerchant"
 				#PUT THAT STOREFRONT BACK INTO CIRCULATION
 				@kingdom_empty_shop = KingdomEmptyShop.new
 				@kingdom_empty_shop.kingdom_id = session[:kingdom][:id]
