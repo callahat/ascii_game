@@ -93,20 +93,20 @@ class NpcTest < ActiveSupport::TestCase
 		@pc.update_attribute(:gold, 150)
 		@item1 = Item.find_by_name("Item1")
 		@item2 = Item.find_by_name("Item2")
-		assert_difference '@npc2.gold', +0 do
+		assert_difference '@npc.gold', +0 do
 			assert_difference '@pc.gold', +0 do
 				assert_difference '@pc.items.find(:first, :conditions => {:item_id => 1}).quantity', +0 do
-					res, msg = @npc2.manufacture(@pc, -1)
+					res, msg = @npc.manufacture(@pc, -1)
 					assert !res
 					assert msg =~ /cannot make that/
 				end
 			end
 		end
 		
-		assert_difference '@npc2.gold', +0 do
+		assert_difference '@npc.gold', +0 do
 			assert_difference '@pc.gold', +0 do
 				assert_difference '@pc.items.find(:first, :conditions => {:item_id => 1}).quantity', +0 do
-					res, msg = @npc2.manufacture(@pc, @item2.id)
+					res, msg = @npc.manufacture(@pc, @item2.id)
 					assert !res
 					assert msg =~ /cannot make #{@item2.name}/, msg
 				end
@@ -114,10 +114,10 @@ class NpcTest < ActiveSupport::TestCase
 		end
 		
 		@pc.update_attribute(:gold, 0)
-		assert_difference '@npc2.gold', +0 do
+		assert_difference '@npc.gold', +0 do
 			assert_difference '@pc.gold', +0 do
 				assert_difference '@pc.items.find(:first, :conditions => {:item_id => 1}).quantity', +0 do
-					res, msg = @npc2.manufacture(@pc, @item1.id)
+					res, msg = @npc.manufacture(@pc, @item1.id)
 					assert !res
 					assert msg =~ /Insufficient gold/
 				end
@@ -126,31 +126,31 @@ class NpcTest < ActiveSupport::TestCase
 		
 		@pc.update_attribute(:gold, 500)
 		
-		npc_orig_gold = @npc2.gold
+		npc_orig_gold = @npc.gold
 		pc_orig_gold = @pc.gold
-		orig_kingdom_gold = @npc2.kingdom.gold
-		assert_difference '@npc2.gold', +50 do
+		orig_kingdom_gold = @npc.kingdom.gold
+		assert_difference '@npc.gold', +50 do
 			assert_difference '@pc.items.find(:first, :conditions => {:item_id => 1}).quantity', +1 do
-				res, msg = @npc2.manufacture(@pc, @item1.id)
+				res, msg = @npc.manufacture(@pc, @item1.id)
 				assert res
 				assert msg =~ /Bought/
 			end
 		end
 		assert pc_orig_gold - @pc.gold >= 50
-		assert (orig_kingdom_gold + pc_orig_gold - @pc.gold - 50) == @npc2.kingdom.gold
+		assert (orig_kingdom_gold + pc_orig_gold - @pc.gold - 50) == @npc.kingdom.gold
 		
 		@pc.items.find(:first, :conditions => {:item_id => 1}).destroy
 		
-		npc_orig_gold = @npc2.gold
+		npc_orig_gold = @npc.gold
 		pc_orig_gold = @pc.gold
-		orig_kingdom_gold = @npc2.kingdom.gold
-		assert_difference '@npc2.gold', +50 do
-			res, msg = @npc2.manufacture(@pc, @item1.id)
+		orig_kingdom_gold = @npc.kingdom.gold
+		assert_difference '@npc.gold', +50 do
+			res, msg = @npc.manufacture(@pc, @item1.id)
 			assert res
 			assert msg =~ /Bought/
 		end
 		assert pc_orig_gold - @pc.gold >= 50
-		assert (orig_kingdom_gold + pc_orig_gold - @pc.gold - 50) == @npc2.kingdom.gold
+		assert (orig_kingdom_gold + pc_orig_gold - @pc.gold - 50) == @npc.kingdom.gold
 		assert @pc.items.exists?(:item_id => 1)
 		assert @pc.items.find(:first, :conditions => {:item_id => 1}).quantity == 1
 	end

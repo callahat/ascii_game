@@ -95,3 +95,16 @@ fe_old_guy2:
   chance: 100
   priority: 1
   choice: false
+
+fe_npc_healer:
+  feature: healer_npc
+  event: npc_event_healer
+  chance: 100
+  priority: 1
+  choice: true
+fe_npc_multiclass:
+  feature: multiclass_npc
+  event: npc_event_multiclass
+  chance: 100
+  priority: 1
+  choice: true

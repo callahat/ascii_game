@@ -35,6 +35,19 @@ ActionController::Routing::Routes.draw do |map|
 	map.do_complete_quest		'game/quests/do_complete',	:controller => 'game/quests', :action => 'do_complete'
 	map.do_reward_quest			'game/quests/do_reward',		:controller => 'game/quests', :action => 'do_reward'
 
+	#NpcController
+	map.npc_index						'game/npc',									:controller => 'game/npc', :action => 'npc'
+	map.npc_smithy					'game/npc/smithy',					:controller => 'game/npc', :action => 'smithy'
+	map.npc_do_buy_new			'game/npc/do_buy_new',			:controller => 'game/npc', :action => 'do_buy_new'
+	map.npc_heal						'game/npc/heal',						:controller => 'game/npc', :action => 'heal'
+	map.npc_do_heal					'game/npc/do_heal',					:controller => 'game/npc', :action => 'do_heal'
+	map.npc_train						'game/npc/train',						:controller => 'game/npc', :action => 'train'
+	map.npc_do_train				'game/npc/do_train',				:controller => 'game/npc', :action => 'do_train'
+	map.npc_buy							'game/npc/buy',							:controller => 'game/npc', :action => 'buy'
+	map.npc_do_buy					'game/npc/do_buy',					:controller => 'game/npc', :action => 'do_buy'
+	map.npc_sell						'game/npc/sell',						:controller => 'game/npc', :action => 'sell'
+	map.npc_do_sell					'game/npc/do_sell',					:controller => 'game/npc', :action => 'do_sell'
+	
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'

@@ -45,7 +45,7 @@ class Game::QuestsController < ApplicationController
 	end
 protected
 	def setup_quest
-		redirect_to game_feature_url() unless @pc.current_event.event.class == EventQuest
+		redirect_to game_feature_url() unless @pc.current_event && @pc.current_event.event.class == EventQuest
 		@event = @pc.current_event.event
 		@quest = @event.quest
 		if @quest.quest_id && 

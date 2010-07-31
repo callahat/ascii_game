@@ -7,7 +7,7 @@ class Game::NpcController < ApplicationController
 	layout 'main'
 
 	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-	verify :method => :post, :only => [ :do_heal, :do_buy, :do_train, :do_buy_new, :do_sell ], :redirect_to => { :action => :npc }
+	verify :method => :post, :only => [ :do_train ], :redirect_to => { :action => :npc }
 	
 	def npc
 		Illness.spread(@pc, @npc, SpecialCode.get_code('trans_method','air'))
@@ -15,7 +15,7 @@ class Game::NpcController < ApplicationController
 	end
 	
 	def smithy
-		redirect_to(:action => 'npc') and return() unless @can_make = @npc.npc_blacksmith_items
+		redirect_to npc_index_url() and return() unless (@can_make = @npc.npc_blacksmith_items).size > 0
 	end
 	
 	def do_buy_new
@@ -24,12 +24,12 @@ class Game::NpcController < ApplicationController
 		res, msg = @npc.manufacture(@pc, params[:iid])
 		flash[:notice] = msg + ( flash[:notice] ? "<br/>" + flash[:notice] : "" )
 		
-		redirect_to :action => 'smithy'
+		redirect_to npc_smithy_url()
 	end
 
 	def heal
-		@npc_healer_skills = @npc.npc_merchant_detail.healer_skills 
-		
+		redirect_to npc_index_url() and return() unless (@npc_healer_skills = @npc.npc_merchant_detail.healer_skills).size > 0
+
 		@diseases_cured = @npc_healer_skills.collect{|cure| cure.disease }.compact
 
 		@max_HP_heal = @npc.max_heal(@pc, "HP")
@@ -42,7 +42,7 @@ class Game::NpcController < ApplicationController
 		heal
 
 		if params[:did]
-			res, @msg = @npc.cure_disease(@pc, params[:did])
+			res, @msg = @npc.cure_disease(@pc, params[:did].to_i)
 		elsif params[:HP]
 			res, @msg = @npc.heal(@pc, "HP")
 		elsif params[:MP]
@@ -52,69 +52,60 @@ class Game::NpcController < ApplicationController
 		end
 		flash[:notice] = @msg + ( flash[:notice] ? "<br/>" + flash[:notice] : "" )
 
-		redirect_to :action => 'heal'
+		redirect_to npc_heal_url()
 	end
  
 	def train
-		@max_skill = @npc.npc_merchant_detail.max_skill_taught
+		redirect_to npc_index_url() and return() unless (@max_skill = @npc.npc_merchant_detail.max_skill_taught) > 0
 		@atrib = Stat.new(params[:atrib])
 		
-		@cost_per_pt = (@pclevel * 10 * (1 + @npc.kingdom.tax_rate / 100.0)).to_i
-		@flag = false
+		@cost_per_pt = (@pc.level * 10 * (1 + @npc.kingdom.tax_rate / 100.0)).to_i
 	end
 	
 	def do_train
 		train
-		res, msg = @npc.train(@pc, @attrib)
+		res, msg = @npc.train(@pc, @atrib)
+		
 		flash[:notice] = msg + ( flash[:notice] ? "<br/>" + flash[:notice] : "" )
 		if res
-			redirect_to :action => 'train'
+			redirect_to npc_train_url()
 		else
 			render :action => 'train'
 		end
 	end
 	
 	def buy
+		redirect_to npc_index_url() and return() unless @npc.npc_merchant_detail.consignor
 		@stocks = NpcStock.get_page(params[:page], @npc.id)
 	end
 	
 	def do_buy
 		res, msg = @npc.sell_used_to(@pc, params[:id])
 		flash[:notice] = msg + ( flash[:notice] ? "<br/>" + flash[:notice] : "" )
-		redirect_to :action => 'buy'
+		redirect_to npc_buy_url()
 	end
 	
 	def sell
+		redirect_to npc_index_url() and return() unless @npc.npc_merchant_detail.consignor
 		@player_character_items = PlayerCharacterItem.get_page(params[:page], @pc.id)
 	end
 	
 	def do_sell
-		@player_character_item = @pc.items.find(:first, :conditions => ['id = ?', params[:id]])
-	
-		if @player_character_item && PlayerCharacterItem.update_inventory(@pc.id,@player_character_item.item_id,-1)
-			NpcStock.update_inventory(@npc.id,@player_character_item.item_id,1)
-			@cost = (@player_character_item.item.price / 6.0).ceil
-			flash[:notice] = "Sold a " + @player_character_item.item.name + " for " + @cost.to_s + " gold."
-		else
-			flash[:notice] = "You do not have a " + @player_character_item.item.name + " to sell."
-		end
-		
-		#pay player
-		TxWrapper.give(@pc, :gold, @cost)
-		
-		redirect_to :action => 'sell'
+		res, msg = @npc.buy_from(@pc, params[:id])
+		flash[:notice] = msg + ( flash[:notice] ? "<br/>" + flash[:notice] : "" )
+		redirect_to npc_sell_url()
 	end
 	
 protected
 	def setup_npc_vars
-		redirect_to game_feature_url() unless @pc.current_event.event.class == EventNpc
+		redirect_to game_feature_url() unless @pc.current_event && @pc.current_event.event.class == EventNpc
 		@event = @pc.current_event.event
 		@npc = @event.npc
 		
 		unless @npc.health.HP > 0 && @npc.health.wellness != SpecialCode.get_code('wellness','dead')
 			@pc.current_event.destroy
 			flash[:notice] = @npc.name + " has shuffled from this mortal coil"
-			redirect_to :controller => '/game', :action => 'main'
+			redirect_to game_main_url()
 		end
 	end
 

@@ -1,27 +1,17 @@
 <p>Clinic</p>
-<% if @pc.illnesses.size > 0 || @max_HP_heal || @max_MP_heal %>
+<% if (@dcr = disease_cures(@pc, @diseases_cured, @npc.kingdom.tax_rate / 100.0)) != "" || (@max_HP_heal + @max_MP_heal > 0) %>
 <table>
-<% for cure in @diseases_cured do %>
-  <% if @pc.illnesses.exists?(:disease_id => cure.disease_id) %>
-  <tr>
-    <td>
-      <%= link_to 'Cure ' + cure.disease.name, { :action => 'do_heal', :did => cure.disease_id } , :method => :post %>
-    </td>
-    <td>
-       for <%= (Disease.abs_cost(cure.disease)* (1 + @npc.kingdom.tax_rate / 100.0)).to_i.to_s %> gold
-    </td>
-  </tr>
-  <% end %>
-<% end %>
-<% if @max_HP_heal && @max_HP_heal_cost %>
+<%=  %>
+
+<% if @max_HP_heal > 0 %>
 <tr><td><%= link_to 'Heal ' + @max_HP_heal.to_s + ' HP', { :action => 'do_heal', :HP => true } , :method => :post %></td><td> for <%= @max_HP_heal_cost %> gold</td></tr>
 <% end %>
-<% if @max_MP_heal && @max_MP_heal_cost %>
+<% if @max_MP_heal > 0 %>
 <tr><td><%= link_to 'Heal ' + @max_MP_heal.to_s + ' MP', { :action => 'do_heal', :MP => true } , :method => :post %></td><td> for <%= @max_MP_heal_cost %> gold</td></tr>
 <% end %>
 </table>
 <% else %>
-<p>You are in perfect health</p>
+<p>Nothing more can be done for you here.</p>
 <% end %>
 
 <%= link_to 'Back', :action => 'npc' %>

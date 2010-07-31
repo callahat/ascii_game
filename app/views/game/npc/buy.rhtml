@@ -1,14 +1,17 @@
 <table>
-<tr><td>Item</td><td>Price</td></tr>
+<tr><td>Avail.</td><td>Item</td><td>Price Each</td></tr>
 <% for stock in @stocks do %>
-  <tr>
-    <td>
-      <%= link_to stock.item.name, { :action => 'do_buy', :id => stock.id } , :method => :post %>
-    </td>
-    <td>
-      <%= ((stock.item.price / 2) * (1 + @npc.kingdom.tax_rate / 100.0)).to_i.to_s %>
-    </td>
-  </tr>
+	<tr>
+		<td>
+			<%= stock.quantity %>x
+		</td>
+		<td>
+			<%= link_to stock.item.name, { :action => 'do_buy', :id => stock.item_id } , :method => :post %>
+		</td>
+		<td>
+			<%= ((stock.item.price / 2) * (1 + @npc.kingdom.tax_rate / 100.0)).to_i.to_s %>
+		</td>
+	</tr>
 <% end %>
 </table>
 

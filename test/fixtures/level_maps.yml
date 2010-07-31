@@ -30,3 +30,13 @@ test_level_map_2_0:
   ypos: 0
   feature: old_guy_2
 
+test_level_map_0_1:
+  level: first_kingdom_level_one
+  xpos: 0
+  ypos: 1
+  feature: healer_npc
+test_level_map_2_1:
+  level: first_kingdom_level_one
+  xpos: 2
+  ypos: 1
+  feature: multiclass_npc

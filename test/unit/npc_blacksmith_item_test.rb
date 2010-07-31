@@ -45,8 +45,8 @@ class NpcBlacksmithItemTest < ActiveSupport::TestCase
 		assert msg_array = NpcBlacksmithItem.gen_blacksmith_items(@npc, 0, false)
 		@npc.reload
 		assert msg_array.collect{|a| a unless a =~ /Failed/}.compact.size == @npc.npc_blacksmith_items.size - foo
-		assert foo < @npc.npc_blacksmith_items.size
-		assert bar < Item.count
+		assert foo == @npc.npc_blacksmith_items.size, msg_array
+		assert bar == Item.count
 		
 		@npc.npc_blacksmith_items.destroy_all
 		
@@ -74,8 +74,8 @@ class NpcBlacksmithItemTest < ActiveSupport::TestCase
 		assert msg_array = NpcBlacksmithItem.gen_blacksmith_items(@npc2, 0, false)
 		@npc2.reload
 		assert msg_array.collect{|a| a unless a =~ /Failed/}.compact.size == @npc2.npc_blacksmith_items.size - foo
-		assert foo == @npc2.npc_blacksmith_items.size
-		assert bar == Item.count
+		assert foo < @npc2.npc_blacksmith_items.size
+		assert bar < Item.count
 		
 		@npc.npc_blacksmith_items.destroy_all
 		
