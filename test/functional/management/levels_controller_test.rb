@@ -42,19 +42,6 @@ class Management::LevelsControllerTest < ActionController::TestCase
 	end
 	
 	test "mgmt level controller edit and update" do
-		# get 'edit', {:id => @f.id}, session
-		# assert_response :success
-		
-		# f_attrs = @f.attributes
-		# f_attrs[:num_occupants] = 100
-		# post 'update', {:id => @f.id, :feature => f_attrs, :image => @f.image}, session
-		# assert_response :redirect
-		# assert_redirected_to :controller => 'management/features', :action => 'show', :id => @f.id
-		# assert flash[:notice] =~ /updated/
-		
-		# @new_f_image = Feature.find(@f.id).image
-		# assert @new_f_image.image_text.split("\n").size == 10
-		# @new_f_image.image_text.split("\n").each{|r|
-			# assert r.length == 15 }
+		# Add later
 	end
 end

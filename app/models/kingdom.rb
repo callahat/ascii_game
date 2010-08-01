@@ -21,6 +21,12 @@ class Kingdom < ActiveRecord::Base
 	has_many :merchants, :class_name => 'NpcMerchant', :include => :health,
 										:conditions => ['is_hired = true AND healths.wellness != ?',
 										SpecialCode.get_code('wellness','dead')]
+	has_many :hireable_guards, :class_name => 'NpcGuard', :include => :health,
+										:conditions => ['is_hired = false AND healths.wellness != ?',
+										 SpecialCode.get_code('wellness','dead')]
+	has_many :hireable_merchants, :class_name => 'NpcMerchant', :include => :health,
+										:conditions => ['is_hired = false AND healths.wellness != ?',
+										SpecialCode.get_code('wellness','dead')]
 	has_many :live_npcs, :class_name => 'Npc', :include => :health,
 											 :conditions => ['is_hired = true AND healths.wellness != ?',
 											 SpecialCode.get_code('wellness','dead')], :order => 'name'

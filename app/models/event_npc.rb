@@ -15,4 +15,13 @@ class EventNpc < EventLifeNeutral
 			"Chat with " + npc.name
 		end
 	end
+	
+	def self.generate(npc_id, lm_id)
+		self.sys_gen!(
+				:event_rep_type => SpecialCode.get_code('event_rep_type','unlimited'),
+				:name => "\nSYSTEM GENERATED",
+				:thing_id => npc_id,
+				:flex => lm_id
+			)
+	end
 end

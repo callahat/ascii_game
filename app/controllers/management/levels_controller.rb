@@ -1,8 +1,5 @@
 class Management::LevelsController < ManagementController
-	before_filter :setup_kingdom_vars
 	before_filter :setup_level_variable, :except => :index
-
-	layout 'main'
 
 	def index
 		@levels = Level.get_page(params[:page], @kingdom.id)

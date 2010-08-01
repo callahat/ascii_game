@@ -10,7 +10,7 @@ class Npc < ActiveRecord::Base
 	has_one :health,		:foreign_key => 'owner_id', :class_name => 'HealthNpc'
 	has_one :stat,			:foreign_key => 'owner_id', :class_name => 'StatNpc'
 
-	has_many :event_npcs
+	has_many :event_npcs, :foreign_key => 'thing_id'
 	has_many :items
 	has_many :illnesses,  :foreign_key => 'owner_id', :class_name => 'NpcDisease'
 
