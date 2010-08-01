@@ -48,6 +48,15 @@ ActionController::Routing::Routes.draw do |map|
 	map.npc_sell						'game/npc/sell',						:controller => 'game/npc', :action => 'sell'
 	map.npc_do_sell					'game/npc/do_sell',					:controller => 'game/npc', :action => 'do_sell'
 	
+	#ManagementController
+	map.mgmt_levels					'management/levels',						:controller => 'management/levels', :action => 'index'
+	map.mgmt_levels_show		'management/levels/show/:id',		:controller => 'management/levels', :action => 'show'
+	map.mgmt_levels_new			'management/levels/new',				:controller => 'management/levels', :action => 'new'
+	map.mgmt_levels_create	'management/levels/create',			:controller => 'management/levels', :action => 'create'
+	map.mgmt_levels_edit		'management/levels/edit/:id',		:controller => 'management/levels', :action => 'edit'
+	map.mgmt_levels_update	'management/levels/update/:id',	:controller => 'management/levels', :action => 'update'
+	
+	
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'

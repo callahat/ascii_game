@@ -47,7 +47,7 @@ class Game::NpcControllerTest < ActionController::TestCase
 		
 		get 'heal', {}, session
 		assert_response :success
-		assert @response.body =~ /perfect health/
+		assert @response.body =~ /Nothing more can be done/
 	end
 	
 	test "healer npc do heal" do
@@ -107,7 +107,7 @@ class Game::NpcControllerTest < ActionController::TestCase
 		
 		get 'heal', {}, session
 		assert_response :success
-		assert @response.body =~ /perfect health/
+		assert @response.body =~ /Nothing more can be done/
 	end
 	
 	test "multiclass npc do buy new" do

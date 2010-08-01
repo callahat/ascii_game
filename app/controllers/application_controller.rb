@@ -100,18 +100,6 @@ protected
 	#	print "\n" + crap.to_s
 	#end
 
-	#Delete the event for an NPC that is either fired or is killed
-	def destroy_npc_event(npc)
-		#delete that event
-		@event_npc = npc.event_npcs.last
-		@event = @event_npc.event
-		@feature_event = @event.feature_events.last #dunno if this would be the rigth oen. have to test.
-		
-		@event_npc.destroy
-		@feature_event.destroy
-		#@event.destroy		#This cannot be destroyed, there might be a linked done event.
-	end
-	
 	def create_peasant_feature_event(feature)
 		#MAKE EVENT	
 		@event = Event.new
@@ -154,22 +142,4 @@ protected
 		
 		@feature_event.save
 	end
-	
-	#def minimum(x,y)
-	#	y > x ? x : y
-	#end
-	#
-	#def maximum(x,y)
-	#	x > y ? x : y
-	#end
-	
-	#def gain_xp(who,xp)
-	#	if who.class != Creature #Creatures dont gain XP
-	#		who.transaction do
-	#			who.lock!
-	#			who.experience += xp
-	#			who.save!
-	#		end
-	#	end
-	#end
 end
