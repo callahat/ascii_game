@@ -2,7 +2,7 @@
 <p><b>Assign Storefront:</b><br/></p>
 <%= radio_button 'level_map', 'id', '' %>Random assignment<br/>
 <% for shop in @shops %>
-<%= radio_button 'level_map', 'id', shop.id %>Level: <%=h shop.level_map.level.level %>, at <%=h shop.level_map.ypos %> by <%=h shop.level_map.xpos %><br/>
+<%= radio_button 'level_map', 'id', shop.id %>Level: <%=h shop.level_map.level.level %>, at <%=h shop.level_map.ypos %> by <%=h shop.level_map.xpos %> (<%= shop.level_map.feature.name %>)<br/>
 <% end %>
   <%= submit_tag 'Assign' %>
 <% end %>
