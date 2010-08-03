@@ -9,10 +9,17 @@
 </head>
 <body>
 
-<table>
- <tr>
-  <td valign=top>
-   <table width=100>
+<div id="header">
+	<!-- 140px -->
+</div>
+
+<div id="mid">
+	<div id="center_col">
+		<p style="color: green"><%= flash[:notice] %></p>
+		<%= yield  %>
+	</div>
+	<div id="left_col" class="side_col">
+		   <table width=100>
     <tr><td><%= link_to 'Attack Spells', :controller => 'attack_spells' %></td></tr>
     <tr><td><%= link_to 'Base Items', :controller => 'base_items' %></td></tr>
     <tr><td><%= link_to 'Blacksmith Skills', :controller => 'blacksmith_skills' %></td></tr>
@@ -34,13 +41,17 @@
     <tr><td><%= link_to 'NM Button', :controller => 'maintain' %></td></tr>
     <tr><td><%= link_to 'Back to Game', :controller => '/home' %></td></tr>
    </table>
-  </td>
-  <td valign=top>
-   <p style="color: green"><%= flash[:notice] %></p>
-   <%= yield  %>
-  </td>
- </tr>
-</table>
+	</div>
+	<div id="right_col" class="side_col">
+		<div style="height:200px;color:green;background-color:#EDFCED; padding:3px;"><%= flash[:notice] %></div>
+		<%= google_ad() %>
+	</div>
+</div>
+
+<div id="footer">
+	Footer
+</div>
+
 
 </body>
 </html>

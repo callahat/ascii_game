@@ -3,6 +3,19 @@ class Stat < ActiveRecord::Base
 	
 	validates_presence_of :str, :dex, :con, :int, :mag, :dfn, :dam
 	
+	@@humanize = {
+		:str => "strength",
+		:dex => "dexterity",
+		:con => "constitution",
+		:int => "intelligence",
+		:mag => "magic",
+		:dfn => "defense",
+		:dam => "damage"}
+	
+	def self.human_attr(attr)
+		@@humanize[attr]
+	end
+	
 	def save_level_zero
 		( valid_for_level_zero ? save : false )
 	end

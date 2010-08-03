@@ -21,8 +21,8 @@ class MaintenanceTest < ActiveSupport::TestCase
 		@kingdom.npcs.destroy_all
 	
 		assert @kingdom.npcs.size == 0
-		Maintenance.npc_solicitation(@kingdom,SpecialCode.get_code('npc_division','merchant'))
-		Maintenance.npc_solicitation(@kingdom,SpecialCode.get_code('npc_division','guard'))
+		Maintenance.npc_solicitation(@kingdom,NpcMerchant)
+		Maintenance.npc_solicitation(@kingdom,NpcGuard)
 		@kingdom.npcs.reload
 		assert @kingdom.npcs.size > 0
 		assert Maintenance.report.size >= 0

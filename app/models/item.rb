@@ -18,6 +18,14 @@ class Item < ActiveRecord::Base
 	
 	validates_presence_of :name,:min_level,:base_item_id,:equip_loc
 	
+	def used_price
+		price / 2
+	end
+	
+	def resell_value
+		(price / 6.0).ceil
+	end
+	
 	#Pagination related stuff
 	def self.per_page
 		10

@@ -16,7 +16,7 @@ class Disease < ActiveRecord::Base
 
 
 	def self.abs_cost(d)
-		return ((d.stat.abs_sum_points + d.HP_per_turn.abs + d.MP_per_turn.abs) * (d.virility.abs + 1)).to_i
+		return ((d.stat.abs_sum_points + d.HP_per_turn.to_i.abs + d.MP_per_turn.to_i.abs) * (d.virility.to_i.abs + 1)).to_i
 	end
 
 	#Pagination related stuff

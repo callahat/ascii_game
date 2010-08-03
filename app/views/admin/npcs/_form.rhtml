@@ -1,48 +1,53 @@
 <%= error_messages_for 'npc','health','stat' %>
 
 <!--[form:npc]-->
-<p><label for="npc_name">Name</label><br/>
-<%= text_field 'npc', 'name'  %></p>
+<ul class="form">
+<li><label for="npc_name">Name</label>
+<%= text_field 'npc', 'name' %></li>
 
-<p><label for="health_wellness">Wellness</label><br/>
-<%= text_field 'health', 'wellness'  %></p>
+<li><label for="health_wellness">Wellness</label>
+<%= select 'health', 'wellness', SPEC_CODET['wellness'] %></li>
 
-<p><label for="npc_npc_division">Npc division</label><br/>
-<%= select 'npc', 'npc_division', @divisions  %></p>
+<li><label for="npc_kind">Npc division</label>
+<% if !@npc.new_record? %>
+<%= @npc.kind[3..-1] %>
+<% else %>
+<%= select 'npc', 'kind', @divisions %>
+<% end %></li>
 
-<p><label for="health_base_HP">Base hp</label><br/>
-<%= text_field 'health', 'base_HP'  %></p>
+<li><label for="health_base_HP">Base hp</label>
+<%= text_field 'health', 'base_HP' %></li>
 
-<p><label for="health_HP">Hp</label><br/>
-<%= text_field 'health', 'HP'  %></p>
+<li><label for="health_HP">Hp</label>
+<%= text_field 'health', 'HP' %></li>
 
-<p><label for="stat_str">Str</label><br/>
-<%= text_field 'stat', 'str'  %></p>
+<li><label for="stat_str">Str</label>
+<%= text_field 'stat', 'str' %></li>
 
-<p><label for="stat_dex">Dex</label><br/>
-<%= text_field 'stat', 'dex'  %></p>
+<li><label for="stat_dex">Dex</label>
+<%= text_field 'stat', 'dex' %></li>
 
-<p><label for="stat_con">Con</label><br/>
-<%= text_field 'stat', 'con'  %></p>
+<li><label for="stat_con">Con</label>
+<%= text_field 'stat', 'con' %></li>
 
-<p><label for="stat_int">Int</label><br/>
-<%= text_field 'stat', 'int'  %></p>
+<li><label for="stat_int">Int</label>
+<%= text_field 'stat', 'int' %></li>
 
-<p><label for="stat_mag">Mag</label><br/>
-<%= text_field 'stat', 'mag'  %></p>
+<li><label for="stat_mag">Mag</label>
+<%= text_field 'stat', 'mag' %></li>
 
-<p><label for="stat_dam">Dam</label><br/>
-<%= text_field 'stat', 'dam'  %></p>
+<li><label for="stat_dam">Dam</label>
+<%= text_field 'stat', 'dam' %></li>
 
-<p><label for="stat_def">Dfn</label><br/>
-<%= text_field 'stat', 'dfn'  %></p>
+<li><label for="stat_def">Dfn</label>
+<%= text_field 'stat', 'dfn' %></li>
 
-<p><label for="npc_gold">Gold</label><br/>
-<%= text_field 'npc', 'gold'  %></p>
+<li><label for="npc_gold">Gold</label>
+<%= text_field 'npc', 'gold' %></li>
 
-<p><label for="npc_experience">Experience</label><br/>
-<%= text_field 'npc', 'experience'  %></p>
+<li><label for="npc_experience">Experience</label>
+<%= text_field 'npc', 'experience' %></li>
 
-<p><label for="npc_is_hired?">Hired?</label><br/>
-<%= check_box 'npc','is_hired' %></p>
+<li><label for="npc_is_hired?">Hired?</label>
+<%= check_box 'npc','is_hired' %></li>
 <!--[eoform:npc]-->

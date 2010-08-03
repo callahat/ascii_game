@@ -23,21 +23,18 @@ class Maintenance < ActiveRecord::Base
 		@unhired_guards = kingdom.guards.find(:all, :conditions => ['is_hired = 0'])
 		
 		if @unhired_merchants.size < kingdom.kingdom_empty_shops.size * 1.5
-			npc_solicitation(kingdom,SpecialCode.get_code('npc_division','merchant'))
+			npc_solicitation(kingdom, NpcMerchant)
 		end
-		npc_solicitation(kingdom,SpecialCode.get_code('npc_division','guard')) if kingdom.player_character
+		npc_solicitation(kingdom, NpcGuard) if kingdom.player_character
 	end
 	
-	def self.npc_solicitation(kingdom,npc_division)
+	def self.npc_solicitation(kingdom, npc_class)
 		if @unhired_merchants.size < kingdom.player_character.level * 2
-			@npc_from_pool = Npc.find(:first,:conditions => ['kingdom_id is NULL AND npc_division = ?', npc_division],
-															:offset => Npc.count(:conditions => ['kingdom_id is NULL AND npc_division = ?', npc_division]))
+			@npc_from_pool = npc_class.find(:first, :conditions => ['kingdom_id is NULL'], :order => 'rand()')
 			if @npc_from_pool.nil? || rand > 0.75
-				if npc_division == SpecialCode.get_code('npc_division','guard')
-					@new_guy = Npc.gen_stock_guard(kingdom.id)
-				elsif npc_division == SpecialCode.get_code('npc_division','merchant')
-					@new_guy = Npc.gen_stock_merchant(kingdom.id)
-				end
+				
+				@new_guy = npc_class.generate(kingdom.id)
+				
 				@@report << @new_guy.name + " entered the job market"
 			else
 				@npc_from_pool.update_attribute(:kingdom_id, kingdom.id)
@@ -82,12 +79,12 @@ class Maintenance < ActiveRecord::Base
 			if npc.health.wellness == SpecialCode.get_code('wellness','dead')
 				@@report << "This is a dead NPC :'("
 			else
-				if npc.npc_merchant
-					if npc.npc_merchant.healing_sales.to_i > 0
+				if npc.npc_merchant_detail
+					if npc.npc_merchant_detail.healing_sales.to_i > 0
 						#can any pandemics be cured?
 						for pandemic in kingdom.pandemics
 							if HealerSkill.find(:first, :conditions => ['disease_id = ? AND min_sales <= ?',
-																	pandemic.disease_id, npc.npc_merchant.healing_sales]) &&
+																	pandemic.disease_id, npc.npc_merchant_detail.healing_sales]) &&
 									rand(pandemic.disease.virility) < npc.int / 10	#then NPC has cured the pandemic
 								text = npc.name + " has discovered a cure for the " + pandemic.disease.name +
 											 " pandemic which had been tormenting the kingdom for " + pandemic.day + " days."
@@ -96,8 +93,8 @@ class Maintenance < ActiveRecord::Base
 							end
 						end
 					end
-					if npc.npc_merchant.blacksmith_sales.to_i > 0
-						NpcBlacksmithItem.gen_blacksmith_items(npc, npc.npc_merchant.blacksmith_sales, rand(1))
+					if npc.npc_merchant_detail.blacksmith_sales.to_i > 0
+						NpcBlacksmithItem.gen_blacksmith_items(npc, npc.npc_merchant_detail.blacksmith_sales, rand(1))
 					end
 					#Nothing needs done if npc is trainer
 				end

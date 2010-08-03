@@ -1,14 +1,17 @@
 <table>
-<tr><td>Item</td><td>Sells For</td></tr>
+<tr><td></td><td>Item</td><td>One Sells For</td></tr>
 <% for junk in @player_character_items do %>
-  <tr>
-    <td>
-      <%= link_to junk.item.name, { :action => 'do_sell', :id => junk.id } , :method => :post %>
-    </td>
-    <td>
-      <%= (junk.item.price / 6.0).ceil.to_s %>
-    </td>
-  </tr>
+	<tr>
+		<td>
+			<%= junk.quantity %>x
+		</td>
+		<td>
+			<%= link_to junk.item.name, { :action => 'do_sell', :id => junk.item_id } , :method => :post %>
+		</td>
+		<td>
+			<%= (junk.item.price / 6.0).ceil.to_s %>
+		</td>
+	</tr>
 <% end %>
 </table>
 

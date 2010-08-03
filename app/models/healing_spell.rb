@@ -40,7 +40,7 @@ class HealingSpell < ActiveRecord::Base
 			receiver.health.save!
 		end
 		
-		unless @disease && Illness.cure(@disease, receiver)
+		unless @disease && Illness.cure(receiver, @disease)
 			@disease = nil
 		end
 		#return amount healed and disease cured
@@ -54,9 +54,9 @@ class HealingSpell < ActiveRecord::Base
 	
 	def self.get_page(page, l = nil)
 		if l.nil?
-		paginate(:page => page, :order => 'min_level,name' )
-	else
+			paginate(:page => page, :order => 'min_level,name' )
+		else
 			paginate(:page => page, :conditions => ['min_level <= ?', l], :order => 'min_level,name' )
-	end
+		end
 	end
 end

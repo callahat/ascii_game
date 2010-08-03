@@ -174,3 +174,22 @@ quest_event_two:
   armed: 1
   cost: 500
   quest: quest_two
+
+npc_event_healer:
+  kingdom_id: 1
+  player: test_player_one
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Healer NPC"
+  kind: "EventNpc"
+  armed: 1
+  cost: 500
+  thing_id: 2
+npc_event_multiclass:
+  kingdom_id: 1
+  player: test_player_one
+  event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
+  name: "Multiclass NPC"
+  kind: "EventNpc"
+  armed: 1
+  cost: 500
+  thing_id: 1

@@ -1,1 +1,29 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+base_item_one:
+  name: "knife"
+  description: "regular knife"
+  equip_loc: <%= SpecialCode.get_code('equip_loc', 'hand') %>
+  price: 50
+  race_body_type: <%= SpecialCode.get_code('race_body_type','human') %>
+base_item_one_b:
+  name: "mace"
+  description: "regular mace"
+  equip_loc: <%= SpecialCode.get_code('equip_loc', 'hand') %>
+  price: 50
+  race_body_type: <%= SpecialCode.get_code('race_body_type','human') %>
+base_item_one_c:
+  name: "hatchet"
+  description: "regular hatchet"
+  equip_loc: <%= SpecialCode.get_code('equip_loc', 'hand') %>
+  price: 50
+  race_body_type: <%= SpecialCode.get_code('race_body_type','human') %>
+base_item_two:
+  name: "uni knife"
+  description: "universal knife, can be used by any race"
+  equip_loc: <%= SpecialCode.get_code('equip_loc', 'hand') %>
+  price: 100
+base_item_three:
+  name: "swerd"
+  description: "like a sword, but spelled cooler"
+  equip_loc: <%= SpecialCode.get_code('equip_loc', 'hand') %>
+  price: 2500

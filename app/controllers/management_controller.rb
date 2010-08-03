@@ -1,18 +1,19 @@
 class ManagementController < ApplicationController
 	before_filter :authenticate
 	before_filter :king_filter
+	before_filter :setup_kingdom_vars, :except => ['main_index', 'choose_kingdom', 'select_kingdom']
 
 	layout 'main'
 	
 	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-	verify :method => :post, :only => [ :do_retire ],				 :redirect_to => { :action => :index }
+	verify :method => :post, :only => [ :do_retire ],				 :redirect_to => { :action => :main_index }
 	
 	def choose_kingdom
 		session[:kingdom] = nil
-		redirect_to :action => 'index'
+		redirect_to :action => 'main_index'
 	end
 
-	def index
+	def main_index
 		if session[:kingdom].nil? || @pc.nil?
 			#code for regular menu to do things
 			#Have the player pick a kingdom to manage, they mgith have multiple
@@ -43,7 +44,7 @@ class ManagementController < ApplicationController
 		else
 			flash[:notice] = 'You are not the king in the kingdom submitted!'
 		end
-		redirect_to :action => 'index'
+		redirect_to :action => 'main_index'
 	end
 	
 	def retire
@@ -102,5 +103,10 @@ class ManagementController < ApplicationController
 			
 			redirect_to :controller => 'game'
 		end
+	end
+	
+protected
+	def setup_kingdom_vars
+		redirect_to :action => 'choose_kingdom' unless @kingdom = session[:kingdom]
 	end
 end

@@ -48,3 +48,9 @@ old_guy_1:
 old_guy_2:
   <<: *default_feature
   name: "Second Old Guy"
+healer_npc:
+  <<: *default_feature
+  name: "Healer"
+multiclass_npc:
+  <<: *default_feature
+  name: "Multiclass Npc"

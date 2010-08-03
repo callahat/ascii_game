@@ -217,8 +217,8 @@ class BattleTest < ActiveSupport::TestCase
 		#uh oh caught it
 		Illness.infect(@sick_npc, @fluid_disease)
 		assert @pc.illnesses.size == 0
-		Battle.spread_disease(battle.enemies[0], @pc, SpecialCode.get_code('trans_method','fluid'))
-		assert @pc.illnesses.size == 1
+		Battle.spread_disease(battle.merchants[0], @pc, SpecialCode.get_code('trans_method','fluid'))
+		assert @pc.illnesses.size == 1, @pc.illnesses.size
 		assert @pc.illnesses[0].disease == (@fluid_disease)
 	end
 	
@@ -587,7 +587,7 @@ class BattleTest < ActiveSupport::TestCase
 		assert @pc.log_quests.find_by_quest_id(@quest.id).kill_s_npcs.first.detail.to_i == @sick_npc.id
 		
 		battle.report = {}
-		assert battle.merchants.size == 1, battle.merchants.size
+		assert battle.merchants.size == 1, battle.merchants.collect{|bm| bm.special}
 		battle.phys_damage_enemies(@pc, battle.merchants)
 		assert battle.merchants.size == 0
 		assert @pc.log_quests.find_by_quest_id(@quest.id).kill_s_npcs.size == 0, @pc.log_quests.find_by_quest_id(@quest.id).kill_s_npcs.size
@@ -609,7 +609,7 @@ class BattleTest < ActiveSupport::TestCase
 		battle.enemies.reload
 		assert battle.enemies.size == 0, battle.enemies.size
 		assert @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.size == 1
-		assert @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.first.quantity == 4, @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.first.quantity
+		assert @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.first.quantity == 4, @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.first.quantity.to_s + " " + battle.report.inspect
 		assert battle.victory
 		
 		battle, msg = Battle.new_creature_battle(@pc, @peasants, 8, 8, @pc.present_kingdom)
@@ -639,7 +639,7 @@ class BattleTest < ActiveSupport::TestCase
 
 		assert @pc.nonplayer_character_killers.count(:conditions => ['npc_id = ?', @sick_npc.id]) == 0
 		battle.phys_damage_enemies(@pc, battle.merchants)
-		assert @pc.nonplayer_character_killers.count(:conditions => ['npc_id = ?', @sick_npc.id]) == 1
+		assert @pc.nonplayer_character_killers.count(:conditions => ['npc_id = ?', @sick_npc.id]) == 1, battle.merchants
 		
 		#PC
 		battle, msg = Battle.new_pc_battle(@pc, @sickpc)

@@ -126,8 +126,8 @@ class GameController < ApplicationController
 		elsif TxWrapper.take(@pc, :turns, 1)
 			Health.transaction do
 				@pc.health.lock!
-				@hp_gain = minimum((@pc.health.base_HP * (rand() /10.0 + 0.07)).to_i, @pc.health.base_HP - @pc.health.HP)
-				@mp_gain = minimum((@pc.health.base_MP * (rand() /10.0 + 0.03)).to_i, @pc.health.base_MP - @pc.health.MP)
+				@hp_gain = MiscMath.min((@pc.health.base_HP * (rand() /10.0 + 0.07)).to_i, @pc.health.base_HP - @pc.health.HP)
+				@mp_gain = MiscMath.min((@pc.health.base_MP * (rand() /10.0 + 0.03)).to_i, @pc.health.base_MP - @pc.health.MP)
 				@pc.health.HP += @hp_gain
 				@pc.health.MP += @mp_gain
 			

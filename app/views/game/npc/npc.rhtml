@@ -1,21 +1,21 @@
-<% if @npc.npc_division == SpecialCode.get_code('npc_division','merchant') %>
+<% if @npc.kind == "NpcMerchant" %>
 <p><%= @npc.name %>'s Workshop</p>
-  <% if @npc.npc_merchant.healing_sales %>
+  <% if @npc.npc_merchant_detail.healing_sales %>
     <p><%= link_to 'Recieve healing', :action => 'heal' %></p>
   <% end %>
-  <% if @npc.npc_merchant.trainer_sales %>
+  <% if @npc.npc_merchant_detail.trainer_sales %>
     <p><%= link_to 'Train', :action => 'train' %></p>
   <% end %>
-  <% if @npc.npc_merchant.blacksmith_sales %>
+  <% if @npc.npc_merchant_detail.blacksmith_sales %>
     <p><%= link_to 'Buy new items', :action => 'smithy' %></p>
   <% end %>
-  <% if @npc.npc_merchant.consignor == true %>
+  <% if @npc.npc_merchant_detail.consignor == true %>
       <p><%= link_to 'Buy used items', :action => 'buy' %></p>
     <p><%= link_to 'Sell items', :action => 'sell' %></p>
   <% end %>
-<% elsif @npc.npc_division == SpecialCode.get_code('npc_division','guard') %>
+<% elsif @npc.kind == "NpcGuard" %>
 <p><%= @npc.name %> is standing here</p>
-<% elsif @npc.npc_division == SpecialCode.get_code('npc_division','peasant') %>
+<% elsif @npc.kind == "" %>
 <p>You encounter peasants!</p>
 <% else %>
 <p>Unrecognized NPC type</p>

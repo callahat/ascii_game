@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100721125026) do
+ActiveRecord::Schema.define(:version => 20100725164109) do
 
   create_table "attack_spells", :force => true do |t|
     t.string  "name",         :limit => 32,  :default => "", :null => false
@@ -41,11 +41,11 @@ ActiveRecord::Schema.define(:version => 20100721125026) do
   add_index "base_items", ["race_body_type"], :name => "race_body_type"
 
   create_table "battle_enemies", :force => true do |t|
-    t.integer "battle_id",                                     :null => false
-    t.integer "battle_group_id",                               :null => false
-    t.integer "enemy_id",                                      :null => false
-    t.integer "special",         :limit => 1,  :default => 0
-    t.string  "kind",            :limit => 20, :default => "", :null => false
+    t.integer "battle_id",                                      :null => false
+    t.integer "battle_group_id",                                :null => false
+    t.integer "enemy_id",                                       :null => false
+    t.string  "special",         :limit => 20, :default => "0"
+    t.string  "kind",            :limit => 20, :default => "",  :null => false
   end
 
   add_index "battle_enemies", ["battle_id", "battle_group_id", "kind", "special"], :name => "battle_id_battle_group_id_kind_special"
@@ -364,7 +364,7 @@ ActiveRecord::Schema.define(:version => 20100721125026) do
     t.integer "kingdom_id",                                    :null => false
     t.integer "image_type",                                    :null => false
     t.string  "picture",    :limit => 256
-    t.string  "name",       :limit => 32,   :default => "",    :null => false
+    t.string  "name",       :limit => 64,   :default => "",    :null => false
   end
 
   add_index "images", ["image_type"], :name => "type"
@@ -555,7 +555,7 @@ ActiveRecord::Schema.define(:version => 20100721125026) do
   add_index "npc_blacksmith_items", ["item_id"], :name => "item_id"
   add_index "npc_blacksmith_items", ["npc_id"], :name => "npc_id"
 
-  create_table "npc_merchants", :force => true do |t|
+  create_table "npc_merchant_details", :force => true do |t|
     t.integer "npc_id",                              :null => false
     t.integer "healing_sales"
     t.integer "blacksmith_sales"
@@ -565,22 +565,22 @@ ActiveRecord::Schema.define(:version => 20100721125026) do
     t.boolean "lock",             :default => false
   end
 
-  add_index "npc_merchants", ["npc_id"], :name => "npc_id"
+  add_index "npc_merchant_details", ["npc_id"], :name => "npc_id"
 
   create_table "npcs", :force => true do |t|
-    t.string  "name",         :limit => 32, :default => "",    :null => false
+    t.string  "name",       :limit => 32, :default => "",    :null => false
     t.integer "kingdom_id"
-    t.integer "npc_division",                                  :null => false
-    t.integer "gold",                       :default => 10,    :null => false
-    t.integer "experience",                 :default => 10,    :null => false
-    t.boolean "is_hired",                   :default => false, :null => false
-    t.integer "image_id",                   :default => 1,     :null => false
-    t.boolean "lock",                       :default => false
+    t.integer "gold",                     :default => 10,    :null => false
+    t.integer "experience",               :default => 10,    :null => false
+    t.boolean "is_hired",                 :default => false, :null => false
+    t.integer "image_id",                 :default => 1,     :null => false
+    t.boolean "lock",                     :default => false
+    t.string  "kind",       :limit => 20
   end
 
   add_index "npcs", ["is_hired"], :name => "is_hired"
-  add_index "npcs", ["kingdom_id", "npc_division"], :name => "kingdom_id_npc_division"
   add_index "npcs", ["kingdom_id"], :name => "kingdom_id"
+  add_index "npcs", ["kingdom_id"], :name => "kingdom_id_npc_division"
   add_index "npcs", ["name", "is_hired"], :name => "name_is_hired"
   add_index "npcs", ["name"], :name => "name"
 

@@ -7,7 +7,7 @@ item_<%= it %>:
   price: 50
   min_level: 1
   equip_loc: 1
-  base_item_id: 1
+  base_item: base_item_one
 <% } %>
   
 item_99:
@@ -16,11 +16,11 @@ item_99:
   price: 99
   min_level: 1
   equip_loc: 1
-  base_item_id: 1
+  base_item: base_item_two
 
 cool_item:
   name: "Cool item"
-  price: 6
+  price: 1125
   min_level: 1
   equip_loc: 1
-  base_item_id: 1
+  base_item: base_item_three

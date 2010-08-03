@@ -15,12 +15,18 @@ class Kingdom < ActiveRecord::Base
 	has_many :kingdom_items, :foreign_key => "owner_id"
 	has_many :levels, :order => 'level'
 	has_many :npcs, :order => 'name'
-	has_many :guards, :class_name => 'Npc', :include => :health,
-										:conditions => ['is_hired = true AND npc_division = ? and healths.wellness != ?',
-										SpecialCode.get_code('npc_division','guard'), SpecialCode.get_code('wellness','dead')]
-	has_many :merchants, :class_name => 'Npc', :include => :health,
-										:conditions => ['is_hired = true AND npc_division = ? and healths.wellness != ?',
-										SpecialCode.get_code('npc_division','merchant'), SpecialCode.get_code('wellness','dead')]
+	has_many :guards, :class_name => 'NpcGuard', :include => :health,
+										:conditions => ['is_hired = true AND healths.wellness != ?',
+										 SpecialCode.get_code('wellness','dead')]
+	has_many :merchants, :class_name => 'NpcMerchant', :include => :health,
+										:conditions => ['is_hired = true AND healths.wellness != ?',
+										SpecialCode.get_code('wellness','dead')]
+	has_many :hireable_guards, :class_name => 'NpcGuard', :include => :health,
+										:conditions => ['is_hired = false AND healths.wellness != ?',
+										 SpecialCode.get_code('wellness','dead')]
+	has_many :hireable_merchants, :class_name => 'NpcMerchant', :include => :health,
+										:conditions => ['is_hired = false AND healths.wellness != ?',
+										SpecialCode.get_code('wellness','dead')]
 	has_many :live_npcs, :class_name => 'Npc', :include => :health,
 											 :conditions => ['is_hired = true AND healths.wellness != ?',
 											 SpecialCode.get_code('wellness','dead')], :order => 'name'
@@ -154,7 +160,9 @@ class Kingdom < ActiveRecord::Base
 		@new_kingdom = WorldMap.copy(wm)
 		@new_kingdom.feature_id = @kingdom_entrance_feature.id
 		@new_kingdom.save!
-		5.times { Npc.gen_stock_guard(self.id) }
+		
+		NpcGuard.create_image(self.id)
+		5.times { NpcGuard.generate(self.id) }
 		KingdomEntry.create(:kingdom_id => self.id,
 												:allowed_entry => SpecialCode.get_code('entry_limitations','everyone') )
 		PlayerCharacter.transaction do

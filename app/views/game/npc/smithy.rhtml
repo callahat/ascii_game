@@ -3,7 +3,7 @@
 <% for forge_item in @can_make do %>
   <tr>
     <td>
-      <%= link_to forge_item.item.name, { :action => 'do_buy_new', :iid => forge_item.item_id } , :method => :post %>
+      <%= link_to forge_item.item.name, { :action => 'do_buy_new', :iid => forge_item.item_id } %>
     </td>
     <td>
        <%= (forge_item.item.price * (1 + @npc.kingdom.tax_rate / 100.0)).to_i.to_s %>

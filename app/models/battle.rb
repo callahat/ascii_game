@@ -2,8 +2,8 @@ class Battle < ActiveRecord::Base
 	has_many :enemies,		:class_name => "BattleEnemy"
 	has_many :pcs,				:class_name => "BattlePc"
 	has_many :npcs,				:class_name => "BattleNpc"
-	has_many :merchants,	:class_name => "BattleNpc", :conditions => {:special => SpecialCode.get_code('npc_division','merchant')}
-	has_many :guards,			:class_name => "BattleNpc", :conditions => {:special => SpecialCode.get_code('npc_division','guard')}
+	has_many :merchants,	:class_name => "BattleNpc", :conditions => {:special => "NpcMerchant"}
+	has_many :guards,			:class_name => "BattleNpc", :conditions => {:special => "NpcGuard"}
 	has_many :creatures,	:class_name => "BattleCreature"
 	has_many :items,			:class_name => "BattleItem"
 	has_many :groups,			:class_name => "BattleGroup"
@@ -21,7 +21,7 @@ class Battle < ActiveRecord::Base
 			b = Battle.create(:owner_id => owner.id)
 			gname = @guards.size.to_s + ( @guards.size > 1 ? " guards" : " guard")
 			bg = BattleGroup.create(:battle_id => b.id, :name => gname)
-			spec = SpecialCode.get_code('npc_division','guard')
+			spec = "NpcGuard"
 			@guards.each{ |g|
 				BattleNpc.create(:battle_id => b.id, :enemy_id => g.id, :battle_group_id => bg.id, :special => spec) }
 			return b, ""
@@ -45,15 +45,14 @@ class Battle < ActiveRecord::Base
 		if npc.health.HP <= 0
 			return nil, npc.name + " is already dead..."
 		else
-			spec = SpecialCode.get_code('npc_division','guard')
 			b = Battle.create(:owner_id => owner.id)
 			@guards = self.summon_guards(npc.kingdom, 0.3)	 #upto %30 of guards will show
 			gname = npc.name
 			gname += " and " + @guards.size.to_s + ( @guards.size > 1 ? " guards" : " guard")
 			bg = BattleGroup.create(:battle_id => b.id, :name => gname)
-			BattleNpc.create(:battle_id => b.id, :enemy_id => npc.id, :battle_group_id => bg.id, :special => npc.npc_division)
+			BattleNpc.create(:battle_id => b.id, :enemy_id => npc.id, :battle_group_id => bg.id, :special => npc.kind)
 			@guards.each{ |g|
-				BattleNpc.create(:battle_id => b.id, :enemy_id => g.id, :battle_group_id => bg.id, :special => spec) }
+				BattleNpc.create(:battle_id => b.id, :enemy_id => g.id, :battle_group_id => bg.id, :special => "NpcGuard") }
 			return b, ""
 		end
 	end
@@ -63,7 +62,6 @@ class Battle < ActiveRecord::Base
 		if @king.health.HP <= 0
 			return nil, "There is no king to fight, only memories..."
 		else
-			spec = SpecialCode.get_code('npc_division','guard')
 			b = Battle.create(:owner_id => owner.id)
 			@guards = self.summon_guards(kingdom, 0.7)	 #upto %70 of guards will show
 			gname = @king.name
@@ -71,7 +69,7 @@ class Battle < ActiveRecord::Base
 			bg = BattleGroup.create(:battle_id => b.id, :name => gname)
 			BattlePc.create(:battle_id => b.id, :enemy_id => @king.id, :battle_group_id => bg.id)
 			@guards.each{ |g|
-				BattleNpc.create(:battle_id => b.id, :enemy_id => g.id, :battle_group_id => bg.id, :special => spec) }
+				BattleNpc.create(:battle_id => b.id, :enemy_id => g.id, :battle_group_id => bg.id, :special => "NpcGuard") }
 			return b, ""
 		end
 	end
@@ -79,7 +77,7 @@ class Battle < ActiveRecord::Base
 	def self.new_creature_battle(owner, creature, low, high, kingdom)
 		if creature.name == 'Peasant' && kingdom
 			@num = kingdom.reserve_peasants(rand(high - low + 1) + low)
-			@spec = SpecialCode.get_code('npc_division','peasant')
+			@spec = "NpcPeasant"
 		else
 			@num = creature.reserve_creatures(rand(high - low + 1) + low)
 		end
@@ -194,18 +192,24 @@ class Battle < ActiveRecord::Base
 			self.update_attributes(:gold => self.gold + who.enemy.drop_nth_of_gold(8))
 		end
 		if who.class.base_class == BattleEnemy
+		#may need updated later.
+			case who.special
+				when "NpcPeasant"		; @code = SpecialCode.get_code('npc_division','peasant')
+				when "NpcMerchant"	; @code = SpecialCode.get_code('npc_division','merchant')
+				when "NpcGuard"			; @code = SpecialCode.get_code('npc_division','guard')
+			end
 			case who.class.name
 				when "BattleCreature"
 					LogQuestCreatureKill.complete_req(self.owner_id, who.enemy_id)
-					peasant = (who.special == SpecialCode.get_code('npc_division','peasant'))
-					LogQuestKillNNpc.complete_req(self.owner_id,who.special, self.owner.in_kingdom) if peasant
+					peasant = (who.special == "NpcPeasant")
+					LogQuestKillNNpc.complete_req(self.owner_id, @code, self.owner.in_kingdom) if peasant
 					CreatureKill.log_kill(self.owner_id,who.enemy_id,1)
 				when "BattlePc"
 					LogQuestKillPc.complete_req(self.owner_id,who.enemy_id)
 					PlayerCharacterKiller.create(:player_character_id => self.owner_id, :killed_id => who.enemy_id)
 				when "BattleNpc"
 					LogQuestKillSNpc.complete_req(self.owner_id,who.enemy_id)
-					LogQuestKillNNpc.complete_req(self.owner_id,who.special, self.owner.in_kingdom)
+					LogQuestKillNNpc.complete_req(self.owner_id,@code, self.owner.in_kingdom)
 					NonplayerCharacterKiller.create(:player_character_id => self.owner_id, :npc_id => who.enemy_id)
 			end
 			group = who.battle_group

@@ -1,5 +1,10 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
-  id: 1
-two:
-  id: 2
+trainer_skill_one:
+  max_skill_taught: 20
+  min_sales: 5
+trainer_skill_two:
+  max_skill_taught: 30
+  min_sales: 10
+trainer_skill_three:
+  max_skill_taught: 40
+  min_sales: 100
