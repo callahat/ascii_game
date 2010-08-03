@@ -42,14 +42,17 @@ class Management::KingdomNpcsController < ManagementController
 	def hire_merchant
 		@npc = @kingdom.hireable_merchants.find(params[:id])
 		if (params[:level_map].nil? || params[:level_map][:id] == "") && @kingdom.kingdom_empty_shops.first
-			@level_map = @kingdom.kingdom_empty_shops.first.level_map
+			@empty = @kingdom.kingdom_empty_shops.first
 		elsif @kingdom.kingdom_empty_shops.exists?(params[:level_map][:id])
-			@level_map = @kingdom.kingdom_empty_shops.find(params[:level_map][:id]).level_map
+			@empty = @kingdom.kingdom_empty_shops.find(params[:level_map][:id])
 		else
 			flash[:notice] = 'No store found for the NPC to set up shop.'
 			redirect_to :action => 'list'
+
 			return false
 		end
+		@level_map = @empty.level_map
+		@empty.destroy
 		
 		@event = EventNpc.generate(@npc.id, @level_map.id)
 		FeatureEvent.spawn_gen(
@@ -57,9 +60,8 @@ class Management::KingdomNpcsController < ManagementController
 				:event_id => @event.id )
 			
 		#THAT KINGDOM STORE IS NO LONGER EMPTY
-		@level_map.kingdom_empty_shops.first.destroy
 		@npc.update_attribute(:is_hired, true)
-
+		@kingdom.reload
 		redirect_to :action => 'list'
 	end
 

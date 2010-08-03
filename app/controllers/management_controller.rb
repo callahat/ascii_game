@@ -107,6 +107,6 @@ class ManagementController < ApplicationController
 	
 protected
 	def setup_kingdom_vars
-		redirect_to :action => 'select_kingdom' unless @kingdom = session[:kingdom]
+		redirect_to :action => 'choose_kingdom' unless @kingdom = session[:kingdom]
 	end
 end

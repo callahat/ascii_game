@@ -45,12 +45,12 @@ class Npc < ActiveRecord::Base
 	end
 
 	#Primarily and admin tool. revisit later.
-	#def self.new_of_kind(params)
-	#	return Npc.new if params.class.to_s !~ /Hash/ && params.class.to_s !~ /Npc/
-	#	return Npc.new(params) unless params
-	#	params[:kind] =~ /^(Npc(Guard|Merchant)*$)/
-	#	return ($1 ? Rails.module_eval($1).new(params) : Npc.new(params))
-	#end
+	def self.new_of_kind(params)
+		return Npc.new if params.class.to_s !~ /Hash/ && params.class.to_s !~ /Npc/
+		return Npc.new(params) unless params
+		params[:kind] =~ /^(Npc(Guard|Merchant)*$)/
+		return ($1 ? Rails.module_eval($1).new(params) : Npc.new(params))
+	end
 
 	#Pagination related stuff
 	def self.per_page

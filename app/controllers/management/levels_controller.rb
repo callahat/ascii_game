@@ -62,8 +62,7 @@ class Management::LevelsController < ManagementController
 			0.upto(@level.maxy-1){|y|
 				0.upto(@level.maxx-1){|x|
 					@temp = @level.level_maps.find(:all, :conditions => ['ypos = ? and xpos = ?', y, x]).last
-
-					if (@temp.feature_id.to_i != params[:map][y.to_s][x.to_s].to_i) &&
+					if params[:map][y.to_s][x.to_s] != "" && (@temp.feature_id.to_i != params[:map][y.to_s][x.to_s].to_i) &&
 						 (@temp.feature.nil? || @temp.feature.name[0..0] != "\n")
 						#if this is has storefronts, get rid of the previous store vacancies.
 						if @temp.feature
