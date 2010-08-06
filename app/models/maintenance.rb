@@ -198,7 +198,7 @@ class Maintenance < ActiveRecord::Base
 				@@report << "Updating PC #" + pc.id.to_s + " " + pc.name
 				
 				pc.lock!
-				turns_added = ( pc.turns > 320 ? 400 - pc.turns : 80 )
+				turns_added = ( pc.turns > 160 ? 200 - pc.turns : 40 )
 				pc.turns += turns_added
 				pc.save!
 				
