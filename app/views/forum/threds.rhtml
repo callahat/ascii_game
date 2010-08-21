@@ -1,5 +1,5 @@
 <h1><%=h @board.name %><% if @board.is_locked %> (This board is locked)<% end %></h1>
-
+<p>Note, in order to post you must have at least one character level 10 or higher</p>
 
 <p>
 <% unless session[:player].nil? || session[:player].forum_restrictions.exists?(:restriction => [SpecialCode.get_code('restrictions','no_threading'), SpecialCode.get_code('restrictions','no_threding')]) %>

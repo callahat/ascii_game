@@ -416,14 +416,12 @@ protected
 
 	def verify_before_new_forum_node
 		@parent_forum_node = ForumNode.find(:first, :conditions => ['id = ?', session[:parent_node]])
-	print "\n" + session[:parent_node].to_s
-	print "\nIN THE FILTER"
-	print (@parent_forum_node.elders > 0).to_s + " " + ForumRestriction.no_posting(session[:player]).to_s
-	print "\n" + ForumRestriction.no_threding(session[:player]).to_s
-	print "\n" + @parent_forum_node.parent_forum_node(:is_deleted).to_s
-	print "\n" + @parent_forum_node.parent_forum_node(:is_hidden).to_s 
-	print "\n" + @parent_forum_node.parent_forum_node(:is_locked).to_s 
-	print "\n" + @parent_forum_node.parent_forum_node(:is_mods_only).to_s + " " + (session[:player].mod_level < 1).to_s
+	
+		
+		p session[:player].player_characters.find(:first, :conditions => 'level > 9')
+		p session[:player].mod_level
+		p @parent_forum_node.elders
+	
 	
 		if session[:player].mod_level < 9 && ((@parent_forum_node.elders > 0 && ForumRestriction.no_posting(session[:player])) ||
 																					(ForumRestriction.no_threding(session[:player])) ||
@@ -432,6 +430,7 @@ protected
 																					@parent_forum_node.parent_forum_node(:is_locked) || 
 																					(@parent_forum_node.parent_forum_node(:is_mods_only) && session[:player].mod_level < 1))
 			redirect_to :action => 'dispatch'
+			p 'redireting to dispatch'
 			return false
 		else
 			return true
