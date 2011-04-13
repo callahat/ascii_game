@@ -1,3 +1,3 @@
 class KingdomEntry < ActiveRecord::Base
-	belongs_to :kingdom
+  belongs_to :kingdom
 end

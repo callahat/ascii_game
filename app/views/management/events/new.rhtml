@@ -2,14 +2,14 @@
 
 <% if @event.kind.nil? %>
 <p>First chose an event type</p>
-<% form_tag :action => 'new' do %>
+<%= form_tag :action => 'new' do %>
   <%= render :partial => 'pre_form' %>
   <%= submit_tag "Proceed" %>
 <% end %>
 <%= link_to 'Back', :action => 'index' %>
 <% else %>
 
-<% form_tag :action => 'create' do %>
+<%= form_tag :action => 'create' do %>
   <%= render :partial => 'form' %>
   <%= submit_tag "Create" %>
 <% end %>

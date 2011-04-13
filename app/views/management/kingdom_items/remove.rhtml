@@ -1,4 +1,4 @@
-<% form_tag :action => 'do_take', :id => @kingdom_item, :item_id => @kingdom_item.item_id do %>
+<%= form_tag :action => 'do_take', :id => @kingdom_item, :item_id => @kingdom_item.item_id do %>
 <p><b>Removing Item:</b><%= @kingdom_item.item.name %><br/></p>
 <p><label for="kingdom_item_quantity">Number</label><br/>
 <%= text_field 'kingdom_item', 'quantity'  %></p>

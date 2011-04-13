@@ -1,6 +1,6 @@
 <h1>Edit thred <%=h @thred.name %> in <%=h @board.name %></h1>
 
-<% form_tag :action => 'update_thred', :thred_id => params[:thred_id] do %>
+<%= form_tag :action => 'update_thred', :thred_id => params[:thred_id] do %>
   <%= render :partial => 'thred_form' %>
   <%= submit_tag "Update" %>
 <% end %>

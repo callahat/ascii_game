@@ -1,12 +1,12 @@
 <% if !@levels.nil? %>
-  <% form_tag :action => 'throne_square' do %>
+  <%= form_tag :action => 'throne_square' do %>
   <p>Select level:</p>
   <%= collection_select 'level','id',@levels,'id','level' %>
    <%= submit_tag 'Accept' %>
   <% end %>
 
 <% elsif !@squares.nil? %>
-<% form_tag :action => 'set_throne' do %>
+<%= form_tag :action => 'set_throne' do %>
 <p>Select available square. Grey squares cannot be built upon; something already occupies that space.</p>
 <table>
 <% while @y < @squares.maxy %>

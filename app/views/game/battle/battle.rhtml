@@ -1,6 +1,5 @@
-<% form_tag :action => 'fight' do %>
-<%= battle_grid(@battle) %>
-
+<%= form_tag :action => 'fight' do %>
+<%= raw battle_grid(@battle) %>
 <table>
 <tr><td>
 	Click on a button below an enemy to<br/>
@@ -11,7 +10,7 @@
 	</select>
  </td></tr>
  <% if @healing_spells.to_a.size > 0 %>
-   <% form_tag :action => 'heal_spell' do %>
+   <%= form_tag :action => 'heal_spell' do %>
  <tr><td>
 		<select name="heal">
 			<%= options_for_select(@healing_spells, session[:heal]) %>
@@ -21,7 +20,7 @@
  <% end %>
 
 	<tr><td>
-	<% form_tag :action => 'run_away' do %>
+	<%= form_tag :action => 'run_away' do %>
 	<%= submit_tag 'Run Away' %>
 	<% end %>
 </td></tr>

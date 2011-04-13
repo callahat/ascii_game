@@ -1,5 +1,5 @@
 class QuestReq < ActiveRecord::Base
-	self.inheritance_column = 'kind'
+  self.inheritance_column = 'kind'
 
-	belongs_to :quest
+  belongs_to :quest
 end

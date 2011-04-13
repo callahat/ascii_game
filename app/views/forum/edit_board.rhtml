@@ -1,6 +1,6 @@
 <h1>Edit board tagline</h1>
 
-<% form_tag :action => 'update_board', :board_id => params[:board_id] do %>
+<%= form_tag :action => 'update_board', :board_id => params[:board_id] do %>
   <%= render :partial => 'board_form' %>
   <%= submit_tag "Update" %>
 <% end %>

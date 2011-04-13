@@ -1,4 +1,4 @@
-<% form_tag :action => 'hire_merchant', :id => @npc do %>
+<%= form_tag :action => 'hire_merchant', :id => @npc do %>
 <p><b>Assign Storefront:</b><br/></p>
 <%= radio_button 'level_map', 'id', '' %>Random assignment<br/>
 <% for shop in @shops %>

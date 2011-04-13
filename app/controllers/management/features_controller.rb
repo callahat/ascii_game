@@ -62,7 +62,7 @@ class Management::FeaturesController < ApplicationController
 		@images = Image.find(:all,
 								:conditions => ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
 								@player_id,@kingdom_id,SpecialCode.get_code('image_type', 'kingdom')], :order => 'name')
-		if !verify_feature_owner || !verify_feature_not_in_use
+		if !is_feature_owner || !is_feature_not_in_use
 			redirect_to :action => 'index'
 			return
 		end
@@ -95,7 +95,7 @@ class Management::FeaturesController < ApplicationController
 	def create_feature_event
 		new_feature_event
 		
-		if !verify_valid_event || !verify_feature_owner
+		if !good_event || !is_feature_owner
 			redirect_to :action => 'new_feature_event', :id => params[:id]
 			return
 		end
@@ -119,11 +119,11 @@ class Management::FeaturesController < ApplicationController
 		@feature_event = FeatureEvent.find(params[:id])
 		@feature = @feature_event.feature
 		
-		if !verify_feature_owner || !verify_feature_not_in_use
+		if !is_feature_owner || !is_feature_not_in_use
 			redirect_to :action => 'index'
 			return
 		end
-		if !verify_valid_event
+		if !good_event
 			redirect_to :action => 'edit_feature_event', :id => @feature.id
 			return
 		end
@@ -142,7 +142,7 @@ class Management::FeaturesController < ApplicationController
 		@feature_event = FeatureEvent.find(params[:id])
 		@feature = Feature.find(@feature_event.feature_id)
 		
-		if !verify_feature_owner || !verify_feature_not_in_use
+		if !is_feature_owner || !is_feature_not_in_use
 			redirect_to :action => 'index'
 			return
 		end
@@ -164,7 +164,7 @@ class Management::FeaturesController < ApplicationController
 	
 	def arm_feature
 		@feature = Feature.find(params[:id])
-		if !verify_feature_owner
+		if !is_feature_owner
 			redirect_to :action => 'index'
 			return
 		end
@@ -201,7 +201,7 @@ class Management::FeaturesController < ApplicationController
 	
 	def destroy
 		@feature = Feature.find(params[:id])
-		if !verify_feature_owner || !verify_feature_not_in_use
+		if !is_feature_owner || !is_feature_not_in_use
 			redirect_to :action => 'index'
 			return
 		end
@@ -227,7 +227,7 @@ class Management::FeaturesController < ApplicationController
 	
 	
 protected
-	def verify_valid_event
+	def good_event
 		if Event.find(:first,:conditions => ['armed = true AND (kingdom_id = ? or player_id	= ?) AND id = ?', session[:kingdom][:id], session[:player][:id], params[:feature_event][:event_id]])
 			return true
 		else
@@ -286,7 +286,7 @@ protected
 		end
 	end
 	
-	def verify_feature_owner
+	def is_feature_owner
 		#if someone tries to edit a feature not belonging to them
 		if @feature.player_id != session[:player][:id] && 
 			 @feature.kingdom_id != session[:kingdom][:id]
@@ -297,7 +297,7 @@ protected
 		end
 	end
 
-	def verify_feature_not_in_use
+	def is_feature_not_in_use
 		if @feature.armed
 			flash[:notice] = @feature.name + ' cannot be edited; it is already being used.'
 			false

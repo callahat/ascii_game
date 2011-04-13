@@ -53,10 +53,8 @@ class HealingSpell < ActiveRecord::Base
 	end
 	
 	def self.get_page(page, l = nil)
-		if l.nil?
-			paginate(:page => page, :order => 'min_level,name' )
-		else
-			paginate(:page => page, :conditions => ['min_level <= ?', l], :order => 'min_level,name' )
-		end
+	  where(l ? ['min_level <= ?', l] : []) \
+	    .order('min_level,name') \
+	    .paginate(:per_page => 25, :page => page)
 	end
 end

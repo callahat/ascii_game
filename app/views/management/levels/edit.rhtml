@@ -1,6 +1,6 @@
 <h1>Editing level</h1>
 
-<% form_tag :action => 'update', :id => @level do %>
+<%= form_tag :action => 'update', :id => @level do %>
 	<%= edit_kingdom_map(@level) %>
 	<%= submit_tag 'Edit' %>
 <% end %>

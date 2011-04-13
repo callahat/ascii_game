@@ -15,7 +15,7 @@ class GameHelperTest < ActionView::TestCase
 	end
 	
 	test "battle grid" do
-		get 'battle'
+		# get 'battle'
 		battle, msg = Battle.new_creature_battle(@pc, @creature, 5, 5, @pc.in_kingdom)
 		assert battle, msg
 		output = battle_grid(battle)
@@ -23,7 +23,7 @@ class GameHelperTest < ActionView::TestCase
 	end
 
 	test "draw the kingdom map" do
-		get 'main'
+		# get 'main'
 		output1 = draw_map(@level)
 		assert output1 =~ /<table>/
 		assert output1 !~ /<tr>North<\/td>/
@@ -36,7 +36,7 @@ class GameHelperTest < ActionView::TestCase
 	
 	test "draw the world map" do
 		@pc.update_attributes(:in_kingdom => nil, :kingdom_level => nil)
-		get 'main'
+		# get 'main'
 		wmt = world_map_table([@world,0,0])
 		output1 = draw_map([@world,0,0])
 		assert output1 =~ /<table>/

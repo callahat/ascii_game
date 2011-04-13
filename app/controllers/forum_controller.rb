@@ -1,18 +1,18 @@
 class ForumController < ApplicationController
-	before_filter :authenticate, :except => ['index', 'dispatch', 'boards', 'view_thred', 'threds']
-	before_filter :verify_before_new_forum_node, :only => [ :new_thred, :create_thred, :create_post, :update_post, :delete ]
-	before_filter :verify_before_delete_forum_node, :only => [ :delete_post ]
+	before_filter :authenticate, :except => ['index', 'forum_router', 'boards', 'view_thred', 'threds']
+	before_filter :filter_before_new_forum_node, :only => [ :new_thred, :create_thred, :create_post, :update_post, :delete ]
+	before_filter :filter_before_delete_forum_node, :only => [ :delete_post ]
 	
-	before_filter :verify_min_mod_level, :only => [ :banhammer, :hammer_strike, :promote_mod, :do_promote ]
-	before_filter :verify_low_mod_level, :only => [ :toggle_lock ]
-	before_filter :verify_mid_mod_level, :only => [	:toggle_hidden, :toggle_mods_only ]
-	before_filter :verify_hi_mod_level, :only => [ :toggle_delete ]
+	before_filter :filter_min_mod_level, :only => [ :banhammer, :hammer_strike, :promote_mod, :do_promote ]
+	before_filter :filter_low_mod_level, :only => [ :toggle_lock ]
+	before_filter :filter_mid_mod_level, :only => [	:toggle_hidden, :toggle_mods_only ]
+	before_filter :filter_hi_mod_level, :only => [ :toggle_delete ]
 	
-	before_filter :verify_mod_level_for_promotion, :only => [ :banhammer, :hammer_strike, :promote_mod, :do_promote ]
+	before_filter :filter_mod_level_for_promotion, :only => [ :banhammer, :hammer_strike, :promote_mod, :do_promote ]
 	layout 'main'
 
 	def index
-	print "HIT INDEX"
+	p "HIT INDEX"
 		boards
 		render :action => 'boards'
 	end
@@ -20,7 +20,7 @@ class ForumController < ApplicationController
 	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
 	verify :method => :post, :only => [ :destroy, :create, :update ],				 :redirect_to => { :action => :index }
 
-	def dispatch
+	def forum_router
 		flash.keep(:notice)
 		if params[:post_id]
 			session[:post_id] = params[:post_id]
@@ -83,7 +83,7 @@ class ForumController < ApplicationController
 		
 		if @board.save
 			flash[:notice] = "Description updated"
-			redirect_to :action => 'dispatch'
+			redirect_to :action => 'forum_router'
 		else
 			flash[:notice] = "Failed to update descritpion"
 			render :action => 'edit_board',:board_id => @board.id
@@ -140,7 +140,7 @@ class ForumController < ApplicationController
 			render :action => 'new_thred'
 		else
 			flash[:notice] = 'Thred created sucessfully'
-			redirect_to :action => 'dispatch',:thred_id => @thred.id
+			redirect_to :action => 'forum_router',:thred_id => @thred.id
 		end
 	end
 
@@ -163,7 +163,7 @@ class ForumController < ApplicationController
 		
 		if @thred.update_attributes(params[:thred])
 			flash[:notice] = "Description updated"
-			redirect_to :action => 'dispatch'
+			redirect_to :action => 'forum_router'
 		else
 			flash[:notice] = "Failed to update descritpion"
 			render :action => 'edit_thred',:thred_id => @thred.id
@@ -176,14 +176,14 @@ class ForumController < ApplicationController
 
 	def cancel_edit
 		session[:post_id] = nil
-		redirect_to :action => 'dispatch'
+		redirect_to :action => 'forum_router'
 	end
 
 	def create_post
 		@post = ForumNode.new(params[:post])
 		if @post.text == ""
 			flash[:notice] = "Can't post nothing"
-			redirect_to :action => 'dispatch'
+			redirect_to :action => 'forum_router'
 			return
 		end
 		@thred = ForumNode.find(session[:thred_id])
@@ -205,7 +205,7 @@ class ForumController < ApplicationController
 		else
 			flash[:notice] = 'Posted!'
 			params[:post] = nil #destroy the parameters to prevent refreshes from adding multiple posts, works in firefox at least.
-			redirect_to :action => 'dispatch'
+			redirect_to :action => 'forum_router'
 		end
 	end
 
@@ -223,11 +223,11 @@ class ForumController < ApplicationController
 			@post.save
 			session[:post_id] = nil
 			flash[:notice] = "Updated post!"
-			redirect_to :action => 'dispatch'
+			redirect_to :action => 'forum_router'
 		else
 			view_thred
 			flash[:notice] = "Failed to update post"
-			render :action => 'dispatch'
+			render :action => 'forum_router'
 		end
 	end
 
@@ -239,7 +239,7 @@ class ForumController < ApplicationController
 			flash[:notice] = "Post deleted"
 		end
 		
-		redirect_to :action => 'dispatch'
+		redirect_to :action => 'forum_router'
 	end
 
 	#moderator tools
@@ -270,7 +270,7 @@ class ForumController < ApplicationController
 		
 		if @forum_restriction.save
 			flash[:notice] = "Restriction saved"
-			redirect_to :action => 'dispatch'
+			redirect_to :action => 'forum_router'
 		else
 			flash[:notice] = "Error in creating restriction"
 			render :action => 'banhammer'
@@ -307,7 +307,7 @@ class ForumController < ApplicationController
 				flash[:notice] = "Updated player mod level"
 		@player.save!
 		end
-		redirect_to :action => 'dispatch'
+		redirect_to :action => 'forum_router'
 		else
 			flash[:notice] = "mod level must be between 0 and " + (session[:player].mod_level - 1).to_s
 			render :action => 'promote_mod'
@@ -316,22 +316,22 @@ class ForumController < ApplicationController
 	
 	def toggle_locked
 		toggle_filter(ForumNode.find(:first, :conditions => ['id = ?', params[:forum_node_id]]), :is_locked)
-		redirect_to :action => 'dispatch'
+		redirect_to :action => 'forum_router'
 	end
 	
 	def toggle_hidden
 		toggle_filter(ForumNode.find(:first, :conditions => ['id = ?', params[:forum_node_id]]), :is_hidden)
-		redirect_to :action => 'dispatch'
+		redirect_to :action => 'forum_router'
 	end
 	
 	def toggle_deleted
 		toggle_filter(ForumNode.find(:first, :conditions => ['id = ?', params[:forum_node_id]]), :is_deleted)
-		redirect_to :action => 'dispatch'
+		redirect_to :action => 'forum_router'
 	end
 	
 	def toggle_mods_only
 		toggle_filter(ForumNode.find(:first, :conditions => ['id = ?', params[:forum_node_id]]), :is_mods_only)
-		redirect_to :action => 'dispatch'
+		redirect_to :action => 'forum_router'
 	end
 	
 	def show_restrictions
@@ -360,32 +360,32 @@ protected
 		what.save
 	end
 
-	def verify_mod(level)
+	def filter_mod(level)
 		if session[:player].mod_level > level
 			return true
 		else
-			redirect_to :action => 'dispatch'
+			redirect_to :action => 'forum_router'
 			return false
 		end
 	end
 
-	def verify_min_mod_level
-		return verify_mod(0)
+	def filter_min_mod_level
+		return filter_mod(0)
 	end
 
-	def verify_low_mod_level
-		return verify_mod(2)
+	def filter_low_mod_level
+		return filter_mod(2)
 	end
 
-	def verify_mid_mod_level
-		return verify_mod(4)
+	def filter_mid_mod_level
+		return filter_mod(4)
 	end
 
-	def verify_hi_mod_level
-		return verify_mod(6)
+	def filter_hi_mod_level
+		return filter_mod(6)
 	end
 
-	def verify_forum_node_param
+	def filter_forum_node_param
 		if params[:forum_node_id]
 			return true
 		else
@@ -393,7 +393,7 @@ protected
 		end
 	end
 
-	def verify_mod_level_for_promotion
+	def filter_mod_level_for_promotion
 		@player = Player.find(:first, :conditions => ['id = ?', params[:player_id]])
 		if @player.nil?
 			redirect_to :action => 'view_thred'
@@ -414,7 +414,7 @@ protected
 	#node viewable, (node is hidden if parent is hidden)
 	#node deleted, (node is deleted if parent is deleted)
 
-	def verify_before_new_forum_node
+	def filter_before_new_forum_node
 		@parent_forum_node = ForumNode.find(:first, :conditions => ['id = ?', session[:parent_node]])
 	
 		
@@ -429,21 +429,21 @@ protected
 																					@parent_forum_node.parent_forum_node(:is_hidden) || 
 																					@parent_forum_node.parent_forum_node(:is_locked) || 
 																					(@parent_forum_node.parent_forum_node(:is_mods_only) && session[:player].mod_level < 1))
-			redirect_to :action => 'dispatch'
-			p 'redireting to dispatch'
+			redirect_to :action => 'forum_router'
+			p 'redireting to forum_router'
 			return false
 		else
 			return true
 		end
 	end
 
-	def verify_before_view_forum_node
+	def filter_before_view_forum_node
 		@parent_forum_node = ForumNode.find(:first, :conditions => ['id = ?', session[:parent_node]])
 		if session[:player].mod_level < 7 && (ForumRestriction.no_viewing(session[:player])
 																					@parent_forum_node.parent_forum_node(:is_deleted) ||
 																					(session[:player].mod_level < 5 && @parent_forum_node.parent_forum_node(:is_hidden)) || 
 																					(session[:player].mod_level < 1 && @parent_forum_node.parent_forum_node(:is_mods_only)))
-			redirect_to :action => 'dispatch'
+			redirect_to :action => 'forum_router'
 			return false
 		else
 			return true
@@ -451,11 +451,11 @@ protected
 	end
 
 
-	def verify_before_forum_node_delete
+	def filter_before_forum_node_delete
 	end
 
 
-	def verify_before_delete_forum_node
+	def filter_before_delete_forum_node
 		@post = ForumNode.find(:first, :conditions => ['id = ?', params[:post_id]])
 		if @post.player_id != session[:player][:id] && session[:player][:mod_level] < 8
 			if session[:player].mod_level < 1
@@ -463,7 +463,7 @@ protected
 			else
 				flash[:notice] = "You may not edit delete a post; your mod level is insufficient"
 			end
-			redirect_to :action => 'dispatch', :thred_id => session[:thred_id]
+			redirect_to :action => 'forum_router', :thred_id => session[:thred_id]
 			return false
 		else
 			return true

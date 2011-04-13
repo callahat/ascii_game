@@ -38,7 +38,7 @@ class Management::EventsController < ApplicationController
 		
 		@event.cost = 500
 
-		if verify_valid_event_params & @event.save
+		if good_event_params & @event.save
 			@extras=true
 			if @stat || @health
 				@stat.update_attributes(params[:stat].merge(:owner_id => @event.id)) &
@@ -68,7 +68,7 @@ class Management::EventsController < ApplicationController
 			@flex = params[:flex][0].to_s + ";" + params[:flex][0].to_s
 		end
 		
-		if verify_event_not_in_use & verify_event_owner & verify_valid_event_params &
+		if is_event_not_in_use & is_event_owner & good_event_params &
 				@event.update_attributes(params[:event].merge(:flex => @flex))
 			@extras=true
 			if @stat || @health
@@ -89,7 +89,7 @@ class Management::EventsController < ApplicationController
 	def destroy
 		@event = Event.find(params[:id])
 		
-		if !verify_event_not_in_use || !verify_event_owner
+		if !is_event_not_in_use || !is_event_owner
 			redirect_to :action => 'index'
 			return
 		end
@@ -108,7 +108,7 @@ class Management::EventsController < ApplicationController
 	def arm_event
 		@event = Event.find(params[:id])
 
-		if !verify_event_not_in_use || !verify_event_owner
+		if !is_event_not_in_use || !is_event_owner
 			redirect_to :action => 'index'
 			return
 		end
@@ -138,7 +138,7 @@ class Management::EventsController < ApplicationController
 	
 	
 protected
-	def verify_valid_event_params
+	def good_event_params
 		if @event.class == EventCreature
 			if Creature.find(:first,:conditions => ['armed = true AND (public = true or kingdom_id = ? or player_id	= ?) AND id = ?', session[:kingdom][:id], session[:player][:id],params[:event][:thing_id]])
 				return true
@@ -151,7 +151,7 @@ protected
 		end
 	end
 
-	def verify_event_owner
+	def is_event_owner
 		#if someone tries to edit a creature not belonging to them
 		if @event.player_id != session[:player][:id] && 
 			 @event.kingdom_id != session[:kingdom][:id]
@@ -162,7 +162,7 @@ protected
 		end
 	end
 
-	def verify_event_not_in_use
+	def is_event_not_in_use
 		if @event.armed
 			flash[:notice] = @event.name + ' cannot be edited; it is already being used.'
 			false

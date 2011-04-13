@@ -1,6 +1,6 @@
 <h1>Pick Requirement</h1>
 
-<% form_tag :action => 'new_req', :id => params[:id] do %>
+<%= form_tag :action => 'new_req', :id => params[:id] do %>
   <p>
   <select id="type" name="type">
     <% for req in @reqs %>

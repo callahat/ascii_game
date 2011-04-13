@@ -35,7 +35,7 @@ class Feature < ActiveRecord::Base
 		[true, false].inject([]) {|ret, c|
 			conds = {:conditions => ['priority = ? and chance >= ? and choice = ?', p, chance, c]}
 			ret << feature_events.find(:all, conds).inject([]){|a,fe|
-				e = fe.event.dup
+				e = fe.event
 				if (e.class == EventQuest) && (q = e.quest) &&
 						(((lq = q.log_quests.find(:first, :conditions => ['player_character_id = ?', pid])) && lq.rewarded) )
 						#|| q.quest_id && DoneQuest.find(:first,:conditions => ['quest_id = ? and player_character_id = ?', q.quest_id, pid ]).nil?)
@@ -64,15 +64,9 @@ class Feature < ActiveRecord::Base
 	end
 	
 	#Pagination related stuff
-	def self.per_page
-		15
-	end
-	
 	def self.get_page(page, pcid = nil, kid = nil)
-		if pcid.nil? && kid.nil?
-			paginate(:page => page, :order => 'armed,name' )
-		else
-			paginate(:page => page, :conditions => ['player_id = ? or kingdom_id = ?', pcid, kid], :order => 'armed,name' )
-		end
+	  where( (pcid || kid) ? ['player_id = ? or kingdom_id = ?', pcid, kid] : [] ) \
+	    .order('armed,name') \
+	    .paginate(:per_page => 15, :page => page)
 	end
 end

@@ -7,7 +7,7 @@
 punished by <%=h r.giver.handle %><% if r.given_by == session[:player][:id] %><%= link_to 'Remove ban', :action => 'kill_ban', :ban_id => r.id %><% end %><br/>
 <% end %>
 
-<% form_tag :action => 'hammer_strike', :player_id => @player.id do %>
+<%= form_tag :action => 'hammer_strike', :player_id => @player.id do %>
   <%= render :partial => 'ban_form' %>
   <%= submit_tag "Unleash Vengance" %>
 <% end %>

@@ -60,8 +60,7 @@ ul.battle_report {
 .world_feature {
   font-size:7pt;
   line-height:6pt;
-  background-color: #fff
-  font-color: #000}
+  color: #000}
 
 span.image_index {
   font-size:3pt;
@@ -104,7 +103,6 @@ table.author {
 } 
 
 table.forum {
-  align:top;
 } 
 
 tr.edit_notices {
@@ -198,6 +196,4 @@ table {
 
 tr,td,th,tbody {
   border-width:0;
-  border-style:"insert";
-  padding:1;
 }

@@ -6,7 +6,8 @@
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <title>Ascii Game the MMORPG</title>
   <%= stylesheet_link_tag 'main' %>
-  <script type="text/javascript" src="/javascripts/jquery.js"></script>
+  <%= csrf_meta_tag %>
+  <%= javascript_include_tag :defaults %>
 </head>
 <body>
 
@@ -34,7 +35,7 @@
 	</div>
 	<div id="right_col" class="side_col">
 		<div style="height:200px;color:green;background-color:#EDFCED; padding:3px;"><%= flash[:notice] %></div>
-		<%= google_ad() %>
+		<%= raw google_ad() %>
 	</div>
 </div>
 

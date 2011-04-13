@@ -1,6 +1,6 @@
 <h1>Editing quest</h1>
 
-<% form_tag :action => 'update', :id => @quest do %>
+<%= form_tag :action => 'update', :id => @quest do %>
   <%= render :partial => 'form' %>
   <%= submit_tag 'Edit' %>
 <% end %>

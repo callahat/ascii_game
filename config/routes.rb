@@ -19,15 +19,21 @@ AsciiGame3::Application.routes.draw do
   match     'game_feature'      =>  'game#feature'
   match     'game_main'         =>  'game#main'
   match     'complete'          =>  'game#complete'
+  
+  #Game::* controllers
+  match     'game/battle'           =>  'game/battle', :action => :battle
+  match     'game/battle/:action'   =>  'game/battle'
+  match     'game/court/:action'    =>  'game/court'
+  
     
-  #QuestController
+  #Game::QuestController
   match     'quest_index'       =>  'game/quests#index'
   match     'do_decline'        =>  'game/quests#do_decline'
   match     'do_join_quest'     =>  'game/quests#do_join'
   match     'do_complete_quest' =>  'game/quests#do_complete'
   match     'do_reward_quest'   =>  'game/quests#do_reward'
 
-  #NpcController
+  #Game::NpcController
   match     'npc_index'         =>  'game/npc#npc'
   match     'npc_smithy'        =>  'game/npc#smithy'
   match     'npc_do_buy_new'    =>  'game/npc#do_buy_new'
@@ -47,6 +53,9 @@ AsciiGame3::Application.routes.draw do
   match     'mgmt_levels_create'=>  'management/levels#create'
   match     'mgmt_levels_edit'  =>  'management/levels#edit'
   match     'mgmt_levels_update'=>  'management/levels#update'
+  
+  #ForumsController
+
 
   # Sample of named route:
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
@@ -92,5 +101,7 @@ AsciiGame3::Application.routes.draw do
 
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
+  
+  
   match     ':controller(/:action(/:id(.:format)))'
 end

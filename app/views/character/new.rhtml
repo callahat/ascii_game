@@ -1,7 +1,8 @@
 <% ( session[:player] ? @what = {:action => 'namenew'} : @what = {:controller => 'account', :action => 'new'} ) %>
+<script type="text/javascript" src="/javascripts/jquery.js"></script>
 <script type="text/javascript" src="/javascripts/charnew.js"></script>
 
-<% form_tag @what do %>
+<%= form_tag @what do %>
 
 <% if session[:player].nil? %>
 <p>Choose among many exciting races and classes for your character!</p>
@@ -96,5 +97,5 @@
 </table>
 <% end %>
 
-<%= class_stat_dump @c_classes %>
-<%= race_stat_dump @races %>
+<%= raw class_stat_dump @c_classes %>
+<%= raw race_stat_dump @races %>

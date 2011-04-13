@@ -44,6 +44,7 @@ class EventMoveLocalTest < ActiveSupport::TestCase
 		KingdomBan.create(:kingdom_id => e.level.kingdom.id, :player_character_id => @pc.id, :name => @pc.name)
 		
 		direct, comp, msg = e.happens(@pc)
+
 		assert @pc.in_kingdom.nil?
 		assert @pc.kingdom_level.nil?
 		assert msg =~ /prevented from entry/

@@ -1,6 +1,6 @@
 <h1>New Stairway</h1>
 
-<% form_tag :action => 'create' do %>
+<%= form_tag :action => 'create' do %>
 <p><label for="castle_stairs">Select level to build stairs to (Costs 500 gold)</label><br/>
 <%= collection_select 'level','id',@levels,'id','level' %></p>
   <%= submit_tag 'Build' %>

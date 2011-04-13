@@ -1,3 +1,3 @@
 class RaceEquipLoc < ActiveRecord::Base
-	belongs_to :race
+  belongs_to :race
 end

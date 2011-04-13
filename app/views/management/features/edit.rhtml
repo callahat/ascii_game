@@ -1,6 +1,6 @@
 <h1>Edit feature</h1>
 
-<% form_tag :action => 'update', :id => params[:id] do %>
+<%= form_tag :action => 'update', :id => params[:id] do %>
   <%= render :partial => 'form' %>
   <%= submit_tag "Update" %>
 <% end %>

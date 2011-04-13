@@ -4,4 +4,4 @@
 require File.expand_path('../config/application', __FILE__)
 require 'rake'
 
-AsciigameCom::Application.load_tasks
+AsciiGame3::Application.load_tasks

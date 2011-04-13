@@ -1,6 +1,6 @@
 <h1>Edit event</h1>
 
-<% form_tag :action => 'update', :id => @event do %>
+<%= form_tag :action => 'update', :id => @event do %>
   <%= render :partial => 'form' %>
   <%= submit_tag "Update" %>
 <% end %>

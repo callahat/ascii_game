@@ -1,7 +1,7 @@
 <% if session[:kingdom].nil? %>
 <h1>Select Kingdom to Manage</h1>
 
-<% form_tag :action => 'select_kingdom' do %>
+<%= form_tag :action => 'select_kingdom' do %>
   <%= collection_select('king','kingdom_id',@kingdoms,'id', 'name' ) %></p>
   <%= submit_tag 'Manage' %>
 <% end %>

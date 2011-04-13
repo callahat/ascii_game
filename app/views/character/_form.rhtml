@@ -4,5 +4,5 @@
 
 <!--[form:player_character]-->
 <% for character in @select_chars %>
-<p><%= link_to character.name, { :action => @next_action,:id => character.id},:confirm => 'Are you sure?', :method => :post %></p>
+<p><%= link_to character.name, { :action => @next_action,:id => character.id}, :confirm => 'Are you sure?', :method => :post %></p>
 <% end %>

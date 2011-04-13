@@ -1,6 +1,6 @@
 <h1>Editing image</h1>
 
-<% form_tag :action => 'update', :id => @image do %>
+<%= form_tag :action => 'update', :id => @image do %>
   <%= render :partial => 'form' %>
   <%= submit_tag 'Edit' %>
 <% end %>

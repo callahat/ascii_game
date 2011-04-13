@@ -1,3 +1,6 @@
+( function($) {
+
+
   $(document).ready(function(){
     window.onload = function(){ 
         changeStuff("c_class_id", $("select[@id=c_class_id]")[0].value);
@@ -33,3 +36,6 @@
      }
      
   }); //end document
+  
+
+} ) ( jQuery );

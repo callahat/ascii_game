@@ -9,42 +9,42 @@ class EventLifeNeutralTest < ActiveSupport::TestCase
 																	:armed => 1,
 																	:cost => 50)
 		
-		@event.validate
+		@event.valid?
 		assert @event.errors.size == 0
 		
 		@event.event_rep_type = SpecialCode.get_code('event_rep_type','limited_per_char')
 		@event.event_reps = nil
-		@event.validate
+		@event.valid?
 		assert @event.errors.size == 1
 		@event.errors.clear
 		@event.event_reps = -1
-		@event.validate
+		@event.valid?
 		assert @event.errors.size == 1
 		@event.errors.clear
 		@event.event_reps = 9001
-		@event.validate
+		@event.valid?
 		assert @event.errors.size == 1
 		@event.errors.clear
 		@event.event_reps = 9000
-		@event.validate
+		@event.valid?
 		assert @event.errors.size == 0
 		@event.errors.clear
 		
 		@event.event_rep_type = SpecialCode.get_code('event_rep_type','limited')
 		@event.event_reps = nil
-		@event.validate
+		@event.valid?
 		assert @event.errors.size == 1
 		@event.errors.clear
 		@event.event_reps = -1
-		@event.validate
+		@event.valid?
 		assert @event.errors.size == 1
 		@event.errors.clear
 		@event.event_reps = 9001
-		@event.validate
+		@event.valid?
 		assert @event.errors.size == 1
 		@event.errors.clear
 		@event.event_reps = 1
-		@event.validate
+		@event.valid?
 		assert @event.errors.size == 0
 		@event.errors.clear
 	end
