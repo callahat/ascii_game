@@ -22,7 +22,7 @@ you don't see any threds
 </tr>
 <% for thred in @threds %>
 <tr>
-  <td><%= link_to "#{thred.name}", :action => 'dispatch', :thred_id => thred.id %></td>
+  <td><%= link_to "#{thred.name}", :action => 'forum_router', :thred_id => thred.id %></td>
   <td class="board_info"><%=h thred.text %></td>
   <td class="board_info"><%=h thred.childs.size %></td>
   <td class="board_info"><% if thred.childs.size > 0 %><%= thred.childs.first.datetime.strftime("%m-%d-%Y %I:%M.%S %p") %> by <%=h thred.childs.first.player.handle %><% end %></td>

@@ -75,7 +75,7 @@ No Posts
       <tr class="edit_notices"><td colspan=3><%= post.edit_notices %></td></tr>
       <tr class="post_info"><td>posted <%=h post.datetime.strftime("%m-%d-%Y %H:%M.%S %p") %></td>
       <td><% if session[:player] && (post.player_id == session[:player][:id] || post.player.mod_level < session[:player].mod_level) %>
-        <%= link_to '-edit', :action => 'dispatch', :post_id => post.id %><% end %></td>
+        <%= link_to '-edit', :action => 'forum_router', :post_id => post.id %><% end %></td>
       <td><% if session[:player] && (post.player_id == session[:player][:id] || (post.player.mod_level < session[:player].mod_level && session[:player].mod_level > 7)) %>
         <%= link_to '-delete', :action => 'delete_post', :post_id => post.id %><% end %></td>
       </tr>

@@ -18,10 +18,10 @@ you don't see any boards
 </tr>
 <% for board in @boards %>
 <tr>
-  <td><%= link_to "#{board.name}", :action => 'dispatch', :board_id => board.id %></td>
+  <td><%= link_to "#{board.name}", :action => 'forum_router', :board_id => board.id %></td>
   <td class="board_info"><%=h board.text %></td>
   <td><%=h board.childs.size %></td>
-  <td class="board_info"><% if board.last_posted_child %><%=h board.time_of_last_posted_child %> in <%= link_to "#{board.last_posted_child.name}", :action => 'dispatch', :thred_id => board.last_posted_child.id %> by <%= board.last_posted_child.childs.first.player.handle %><% end %></td>
+  <td class="board_info"><% if board.last_posted_child %><%=h board.time_of_last_posted_child %> in <%= link_to "#{board.last_posted_child.name}", :action => 'forum_router', :thred_id => board.last_posted_child.id %> by <%= board.last_posted_child.childs.first.player.handle %><% end %></td>
 </tr>
 <tr>
   <td class="board_info"><% if session[:player] && session[:player].mod_level > 2 %>Mod Ops:<% elsif board.is_locked %>Board Locked<% end %></td>
