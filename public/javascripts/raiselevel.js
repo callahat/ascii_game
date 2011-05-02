@@ -1,3 +1,5 @@
+( function($) {
+
   $(document).ready(function(){
     window.onload = function(){ 
         update_freepts();
@@ -32,3 +34,5 @@
        $("#freepoint_sum").text(freesum);
      }
   }); //end document
+
+} ) ( jQuery );
