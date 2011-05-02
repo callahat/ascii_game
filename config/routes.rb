@@ -54,6 +54,44 @@ AsciiGame3::Application.routes.draw do
   match     'mgmt_levels_edit'  =>  'management/levels#edit'
   match     'mgmt_levels_update'=>  'management/levels#update'
   
+  namespace :management do
+    resources :castles
+    resources :creatures
+    resources :events
+    resources :features
+    resources :images
+    resources :kingdom_bans
+    resources :kingdom_entries
+    resources :kingdom_finances
+    resources :kingdom_items
+    resources :kingdom_notices
+    resources :kingdom_npcs
+    resources :levels
+    resources :pref_list
+    resources :quests
+  end
+  
+  namespace :admin do
+    resource :attack_spells
+    resource :base_items
+    resource :blacksmith_skills
+    resource :c_classes
+    resource :creatures
+    resource :diseases
+    resource :healer_skills
+    resource :healing_spells
+    resource :items
+    resource :maintenance
+    resource :name_surfixes
+    resource :name_titles
+    resource :names
+    resource :npcs
+    resource :races
+    resource :trainer_skills
+    resource :world_maps
+    resource :worlds
+  end
+  
   #ForumsController
 
 

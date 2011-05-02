@@ -16,43 +16,42 @@
 <tr>
   <td><b>Damage</b></td>
   <td><%= @base_stats.dam %></td>
-  <td><%= freepoint_distributer('distributed_freepts', 'dam') %></td>
-</tr><% p "frept dist" %>
+  <td><%= raw freepoint_distributer('distributed_freepts', 'dam') %></td>
+</tr>
 <tr>
   <td><b>Defense</b></td>
   <td><%= @base_stats.dfn %></td>
-  <td><%= freepoint_distributer('distributed_freepts', 'dfn') %></td>
+  <td><%= raw freepoint_distributer('distributed_freepts', 'dfn') %></td>
 </tr>
 <tr>
   <td><b>Strength</b></td>
   <td><%= @base_stats.str %></td>
-  <td><%= freepoint_distributer('distributed_freepts', 'str') %></td>
+  <td><%= raw freepoint_distributer('distributed_freepts', 'str') %></td>
 </tr>
 <tr>
   <td><b>Dexterity</b></td>
   <td><%= @base_stats.dex %></td>
-  <td><%= freepoint_distributer('distributed_freepts', 'dex') %></td>
+  <td><%= raw freepoint_distributer('distributed_freepts', 'dex') %></td>
 </tr>
 <tr>
   <td><b>Magic</b></td>
   <td><%= @base_stats.mag %></td>
-  <td><%= freepoint_distributer('distributed_freepts', 'mag') %></td>
+  <td><%= raw freepoint_distributer('distributed_freepts', 'mag') %></td>
 </tr>
 <tr>
   <td><b>Intelligence</b></td>
   <td><%= @base_stats.int %></td>
-  <td><%= freepoint_distributer('distributed_freepts', 'int') %></td>
+  <td><%= raw freepoint_distributer('distributed_freepts', 'int') %></td>
 </tr>
 <tr>
   <td><b>Constitution</b></td>
   <td><%= @base_stats.con %></td>
-  <td><%= freepoint_distributer('distributed_freepts', 'con') %></td>
+  <td><%= raw freepoint_distributer('distributed_freepts', 'con') %></td>
 </tr>
 <tr>
 <td colspan=3><%= submit_tag "Level!" %></td>
 </tr>
 </table>
 <% end %>
-<% p "last in raise level" %>
 <!--[eoform:distributed_freepts]-->
 
