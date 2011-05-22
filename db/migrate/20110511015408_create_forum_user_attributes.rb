@@ -42,7 +42,7 @@ class CreateForumUserAttributes < ActiveRecord::Migration
       fn.post_count = visible_threds.size
       if visible_threds.size > 0
         threds = visible_threds.inject(visible_threds.first){|h,m| h = (h.updated_at >= m.updated_at ? h : m )  } 
-        fn.last_post_id = threds
+        fn.last_post_id = threds.last_post_id
         p fn.last_post_id
       end
       p fn.save
