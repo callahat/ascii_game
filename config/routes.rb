@@ -93,7 +93,6 @@ AsciiGame3::Application.routes.draw do
   end
   
   #ForumsController
-
   match     'forums'                                        =>  'forum#boards',     :as => "forums"
   match     'forums/:bname'                                 =>  'forum#threds',     :as => "boards"
   match     'forums/:bname/:tname'                          =>  'forum#view_thred', :as => "threds"
