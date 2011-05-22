@@ -103,7 +103,7 @@ AsciiGame3::Application.routes.draw do
   
 
   
-  resource  :forum
+  #resource  :forum
 
   # Sample of named route:
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
