@@ -1,6 +1,6 @@
 <%= error_messages_for 'board' %>
 
-<% if session[:player] && session[:player].mod_level > 7 || @board.new_record? %>
+<% if session[:player] && session[:player].forum_attribute.mod_level > 7 || @board.new_record? %>
 <p><label for="board_name">Name</label><br/>
 <%= text_field 'board', 'name' %></p>
 <% else %>

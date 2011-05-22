@@ -3,8 +3,8 @@ require 'test_helper'
 class HealthTest < ActiveSupport::TestCase
   # Replace this with your real tests.
   test "verify health fixtures loaded" do
-    assert Health.count == 17, Health.count
-    assert HealthPc.count == 4, HealthPc.count
+    assert Health.count == 19, Health.count
+    assert HealthPc.count == 6, HealthPc.count
     assert HealthNpc.count == 12, HealthNpc.count
     [Npc, PlayerCharacter].each{|t| t.all.each{|c|
       assert c.health

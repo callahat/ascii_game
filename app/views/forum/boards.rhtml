@@ -1,6 +1,6 @@
 <h1>Boards</h1>
 
-<% if session[:player] && session[:player].mod_level == 9 %>
+<% if session[:player] && session[:player].forum_attribute.mod_level == 9 %>
 <%= link_to 'Create new board', :action => 'new_board' %>
 <% end %>
 
@@ -16,20 +16,22 @@ you don't see any boards
   <th>Threds</th>
   <th>Last Post</th>
 </tr>
-<% for board in @boards %>
+<% for board in @boards 
+     lp = board.last_post %>
 <tr>
-  <td><%= link_to "#{board.name}", :action => 'forum_router', :board_id => board.id %></td>
+  <td><%= link_to "#{board.name}", boards_url( :bname => board.name ) %></td>
   <td class="board_info"><%=h board.text %></td>
   <td><%=h board.childs.size %></td>
-  <td class="board_info"><% if board.last_posted_child %><%=h board.time_of_last_posted_child %> in <%= link_to "#{board.last_posted_child.name}", :action => 'forum_router', :thred_id => board.last_posted_child.id %> by <%= board.last_posted_child.childs.first.player.handle %><% end %></td>
+  <td class="board_info"><% if lp %><%=h lp.created_at %> in <%= link_to "#{lp.thread.name}", threds_url(:bname => board.name, :tname => lp.thread.name) %> by <%= lp.player.handle %><% end %></td>
 </tr>
 <tr>
-  <td class="board_info"><% if session[:player] && session[:player].mod_level > 2 %>Mod Ops:<% elsif board.is_locked %>Board Locked<% end %></td>
+  <td class="board_info"><% if session[:player] && session[:player].forum_attribute.mod_level > 2 %>Mod Ops:<% elsif board.is_locked %>Board Locked<% end %></td>
   <td colspan=3>
   <table>
     <tr>
-    <td class="board_info" style="word-spacing:3em"><% if session[:player] && session[:player].mod_level == 9 %><%= link_to 'edit', :action => 'edit_board', :board_id => board.id %>-<% end %>
-    <% forum_node = board %><%= render '/forum/forum_node_status.rhtml', { :forum_node => board, :mml => 7 } %></td>
+    <td class="board_info" style="word-spacing:3em">
+    <%= link_to('-edit', forum_action_url(:action => 'edit_board', :forum_node_id => board.id)) if board.can_be_edited_by(session[:player] ) %>
+    <%= raw forum_node_statuses(session[:player], board) %></td>
     </tr>
   </table>
   </td>

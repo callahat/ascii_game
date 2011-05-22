@@ -94,6 +94,17 @@ AsciiGame3::Application.routes.draw do
   
   #ForumsController
 
+  match     'forums'                                        =>  'forum#boards',     :as => "forums"
+  match     'forums/:bname'                                 =>  'forum#threds',     :as => "boards"
+  match     'forums/:bname/:tname'                          =>  'forum#view_thred', :as => "threds"
+
+  match     'forum_action/:bname/:tname/:forum_node_id/:action' =>  'forum',            :as => "thred_action"
+  match     'forum_action/:bname/:forum_node_id/:action'        =>  'forum',            :as => "board_action"
+  match     'forum_action/:forum_node_id/:action'               =>  'forum',            :as => "forum_action"
+  
+
+  
+  resource  :forum
 
   # Sample of named route:
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase

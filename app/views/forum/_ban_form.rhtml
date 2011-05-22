@@ -3,7 +3,7 @@
 <p>Select forum restriction and duration for <%=h @player.handle %></p>
 
 <p><label for="forum_restriction_restriction">Restriction</label><br/>
-<%= collection_select 'forum_restriction','restriction', @restrictions, 'col_num', 'text' %></p>
+<%= select('forum_restriction', 'restriction', @restrictions) %></p>
 
-<p><label for="thred_title">Exires (in days<% if session[:player].mod_level < 9 %>, max <%= (session[:player].mod_level * 2).to_s %><% else %>, blank = no expiration<% end %>):</label><br/>
+<p><label for="thred_title">Exires (in days<% if session[:player].forum_attribute.mod_level < 9 %>, max <%= (session[:player].forum_attribute.mod_level * 2).to_s %><% else %>, blank = no expiration<% end %>):</label><br/>
 <%= text_field 'forum_restriction', 'expires' %></p>

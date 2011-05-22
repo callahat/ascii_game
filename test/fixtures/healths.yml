@@ -31,7 +31,24 @@ test_king_health:
   wellness: <%= SpecialCode.get_code('wellness','alive') %>
   owner: test_king
   kind: "HealthPc"
-	
+test_hollow_pc_health:
+  base_HP: 60
+  base_MP: 60
+  HP: 60
+  MP: 60
+  wellness: <%= SpecialCode.get_code('wellness','alive') %>
+  owner: test_hollow_pc
+  kind: "HealthPc"
+  
+test_mod_pc_health:
+  base_HP: 60
+  base_MP: 60
+  HP: 60
+  MP: 60
+  wellness: <%= SpecialCode.get_code('wellness','alive') %>
+  owner: test_mod_pc
+  kind: "HealthPc"
+  
 npc_one_health:
   wellness: <%= SpecialCode.get_code('wellness','alive') %>
   base_HP: 30

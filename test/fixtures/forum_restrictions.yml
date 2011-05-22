@@ -1,5 +1,16 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
-  id: 1
-two:
-  id: 2
+<% SPEC_CODET['restrictions'].to_a.each do |res| %>
+one_<%= res[1] %>:
+  player: banned_player
+  restriction: <%= res[1] %>
+  expires: <%= Date.today + 1.years %>
+  giver: test_player_mod
+<% end %>
+
+<% SPEC_CODET['restrictions'].to_a.each do |res| %>
+expires_ban_<%= res[1] %>:
+  player: test_player_junior_mod
+  restriction: <%= res[1] %>
+  expires: <%= Date.today - 1.years %>
+  giver: test_player_mod
+<% end %>

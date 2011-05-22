@@ -3,14 +3,10 @@ class ForumRestriction < ActiveRecord::Base
   belongs_to :giver, :foreign_key => 'given_by', :class_name => 'Player'
   
   def self.no_posting(who)
-    p who.player_characters.find(:first, :conditions => 'level > 9')
-    return(true) if who.player_characters.find(:first, :conditions => 'level > 9').nil?
     return self.no_whating('no_posting', who)
   end
   
   def self.no_threding(who)
-    p who.player_characters.find(:first, :conditions => 'level > 9')
-    return(true) if who.player_characters.find(:first, :conditions => 'level > 9').nil?
     return self.no_whating('no_threding', who)
   end
   
@@ -19,6 +15,35 @@ class ForumRestriction < ActiveRecord::Base
   end
   
   def self.no_whating(what, who)
-    return who.forum_restrictions.exists?(:restriction => SpecialCode.get_code('restrictions', what))
+    return who.forum_restrictions.exists?(
+       ['restriction = ? and expires > ?',
+        SpecialCode.get_code('restrictions', what),
+        Date.today() ] )
+  end
+  
+  def check_expiration(mod, expiry)
+    if mod.forum_attribute.mod_level < 9 &&
+       (expiry.nil? || expiry == "" || expiry.to_i > mod.forum_attribute.mod_level*2)
+      errors[:expires] << "Too long"
+    elsif expiry.nil? || expiry == ""
+      self.expires = nil
+    else
+      self.expires = Date.today + [expires.to_i.day,27.years].min
+    end
+  end
+  
+  def kill_ban(mod)
+    if given_by != mod.id && giver.forum_attribute.mod_level > mod.forum_attribute.mod_level
+      return false, "Cannot remove a restriction placed by someone with a higher mod level than yourself."
+    else
+      return destroy, "Removed restriction"
+    end
+  end
+
+protected
+  before_create :check_expiry
+  
+  def check_expiry
+    check_expiration(self.giver, self.expires)
   end
 end

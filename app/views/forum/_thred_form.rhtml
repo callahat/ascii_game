@@ -1,6 +1,6 @@
 <%= error_messages_for 'thred' %>
 
-<% if session[:player] && session[:player].mod_level > 5 || @thred.new_record? %>
+<% if session[:player] && session[:player].forum_attribute.mod_level > 5 || @thred.new_record? %>
 <p><label for="thred_name">Name</label><br/>
 <%= text_field 'thred', 'name' %></p>
 <% else %>
@@ -10,3 +10,4 @@
 
 <p><label for="thred_text">Description</label><br/>
 <%= text_area 'thred', 'text', :cols => 23, :rows => 4 %></p>
+

@@ -46,6 +46,30 @@ test_pc_one_stat_trn:
   owner: test_pc_one
   kind: "StatPcTrn"
 
+test_hollow_pc_stat:
+  <<: *default_stat10
+  owner: test_hollow_pc
+  kind: "StatPc"
+test_hollow_pc_stat_base:
+  <<: *default_stat10
+  owner: test_hollow_pc
+  kind: "StatPcBase"
+test_hollow_pc_stat_trn:
+  owner: test_hollow_pc
+  kind: "StatPcTrn"
+
+test_mod_pc_stat:
+  <<: *default_stat10
+  owner: test_mod_pc
+  kind: "StatPc"
+test_mod_pc_stat_base:
+  <<: *default_stat10
+  owner: test_mod_pc
+  kind: "StatPcBase"
+test_mod_pc_stat_trn:
+  owner: test_mod_pc
+  kind: "StatPcTrn"
+
 test_king_stat:
   <<: *default_stat10
   owner: test_king

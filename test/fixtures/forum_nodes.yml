@@ -1,5 +1,101 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
-  id: 1
-two:
-  id: 2
+board_1:
+  player: test_player_one
+  forum_node_id: nil
+  name: "First board"
+  text: "This is the first board created"
+  elders: 0
+  kind: "ForumNodeBoard"
+thread_1_1:
+  player: test_player_one
+  forum_node: board_1
+  name: "First Thread"
+  text: "This is the first thread, open to all"
+  elders: 1
+  kind: "ForumNodeThread"
+post_1_1_1:
+  player: test_player_one
+  forum_node: thread_1_1
+  name: "First Post, this doesnt appear anywhere tho"
+  text: "This is the first post, open to all"
+  elders: 2
+  kind: "ForumNodePost"
+post_1_1_2:
+  player: test_player_one
+  forum_node: thread_1_1
+  name: "second Post, this doesnt appear anywhere tho"
+  text: "This is the secoind post, open to all"
+  elders: 2
+  kind: "ForumNodePost"
+post_1_1_3:
+  player: test_player_mod
+  forum_node: thread_1_1
+  name: "second Post, this doesnt appear anywhere tho"
+  text: "This is the thrid post, open to mods"
+  elders: 2
+  kind: "ForumNodePost"
+  is_mods_only: true
+post_1_1_4:
+  player: test_player_mod
+  forum_node: thread_1_1
+  name: "Fourth Post, this doesnt appear anywhere tho"
+  text: "This is the fourth post, locked"
+  elders: 2
+  kind: "ForumNodePost"
+  is_locked: true
+post_1_1_5:
+  player: test_player_mod
+  forum_node: thread_1_1
+  name: "Fifth Post, this doesnt appear anywhere tho"
+  text: "This is the fifth post, hidden"
+  elders: 2
+  kind: "ForumNodePost"
+  is_hidden: true
+post_1_1_6:
+  player: test_player_mod
+  forum_node: thread_1_1
+  name: "Sixth Post, this doesnt appear anywhere tho"
+  text: "This is the six post, deleted"
+  elders: 2
+  kind: "ForumNodePost"
+  is_deleted: true
+
+thread_1_2:
+  player: test_player_one
+  forum_node: board_1
+  name: "Second Thread"
+  text: "This is the second thread, locked"
+  elders: 1
+  kind: "ForumNodeThread"
+  is_locked: true
+post_1_2_1:
+  player: test_player_mod
+  forum_node: thread_1_2
+  name: "First post of thread 2, should be locked like its parent"
+  text: "This is the six post, deleted"
+  elders: 2
+  kind: "ForumNodePost"
+
+board_2:
+  player: test_player_mod
+  forum_node_id: nil
+  name: "Second board"
+  text: "This is the second board created, mods only"
+  elders: 0
+  kind: "ForumNodeBoard"
+  is_mods_only: true
+thread_2_1:
+  player: test_player_mod
+  forum_node: board_2
+  name: "First Thread of board 2"
+  text: "This is the first thread, open to all mods for it is on the mods board"
+  elders: 1
+  kind: "ForumNodeThread"
+post_2_1_1:
+  player: test_player_mod
+  forum_node: thread_2_1
+  name: "First post of thread 2, should be locked like its parent"
+  text: "This is the six post, deleted"
+  elders: 2
+  kind: "ForumNodePost"
+

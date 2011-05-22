@@ -1,15 +1,16 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file, 
-# please use the migrations feature of Active Record to incrementally modify your database, and
-# then regenerate this schema definition.
+# This file is auto-generated from the current state of the database. Instead
+# of editing this file, please use the migrations feature of Active Record to
+# incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your database schema. If you need
-# to create the application database on another system, you should be using db:schema:load, not running
-# all the migrations from scratch. The latter is a flawed and unsustainable approach (the more migrations
+# Note that this schema.rb definition is the authoritative source for your
+# database schema. If you need to create the application database on another
+# system, you should be using db:schema:load, not running all the migrations
+# from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100725164109) do
+ActiveRecord::Schema.define(:version => 20110511015408) do
 
   create_table "attack_spells", :force => true do |t|
     t.string  "name",         :limit => 32,  :default => "", :null => false
@@ -143,7 +144,7 @@ ActiveRecord::Schema.define(:version => 20100725164109) do
     t.integer  "location_id",                         :null => false
     t.integer  "priority",            :default => 0,  :null => false
     t.integer  "completed",           :default => -1
-    t.string   "kind",                :default => "", :null => false
+    t.string   "kind",                                :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -171,10 +172,10 @@ ActiveRecord::Schema.define(:version => 20100725164109) do
   add_index "diseases", ["name"], :name => "name"
 
   create_table "done_events", :force => true do |t|
-    t.integer  "event_id",                            :null => false
-    t.integer  "player_character_id",                 :null => false
-    t.integer  "location_id",                         :null => false
-    t.string   "kind",                :default => "", :null => false
+    t.integer  "event_id",            :null => false
+    t.integer  "player_character_id", :null => false
+    t.integer  "location_id",         :null => false
+    t.string   "kind",                :null => false
     t.datetime "created_at"
   end
 
@@ -264,22 +265,26 @@ ActiveRecord::Schema.define(:version => 20100725164109) do
     t.integer  "forum_node_id"
     t.string   "name",          :limit => 64
     t.text     "text"
-    t.datetime "datetime"
+    t.datetime "created_at"
     t.boolean  "is_locked",                   :default => false
     t.boolean  "is_hidden",                   :default => false
     t.boolean  "is_deleted",                  :default => false
     t.boolean  "is_mods_only",                :default => false
     t.integer  "elders",                      :default => 0,     :null => false
     t.text     "edit_notices"
+    t.datetime "updated_at"
+    t.string   "kind",          :limit => 20
+    t.boolean  "lock"
+    t.integer  "post_count",                  :default => 0
+    t.integer  "last_post_id"
   end
 
-  add_index "forum_nodes", ["datetime"], :name => "datetime"
-  add_index "forum_nodes", ["forum_node_id", "is_deleted"], :name => "forum_node_id_is_deleted"
-  add_index "forum_nodes", ["forum_node_id", "is_hidden"], :name => "forum_node_id_is_hidden"
-  add_index "forum_nodes", ["forum_node_id", "is_locked"], :name => "forum_node_id_is_locked"
-  add_index "forum_nodes", ["forum_node_id", "is_mods_only"], :name => "forum_node_id_is_mods_only"
-  add_index "forum_nodes", ["forum_node_id"], :name => "forum_node_id"
-  add_index "forum_nodes", ["name"], :name => "name"
+  add_index "forum_nodes", ["kind", "forum_node_id", "is_deleted"], :name => "kind_forum_node_id_is_deleted"
+  add_index "forum_nodes", ["kind", "forum_node_id", "is_hidden"], :name => "kind_forum_node_id_is_hidden"
+  add_index "forum_nodes", ["kind", "forum_node_id", "is_locked"], :name => "kind_forum_node_id_is_locked"
+  add_index "forum_nodes", ["kind", "forum_node_id", "is_mods_only"], :name => "kind_forum_node_id_is_mods_only"
+  add_index "forum_nodes", ["kind", "forum_node_id"], :name => "kind_forum_node_id"
+  add_index "forum_nodes", ["kind"], :name => "index_forum_nodes_on_kind"
   add_index "forum_nodes", ["player_id"], :name => "player_id"
 
   create_table "forum_restrictions", :force => true do |t|
@@ -293,6 +298,18 @@ ActiveRecord::Schema.define(:version => 20100725164109) do
   add_index "forum_restrictions", ["player_id", "expires", "restriction"], :name => "player_id_expires_restriction"
   add_index "forum_restrictions", ["player_id", "expires"], :name => "player_id_expires"
   add_index "forum_restrictions", ["player_id"], :name => "player_id"
+
+  create_table "forum_user_attributes", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "mod_level"
+    t.integer  "posts"
+    t.boolean  "lock"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "forum_user_attributes", ["posts"], :name => "index_forum_user_attributes_on_posts"
+  add_index "forum_user_attributes", ["user_id"], :name => "index_forum_user_attributes_on_user_id"
 
   create_table "genocides", :force => true do |t|
     t.integer  "player_character_id", :null => false
@@ -651,7 +668,6 @@ ActiveRecord::Schema.define(:version => 20100725164109) do
     t.integer "account_status",                     :default => 1,     :null => false
     t.boolean "admin",                              :default => false
     t.boolean "table_editor_access",                :default => false
-    t.integer "mod_level",                          :default => 0
     t.date    "joined"
   end
 

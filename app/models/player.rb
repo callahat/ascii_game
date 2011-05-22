@@ -1,16 +1,19 @@
 #require 'digest/sha1'
 
 class Player < ActiveRecord::Base
-  has_many :boards, :foreign_key => 'player_id', :class_name => 'ForumNode', :conditions => ['elders = 0'], :order => 'datetime'
+  has_many :forum_node_boards
   has_many :creatures
   has_many :events
   has_many :features
   has_many :images
-  has_many :posts, :foreign_key => 'player_id', :class_name => 'ForumNode', :conditions => ['elders > 1'], :order => 'datetime'
+  has_many :forum_node_posts
   has_many :quests
-  has_many :threds, :foreign_key => 'player_id', :class_name => 'ForumNode', :conditions => ['elders = 1'], :order => 'datetime'
+  has_many :forum_node_threads
   has_many :player_characters, :order => 'name'
   has_many :forum_restrictions, :conditions => ['expires is null OR expires > ?', Time.now.to_date]
+  
+  has_one :forum_user_attribute, :foreign_key => 'user_id'
+  alias :forum_attribute :forum_user_attribute
 
   # Authenticate a player. 
   # /borrrowed code
@@ -74,5 +77,11 @@ protected
 
   validates_uniqueness_of :handle, :on => :create
   validates_presence_of :handle,:passwd, :on => :create
+
+  after_create :make_forum_attribute
+  
+  def make_forum_attribute
+    ForumUserAttribute.create(:user_id => self.id, :posts => 0, :mod_level => 0)
+  end
 
 end

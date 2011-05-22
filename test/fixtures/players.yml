@@ -5,10 +5,23 @@ test_system_player:
   account_status: 1
   admin: 1
   table_editor_access: 1
-  mod_level: 9
 test_player_one:
   handle: "Test Player One"
   account_status: 1
   admin: 0
   table_editor_access: 0
-  mod_level: 0
+test_player_mod:
+  handle: "Test Player Mod"
+  account_status: 1
+  admin: 0
+  table_editor_access: 0
+test_player_junior_mod:
+  handle: "Test Player Junior Mod"
+  account_status: 1
+  admin: 0
+  table_editor_access: 0
+banned_player:
+  handle: "Banned"
+  account_status: 1
+  admin: 0
+  table_editor_access: 0
