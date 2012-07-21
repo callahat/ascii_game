@@ -12,7 +12,7 @@ AsciiGame3::Application.configure do
   # Show full error reports and disable caching
   config.consider_all_requests_local = false
   config.action_controller.perform_caching             = true
-  config.action_controller.cache_store                 = :file_store, RAILS_ROOT+"/tmp/cache/"
+  config.action_controller.cache_store                 = :file_store, Rails.root.to_s+"/tmp/cache/"
   config.cache_template_loading            = true
   config.action_view.debug_rjs                         = true
 
