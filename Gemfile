@@ -5,8 +5,10 @@ gem 'rails', '3.0.5'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'mysql2'
-gem 'will_paginate'
+gem 'mysql2', '0.2.7'
+gem 'will_paginate', '2.3.15'
+
+gem 'activesupport', '3.0.5'
 
 
 # Use unicorn as the web server
