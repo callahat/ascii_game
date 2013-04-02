@@ -30,9 +30,10 @@ class Maintenance < ActiveRecord::Base
   
   def self.npc_solicitation(kingdom, npc_class)
     if @unhired_merchants.size < kingdom.player_character.level * 2
+    
       @npc_from_pool = npc_class.find(:first, :conditions => ['kingdom_id is NULL'], :order => 'rand()')
+
       if @npc_from_pool.nil? || rand > 0.75
-        
         @new_guy = npc_class.generate(kingdom.id)
         
         @@report << @new_guy.name + " entered the job market"
@@ -160,22 +161,36 @@ class Maintenance < ActiveRecord::Base
       Kingdom.transaction do
         kingdom.lock!
         
+        @current_pop = kingdom.num_peasants
         @tax_revenue = (kingdom.num_peasants * kingdom.tax_rate / 1000.0).to_i
         @immigrants = 3 + (100 - (kingdom.tax_rate ** 2) / 100.0).to_i
-        @births = ((rand(10) + kingdom.num_peasants) * [100 - kingdom.tax_rate ** 2, 1].max / 100.0).to_i
-        @emmigrants = [kingdom.housing_cap - kingdom.num_peasants, 0].min / (rand(10)+1)
+        @immigrants *= [(kingdom.housing_cap - kingdom.num_peasants - @immigrants), 1].min
+        @immigrants = 0 if @immigrants < 0
+        @emmigrants = [30+kingdom.housing_cap - kingdom.num_peasants, 0].min
+        @emmigrants /= (rand(10)+1) unless @emmigrants < kingdom.housing_cap * -2
+        @births = ((rand(10) + kingdom.num_peasants + @emmigrants) * [100 - kingdom.tax_rate ** 2, 1].max / 1000.0).to_i
         
-        text = "Population trends:<br/>Births: " + @births.to_s +
-               "<br/>Immigrants: " + @immigrants.to_s +
-               "<br/>Emmigrants: " + @emmigrants.to_s +
-               "<br/>Deaths from disease: " + @disease_deaths.to_s
+        
+        text = "Population trends:" + 
+               "%-26s%20s" % ["<br/>Current Population:" ,@current_pop.to_s] +
+               "%-26s%20s" % ["<br/>Births:", @births.to_s] +
+               "%-26s%20s" % ["<br/>Immigrants:", @immigrants.to_s] +
+               "%-26s%20s" % ["<br/>Emmigrants:", (-1*@emmigrants).to_s] +
+               "%-26s%20s" % ["<br/>Deaths from disease:", @disease_deaths.to_s]
         KingdomNotice.create_notice(text, kingdom.id, "Minister of Population")
         
-        kingdom.num_peasants += @births + @immigrants - @emmigrants
+        kingdom.num_peasants += @births + @immigrants + @emmigrants
         kingdom.gold += @tax_revenue
         
         kingdom.save!
       end
+      
+      @@report << "\nPopulation trends:" + 
+                  "%-26s%20s" % ["\nCurrent Population:" ,@current_pop.to_s] +
+                  "%-26s%20s" % ["\nBirths:", @births.to_s] +
+                  "%-26s%20s" % ["\nImmigrants:", @immigrants.to_s] +
+                  "%-26s%20s" % ["\nEmmigrants:", (-1*@emmigrants).to_s] +
+                  "%-26s%20s" % ["\nDeaths from disease:", @disease_deaths.to_s]
       
       #take care of the new NPC stuff, only if there is a king
       if kingdom.player_character_id
@@ -189,8 +204,8 @@ class Maintenance < ActiveRecord::Base
   #main routine to take care of all the player maintenance that needs done
   #mostly just gives players characters more time units, but could be expanded later.
   def self.player_character_maintenance
-    #add turns for player characters that are active only. 
-    @player_characters = PlayerCharacter.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code('char_stat','active')])
+    #add turns for player characters that are active only, and have used turns since last time
+    @player_characters = PlayerCharacter.find(:all, :conditions => ['char_stat = ? and turns < 200', SpecialCode.get_code('char_stat','active')])
     @updated_count = 0
     for pc in @player_characters
       #might as well get the lock
