@@ -53,9 +53,10 @@ class Maintenance < ActiveRecord::Base
     for npc in npcs
       #get the disease damage toll first
       @disease_damage = npc.illnesses.inject(0){|c,i| c+i.disease.HP_per_turn }
-
+      
       #lock NPC, just to be safe
       Npc.transaction do
+        begin
         npc.lock! && npc.stat.lock! && npc.health.lock!
 
         Stat.symbols.each{|sym| npc.stat[sym] += rand(4) }
@@ -75,6 +76,9 @@ class Maintenance < ActiveRecord::Base
           npc.health.HP = [npc.health.HP,1].max
         end
         npc.save! && npc.stat.save! && npc.health.save!
+        rescue Exception => e
+          @@report << e
+        end
       end
       
       if npc.health.wellness == SpecialCode.get_code('wellness','dead')
@@ -208,6 +212,7 @@ class Maintenance < ActiveRecord::Base
     @player_characters = PlayerCharacter.find(:all, :conditions => ['char_stat = ? and turns < 200', SpecialCode.get_code('char_stat','active')])
     @updated_count = 0
     for pc in @player_characters
+      begin
       #might as well get the lock
       PlayerCharacter.transaction do
         @@report << "Updating PC #" + pc.id.to_s + " " + pc.name
@@ -237,6 +242,9 @@ class Maintenance < ActiveRecord::Base
         pc.health.save!
       end
       @updated_count += 1
+      rescue Exception => e
+        @@report << e
+      end
     end
     @updated_count
   end
@@ -244,9 +252,13 @@ class Maintenance < ActiveRecord::Base
   def self.creature_maintenance
     @@report << "Creature maintenance"
     Creature.find(:all, :conditions => ['armed = true AND being_fought > 0']).each{|c|
+    begin
       c.lock!
       c.number_alive += c.being_fought
       @@report << "  shifted " + c.being_fought.to_s + " " + c.name + " from being fought to alive; total alive now:" + c.number_alive.to_s
-      c.save! }
+      c.save! 
+    rescue Exception => e
+     @@report << e
+    end }
   end
 end

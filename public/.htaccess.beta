@@ -1,3 +1,6 @@
 PassengerEnabled On
+PassengerMinInstances 3
+PassengerMaxPoolSize 10
+PassengerPoolIdleTime 0
 PassengerAppRoot /home/callahat/projects/rails/asciigame.com
 RailsEnv beta
