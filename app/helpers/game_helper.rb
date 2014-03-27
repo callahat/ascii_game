@@ -32,7 +32,7 @@ module GameHelper
 				level_map = where.level_maps.find(:last,:conditions => ['ypos = ? AND xpos = ?', y, x])
 				if level_map && feature = level_map.feature
 					@ret += "<td>\n<a href=\"/game/feature?id=" + level_map.id.to_s + "\" class=\"map\">" + 
-									"<span class=\"feature image\" title=\"" + (feature.name.split("::").first) + "\">"  + h(feature.image.image_text) + "</span>\n</a></td>\n"
+									"<span class=\"feature image\" title=\"" + (feature.name.split("::").first) + "\">"  + html_escape(feature.image.image_text) + "</span>\n</a></td>\n"
 				else
 					@ret += "<td>\n<a href=\"#\" class=\"map\"><pre class=\"feature image\" title=\"Empty\">" +
 									h(EMPTY_IMAGE) + "</span></a></td>\n"

@@ -8,8 +8,8 @@ class Management::ImagesController < ApplicationController
 		@images = Image.get_page(params[:page], session[:kingdom][:id] )
 	end
 
-	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-	verify :method => :post, :only => [ :destroy, :create, :update ],				 :redirect_to => { :action => :index }
+#	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
+#	verify :method => :post, :only => [ :destroy, :create, :update ],				 :redirect_to => { :action => :index }
 
 	def show
 		@image = Image.find(params[:id])

@@ -11,27 +11,27 @@ class Management::LevelsControllerTest < ActionController::TestCase
 	end
 	
 	test "mgmt level controller index" do
-		# get 'index', {}, session
+		# get 'index', {}, session.to_hash
 		# assert_response :success
 		# assert_not_nil assigns(:features)
 	end
 	
 	test "mgmt level controller show" do
-		# get 'show', {:id => @f.id}, session
+		# get 'show', {:id => @f.id}, session.to_hash
 		# assert_response :success
 		# assert_not_nil assigns(:feature)
 	end
 	
 	test "mgmt level controller new and create" do
-		# get 'new', {}, session
+		# get 'new', {}, session.to_hash
 		# assert_response :success
 		
-		# post 'create', {:feature => {}, :image => {:image_text => ""}}, session
+		# post 'create', {:feature => {}, :image => {:image_text => ""}}, session.to_hash
 		# assert_response :success
 		# assert_template 'new'
 		
 		# assert_difference 'Feature.count', +1 do
-			# post 'create', { :feature => @f_hash, :image => @i_hash }, session
+			# post 'create', { :feature => @f_hash, :image => @i_hash }, session.to_hash
 			# assert_response :redirect
 			# assert_redirected_to :controller => 'management/features', :action => 'index'
 		# end

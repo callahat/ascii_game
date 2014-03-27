@@ -8,8 +8,8 @@ class CharacterController < ApplicationController
 
 	layout 'main'
 
-	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-	verify :method => :post, :only => [ :do_destroy, :do_retire, :do_unretire, :do_choose, :do_image_update, :updateimage, :create ],				 :redirect_to => { :action => :menu }
+#	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
+#	verify :method => :post, :only => [ :do_destroy, :do_retire, :do_unretire, :do_choose, :do_image_update, :updateimage, :create ],				 :redirect_to => { :action => :menu }
 
 	def index
 		redirect_to :action => 'menu'

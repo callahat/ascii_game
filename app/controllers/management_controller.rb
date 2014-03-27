@@ -5,8 +5,8 @@ class ManagementController < ApplicationController
 
 	layout 'main'
 	
-	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-	verify :method => :post, :only => [ :do_retire ],				 :redirect_to => { :action => :main_index }
+#	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
+#	verify :method => :post, :only => [ :do_retire ],				 :redirect_to => { :action => :main_index }
 	
 	def choose_kingdom
 		session[:kingdom] = nil

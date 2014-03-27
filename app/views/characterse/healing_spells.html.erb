@@ -1,0 +1,23 @@
+<table>
+<tr><td><b>Healnig Spells</b></td></td>
+  <tr>
+    <td><b>Name</b></td>
+    <td><b>Min Level<b></td>
+    <td><b>HP Restored</b></td>
+    <td><b>Disease Cured</b></td>
+    <td><b>MP<b></td>
+  </tr>
+<% for spell in @healing_spells %>
+  <tr>
+    <td><span title="<%= spell.description %>"><%= spell.name %></span></td>
+    <td><%= spell.min_level %></td>
+    <td><%= spell.min_heal %>-<%= spell.max_heal %></td>
+    <td><% if spell.disease %><%= spell.disease.name %><% else %>none<% end %></td>
+    <td><%= spell.mp_cost %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @healing_spells %> 
+
+<%= render :file => 'characterse/footer' %>

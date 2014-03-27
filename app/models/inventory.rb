@@ -44,16 +44,16 @@ class Inventory < ActiveRecord::Base
     25
   end
   
-  def self.get_page(page, oid = nil, rbt = nil)
+  def self.get_page(page, oid = nil, equip_loc = nil)
     conds = ['quantity > 0']
 
     if oid
       conds[0] += ' and owner_id = ?'
       conds << oid
     end
-    if rbt
-      conds[0] += ' and (items.race_body_type is null or items.race_body_type = ?)'
-      conds << rbt
+    if equip_loc
+      conds[0] += ' and (items.equip_loc is null or items.equip_loc = ?)'
+      conds << equip_loc
     end
 
     joins('INNER JOIN items on inventories.item_id = items.id')\

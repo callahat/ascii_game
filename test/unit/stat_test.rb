@@ -77,8 +77,8 @@ class HealthTest < ActiveSupport::TestCase
       assert s3[sym] == 20
       assert s3[sym] == s1[sym] + s2[sym] }
       
-    s1_old = s1.clone
-    s2_old = s2.clone
+    s1_old = s1.dup
+    s2_old = s2.dup
     assert s1.add_stats(s2)
     Stat.symbols.each{|sym|
       assert s1[sym] == 20

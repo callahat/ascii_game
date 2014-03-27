@@ -4,8 +4,8 @@ class Management::KingdomNpcsController < ManagementController
 		render :action => 'list'
 	end
 
-	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-	verify :method => :post, :only => [ :hire_merchant, :hire_guard, :turn_away ],				 :redirect_to => { :action => :list }
+#	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
+#	verify :method => :post, :only => [ :hire_merchant, :hire_guard, :turn_away ],				 :redirect_to => { :action => :list }
 
 	def list
 		@merchs = @kingdom.merchants.find(:all, :include => :health, :order => 'healths.wellness')

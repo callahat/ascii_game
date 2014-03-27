@@ -51,13 +51,13 @@ class InventoryTest < ActiveSupport::TestCase
 	end
 
 	test "pagination" do
-		assert Inventory.get_page(1).size == 25, Inventory.get_page(1).size.to_s
-		assert PlayerCharacterItem.get_page(1).size == 6
-		assert NpcStock.get_page(1).size == 4
-		assert KingdomItem.get_page(1).size == 25
-		assert KingdomItem.get_page(2).size == 6
-		assert KingdomItem.get_page(1,1).size == 25
-		assert KingdomItem.get_page(2,1).size == 5
-		assert KingdomItem.get_page(1,2).size == 1
+		assert Inventory.get_page(1).to_a.size == 25, Inventory.get_page(1).size.to_s
+		assert PlayerCharacterItem.get_page(1).to_a.size == 6
+		assert NpcStock.get_page(1).to_a.size == 4
+		assert KingdomItem.get_page(1).to_a.size == 25
+		assert_equal KingdomItem.get_page(2).to_a.size, 6
+		assert KingdomItem.get_page(1,1).to_a.size == 25
+		assert KingdomItem.get_page(2,1).to_a.size == 5
+		assert KingdomItem.get_page(1,2).to_a.size == 1
 	end
 end

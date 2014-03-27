@@ -4,8 +4,8 @@ class Management::QuestsController < ApplicationController
 
 	layout 'main'
 	
-	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-	verify :method => :post, :only => [ :destroy, :create, :update, :create_req, :update_req, :destroy_req, :activate, :retire ],				 :redirect_to => { :action => :index }
+#	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
+#	verify :method => :post, :only => [ :destroy, :create, :update, :create_req, :update_req, :destroy_req, :activate, :retire ],				 :redirect_to => { :action => :index }
 
 
 	#**********************************************************************

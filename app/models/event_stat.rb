@@ -20,7 +20,7 @@ class EventStat < Event
       who.health.lock!
       who.health.HP += self.health.HP
       who.health.MP += self.health.MP
-      who.health.wellness = SpecialCode.get_code('wellness','dead') if @health.HP <= 0
+      who.health.wellness = SpecialCode.get_code('wellness','dead') if who.health.HP <= 0
       who.health.save!
     end
     StatPc.transaction do

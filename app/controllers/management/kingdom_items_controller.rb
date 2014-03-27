@@ -10,9 +10,9 @@ class Management::KingdomItemsController < ApplicationController
 		render :action => 'list'
 	end
 
-	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-	verify :method => :post, :only => [ :do_store, :do_take ],
-				 :redirect_to => { :action => :list }
+#	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
+#	verify :method => :post, :only => [ :do_store, :do_take ],
+#				 :redirect_to => { :action => :list }
 
 	def list
 		@kingdom_items = KingdomItem.get_page(params[:page], session[:kingdom][:id] )

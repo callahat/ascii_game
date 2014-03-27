@@ -18,27 +18,27 @@ class Management::FeaturesControllerTest < ActionController::TestCase
 	end
 	
 	test "mgmt feature controller index" do
-		get 'index', {}, session
+		get 'index', {}, session.to_hash
 		assert_response :success
 		assert_not_nil assigns(:features)
 	end
 	
 	test "mgmt feature controller show" do
-		get 'show', {:id => @f.id}, session
+		get 'show', {:id => @f.id}, session.to_hash
 		assert_response :success
 		assert_not_nil assigns(:feature)
 	end
 	
 	test "mgmt feature controller new and create" do
-		get 'new', {}, session
+		get 'new', {}, session.to_hash
 		assert_response :success
 		
-		post 'create', {:feature => {}, :image => {:image_text => ""}}, session
+		post 'create', {:feature => {}, :image => {:image_text => ""}}, session.to_hash
 		assert_response :success
 		assert_template 'new'
 		
 		assert_difference 'Feature.count', +1 do
-			post 'create', { :feature => @f_hash, :image => @i_hash }, session
+			post 'create', { :feature => @f_hash, :image => @i_hash }, session.to_hash
 			assert_response :redirect
 			assert_redirected_to :controller => 'management/features', :action => 'index'
 		end
@@ -49,12 +49,12 @@ class Management::FeaturesControllerTest < ActionController::TestCase
 	end
 	
 	test "mgmt feature controller edit and update" do
-		get 'edit', {:id => @f.id}, session
+		get 'edit', {:id => @f.id}, session.to_hash
 		assert_response :success
 		
 		f_attrs = @f.attributes
 		f_attrs[:num_occupants] = 100
-		post 'update', {:id => @f.id, :feature => f_attrs, :image => @f.image}, session
+		post 'update', {:id => @f.id, :feature => f_attrs, :image => @f.image.attributes}, session.to_hash
 		assert_response :redirect
 		assert_redirected_to :controller => 'management/features', :action => 'show', :id => @f.id
 		assert flash[:notice] =~ /updated/
@@ -67,49 +67,49 @@ class Management::FeaturesControllerTest < ActionController::TestCase
 	
 	test "mgmt feature controller destroy" do
 		assert_no_difference 'Feature.count' do
-			post 'destroy', {:id => @f_armed.id}, session
+			post 'destroy', {:id => @f_armed.id}, session.to_hash
 			assert_redirected_to :controller => 'management/features', :action => 'index'
 			assert flash[:notice] =~ /being used/
 		end
 		
 		assert_difference 'Feature.count', -1 do
-			post 'destroy', {:id => @f.id}, session
+			post 'destroy', {:id => @f.id}, session.to_hash
 			assert_redirected_to :controller => 'management/features', :action => 'index'
 			assert flash[:notice] =~ /destroyed/
 		end
 	end
 	
 	test "mgmt feature controller arm" do
-		post 'arm_feature', {:id => @f_armed.id}, session
+		post 'arm_feature', {:id => @f_armed.id}, session.to_hash
 		assert_redirected_to :controller => 'management/features', :action => 'index'
 		assert flash[:notice] =~ /not be added/, flash[:notice]
 
-		post 'arm_feature', {:id => @f.id}, session
+		post 'arm_feature', {:id => @f.id}, session.to_hash
 		assert_redirected_to :controller => 'management/features', :action => 'index'
 		assert flash[:notice] =~ /Added to preference/
 		assert flash[:notice] =~ /sucessfully armed/
 		
-		post 'arm_feature', {:id => @f.id}, session
+		post 'arm_feature', {:id => @f.id}, session.to_hash
 		assert_redirected_to :controller => 'management/features', :action => 'index'
 		assert flash[:notice] =~ /not be added/, flash[:notice]
 	end
 	
 	test "mgmt feature controller pref list redirector" do
-		get 'pref_lists', {}, session
+		get 'pref_lists', {}, session.to_hash
 		assert_redirected_to :controller => 'management/pref_list'
 		assert session[:pref_list_type] == PrefListFeature
 	end
 	
 	test "mgmt feature controller new and create feature events" do
-		get 'new_feature_event', {:id => @f.id}, session
+		get 'new_feature_event', {:id => @f.id}, session.to_hash
 		assert_response :success
 		
-		post 'create_feature_event', {:id => @f.id, :feature_event => {:feature_id => @f.id, :event_id => @e.id} }, session
+		post 'create_feature_event', {:id => @f.id, :feature_event => {:feature_id => @f.id, :event_id => @e.id} }, session.to_hash
 		assert_response :success
 		assert_template 'new'
 		
 		assert_difference '@f.feature_events.count', +1 do
-			post 'create_feature_event', {:id => @f.id, :feature_event => @fe_hash }, session
+			post 'create_feature_event', {:id => @f.id, :feature_event => @fe_hash }, session.to_hash
 			assert_response :redirect
 			assert_redirected_to :controller => 'management/features', :action => 'show', :id => @f.id
 		end
@@ -117,17 +117,17 @@ class Management::FeaturesControllerTest < ActionController::TestCase
 	
 	test "mgmt feature controller edit and update feature events" do
 		@feid = @f.feature_events.first
-		get 'edit_feature_event', {:id => @feid}, session
+		get 'edit_feature_event', {:id => @feid}, session.to_hash
 		assert_response :success
 		
 		@fe_hash[:chance] = -33
-		post 'update_feature_event', {:id => @feid, :feature_event => @fe_hash }, session
+		post 'update_feature_event', {:id => @feid, :feature_event => @fe_hash }, session.to_hash
 		assert_response :success
 		assert_template 'edit'
 		
 		@fe_hash[:chance] = 50
 		assert_difference '@f.feature_events.count', +0 do
-			post 'update_feature_event', {:id => @feid, :feature_event => @fe_hash }, session
+			post 'update_feature_event', {:id => @feid, :feature_event => @fe_hash }, session.to_hash
 			assert_response :redirect
 			assert_redirected_to :controller => 'management/features', :action => 'show', :id => @f.id
 		end
@@ -135,13 +135,13 @@ class Management::FeaturesControllerTest < ActionController::TestCase
 	
 	test "mgmt feature controller destroy feature events" do
 		assert_no_difference '@f_armed.feature_events.count' do
-			post 'destroy_feature_event', {:id => @f_armed.feature_events.first.id}, session
+			post 'destroy_feature_event', {:id => @f_armed.feature_events.first.id}, session.to_hash
 			assert_redirected_to :controller => 'management/features', :action => 'index'
 			assert flash[:notice] =~ /being used/
 		end
 		
 		assert_difference '@f.feature_events.count', -1 do
-			post 'destroy_feature_event', {:id => @f.feature_events.first.id}, session
+			post 'destroy_feature_event', {:id => @f.feature_events.first.id}, session.to_hash
 			assert_redirected_to :controller => 'management/features', :action => 'show', :id => @f.id
 			assert flash[:notice] =~ /destroyed/
 			@f.feature_events.reload

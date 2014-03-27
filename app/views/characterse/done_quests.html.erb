@@ -1,0 +1,22 @@
+<p>Completed Qeusts</p>
+
+<% if @done_quests %>
+  <table>
+    <tr>
+      <th>Quest</th>
+      <th>Kingom</th>
+      <th>Date</th>
+    </tr>
+  <% for done_quest in @done_quests %>
+    <tr>
+      <td><span title="<%= done_quest.quest.description %>"><%= done_quest.quest.name %></span></td>
+      <td><%= done_quest.quest.kingdom.name %></td>
+      <td><% if done_quest.date %><%= done_quest.date.to_date.to_s %><% end %></td>
+    </tr>
+  <% end %>
+  </table>
+<% end %>
+
+<%= will_paginate @done_quests %> 
+
+<%= render :file => 'characterse/footer' %>

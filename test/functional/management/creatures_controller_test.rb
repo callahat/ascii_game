@@ -16,27 +16,27 @@ class Management::CreaturesControllerTest < ActionController::TestCase
 	end
 	
 	test "mgmt creature controller index" do
-		get 'index', {}, session
+		get 'index', {}, session.to_hash
 		assert_response :success
 		assert_not_nil assigns(:creatures)
 	end
 	
 	test "mgmt creature controller show" do
-		get 'show', {:id => @c.id}, session
+		get 'show', {:id => @c.id}, session.to_hash
 		assert_response :success
 		assert_not_nil assigns(:creature)
 	end
 	
 	test "mgmt creature controller new and create" do
-		get 'new', {}, session
+		get 'new', {}, session.to_hash
 		assert_response :success
 		
-		post 'create', {:creature => {}, :image => {}, :stat => {}}, session
+		post 'create', {:creature => {}, :image => {}, :stat => {}}, session.to_hash
 		assert_response :success
 		assert_template 'new'
 		
 		assert_difference 'Creature.count', +1 do
-			post 'create', { :creature => @c_hash, :image => @i_hash, :stat => @s_hash }, session
+			post 'create', { :creature => @c_hash, :image => @i_hash, :stat => @s_hash }, session.to_hash
 			assert_response :redirect
 			assert_redirected_to :controller => 'management/creatures', :action => 'index'
 		end
@@ -45,16 +45,16 @@ class Management::CreaturesControllerTest < ActionController::TestCase
 	end
 	
 	test "mgmt creature controller edit and update" do
-		get 'edit', {:id => @c.id}, session
+		get 'edit', {:id => @c.id}, session.to_hash
 		assert_response :success
 		
 		orig_c_image = @c.image.image_text
 		
-		post 'update', {:id => @c.id, :creature => {:gold => nil}, :image => @c.image, :stat => {}}, session
+		post 'update', {:id => @c.id, :creature => {:gold => nil}, :image => @c.image, :stat => {}}, session.to_hash
 		assert_response :success
 		assert_template 'edit'
 		
-		post 'update', {:id => @c.id, :creature => @c.attributes, :image => @c.image.attributes, :stat => {}}, session
+		post 'update', {:id => @c.id, :creature => @c.attributes, :image => @c.image.attributes, :stat => {}}, session.to_hash
 		assert_response :redirect
 		assert_redirected_to :controller => 'management/creatures', :action => 'index'
 		assert flash[:notice] =~ /updated/
@@ -64,35 +64,35 @@ class Management::CreaturesControllerTest < ActionController::TestCase
 	
 	test "mgmt creature controller destroy" do
 		assert_no_difference 'Creature.count' do
-			post 'destroy', {:id => @c_armed.id}, session
+			post 'destroy', {:id => @c_armed.id}, session.to_hash
 			assert_redirected_to :controller => 'management/creatures', :action => 'index'
 			assert flash[:notice] =~ /being used/
 		end
 		
 		assert_difference 'Creature.count', -1 do
-			post 'destroy', {:id => @c.id}, session
+			post 'destroy', {:id => @c.id}, session.to_hash
 			assert_redirected_to :controller => 'management/creatures', :action => 'index'
 			assert flash[:notice] =~ /Creature destroyed/
 		end
 	end
 	
 	test "mgmt creature controller arm" do
-		get 'arm_creature', {:id => @c_armed.id}, session
+		get 'arm_creature', {:id => @c_armed.id}, session.to_hash
 		assert_redirected_to :controller => 'management/creatures', :action => 'index'
 		assert flash[:notice] =~ /Could not be/
 
-		get 'arm_creature', {:id => @c.id}, session
+		get 'arm_creature', {:id => @c.id}, session.to_hash
 		assert_redirected_to :controller => 'management/creatures', :action => 'index'
 		assert flash[:notice] =~ /Added to preference/
 		assert flash[:notice] =~ /sucessfully armed/
 		
-		get 'arm_creature', {:id => @c.id}, session
+		get 'arm_creature', {:id => @c.id}, session.to_hash
 		assert_redirected_to :controller => 'management/creatures', :action => 'index'
 		assert flash[:notice] =~ /Could not be/
 	end
 	
 	test "mgmt creature controller pref list redirector" do
-		get 'pref_lists', {}, session
+		get 'pref_lists', {}, session.to_hash
 		assert_redirected_to :controller => 'management/pref_list'
 		assert session[:pref_list_type] == PrefListCreature
 	end

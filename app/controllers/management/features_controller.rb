@@ -4,8 +4,8 @@ class Management::FeaturesController < ApplicationController
 
 	layout 'main'
 
-	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-	verify :method => :post, :only => [ :destroy, :create, :update, :create_feature_event, :update_feature_event, :destroy_feature_event, :arm_feature ],				 :redirect_to => { :action => :index }
+#	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
+#	verify :method => :post, :only => [ :destroy, :create, :update, :create_feature_event, :update_feature_event, :destroy_feature_event, :arm_feature ],				 :redirect_to => { :action => :index }
 	
 	
 	#**********************************************************************

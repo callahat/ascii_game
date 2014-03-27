@@ -4,7 +4,7 @@
 <p><%= link_to 'Decline', do_decline_url() %></p>
 <% elsif !@log_quest.reqs_met %>
 <p><%= @event.req_text %></p>
-<p><%= render :file => "game/log_quest_reqs.rhtml" %></p>
+<p><%= render :file => "game/log_quest_reqs" %></p>
 <p><%= link_to 'Ok', complete_url() %></p>
 <% else %>
 <p><%= @event.reward_text %></p>

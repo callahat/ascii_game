@@ -1,0 +1,18 @@
+<h1>New c_class_level</h1>
+<p>Allocate between 30 and 80 points in the fields below.</p>
+<p>These base stats are the bonus the character will get for each level that they obtain.</p>
+<p>Each point contributes to the minumum xp for the next level. As the points increase in number, the cost per extra point increases exponentially.</p>
+<p>Also note that min xp is affected by the number of types of spells the character can use. Standard rate is 15 xp per level per spell type</p>
+<%= form_tag :action => 'post_first_level', :pres => params[:pres]  do %>
+
+  <%= hidden_field 'stat', 'c_class_id' %>
+  <p><b>Level: </b><%= @stat.level  %></p>
+  <%= hidden_field 'stat', 'level' %>
+  <p><b>Min xp: </b><%= @stat.min_xp  %></p>
+  <%= hidden_field 'stat', 'min_xp' %>
+
+  <%= render :partial => 'level_form' %>
+  <%= submit_tag "Gen levels" %>
+<% end %>
+
+<%= link_to 'Back', :action => 'list' %>

@@ -9,9 +9,9 @@ class Management::KingdomFinancesController < ApplicationController
 		render :action => 'show'
 	end
 
-	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-	verify :method => :post, :only => [ :withdraw, :deposit, :adjust_tax ],
-				 :redirect_to => { :action => :show }
+#	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
+#	verify :method => :post, :only => [ :withdraw, :deposit, :adjust_tax ],
+#				 :redirect_to => { :action => :show }
 
 	def show
 		@cash = session[:kingdom].gold

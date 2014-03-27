@@ -1,0 +1,39 @@
+<p>Inventory</p>
+
+<table>
+<tr><th>Equipped Items</th></tr>
+  <tr>
+    <th>Location</th>
+    <th>Item</th>
+  </tr>
+<% for loc in @equip_locs %>
+  <tr>
+    <td><%= SpecialCode.get_text('equip_loc',loc.equip_loc) %></td>
+    <td><% if loc.item %><%= loc.item.name %></td><td><%= link_to 'Unequip', {:action => 'unequip', :id => loc}, :method => :post %><% else %>nothing<% end %></td><td><%= link_to 'Equip', {:action => 'equip', :id => loc}, :method => :post  %></td>
+  <tr>
+<% end %>
+</table>
+
+
+<% if @pc_items %>
+  <table>
+  <tr><td><b>Inventory</b></td></td>
+    <tr>
+      <th>Item</th>
+      <th>Quantity</th>
+      <th></th>
+    </tr>
+  <% for pc_item in @pc_items %>
+    <% if pc_item.quantity > 0 %>
+      <tr>
+        <td><span title="<%= pc_item.item.description %>"><%= pc_item.item.name %></span></td>
+        <td><%= pc_item.quantity %></td>
+      </tr>
+    <% end %>
+  <% end %>
+  </table>
+<% end %>
+
+<%= will_paginate @pc_items %> 
+
+<%= render :file=> 'characterse/footer' %>

@@ -1,0 +1,8 @@
+<h1>Set mod level</h1>
+
+<%= form_tag :action => 'do_promote', :player_id => params[:player_id] do %>
+  <%= render :partial => 'promote_form' %>
+  <%= submit_tag "Set level" %>
+<% end %>
+
+<%= link_to 'Back', :action => 'view_thred' %>

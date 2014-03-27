@@ -1,0 +1,12 @@
+<h1>Editing race</h1>
+
+<%= form_tag :action => 'update', :id => @race do %>
+	<%= render :partial => 'form' %>
+	<%= render :partial => 'loc_form' %>
+	<%= render :partial => 'level_form' %>
+	<%= render :partial => 'image_form' %>
+	<%= submit_tag 'Edit' %>
+<% end %>
+
+<%= link_to 'Show', :action => 'show', :id => @race %> |
+<%= link_to 'Back', :action => 'list' %>

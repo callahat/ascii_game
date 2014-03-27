@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <title>ADMIN LAYOUT::<%= controller.controller_name + ":" + controller.action_name %></title>
+  <%= stylesheet_link_tag 'main' %>
+  <%= csrf_meta_tag %>
+  <%= javascript_include_tag :defaults %>
+  <%= javascript_include_tag 'prototype' %>
+  <%= javascript_include_tag 'rails' %>
+</head>
+<body>
+
+<div id="header">
+	<!-- 140px -->
+</div>
+
+<div id="mid">
+	<div id="center_col">
+		<p style="color: green"><%= flash[:notice] %></p>
+		<%= yield  %>
+	</div>
+	<div id="left_col" class="side_col">
+		   <table width=100>
+    <tr><td><%= link_to 'Attack Spells', :controller => 'attack_spells' %></td></tr>
+    <tr><td><%= link_to 'Base Items', :controller => 'base_items' %></td></tr>
+    <tr><td><%= link_to 'Blacksmith Skills', :controller => 'blacksmith_skills' %></td></tr>
+    <tr><td><%= link_to 'Classes', :controller => 'c_classes' %></td></tr>
+    <tr><td><%= link_to 'Creatures', :controller => 'creatures' %></td></tr>
+    <tr><td><%= link_to 'Diseases', :controller => 'diseases' %></td></tr>
+    <tr><td><%= link_to 'Healer Skills', :controller => 'healer_skills' %></td></tr>
+    <tr><td><%= link_to 'Healing Spells', :controller => 'healing_spells' %></td></tr>
+    <tr><td><%= link_to 'Items', :controller => 'items' %></td></tr>
+    <tr><td><%= link_to 'Names', :controller => 'names' %></td></tr>
+    <tr><td><%= link_to 'Name Surfixes', :controller => 'name_surfixes' %></td></tr>
+    <tr><td><%= link_to 'Name Titles', :controller => 'name_titles' %></td></tr>
+    <tr><td><%= link_to 'NPCs', :controller => 'npcs' %></td></tr>
+    <tr><td><%= link_to 'Races', :controller => 'races' %></td></tr>
+    <tr><td><%= link_to 'Trainer Skills', :controller => 'trainer_skills' %></td></tr>
+    <tr><td><%= link_to 'World Maps', :controller => 'world_maps' %></td></tr>
+    <tr><td><%= link_to 'Worlds', :controller => 'worlds' %></td></tr>
+    <tr><td>Other stuff</td></tr>
+    <tr><td><%= link_to 'NM Button', :controller => 'maintain' %></td></tr>
+    <tr><td><%= link_to 'Back to Game', :controller => '/home' %></td></tr>
+   </table>
+	</div>
+	<div id="right_col" class="side_col">
+		<div style="height:200px;color:green;background-color:#EDFCED; padding:3px;"><%= flash[:notice] %></div>
+		<%= google_ad() %>
+	</div>
+</div>
+
+<div id="footer">
+	Footer
+</div>
+
+
+</body>
+</html>

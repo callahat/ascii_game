@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
 	def system_up
 		if SystemStatus.status(1) != 1
 			print "halt!"
-			render :file => "#{RAILS_ROOT}/public/9001.html"
+			render :file => "#{Rails.root}/public/9001.html"
 			return false
 		end
 	end

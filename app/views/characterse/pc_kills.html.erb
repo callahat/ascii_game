@@ -1,0 +1,23 @@
+<p>Player Character Kills</p>
+
+<% if @pc_kills %>
+  <table>
+  <tr><td><b>Kills:</b> <%= @pc.player_character_killers.size %></td></tr>
+    <tr>
+      <th>Name</th>
+      <th>Home</th>
+      <th>Date</th>
+    </tr>
+  <% for pc in @pc_kills %>
+    <tr>
+      <td><%= pc.player_character.name %></td>
+      <td><% if pc.player_character.kingdom %><%= pc.player_character.kingdom.name %><% else %>[none]<% end %></td>
+      <td><% if pc.when %><%= pc.when.to_date.to_s %><% end %></td>
+    </tr>
+  <% end %>
+  </table>
+<% end %>
+
+<%= will_paginate @pc_kills %> 
+
+<%= render :file => 'characterse/footer' %>

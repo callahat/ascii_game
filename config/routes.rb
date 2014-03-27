@@ -16,6 +16,8 @@ AsciiGame3::Application.routes.draw do
   match     'character'         =>  'character#menu'
   match     'choose_character'  =>  'character#choose_character'
 
+  match     'characterse'       =>  'characterse#menu'
+
   match     'game_feature'      =>  'game#feature'
   match     'game_main'         =>  'game#main'
   match     'complete'          =>  'game#complete'
@@ -25,7 +27,21 @@ AsciiGame3::Application.routes.draw do
   match     'game/battle/:action'   =>  'game/battle'
   match     'game/court/:action'    =>  'game/court'
   
+  match     'game/do_heal'        =>  'game#do_heal',    :via => :post
+  match     'game/do_choose'      =>  'game#do_choose',  :via => :post
+  match     'game/do_train'       =>  'game#do_train',   :via => :post
+  match     'game/do_spawn'       =>  'game#do_spawn',   :via => :post
+  
+  match     'game/do_heal'        =>  'game#feature',    :via => :get
+  match     'game/do_choose'      =>  'game#feature',    :via => :get
+  match     'game/do_train'       =>  'game#feature',    :via => :get
+  match     'game/do_spawn'       =>  'game#feature',    :via => :get
     
+  match     'game/leave_kingdom'  =>  'game#leave_kingdom'
+  match     'game/spawn_kingdom'  =>  'game#spawn_kingdom'
+  match     'game/make_camp'      =>  'game#make_camp'
+  match     'game/world_move/:id' =>  'game#world_move'
+      
   #Game::QuestController
   match     'quest_index'       =>  'game/quests#index'
   match     'do_decline'        =>  'game/quests#do_decline'
@@ -45,6 +61,8 @@ AsciiGame3::Application.routes.draw do
   match     'npc_do_buy'        =>  'game/npc#do_buy'
   match     'npc_sell'          =>  'game/npc#sell'
   match     'npc_do_sell'       =>  'game/npc#do_sell'
+  
+  match     'management'        =>  'management#main_index'
     
   #ManagementController
   match     'mgmt_levels'       =>  'management/levels#index'
@@ -53,6 +71,13 @@ AsciiGame3::Application.routes.draw do
   match     'mgmt_levels_create'=>  'management/levels#create'
   match     'mgmt_levels_edit'  =>  'management/levels#edit'
   match     'mgmt_levels_update'=>  'management/levels#update'
+  
+  #PrefListController
+  match     'management/pref_list'                =>  'management/pref_list#index',          :via => :get
+  match     'management/pref_list/drop_from_list' =>  'management/pref_list#drop_from_list', :via => :post
+  match     'management/pref_list/add_to_list'    =>  'management/pref_list#add_to_list',    :via => :post
+  match     'management/pref_list/drop_from_list' =>  'management/pref_list#index',          :via => :get
+  match     'management/pref_list/add_to_list'    =>  'management/pref_list#index',          :via => :get
   
   namespace :management do
     resources :castles
@@ -67,7 +92,6 @@ AsciiGame3::Application.routes.draw do
     resources :kingdom_notices
     resources :kingdom_npcs
     resources :levels
-    resources :pref_list
     resources :quests
   end
   

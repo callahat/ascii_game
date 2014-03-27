@@ -1,7 +1,0 @@
-<% if flash[:battle_report] %>
-<%= render :file => "game/battle/_battle_report.rhtml" %>
-<% end %>
-
-<p><%= raw @message %></p>
-
-<p><%= link_to 'Continue', :controller => '/game', :action => 'complete' %></p>

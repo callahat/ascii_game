@@ -17,27 +17,27 @@ class Management::ImagesControllerTest < ActionController::TestCase
 
 		
 	test "mgmt image controller index" do
-		get 'index', {}, session
+		get 'index', {}, session.to_hash
 		assert_response :success
 		assert_not_nil assigns(:images)
 	end
 	
 	test "mgmt image controller show" do
-		get 'show', {:id => @c_image.id}, session
+		get 'show', {:id => @c_image.id}, session.to_hash
 		assert_response :success
 		assert_not_nil assigns(:image)
 	end
 	
 	test "mgmt creature controller new and create" do
-		get 'new', {}, session
+		get 'new', {}, session.to_hash
 		assert_response :success
 		
-		post 'create', {:image => {:image_text => ""}}, session
+		post 'create', {:image => {:image_text => ""}}, session.to_hash
 		assert_response :success
 		assert_template 'new'
 		
 		assert_difference 'Image.count', +1 do
-			post 'create', { :image => @ci_hash }, session
+			post 'create', { :image => @ci_hash }, session.to_hash
 			assert_response :redirect
 			assert_redirected_to :controller => 'management/images', :action => 'index'
 		end
@@ -45,7 +45,7 @@ class Management::ImagesControllerTest < ActionController::TestCase
 		assert @new_c_image.image_text == @ci_hash[:image_text]
 		
 		assert_difference 'Image.count', +1 do
-			post 'create', { :image => @fi_hash }, session
+			post 'create', { :image => @fi_hash }, session.to_hash
 			assert_response :redirect
 			assert_redirected_to :controller => 'management/images', :action => 'index'
 		end
@@ -56,32 +56,32 @@ class Management::ImagesControllerTest < ActionController::TestCase
 	end
 	
 	test "mgmt image controller edit and update" do
-		get 'edit', {:id => @c_image.id}, session
+		get 'edit', {:id => @c_image.id}, session.to_hash
 		assert_response :success
 		
 		orig_c_image = @c_image.image_text
 		
-		post 'update', {:id => @c_image.id, :image => {:image_type => ""} }, session
+		post 'update', {:id => @c_image.id, :image => {:image_type => ""} }, session.to_hash
 		assert_response :success
 		assert_template 'edit'
 		
-		post 'update', {:id => @c_image.id, :image => @c_image.attributes }, session
+		post 'update', {:id => @c_image.id, :image => @c_image.attributes }, session.to_hash
 		assert_response :redirect
 		assert_redirected_to :controller => 'management/images', :action => 'show', :id => @c_image.id
 		assert flash[:notice] =~ /updated/
 		@new_c_image = Image.find(@c_image.id)
 		assert @new_c_image.image_text == orig_c_image
 		
-		get 'edit', {:id => @f_image.id}, session
+		get 'edit', {:id => @f_image.id}, session.to_hash
 		assert_response :success
 		
 		orig_f_image = @f_image.image_text
 		
-		post 'update', {:id => @f_image.id, :image => {:image_type => ""} }, session
+		post 'update', {:id => @f_image.id, :image => {:image_type => ""} }, session.to_hash
 		assert_response :success
 		assert_template 'edit'
 		
-		post 'update', {:id => @f_image.id, :image => @f_image.attributes }, session
+		post 'update', {:id => @f_image.id, :image => @f_image.attributes }, session.to_hash
 		assert_response :redirect
 		assert_redirected_to :controller => 'management/images', :action => 'show', :id => @f_image.id
 		assert flash[:notice] =~ /updated/
@@ -93,13 +93,13 @@ class Management::ImagesControllerTest < ActionController::TestCase
 	
 	test "mgmt image controller destroy" do
 		assert_no_difference 'Image.count' do
-			post 'destroy', {:id => @f_image.id}, session
+			post 'destroy', {:id => @f_image.id}, session.to_hash
 			assert_redirected_to :controller => 'management/images', :action => 'index'
 			assert flash[:notice] =~ /in use/
 		end
 		
 		assert_difference 'Image.count', -1 do
-			post 'destroy', {:id => @c_image.id}, session
+			post 'destroy', {:id => @c_image.id}, session.to_hash
 			assert_redirected_to :controller => 'management/images', :action => 'index'
 			assert flash[:notice] =~ /Image was destroyed/
 		end

@@ -6,8 +6,8 @@ class Game::NpcController < ApplicationController
 
   layout 'main'
 
-  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-  verify :method => :post, :only => [ :do_train ], :redirect_to => { :action => :npc }
+#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
+#  verify :method => :post, :only => [ :do_train ], :redirect_to => { :action => :npc }
   
   def npc
     Illness.spread(@pc, @npc, SpecialCode.get_code('trans_method','air'))

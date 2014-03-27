@@ -1,0 +1,27 @@
+<%= error_messages_for 'player_character' %>
+
+<%= form_tag :action => 'create' do %>
+<table border=3>
+ <tr><td>
+  <p><label for="player_character_name">Character Name:</label><br/>
+  <%= text_field 'player_character', 'name' %></p>
+ </td></tr>
+ <tr>
+  <td>
+   <p><label for="image">Character Image:</label><br/>
+   <%#= text_area 'player_character', 'image', {:rows => '15', :cols => '20' } %>
+   <%= text_area 'image', 'image_text', {:rows => '15', :cols => '20' } %>
+   </p>   
+  </td>
+ </tr>
+ <tr>
+  <td>
+   <p><label for="kingdom_id">Home Kingdom:</label>
+   <%= collection_select('kingdom','id', @kingdoms, 'id', 'name') %></p>
+  </td>
+ </tr>
+ <tr><td>
+   <%= submit_tag "Accept" %>
+ </tr></td>
+</table>
+<% end %>

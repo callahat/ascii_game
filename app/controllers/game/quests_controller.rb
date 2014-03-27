@@ -19,12 +19,12 @@ class Game::QuestsController < ApplicationController
 	def do_join
 		res, @message = LogQuest.join_quest(@pc, @quest.id) unless @log_quest
 		@message = "You take an oath to pursue the Quest"
-		render :file => 'game/complete.rhtml', :layout => true
+		render :file => 'game/complete', :layout => true
 	end
 	
 	def do_decline
 		@message = "You decline the quest. Perhaps it is too much for you."
-		render :file => 'game/complete.rhtml', :layout => true
+		render :file => 'game/complete', :layout => true
 	end
 	
 	def do_complete

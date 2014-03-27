@@ -48,8 +48,8 @@ class Image < ActiveRecord::Base
   
   #Pagination related stuff
   def self.get_page(page, kid = nil)
-    where(kid ? ['kingdom_id = ?', kid] :[]) \
-      .order('image_type,name') \
+    where(kid ? ['kingdom_id = ?', kid] :[])   \
+      .order('image_type,name')                \
       .paginate(:per_page => 10, :page => page)
   end
 end

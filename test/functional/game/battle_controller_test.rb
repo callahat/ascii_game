@@ -11,13 +11,13 @@ class Game::BattleControllerTest < ActionController::TestCase
 	end
 
 	test "king battle" do
-		get 'fight_king', {}, session
+		get 'fight_king', {}, session.to_hash
 		assert_not_nil assigns(:pc)
 		assert_not_nil assigns(:kingdom)
 		assert_response :redirect
 		assert_redirected_to :action => 'battle'
 		
-		get 'battle', {}, session
+		get 'battle', {}, session.to_hash
 		assert_template 'battle'
 		
 		assert_response :success
@@ -27,13 +27,13 @@ class Game::BattleControllerTest < ActionController::TestCase
 	test "pc battle" do
 		session[:current_event] = CurrentEvent.make_new(session[:player_character], @kl.id)
 		session[:current_event].update_attribute(:event_id, Event.find_by_name("Sick PC encounter").id)
-		get 'fight_pc', {}, session
+		get 'fight_pc', {}, session.to_hash
 		assert_not_nil assigns(:pc)
 		assert_not_nil assigns(:enemy_pc)
 		assert_response :redirect
 		assert_redirected_to :action => 'battle'
 		
-		get 'battle', {}, session
+		get 'battle', {}, session.to_hash
 		assert_template 'battle'
 		
 		assert_response :success
@@ -43,13 +43,13 @@ class Game::BattleControllerTest < ActionController::TestCase
 	test "npc battle" do
 		session[:current_event] = CurrentEvent.make_new(session[:player_character], @kl.id)
 		session[:current_event].update_attribute(:event_id, Event.find_by_name("Healthy Npc encounter").id)
-		get 'fight_npc', {}, session
+		get 'fight_npc', {}, session.to_hash
 		assert_not_nil assigns(:pc)
 		assert_not_nil assigns(:npc)
 		assert_response :redirect
 		assert_redirected_to :action => 'battle'
 		
-		get 'battle', {}, session
+		get 'battle', {}, session.to_hash
 		assert_template 'battle'
 		
 		assert_response :success
@@ -65,40 +65,40 @@ class Game::BattleControllerTest < ActionController::TestCase
 		
 		session[:current_event] = Event.find_by_name("Weak Monster encounter")
 		session[:current_event].happens(session[:player_character])
-		get 'battle', {}, session
+		get :battle, {}, session.to_hash
 		assert_template 'battle'
 		
 		#conventional
-		get 'fight', {:attack => nil}, session
+		get 'fight', {:attack => nil}, session.to_hash
 		assert_not_nil flash[:battle_report]
 		assert_redirected_to :action => 'battle'
 		
 		#healing spell
-		get 'fight', {:heal => HealingSpell.find_by_name("Heal Only").id, :commit => "Heal"}, session
+		get 'fight', {:heal => HealingSpell.find_by_name("Heal Only").id, :commit => "Heal"}, session.to_hash
 		assert_not_nil flash[:battle_report]
 		assert_redirected_to :action => 'battle'
 		
 		#magic attack, kill all the enemy
-		get 'fight', {:attack => AttackSpell.find_by_name("Splash Attack Spell").id, :commit => "Attack"}, session
+		get 'fight', {:attack => AttackSpell.find_by_name("Splash Attack Spell").id, :commit => "Attack"}, session.to_hash
 		assert_not_nil flash[:battle_report]
 		assert_redirected_to :action => 'battle'
 	end
 	
 	test "regicide" do
-		get 'fight_king', {}, session
+		get 'fight_king', {}, session.to_hash
 		assert_not_nil assigns(:pc)
 		assert_not_nil assigns(:kingdom)
 		assert_response :redirect
 		assert_redirected_to :action => 'battle'
-		get 'regicide', {}, session
+		get 'regicide', {}, session.to_hash
 	end
 	
 	test "run away" do
-		get 'fight_king', {}, session
+		get 'fight_king', {}, session.to_hash
 		assert_not_nil assigns(:pc)
 		assert_not_nil assigns(:kingdom)
 		assert_response :redirect
 		assert_redirected_to :action => 'battle'
-		get 'run_away', {}, session
+		get 'run_away', {}, session.to_hash
 	end
 end

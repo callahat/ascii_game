@@ -174,7 +174,7 @@ class EventMoveLocalTest < ActiveSupport::TestCase
 		e = EventMoveLocal.new(@standard_new)
 		assert !e.valid?
 		assert e.errors.full_messages.size == 1
-		e.thing_id = Level.find(:first)
+		e.thing_id = Level.find(:first).id
 		assert e.valid?
 		assert e.errors.full_messages.size == 0
 		assert e.save!

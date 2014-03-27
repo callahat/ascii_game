@@ -5,8 +5,8 @@ class Management::LevelsController < ManagementController
 		@levels = Level.get_page(params[:page], @kingdom.id)
 	end
 
-	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-	verify :method => :post, :only => [ :create, :update ], :redirect_to => { :action => :index }
+#	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
+#	verify :method => :post, :only => [ :create, :update ], :redirect_to => { :action => :index }
 
 	def show
 		@level = @kingdom.levels.find(:first, :conditions => ['id = ?', params[:id] ] )

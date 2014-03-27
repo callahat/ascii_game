@@ -8,8 +8,8 @@ class Management::CastlesController < ApplicationController
 		@moves = session[:kingdom].levels.find(:all, :conditions => ['level = ?', 0]).last
 	end
 
-	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-	verify :method => :post, :only => [ :destroy, :create, :set_throne ],				 :redirect_to => { :action => :index }
+#	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
+#	verify :method => :post, :only => [ :destroy, :create, :set_throne ],				 :redirect_to => { :action => :index }
 
 	#SHOW moves
 	def show

@@ -1,0 +1,58 @@
+<script type="text/javascript" src="/javascripts/jquery.js"></script>
+<script type="text/javascript" src="/javascripts/raiselevel.js"></script>
+
+<%= error_messages_for 'distributed_freepts', :header_message => @message, :message  => nil %>
+
+<!--[form:distributed_freepts]-->
+<%= form_tag :action => 'gainlevel' do %>
+<input type="hidden" id="total_freepts" value="<%= @pc.freepts %>">
+
+<p>Available freepoints: <label id=freepoint_sum><%= @pc.freepts %></label></p>
+<table>
+<tr>
+  <td><b>Attribute</b></td>
+  <td><b>Base Points</b></td>
+  <td colspan=3><b>Free Points Added</b></td>
+</tr>
+<tr>
+  <td><b>Damage</b></td>
+  <td><%= @base_stats.dam %></td>
+  <td><%= raw freepoint_distributer('distributed_freepts', 'dam') %></td>
+</tr>
+<tr>
+  <td><b>Defense</b></td>
+  <td><%= @base_stats.dfn %></td>
+  <td><%= raw freepoint_distributer('distributed_freepts', 'dfn') %></td>
+</tr>
+<tr>
+  <td><b>Strength</b></td>
+  <td><%= @base_stats.str %></td>
+  <td><%= raw freepoint_distributer('distributed_freepts', 'str') %></td>
+</tr>
+<tr>
+  <td><b>Dexterity</b></td>
+  <td><%= @base_stats.dex %></td>
+  <td><%= raw freepoint_distributer('distributed_freepts', 'dex') %></td>
+</tr>
+<tr>
+  <td><b>Magic</b></td>
+  <td><%= @base_stats.mag %></td>
+  <td><%= raw freepoint_distributer('distributed_freepts', 'mag') %></td>
+</tr>
+<tr>
+  <td><b>Intelligence</b></td>
+  <td><%= @base_stats.int %></td>
+  <td><%= raw freepoint_distributer('distributed_freepts', 'int') %></td>
+</tr>
+<tr>
+  <td><b>Constitution</b></td>
+  <td><%= @base_stats.con %></td>
+  <td><%= raw freepoint_distributer('distributed_freepts', 'con') %></td>
+</tr>
+<tr>
+<td colspan=3><%= submit_tag "Level!" %></td>
+</tr>
+</table>
+<% end %>
+<!--[eoform:distributed_freepts]-->
+

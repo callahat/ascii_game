@@ -4,8 +4,8 @@ class Game::CourtController < ApplicationController
 
 	layout 'main'
 
-		# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-	verify :method => :post, :only => [ :do_heal, :do_choose, :do_train ],				 :redirect_to => { :action => :feature }
+#		# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
+#	verify :method => :post, :only => [ :do_heal, :do_choose, :do_train ],				 :redirect_to => { :action => :feature }
 	
 	def throne
 		@king = @pc.present_kingdom.player_character
