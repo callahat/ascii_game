@@ -5,8 +5,8 @@ class EventStormGateTest < ActiveSupport::TestCase
 		@pc = PlayerCharacter.find_by_name("Test PC One")
 		@pc.update_attribute(:in_kingdom, nil)
 		@pc.update_attribute(:kingdom_level, nil)
-		@standard_new = {:kingdom_id => Kingdom.find(:first).id,
-											:player_id => Player.find(:first).id,
+		@standard_new = {:kingdom_id => Kingdom.first.id,
+											:player_id => Player.first.id,
 											:event_rep_type => SpecialCode.get_code('event_rep_type','unlimited'),
 											:name => 'Created event name',
 											:armed => 1,
@@ -52,7 +52,7 @@ class EventStormGateTest < ActiveSupport::TestCase
 		e = EventStormGate.new(@standard_new)
 		assert !e.valid?
 		assert e.errors.full_messages.size == 1, e.errors.full_messages
-		e.level = Level.find(:first)
+		e.level = Level.first
 		assert e.valid?,e.errors.full_messages
 		assert e.errors.full_messages.size == 0
 		assert e.save!

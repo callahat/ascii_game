@@ -2,7 +2,7 @@ require 'test_helper'
 
 class ForumHelperTest < ActionView::TestCase
   test "link_to unaffected" do
-    assert link_to("here", :controller => "forums") =~ /:controller/
+    assert_equal link_to("here", :controller => "forums"), "<a href=\"/forums\">here</a>"
   end
 
   #can't test, link_to function does not work properly

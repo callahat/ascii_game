@@ -5,8 +5,8 @@ class EventSpawnKingdomTest < ActiveSupport::TestCase
 		@pc = PlayerCharacter.find_by_name("Test PC One")
 		@pc.update_attribute(:in_kingdom, nil)
 		@pc.update_attribute(:kingdom_level, nil)
-		@standard_new = {:kingdom_id => Kingdom.find(:first).id,
-											:player_id => Player.find(:first).id,
+		@standard_new = {:kingdom_id => Kingdom.first.id,
+											:player_id => Player.first.id,
 											:event_rep_type => SpecialCode.get_code('event_rep_type','unlimited'),
 											:name => 'Created event name',
 											:armed => 1,

@@ -3,8 +3,8 @@ require 'test_helper'
 class GameHelperTest < ActionView::TestCase
 	def setup
 		@creature = Creature.find_by_name("Wimp Monster")
-		@level = Level.find(:first, :conditions =>['kingdom_id = ? and level = 0', 1])
-		@world = World.find(:first)
+		@level = Level.where(['kingdom_id = ? and level = 0', 1]).first
+		@world = World.first
 		@pc = PlayerCharacter.find_by_name("Test PC One")
 		@pc[:in_kingdom] = 1
 		@pc.present_world = @world

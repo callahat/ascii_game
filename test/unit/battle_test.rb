@@ -624,14 +624,14 @@ class BattleTest < ActiveSupport::TestCase
 		battle1, msg = Battle.new_creature_battle(@pc, @wild_foo, 5, 5, nil)
 		battle1.report={}
 		battle1.phys_damage_enemies(@pc, battle1.groups.first.enemies)
-		assert @pc.creature_kills.find(:first, :conditions => ['creature_id = ?', @wild_foo.id]).nil?
+		assert @pc.creature_kills.where(['creature_id = ?', @wild_foo.id]).first.nil?
 		
 		battle2, msg = Battle.new_creature_battle(@pc, @wimp_c, 10, 10, nil)
 		battle2.report={}
 		battle2.phys_damage_enemies(@pc, battle2.groups.first.enemies)
-		assert @pc.creature_kills.find(:first, :conditions => ['creature_id = ?', @wimp_c.id]).number == 1
+		assert @pc.creature_kills.where(['creature_id = ?', @wimp_c.id]).first.number == 1
 		battle2.phys_damage_enemies(@pc, battle2.groups.first.enemies)
-		assert @pc.creature_kills.find(:first, :conditions => ['creature_id = ?', @wimp_c.id]).number == 2
+		assert @pc.creature_kills.where(['creature_id = ?', @wimp_c.id]).first.number == 2
 		
 		#NPC
 		battle, msg = Battle.new_npc_battle(@pc, @sick_npc)

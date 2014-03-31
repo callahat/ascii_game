@@ -7,8 +7,8 @@ class GameControllerTest < ActionController::TestCase
 		@response = ActionController::TestResponse.new
 	
 		@creature = Creature.find_by_name("Wimp Monster")
-		@level = Level.find(:first, :conditions =>['kingdom_id = ? and level = 0', 1])
-		@level_map = @level.level_maps.find(:first, :conditions => ['feature_id is not null'])
+		@level = Level.where(['kingdom_id = ? and level = 0', 1]).first
+		@level_map = @level.level_maps.where(['feature_id is not null']).first
 		session[:player] = Player.find_by_handle("Test Player One")
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
 		session[:player_character][:in_kingdom] = 1
@@ -129,7 +129,7 @@ class GameControllerTest < ActionController::TestCase
 	
 	test "game controller feature action when not enough turns" do
 		session[:player_character].update_attribute(:turns,0)
-		@kl = @level.level_maps.find(:first, :conditions => ['xpos = 1 and ypos = 1'])
+		@kl = @level.level_maps.where(['xpos = 1 and ypos = 1']).first
 		
 		get 'feature', {:id => @kl.id}, session.to_hash
 		assert_redirected_to :controller => 'game', :action => 'main'
@@ -143,7 +143,7 @@ class GameControllerTest < ActionController::TestCase
 	end
 	
 	test "game controller feature action where no choice fight creature" do
-		@kl = @level.level_maps.find(:first, :conditions => ['xpos = 1 and ypos = 1'])
+		@kl = @level.level_maps.where(['xpos = 1 and ypos = 1']).first
 		
 		assert_difference 'session[:player_character].turns', -1 do
 			get 'feature', {:id => @kl.id}, session.to_hash
@@ -172,7 +172,7 @@ class GameControllerTest < ActionController::TestCase
 	end
 	
 	test "game controller feature action where nothing happens" do
-		@kl = @level.level_maps.find(:first, :conditions => ['xpos = 2 and ypos = 2'])
+		@kl = @level.level_maps.where(['xpos = 2 and ypos = 2']).first
 		
 		assert_difference 'session[:player_character].turns', -1 do
 			get 'feature', {:id => @kl.id}, session.to_hash
@@ -183,7 +183,7 @@ class GameControllerTest < ActionController::TestCase
 	end
 	
 	test "game controller feature action where there are choices then choose" do
-		@kl = @level.level_maps.find(:first, :conditions => ['xpos = 0 and ypos = 0'])
+		@kl = @level.level_maps.where(['xpos = 0 and ypos = 0']).first
 		
 		assert_difference 'session[:player_character].turns', -1 do
 			get 'feature', {:id => @kl.id}, session.to_hash
@@ -211,7 +211,7 @@ class GameControllerTest < ActionController::TestCase
 	end
 	
 	test "game controller feature action where there are choices then skip" do
-		@kl = @level.level_maps.find(:first, :conditions => ['xpos = 0 and ypos = 0'])
+		@kl = @level.level_maps.where(['xpos = 0 and ypos = 0']).first
 		
 		assert_difference 'session[:player_character].turns', -1 do
 			get 'feature', {:id => @kl.id}, session.to_hash
@@ -275,8 +275,8 @@ class GameControllerTest < ActionController::TestCase
 
 	test "game controller quest event" do
 		@quest_one = Quest.find_by_name("Quest One")
-		@kl1 = @level.level_maps.find(:first, :conditions => ['xpos = 1 and ypos = 0'])
-		@kl2 = @level.level_maps.find(:first, :conditions => ['xpos = 2 and ypos = 0'])
+		@kl1 = @level.level_maps.where(['xpos = 1 and ypos = 0']).first
+		@kl2 = @level.level_maps.where(['xpos = 2 and ypos = 0']).first
 		
 		get 'feature', {:id => @kl1.id}, session.to_hash
 		assert_response :redirect
@@ -293,7 +293,7 @@ class GameControllerTest < ActionController::TestCase
 		session[:player_character].current_event.destroy
 		
 		LogQuest.join_quest(session[:player_character], @quest_one.id)
-		@lq = session[:player_character].log_quests.find(:first, :conditions => ['quest_id = ?', @quest_one.id])
+		@lq = session[:player_character].log_quests.where(['quest_id = ?', @quest_one.id]).first
 		@lq.reqs.destroy_all
 		
 		res, msg = @lq.complete_quest

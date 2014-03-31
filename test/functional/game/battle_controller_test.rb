@@ -6,8 +6,8 @@ class Game::BattleControllerTest < ActionController::TestCase
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
 		session[:player_character][:in_kingdom] = 1
 		@creature = Creature.find_by_name("Wimp Monster")
-		@level = Level.find(:first, :conditions =>['kingdom_id = ? and level = 0', 1])
-		@kl = @level.level_maps.find(:first, :conditions => ['xpos = 2 and ypos = 2'])
+		@level = Level.where(['kingdom_id = ? and level = 0', 1]).first
+		@kl = @level.level_maps.where(['xpos = 2 and ypos = 2']).first
 	end
 
 	test "king battle" do

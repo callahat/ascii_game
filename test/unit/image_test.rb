@@ -3,7 +3,7 @@ require 'test_helper'
 class ImageTest < ActiveSupport::TestCase
 	def setup
 		@pc = PlayerCharacter.find_by_name("Test PC One")
-		@kingdom = Kingdom.find(:first)
+		@kingdom = Kingdom.first
 		@image = Image.find_by_name("Test pc image")
 		@feature_text =	"123456789012345\n" +
 										"AAAaaaBBBbbbCCCccc\n" +

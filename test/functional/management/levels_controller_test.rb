@@ -7,7 +7,7 @@ class Management::LevelsControllerTest < ActionController::TestCase
 		# session[:kingdom] = Kingdom.find_by_name("HealthyTestKingdom")
 		
 		# @f_armed = Feature.find_by_name("Creature Feature One")
-		# @level1 = session[:kingdom].levels.find.first
+		# @level1 = session[:kingdom].levels.first
 	end
 	
 	test "mgmt level controller index" do

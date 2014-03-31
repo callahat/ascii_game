@@ -95,7 +95,7 @@ class NpcTest < ActiveSupport::TestCase
 		@item2 = Item.find_by_name("Item2")
 		assert_difference '@npc.gold', +0 do
 			assert_difference '@pc.gold', +0 do
-				assert_difference '@pc.items.find(:first, :conditions => {:item_id => 1}).quantity', +0 do
+				assert_difference '@pc.items.where(:item_id => 1).first.quantity', +0 do
 					res, msg = @npc.manufacture(@pc, -1)
 					assert !res
 					assert msg =~ /cannot make that/
@@ -105,7 +105,7 @@ class NpcTest < ActiveSupport::TestCase
 		
 		assert_difference '@npc.gold', +0 do
 			assert_difference '@pc.gold', +0 do
-				assert_difference '@pc.items.find(:first, :conditions => {:item_id => 1}).quantity', +0 do
+				assert_difference '@pc.items.where(:item_id => 1).first.quantity', +0 do
 					res, msg = @npc.manufacture(@pc, @item2.id)
 					assert !res
 					assert msg =~ /cannot make #{@item2.name}/, msg
@@ -116,7 +116,7 @@ class NpcTest < ActiveSupport::TestCase
 		@pc.update_attribute(:gold, 0)
 		assert_difference '@npc.gold', +0 do
 			assert_difference '@pc.gold', +0 do
-				assert_difference '@pc.items.find(:first, :conditions => {:item_id => 1}).quantity', +0 do
+				assert_difference '@pc.items.where(:item_id => 1).first.quantity', +0 do
 					res, msg = @npc.manufacture(@pc, @item1.id)
 					assert !res
 					assert msg =~ /Insufficient gold/
@@ -130,7 +130,7 @@ class NpcTest < ActiveSupport::TestCase
 		pc_orig_gold = @pc.gold
 		orig_kingdom_gold = @npc.kingdom.gold
 		assert_difference '@npc.gold', +50 do
-			assert_difference '@pc.items.find(:first, :conditions => {:item_id => 1}).quantity', +1 do
+			assert_difference '@pc.items.where(:item_id => 1).first.quantity', +1 do
 				res, msg = @npc.manufacture(@pc, @item1.id)
 				assert res
 				assert msg =~ /Bought/
@@ -139,7 +139,7 @@ class NpcTest < ActiveSupport::TestCase
 		assert pc_orig_gold - @pc.gold >= 50
 		assert (orig_kingdom_gold + pc_orig_gold - @pc.gold - 50) == @npc.kingdom.gold
 		
-		@pc.items.find(:first, :conditions => {:item_id => 1}).destroy
+		@pc.items.where(:item_id => 1).first.destroy
 		
 		npc_orig_gold = @npc.gold
 		pc_orig_gold = @pc.gold

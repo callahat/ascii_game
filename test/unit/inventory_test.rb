@@ -10,7 +10,7 @@ class InventoryTest < ActiveSupport::TestCase
 
 	test "remove item" do
 		[PlayerCharacterItem, NpcStock, KingdomItem].each{|inv_type|
-			pci = inv_type.find(:first, :conditions => ['quantity = 1'])
+			pci = inv_type.where(['quantity = 1']).first
 			assert pci.quantity == 1, "Initial quanitity (" + pci.quantity.to_s + ") not 1 for first " + inv_type.to_s
 			assert inv_type.update_inventory(pci.owner_id, pci.item_id, -1), "Failed to take one item from first " + inv_type.to_s
 			pci.reload
@@ -20,7 +20,7 @@ class InventoryTest < ActiveSupport::TestCase
 
 	test "add item" do
 		[PlayerCharacterItem, NpcStock, KingdomItem].each{|inv_type|
-			pci = inv_type.find(:first, :conditions => ['quantity = 1'])
+			pci = inv_type.where(['quantity = 1']).first
 			assert pci.quantity == 1, "Initial quanitity (" + pci.quantity.to_s + ") not 1 for first " + inv_type.to_s
 			assert inv_type.update_inventory(pci.owner_id, pci.item_id, 1), "Failed to take one item from first " + inv_type.to_s
 			pci.reload
@@ -30,10 +30,10 @@ class InventoryTest < ActiveSupport::TestCase
 
 	test "add new item" do
 		[PlayerCharacterItem, NpcStock, KingdomItem].each{|inv_type|
-			pci = inv_type.find(:first, :conditions => ['owner_id = 1 and item_id = 99'])
+			pci = inv_type.where(['owner_id = 1 and item_id = 99']).first
 			assert pci.nil?, "Item already exists for " + inv_type.to_s
 			assert inv_type.update_inventory(1, 99, 14), "Failed to create item from " + inv_type.to_s
-			pci = inv_type.find(:first, :conditions => ['owner_id = 1 and item_id = 99'])
+			pci = inv_type.where(['owner_id = 1 and item_id = 99']).first
 			assert pci.quantity == 14, "New quanitity not 14 for " + inv_type.to_s
 			assert pci.item_id == 99, "New item id not correct for " + inv_type.to_s
 			assert pci.owner_id == 1, "New owner id not correct for " + inv_type.to_s
@@ -42,7 +42,7 @@ class InventoryTest < ActiveSupport::TestCase
 
 	test "remove too many" do
 		[PlayerCharacterItem, NpcStock, KingdomItem].each{|inv_type|
-			pci = inv_type.find(:first, :conditions => ['quantity = 1'])
+			pci = inv_type.where(['quantity = 1']).first
 			assert pci.quantity == 1, "Initial quanitity (" + pci.quantity.to_s + ") not 1 for first " + inv_type.to_s
 			assert !inv_type.update_inventory(pci.owner_id, pci.item_id, -10), "Removed too many from " + inv_type.to_s
 			pci.reload
