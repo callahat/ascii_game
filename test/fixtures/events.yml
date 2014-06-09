@@ -110,7 +110,7 @@ relative_move_event:
   kind: "EventMoveRelative"
   armed: 1
   cost: 50
-  thing_id: -1
+  flex: -1
 throne_event:
   kingdom_id: 1
   player_id: -1
