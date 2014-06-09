@@ -6,13 +6,13 @@ class Game::CourtController < ApplicationController
 
 #    # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
 #  verify :method => :post, :only => [ :do_heal, :do_choose, :do_train ],         :redirect_to => { :action => :feature }
-  
+
   def throne
     @king = @pc.present_kingdom.player_character
   end
-  
+
   def join_king
-    PlayerCharacter.transaction do 
+    PlayerCharacter.transaction do
       @pc.lock!
       @pc.kingdom_id = @pc.in_kingdom
 
@@ -21,9 +21,9 @@ class Game::CourtController < ApplicationController
     end
     render 'game/complete'
   end
-  
+
   def king_me
-    Kingdom.transaction do 
+    Kingdom.transaction do
       @kingdom = @pc.present_kingdom
       @kingdom.lock!
       @king = @kingdom.player_character
@@ -43,25 +43,25 @@ class Game::CourtController < ApplicationController
     @kingdom.save!
     end
   end
-  
+
   def castle
     @kingdom = @pc.present_kingdom
   end
-  
+
   def bulletin
     @notices = KingdomNotice.get_page(params[:page], @pc, @pc.present_kingdom)
   end
-  
+
   def use_stairs
     #move the player
     PlayerCharacter.transaction do
       @pc.lock!
-  
+
       @event = Feature.find(:first, :conditions => ['name = ?', "\nCastle #{@pc.present_kingdom.name}"]).feature_events.find(:first, :conditions => ['event_id = ?', params[:id]])
 
       if @event
-        @event_move = @event.event.event_move
-        @pc.kingdom_level = @event_move.move_id
+        @event_move = @event.event
+        @pc.kingdom_level = @event_move.thing_id
         @message = "You moved to level " + @event_move.level.level.to_s
         session[:completed] = true
       else

@@ -14,35 +14,35 @@
 <body>
 
 <div id="header">
-	<!-- 140px -->
-	
-	<ul class="nav_tabs">
-		<li><span class="user_tab"><%= ( session[:player] ? "Player:#{session[:player][:handle]}" : "Welcome, guest" ) %></span></li>
-		<li><%= link_to 'Home', :controller => 'home' %></li>
-		<li><%= link_to 'Forums', :controller => '/forum', :action => 'boards' %></li>
-		<li><%= link_to 'Characters', :controller => '/character', :action => (session[:player] ? 'menu' : 'new') %></li>
-		<li><%= link_to('Game', :controller => '/game', :action => 'feature') if session[:player] %></li>
-		<li><%= link_to('Kingdom Management', :controller => 'management', :action => 'main_index') if session[:kingbit] %></li>
-		<li><%= session[:player] ? link_to('Logout', logout_url()) :
-															 link_to('Login', login_url()) + ' or ' + link_to('Register', register_url()) %></li>
-	</ul>
+    <!-- 140px -->
+
+    <ul class="nav_tabs">
+        <li><span class="user_tab"><%= ( session[:player] ? "Player:#{session[:player][:handle]}" : "Welcome, guest" ) %></span></li>
+        <li><%= link_to 'Home', :controller => 'home' %></li>
+        <li><%= link_to 'Forums', :controller => '/forum', :action => 'boards' %></li>
+        <li><%= link_to 'Characters', :controller => '/character', :action => (session[:player] ? 'menu' : 'new') %></li>
+        <li><%= link_to('Game', :controller => '/game', :action => 'feature') if session[:player] %></li>
+        <li><%= link_to('Kingdom Management', management_path ) if session[:kingbit] %></li>
+        <li><%= session[:player] ? link_to('Logout', logout_url()) :
+                                                             link_to('Login', login_url()) + ' or ' + link_to('Register', register_url()) %></li>
+    </ul>
 </div>
 
 <div id="mid">
-	<div id="center_col">
-		<%= yield  %>
-	</div>
-	<div id="left_col" class="side_col">
-		<%= ( @pc ?  render(:partial => '/layouts/character_stats') : "No character selected" ) %>
-	</div>
-	<div id="right_col" class="side_col">
-		<div style="height:200px;color:green;background-color:#EDFCED; padding:3px;"><%= flash[:notice] %></div>
-		<%= raw google_ad() %>
-	</div>
+    <div id="center_col">
+        <%= yield  %>
+    </div>
+    <div id="left_col" class="side_col">
+        <%= ( @pc ?  render(:partial => '/layouts/character_stats') : "No character selected" ) %>
+    </div>
+    <div id="right_col" class="side_col">
+        <div style="height:200px;color:green;background-color:#EDFCED; padding:3px;"><%= flash[:notice].to_s.html_safe %></div>
+        <%= raw google_ad() %>
+    </div>
 </div>
 
 <div id="footer">
-	Footer
+    Footer
 </div>
 
 </body>

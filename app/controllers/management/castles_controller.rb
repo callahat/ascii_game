@@ -13,12 +13,11 @@ class Management::CastlesController < ApplicationController
 
   #SHOW moves
   def show
-    @moves = Feature.find(:first, :conditions => ['name = ?', "\nCastle #{session[:kingdom].name}"])
-    
-    if !@moves.nil?
-      @moves = @moves.feature_events.find(:all, :include => 'event', :conditions => ['events.event_type = ?', SpecialCode.get_code('event_type','move')])
+    @moves = Feature.where(['name = ?', "\nCastle #{session[:kingdom].name}"]).first
+
+    if @moves
+      @moves = @moves.feature_events.includes(:event).where( ['events.kind = ?', 'EventMoveLocal'] )
     end
-    @move_type = SpecialCode.get_code('event_type','event_move')
   end
 
   #new staircase (move that can take a player from level 0 to any existing level.
@@ -36,44 +35,42 @@ class Management::CastlesController < ApplicationController
       redirect_to :action => 'new'
       return
     end
-    
+
     #Take the moneys
     session[:kingdom][:gold] -= 500
     session[:kingdom].save
-    
+
     @levels = session[:kingdom].levels
     @level = Level.find(params[:level][:id])
     @feature = Feature.find(:first, :conditions => ['name = ?', "\nCastle #{session[:kingdom].name}"])
-    
+
     build_stairway(@level,@feature)
-    
+
     flash[:notice] = 'Built stairway. ' + session[:kingdom][:gold].to_s + ' gold left.'
-    
+
     redirect_to :action => 'show'
   end
-  
+
   def destroy
     #destroy the stair. no money back though.
     @feature_event = Feature.find(:first, :conditions => ['name = ?', "\nCastle #{session[:kingdom].name}"]).feature_events.find(params[:id])
     @event = @feature_event.event
-    @event_move = @event.event_move
-    
+
     @feature_event.destroy
-    @event_move.destroy
     @event.destroy
-    
+
     redirect_to :action => 'show'
   end
-  
+
   def throne
     @throne = Feature.find(:all, :conditions => ['name = ?', "\nThrone #{session[:kingdom].name}"]).last
   end
-  
+
   def throne_level
     @levels = session[:kingdom].levels
     render :action => 'throne'
   end
-  
+
   def throne_square
     @squares = session[:kingdom].levels.find(params[:level][:id])
     @x,@y = 0,0
@@ -82,10 +79,10 @@ class Management::CastlesController < ApplicationController
       redirect_to :action => 'throne_level'
       return false
     end
-    
+
     render :action => 'throne'
   end
-  
+
   def set_throne
     #delete the old throne by setting that the old square to nil (unless this is the first set_throne)
     @throne = Feature.find(:all, :conditions => ['name = ?', "\nThrone #{session[:kingdom].name}"]).last
@@ -94,11 +91,11 @@ class Management::CastlesController < ApplicationController
     if @throne.nil?
       #This assumes that the throne event was created when the kingom itself was created!
       @throne_event = Event.find(:first, :conditions => ['name = ?', "\nThrone #{session[:kingdom].name} event"])
-      @old_fe = Feature.find(:all, :conditions => ['name => ?', "\nCastle #{session[:kingdom].name}"]).last.feature_events.find(:all, :conditions => ['event_id = ?', @throne_event ]).last
+      @old_fe = Feature.find(:all, :conditions => ['name = ?', "\nCastle #{session[:kingdom].name}"]).last.feature_events.find(:all, :conditions => ['event_id = ?', @throne_event ]).last
       if !@old_fe.nil?
         @old_fe.destroy
       end
-    
+
       #TAKE CARE OF IMAGE HERE
       @image = Image.find(:first, :conditions => ['name = ?', 'DEFAULT THRONE'])
       @new_image = Image.deep_copy(@image)
@@ -106,10 +103,10 @@ class Management::CastlesController < ApplicationController
       @new_image.name = "Throne Image"
       @new_image.save
       #/ IMAGE SETUP CODE
-      
+
       #However, assume the throne feature not set up yet.
       @throne = Feature.sys_gen("\nThrone #{session[:kingdom].name}", @new_image.id)
-      
+
       if !@throne.save
         print 'Failed to save throne.'
         print @throne.errors
@@ -119,7 +116,7 @@ class Management::CastlesController < ApplicationController
     else
       @old_level_map = @throne.level_maps.last
       @old_level = @old_level_map.level
-      
+
       #Overwrite old feature to nil
       @temp = LevelMap.new
       @temp.level_id = @old_level.id
@@ -128,7 +125,7 @@ class Management::CastlesController < ApplicationController
       @temp.feature_id = nil
       @temp.save
     end
-    
+
     #Place the throne
     @temp = LevelMap.new
     @temp.level_id = @level.id
@@ -139,34 +136,23 @@ class Management::CastlesController < ApplicationController
       print "\nBollocks"
       params[:f][:f]
     end
-    
+
     redirect_to :action => 'throne'
   end
 
 protected
   def build_stairway(level,feature)
-    #MAKE EVENT  
-    @event = Event.sys_gen("\nSYSTEM GENERATED",                           SpecialCode.get_code('event_type', 'move'),                           SpecialCode.get_code('event_rep_type','unlimited'),                           nil)
+    #MAKE EVENT
+    @event = EventMoveLocal.sys_gen({:name => "\nSYSTEM GENERATED",
+                                     :event_rep_type => SpecialCode.get_code('event_rep_type','unlimited'),
+                                     :thing_id => level.id } )
     if @event.save
       flash[:notice] = "Created event\n"
     else
       #break code in case event fails to save while developeing this stuff
       flash[:n][:n]
     end
-  
-    #MAKE SUB EVENT
-    @event_move = EventMove.new
-    @event_move.event_id = @event.id
-    @event_move.move_type = SpecialCode.get_code('move_type','local')
-    @event_move.move_id = level.id
-    
-    if @event_move.save
-      flash[:notice] += "Created event_npc\n"
-    else
-      #break code in case event fails to save while developeing this stuff
-      flash[:n][:n]
-    end
-    
+
     #LINK EVENT TO FEATURE
     @feature_event = FeatureEvent.new
     @feature_event.feature_id = feature.id
@@ -174,33 +160,33 @@ protected
     @feature_event.chance = 100.0
     @feature_event.priority = 42
     @feature_event.choice = true
-    
+
     if @feature_event.save
       flash[:notice] += "Created feature_event\n"
     else
       flash[:n][:n]
     end
   end
-  
+
   #throne event should already exist for kingdom.
   def throne_feature_event(feature,event)
-    print "\nCreating throne feature event\n"
+    Rails.logger.info "Creating throne feature event"
     @feature_event = FeatureEvent.new
-    print @feature_event.feature_id = feature.id
-    print "\n"
-    print @feature_event.event_id = event.id
-    print "\n"
-    print @feature_event.chance = 100.0
-    print "\n"
-    print @feature_event.priority = 42
-    print "\n"
-    print @feature_event.choice = true
-    print "\n"
-    
+    Rails.logger.info @feature_event.feature_id = feature.id
+    Rails.logger.info ""
+    Rails.logger.info @feature_event.event_id = event.id
+    Rails.logger.info ""
+    Rails.logger.info @feature_event.chance = 100.0
+    Rails.logger.info ""
+    Rails.logger.info @feature_event.priority = 42
+    Rails.logger.info ""
+    Rails.logger.info @feature_event.choice = true
+    Rails.logger.info ""
+
     if @feature_event.save
-      flash[:notice] = "Created feature_event\n"
+      flash[:notice] = "Created feature_event"
     else
-    print "\nsoemthing went wrong!"
+      Rails.logger.info "soemthing went wrong!"
       flash[:n][:n]
     end
   end

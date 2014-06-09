@@ -9,7 +9,7 @@
     <th>cost</th>
     <th>armed?</th>
   </tr>
-  
+
 <% for event in @events %>
   <tr>
     <td><%= event.name %></td>
@@ -21,7 +21,7 @@
     <td><%= link_to 'Show', :action => 'show', :id => event %></td>
    <% if !event.armed? %>
     <td><%= link_to 'Edit', :action => 'edit', :id => event %></td>
-    <td><%= link_to 'Destroy', { :action => 'destroy', :id => event, :page => params[:page] }, :confirm => 'Are you sure?', :method => :post %></td>
+    <td><%= link_to 'Destroy', { :action => 'destroy', :id => event, :page => params[:page] }, :confirm => 'Are you sure?', :method => :delete %></td>
    <% else %>
     <td></td>
     <td></td>
@@ -32,7 +32,7 @@
 
 <br />
 
-<%= will_paginate @events %> 
+<%= will_paginate @events %>
 
 <br />
 

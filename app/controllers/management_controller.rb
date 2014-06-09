@@ -4,10 +4,10 @@ class ManagementController < ApplicationController
   before_filter :setup_kingdom_vars, :except => ['main_index', 'choose_kingdom', 'select_kingdom']
 
   layout 'main'
-  
+
 #  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
 #  verify :method => :post, :only => [ :do_retire ],         :redirect_to => { :action => :main_index }
-  
+
   def choose_kingdom
     session[:kingdom] = nil
     redirect_to :action => 'main_index'
@@ -25,7 +25,7 @@ class ManagementController < ApplicationController
       #get the kingdoms for the drop down menu
       for pc in @pcs
         @ks=Kingdom.find(:all,:conditions => ['player_character_id = ?', pc.id], :order => 'name')
-        if @ks.size > 0 
+        if @ks.size > 0
           for k in @ks
             @kingdoms << k
           end
@@ -36,7 +36,7 @@ class ManagementController < ApplicationController
 
   def helptext
   end
-  
+
   def select_kingdom
     @kingdom = Kingdom.find(params[:king][:kingdom_id])
     if session[:player].player_characters.find(@kingdom.player_character_id)
@@ -46,7 +46,7 @@ class ManagementController < ApplicationController
     end
     redirect_to :action => 'main_index'
   end
-  
+
   def retire
     print "tits"
    # params[:s][:s]
@@ -69,7 +69,7 @@ class ManagementController < ApplicationController
       end
     end
   end
-  
+
   def do_retire
     print "Made it to do_retire"
     if params[:commit] == "Cancel"
@@ -86,25 +86,25 @@ class ManagementController < ApplicationController
         @pc_id = @player_character.id
         @message = session[:kingdom].player_character.name + " has abdicated rule of " + session[:kingdom].name + " to " + @player_character.name
       end
-    
+
       @kingdom = session[:kingdom]
       @kingdom.player_character_id = @pc_id
-    
+
       if @kingdom.save
         flash[:notice] = 'You have relinquished the crown of ' + @kingdom.name
-      
+
         #New kingdom notice
         KingdomNotice.create_notice(@message, @kingdom.id)
       end
-      
+
       session[:kingdom] = nil
       session[:new_king] = nil
       session[:kingbit] = false
-      
-      redirect_to :controller => 'game'
+
+      redirect_to :controller => 'game', :action => "main"
     end
   end
-  
+
 protected
   def setup_kingdom_vars
     redirect_to :action => 'choose_kingdom' unless @kingdom = session[:kingdom]

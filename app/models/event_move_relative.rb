@@ -1,11 +1,11 @@
 class EventMoveRelative < EventLifeNeutral
   validates_presence_of :flex
-  
+
   def make_happen(who)
     PlayerCharacter.transaction do
       who.lock!
       if who.in_kingdom
-        @next_level = Level.find(:first, :conditions => ['kingdom_id = ? and level = ?', who.in_kingdom, who.present_level.level.to_i + self.thing_id])
+        @next_level = Level.find(:first, :conditions => ['kingdom_id = ? and level = ?', who.in_kingdom, who.present_level.level.to_i + self.flex])
         if @next_level.nil?
           @message = "The passage is maked \"UNDER CONSTRUCTION\", and comlpetely sealed off"
         else
@@ -19,8 +19,8 @@ class EventMoveRelative < EventLifeNeutral
     end
     return {:action => 'complete'}, EVENT_COMPLETED, @message
   end
-  
+
   def as_option_text(pc=nil)
-    "Change level by " + thing_id.to_s
+    "Change level by " + flex.to_s
   end
 end

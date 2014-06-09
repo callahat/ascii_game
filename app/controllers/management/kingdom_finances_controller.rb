@@ -25,26 +25,24 @@ class Management::KingdomFinancesController < ApplicationController
 
   def withdraw
     @withdraw = params[:withdraw][0].to_i
-    if TxWrapper.take(session[:kingdom], :gold, @withdraw)
+    if ! TxWrapper.take(session[:kingdom], :gold, @withdraw)
       flash[:notice] = 'Amount to withdrawl cannot exceed the gold in the coffers.'
-    else
-      TxWrapper.give(@pc, :gold, @withdraw)
+    elsif TxWrapper.give(@pc, :gold, @withdraw)
       flash[:notice] = 'Withdrawl successful.'
     end
     redirect_to :action => 'edit'
   end
-  
+
   def deposit
     @deposit = params[:deposit][0].to_i
-    if TxWrapper.take(@pc, :gold, @deposit)
+    if ! TxWrapper.take(@pc, :gold, @deposit)
       flash[:notice] = 'Amount to withdrawl cannot exceed the gold in the coffers.'
-    else
-      TxWrapper.give(session[:kingdom], :gold, @deposit)
+    elsif TxWrapper.give(session[:kingdom], :gold, @deposit)
       flash[:notice] = 'Withdrawl successful.'
     end
     redirect_to :action => 'edit'
   end
-  
+
   def adjust_tax
     if params[:taxes][0].to_f < 0 || params[:taxes][0].to_f > 100
       flash[:notice] = 'Tax rate must be between 0% and 100%'

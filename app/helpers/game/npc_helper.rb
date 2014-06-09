@@ -7,6 +7,6 @@ module Game::NpcHelper
               link_to('Cure ' + disease.name, npc_do_heal_url(:did => disease.id) ) +
               "</td>\n<td>for " + (Disease.abs_cost(disease)* (1 + tax_rate)).to_i.to_s + " gold</td>\n</tr>\n"
     }
-    @ret
+    @ret.html_safe
   end
 end

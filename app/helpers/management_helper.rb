@@ -14,9 +14,9 @@ module ManagementHelper
       }
       @ret += "</tr>\n"
     }
-    return @ret + "\n</table>\n"
+    (@ret + "\n</table>\n").html_safe
   end
-  
+
   def edit_kingdom_map(where)
     @ret = "<table>"
     0.upto(where.maxy-1){ |y|
@@ -30,7 +30,7 @@ module ManagementHelper
                   "  #{ options_from_collection_for_select(@features, 'id','name') }\n"
         elsif square.name[0..0] == "\n"
           @ret += h(square.name[1..12]) + ( square.name[13..13] ? "..." : "" ) +
-                  "<hidden value=\"#{ square.id }\" name=\"map[#{ y }][#{ x }]\">\n"
+                  "<input type='hidden' value=\"#{ square.id }\" name=\"map[#{ y }][#{ x }]\"/>\n".html_safe
         else
           @ret += "<select name=\"map[#{ y }][#{ x }]\" style=\"width:9em\">\n" +
                   "  <option value = \"\">#{ (square ? "("+square.name+")" : "" ) }</option>\n" +
@@ -40,9 +40,9 @@ module ManagementHelper
       }
     @ret += "</tr>\n"
     }
-    @ret + "</table>\n"
+    (@ret + "</table>\n").html_safe
   end
-  
+
   def npc_summary_rows(npcs)
     npcs.inject(""){|ret, npc|
       ret += "  <tr>
@@ -52,9 +52,9 @@ module ManagementHelper
     <td>#{ link_to 'Show', :action => 'show', :id => npc }</td>
     <td>#{ link_to 'Fire', { :action => 'turn_away', :id => npc }, :confirm => 'Are you sure?', :method => :post }</td>
   </tr>\n"
-    }
+    }.html_safe
   end
-  
+
   def npc_newhire_rows(npcs)
     npcs.inject(""){|ret, npc|
       l = ( npc.kind == "NpcMerchant" ?
@@ -66,9 +66,9 @@ module ManagementHelper
     <td>#{ l }</td>
     <td>#{ link_to 'Turn Away', {:action => 'turn_away', :id => npc },  :method => :post }</td>
   </tr>\n"
-    }
+    }.html_safe
   end
-  
+
   def show_merchant_helper(n)
     @ret = ""
     @ret+= "<p><b>healing_sales: </b>#{ n.npc_merchant_detail.healing_sales }</p>\n" if n.npc_merchant_detail.healing_sales.to_i > 0
@@ -78,12 +78,12 @@ module ManagementHelper
             "<p><b>race body type: </b>#{ SpecialCode.get_text('race_body_type',n.npc_merchant_detail.race_body_type) }</p>\n" +
             "<p><b>consignor: </b>#{ n.npc_merchant_detail.consignor }</p>\n"
     end
-    @ret += "<p><b>Store Location: </b>" + ((@npc.event_npcs.last and (@loc = @npc.event_npcs.last.level_map)) ?
-              "Level #{ @loc.level.level }, #{ @loc.ypos } by #{ @loc.xpos }" : "None" ) + "</p>\n"
+    (@ret += "<p><b>Store Location: </b>" + ((@npc.event_npcs.last and (@loc = @npc.event_npcs.last.level_map)) ?
+             "Level #{ @loc.level.level }, #{ @loc.ypos } by #{ @loc.xpos }" : "None" ) + "</p>\n").html_safe
   end
-  
+
   def show_stats_hepler(n)
     Stat.symbols.inject(""){|ret,at|
-      ret += "<p><b>#{ Stat.human_attr(at) }: </b>#{ n.stat[at] }</p>\n" }
+      ret += "<p><b>#{ Stat.human_attr(at) }: </b>#{ n.stat[at] }</p>\n" }.html_safe
   end
 end

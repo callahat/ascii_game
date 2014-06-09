@@ -20,22 +20,22 @@
   <%= text_field_tag 'flex[0]' %></p>
   <p><label for="event_flex[1]">Most encountered</label><br/>
   <%= text_field_tag 'flex[1]' %></p>
-  
+
 <% elsif @event.kind == "EventDisease" %>
   <p><label for="event_thing_id">Disease</label><br/>
   <%= collection_select('event', 'thing_id', @diseases, 'id', 'name') %></p>
   <p><label for="event_flex">Cures?</label><br/>
   <%= check_box 'event','flex' %></p>
-  
+
 <% elsif @event.kind == "EventItem" %>
   <p><label for="event_thing_id">Item</label><br/>
   <%= collection_select('event', 'thing_id', @items, 'id', 'name') %></p>
   <p><label for="event_flex">Number</label><br/>
   <%= text_field 'event', 'flex' %></p>
-  
+
 <% elsif @event.kind == "EventMoveRelative" %>
   <p><label for="event_thing_id">Move</label><br/>
-  <%= text_field 'event', 'thing_id' %></p>
+  <%= text_field 'event', 'flex' %></p>
 
 <% elsif @event.kind == "EventMoveLocal" %>
   <p><label for="event_thing_id">Move</label><br/>
@@ -48,18 +48,18 @@
 <% elsif @event.kind == "EventNpc" %>
   <p><label for="event_thing_id">NPC</label><br/>
   <%= collection_select('event', 'thing_id', @npcs, 'id', 'name') %></p>
-  
+
 <% elsif @event.kind == "EventPlayerCharacter" %>
   <p><label for="event_thing_id">Player Character</label><br/>
   <%= collection_select('event', 'thing_id', @pcs, 'id', 'name') %></p>
-  
+
 <% elsif @event.kind == "EventQuest" %>
   <p><label for="event_thing_id">Quest</label><br/>
   <%= collection_select('event', 'thing_id', @quests, 'id', 'name') %></p>
-	
+
   <p><label for="event_text">Text</label><br/>
   <%= text_area 'event', 'text', :rows => '10', :wrap => 'hard'  %></p>
-  
+
 <% elsif @event.kind == "EventStat" %>
   <p><label for="health_hp">HP</label><br/>
   <%= text_field 'health', 'HP'  %></p>

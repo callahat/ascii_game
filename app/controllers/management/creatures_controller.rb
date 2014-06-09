@@ -40,10 +40,10 @@ class Management::CreaturesController < ApplicationController
 
     if @stat.valid? && @creature.valid?
       if params[:creature][:image_id].nil? || params[:creature][:image_id] == ""
-        @image.save! 
+        @image.save!
         @creature.image_id = @image.id
       end
-      
+
       @creature.save
       @stat.owner_id = @creature.id
       @stat.save
@@ -77,7 +77,7 @@ class Management::CreaturesController < ApplicationController
   def update
     edit
     @image.update_image(params[:image][:image_text]) unless params[:image][:image_text] == ""
-    
+
     exp = Creature.exp_worth(params[:stat][:dam].to_i,
                              params[:stat][:dfn].to_i,
                              params[:creature][:HP].to_i,
@@ -94,9 +94,9 @@ class Management::CreaturesController < ApplicationController
     end
   end
 
-  #this will not be used for any creatue that ever graced the world. 
+  #this will not be used for any creatue that ever graced the world.
   #Exception is if the user has just created this creature, and nothing is
-  #using it. Might want to revisit later, have a write once column for active 
+  #using it. Might want to revisit later, have a write once column for active
   #things.
   def destroy
     @creature = Creature.find(params[:id])
@@ -105,7 +105,7 @@ class Management::CreaturesController < ApplicationController
       redirect_to :action => 'index'
       return
     end
-    
+
     if @stat.destroy && @creature.destroy
       flash[:notice] = 'Creature destroyed.'
     else
@@ -120,7 +120,7 @@ class Management::CreaturesController < ApplicationController
       redirect_to :action => 'index'
       return
     end
-    
+
     if @creature.update_attribute(:armed, true)
       flash[:notice] = @creature.name + ' sucessfully armed.'
       #add it to the pref list
@@ -145,7 +145,7 @@ protected
 
   def verify_creature_owner
     #if someone tries to edit a creature not belonging to them
-    if @creature.player_id != session[:player][:id] && 
+    if @creature.player_id != session[:player][:id] &&
        @creature.kingdom_id != session[:kingdom][:id]
       flash[:notice] = 'An error occured while retrieving ' + @creature.name
       false

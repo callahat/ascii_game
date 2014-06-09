@@ -1,5 +1,5 @@
 <% if @npcs_for_hire.size > 0 %>
-<p><b>NPC's for hire/ relocation<b></p>
+<p><b>NPC's for hire/ relocation</b></p>
 <table>
 <%= npc_newhire_rows(@npcs_for_hire) %>
 </table>
@@ -8,11 +8,11 @@
 <% if @merchs.size + @guards.size > 0 %>
 <p><b>NPC's of the kingdom</b></p>
 <table>
-	<tr>
-		<th>NPC</th>
-		<th>Type</th>
-		<th>Wellness</td>
-	</tr>
+    <tr>
+        <th>NPC</th>
+        <th>Type</th>
+        <th>Wellness</td>
+    </tr>
 
 <%= npc_summary_rows(@merchs) %>
 <%= npc_summary_rows(@guards) %>

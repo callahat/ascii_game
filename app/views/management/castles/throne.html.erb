@@ -13,11 +13,12 @@
   <tr>
     <% while @x < @squares.maxx %>
     <td><% @lm = @squares.level_maps.find(:all,:conditions => ['ypos = ? AND xpos = ?', @y, @x]).last %>
-      <%= radio_button 'throne', 'spot', @lm.id, :disabled => !@lm.feature.nil? %>
+    <%= @lm.feature.name %>
+      <%= radio_button 'throne', 'spot', @lm.id, :disabled => (@lm.feature && @lm.feature.name != "\nEmpty" ) %>
     </td>
-<%     @x += 1 
-     end 
-     @x = 0 
+<%     @x += 1
+     end
+     @x = 0
      @y += 1 %>
 </tr>
 <% end %>

@@ -14,20 +14,22 @@ class Management::PrefListController < ApplicationController
 
     @all_things = @stuff.paginate(:page => params[:page])
   end
-  
+
   def add_to_list
     if session[:cur_pref_list_class].index(params[:id].to_i).nil?
       flash[:notice] = "Invalid ID number"
     else
       session[:pref_list_type].add(session[:kingdom][:id], params[:id])
+      session[:kingdom].reload
     end
 
     redirect_to :action => 'index', :page => params[:page]
   end
-  
+
   def drop_from_list
     session[:pref_list_type].drop(session[:kingdom][:id], params[:id])
-    
+    session[:kingdom].reload
+
     redirect_to :action => 'index', :page => params[:page]
   end
 end

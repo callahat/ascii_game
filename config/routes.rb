@@ -1,7 +1,7 @@
 AsciiGame3::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
-  
+
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
   root :to => "home#index"
@@ -9,7 +9,7 @@ AsciiGame3::Application.routes.draw do
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action
-  
+
   match     'login'             =>  'account#login'
   match     'logout'            =>  'account#logout'
   match     'register'          =>  'account#new'
@@ -21,27 +21,27 @@ AsciiGame3::Application.routes.draw do
   match     'game_feature'      =>  'game#feature'
   match     'game_main'         =>  'game#main'
   match     'complete'          =>  'game#complete'
-  
+
   #Game::* controllers
   match     'game/battle'           =>  'game/battle', :action => :battle
   match     'game/battle/:action'   =>  'game/battle'
   match     'game/court/:action'    =>  'game/court'
-  
+
   match     'game/do_heal'        =>  'game#do_heal',    :via => :post
   match     'game/do_choose'      =>  'game#do_choose',  :via => :post
   match     'game/do_train'       =>  'game#do_train',   :via => :post
   match     'game/do_spawn'       =>  'game#do_spawn',   :via => :post
-  
+
   match     'game/do_heal'        =>  'game#feature',    :via => :get
   match     'game/do_choose'      =>  'game#feature',    :via => :get
   match     'game/do_train'       =>  'game#feature',    :via => :get
   match     'game/do_spawn'       =>  'game#feature',    :via => :get
-    
+
   match     'game/leave_kingdom'  =>  'game#leave_kingdom'
   match     'game/spawn_kingdom'  =>  'game#spawn_kingdom'
   match     'game/make_camp'      =>  'game#make_camp'
   match     'game/world_move/:id' =>  'game#world_move'
-      
+
   #Game::QuestController
   match     'quest_index'       =>  'game/quests#index'
   match     'do_decline'        =>  'game/quests#do_decline'
@@ -61,9 +61,9 @@ AsciiGame3::Application.routes.draw do
   match     'npc_do_buy'        =>  'game/npc#do_buy'
   match     'npc_sell'          =>  'game/npc#sell'
   match     'npc_do_sell'       =>  'game/npc#do_sell'
-  
+
   match     'management'        =>  'management#main_index'
-    
+
   #ManagementController
   match     'mgmt_levels'       =>  'management/levels#index'
   match     'mgmt_levels_show'  =>  'management/levels#show'
@@ -71,30 +71,67 @@ AsciiGame3::Application.routes.draw do
   match     'mgmt_levels_create'=>  'management/levels#create'
   match     'mgmt_levels_edit'  =>  'management/levels#edit'
   match     'mgmt_levels_update'=>  'management/levels#update'
-  
+
   #PrefListController
   match     'management/pref_list'                =>  'management/pref_list#index',          :via => :get
   match     'management/pref_list/drop_from_list' =>  'management/pref_list#drop_from_list', :via => :post
   match     'management/pref_list/add_to_list'    =>  'management/pref_list#add_to_list',    :via => :post
   match     'management/pref_list/drop_from_list' =>  'management/pref_list#index',          :via => :get
   match     'management/pref_list/add_to_list'    =>  'management/pref_list#index',          :via => :get
-  
+
+  match     'management/main_index'  => 'management#main_index', :as => "management"
+
+  match     'management/events/new' => 'management/events#new'
+
   namespace :management do
-    resources :castles
-    resources :creatures
-    resources :events
-    resources :features
+    resources :castles do
+      collection do
+        get 'throne'
+        get 'throne_level'
+        post 'throne_square'
+        post 'set_throne'
+      end
+    end
+    resources :creatures, :features do
+      get 'pref_lists', :on => :collection
+    end
+    resources :events do
+      get 'pref_lists', :on => :collection
+    end
     resources :images
     resources :kingdom_bans
-    resources :kingdom_entries
-    resources :kingdom_finances
+    resources :kingdom_entries do
+      collection do
+        get 'show'
+        get 'index'
+        get 'edit'
+        post 'update'
+      end
+    end
+    resources :kingdom_finances do
+      collection do
+        get 'show'
+        get 'index'
+        get 'edit'
+        post 'withdraw'
+        post 'deposit'
+        post 'adjust_tax'
+      end
+    end
     resources :kingdom_items
     resources :kingdom_notices
-    resources :kingdom_npcs
+    resources :kingdom_npcs, :except => [:show] do
+      collection do
+        get :list
+        get ':action/:id', :only => [ :edit, :assign_store ]
+        post ':action/:id', :only => [ :hire_merchant, :hire_guard, :turn_away ]
+      end
+    end
+    resources :kingdom_npcs, :only => [:show]
     resources :levels
     resources :quests
   end
-  
+
   namespace :admin do
     resource :attack_spells
     resource :base_items
@@ -115,7 +152,7 @@ AsciiGame3::Application.routes.draw do
     resource :world_maps
     resource :worlds
   end
-  
+
   #ForumsController
   match     'forums'                                        =>  'forum#boards',     :as => "forums"
   match     'forums/:bname'                                 =>  'forum#threds',     :as => "boards"
@@ -124,9 +161,9 @@ AsciiGame3::Application.routes.draw do
   match     'forum_action/:bname/:tname/:forum_node_id/:action' =>  'forum',            :as => "thred_action"
   match     'forum_action/:bname/:forum_node_id/:action'        =>  'forum',            :as => "board_action"
   match     'forum_action/:forum_node_id/:action'               =>  'forum',            :as => "forum_action"
-  
 
-  
+
+
   #resource  :forum
 
   # Sample of named route:
@@ -173,7 +210,7 @@ AsciiGame3::Application.routes.draw do
 
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
-  
-  
+
+
   match     ':controller(/:action(/:id(.:format)))'
 end

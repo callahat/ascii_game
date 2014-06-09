@@ -2,6 +2,6 @@
 
 <!--[form:kingdom_entry]-->
 <p><label for="kingdom_entry_entry_limitations">The following may enter the kingdom:</label><br/>
-<%= collection_select 'kingdom_entry', 'allowed_entry', @entry_types, 'col_num', 'text'  %></p>
+<%= select 'kingdom_entry', 'allowed_entry', @entry_types  %></p>
 <!--[eoform:kingdom_entry]-->
 
