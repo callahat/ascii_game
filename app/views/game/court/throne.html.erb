@@ -1,9 +1,9 @@
-<% if @king %>
-<% if @king.id == @pc.id %>
+<% if @king_on_throne %>
+<% if @king_on_throne.id == @pc.id %>
 <p>You sit on your throne.</p>
 <% else %>
 
-<p>You stand before the throne of <%= @king.name %>, king of <%= @king.kingdom.name %></p>
+<p>You stand before the throne of <%= @king_on_throne.name %>, king of <%= @king_on_throne.kingdom.name %></p>
 
 <p><%= link_to 'Pledge Service', :action => 'join_king' %></p>
 <p><%= link_to 'Attack!', :controller => '/game/battle', :action => 'fight_king' %></p>

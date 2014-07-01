@@ -8,7 +8,7 @@ class Game::CourtController < ApplicationController
 #  verify :method => :post, :only => [ :do_heal, :do_choose, :do_train ],         :redirect_to => { :action => :feature }
 
   def throne
-    @king = @pc.present_kingdom.player_character
+    @king_on_throne = @pc.present_kingdom.player_character
   end
 
   def join_king
