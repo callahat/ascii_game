@@ -5,16 +5,16 @@
     <th>Date</th>
     <th>Notice</th>
   </tr>
-  
+
 <% for notice in @notices %>
   <tr>
     <td><%=h notice.created_at.strftime("%I:%M%p %m/%d/%Y") %></td>
-    <td><%= notice.text %><br/><i>Signed:<% if notice.signed.nil? %>anonymous<% else %><%=h notice.signed %><% end %></i></td>
+    <td><%= notice.text.html_safe %><br/><i>Signed:<% if notice.signed.nil? %>anonymous<% else %><%=h notice.signed %><% end %></i></td>
   </tr>
 <% end %>
 </table>
 
-<%= will_paginate @notices %> 
+<%= will_paginate @notices %>
 
 <br />
 
