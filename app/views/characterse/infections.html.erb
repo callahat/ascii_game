@@ -18,13 +18,13 @@
   <% for infection in @infections %>
     <tr>
       <td><span title="<%= infection.disease.description %>"><%= infection.disease.name %></span></td>
-      <td><%= infection.disease.dam %></td>
-      <td><%= infection.disease.dfn %></td>
-      <td><%= infection.disease.str %></td>
-      <td><%= infection.disease.dex %></td>
-      <td><%= infection.disease.mag %></td>
-      <td><%= infection.disease.int %></td>
-      <td><%= infection.disease.con %></td>
+      <td><%= infection.disease.stat.dam %></td>
+      <td><%= infection.disease.stat.dfn %></td>
+      <td><%= infection.disease.stat.str %></td>
+      <td><%= infection.disease.stat.dex %></td>
+      <td><%= infection.disease.stat.mag %></td>
+      <td><%= infection.disease.stat.int %></td>
+      <td><%= infection.disease.stat.con %></td>
       <td><%= infection.disease.HP_per_turn %></td>
       <td><%= infection.disease.MP_per_turn %></td>
     </tr>
@@ -32,6 +32,6 @@
   </table>
 <% end %>
 
-<%= will_paginate @infections %> 
+<%= will_paginate @infections %>
 
 <%= render :file => 'characterse/footer' %>

@@ -11,12 +11,12 @@
     <tr>
       <td><span title="<%= done_quest.quest.description %>"><%= done_quest.quest.name %></span></td>
       <td><%= done_quest.quest.kingdom.name %></td>
-      <td><% if done_quest.date %><%= done_quest.date.to_date.to_s %><% end %></td>
+      <td><% if done_quest.created_at %><%= done_quest.created_at.to_s %><% end %></td>
     </tr>
   <% end %>
   </table>
 <% end %>
 
-<%= will_paginate @done_quests %> 
+<%= will_paginate @done_quests %>
 
 <%= render :file => 'characterse/footer' %>
