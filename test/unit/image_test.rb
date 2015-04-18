@@ -67,9 +67,9 @@ class ImageTest < ActiveSupport::TestCase
 		@new_f_image.image_text = "m"
 		@new_f_image.resize_image(10,15)
 		assert @new_f_image.image_text != @feature_text
-		assert @new_f_image.image_text.split("\n").size == 10, @new_f_image.image_text.split("\n").size
+		assert_equal 10, @new_f_image.image_text.split("\n").size
 		@new_f_image.image_text.split("\n").each{|r|
-			assert r.length == 15 }
+			assert_equal 15, r.length }
 	end
 	
 	test "image update_image" do
@@ -80,13 +80,13 @@ class ImageTest < ActiveSupport::TestCase
 		assert @new_f_image.image_text == @feature_text
 		@new_f_image.update_image(@feature_text, 10, 15)
 		assert @new_f_image.image_text != @feature_text
-		assert @new_f_image.image_text.split("\n").size == 10, @new_f_image.image_text.split("\n").size
+		assert_equal 10, @new_f_image.image_text.split("\n").size
 		@new_f_image.image_text.split("\n").each{|r|
-			assert r.length == 15 }
+			assert_equal 15, r.length }
 		
 		@new_c_image.update_image(@creature_text)
-		assert @new_c_image.image_text == @creature_text
+		assert_equal @creature_text, @new_c_image.image_text
 		@new_c_image.update_image(@creature_text,-1, -1)
-		assert @new_c_image.image_text == @creature_text
+		assert_equal @creature_text, @new_c_image.image_text
 	end
 end

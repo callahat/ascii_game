@@ -227,7 +227,7 @@ class GameControllerTest < ActionController::TestCase
 		
 		get 'complete', {}, session.to_hash
 		assert_redirected_to :controller => 'game', :action => 'feature'
-		assert session[:player_character].current_event.event_id.nil?, session[:player_character].current_event
+		refute session[:player_character].current_event.event_id
 		
 		assert_difference 'session[:player_character].current_event.priority', +1 do
 			get 'feature', {}, session.to_hash
@@ -297,7 +297,7 @@ class GameControllerTest < ActionController::TestCase
 		@lq.reqs.destroy_all
 		
 		res, msg = @lq.complete_quest
-		assert res, msg
+		assert res, msg.inspect
 		
 		get 'feature', {:id => @kl2.id}, session.to_hash
 		assert_response :redirect

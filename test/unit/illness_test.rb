@@ -12,24 +12,24 @@ class IllnessTest < ActiveSupport::TestCase
 	test "infect" do
 		@pc = PlayerCharacter.find_by_name("sick pc")
 		@disease = Disease.find_by_name("NewInfection")
-		assert @pc.illnesses.size == 4, @pc.illnesses.size
+		assert_equal 4, @pc.illnesses.size
 		pcstr = @pc.stat.str
 		basepcstr = @pc.base_stat.str
 		assert Illness.infect(@pc, @disease)
-		assert @pc.illnesses.size == 5
-		assert @pc.stat.str == pcstr - 5
-		assert @pc.base_stat.str == basepcstr
+		assert_equal 5, @pc.illnesses.size
+		assert_equal pcstr - 5, @pc.stat.str
+		assert_equal basepcstr, @pc.base_stat.str
 		
 		#Can't infect more than once with same disease
 		assert !Illness.infect(@pc, @disease)
-		assert @pc.illnesses.size == 5
+		assert_equal 5, @pc.illnesses.size
 		
 		@pc2 = PlayerCharacter.find_by_name("Test PC One")
-		assert @pc2.health.wellness == SpecialCode.get_code('wellness', 'alive')
-		assert @pc2.illnesses.size == 0
+		assert SpecialCode.get_code('wellness', 'alive'), @pc2.health.wellness.inspect
+		assert_equal 0, @pc2.illnesses.size
 		assert Illness.infect(@pc2, @disease)
-		assert @pc2.health.wellness == SpecialCode.get_code('wellness', 'diseased'), @pc2.health.wellness.to_s + " " + SpecialCode.get_code('wellness', 'diseased').to_s
-		assert @pc2.illnesses.size == 1
+		assert_equal SpecialCode.get_code('wellness', 'diseased'), @pc2.health.wellness, @pc2.health.wellness.to_s + " " + SpecialCode.get_code('wellness', 'diseased').to_s
+		assert_equal 1, @pc2.illnesses.size
 	end
 	
 	test "infect npc" do
@@ -114,7 +114,7 @@ class IllnessTest < ActiveSupport::TestCase
 	test "cure illness" do
 		@pc = PlayerCharacter.find_by_name("sick pc")
 		@disease = @pc.infections.first.disease
-		assert @pc.illnesses.size == 4, @pc.illnesses.size
+		assert_equal 4, @pc.illnesses.size
 		assert_difference '@pc.stat.str', +5 do
 			assert_difference '@pc.stat.int', +5 do
 				assert_difference '@pc.stat.dex', +5 do
@@ -130,10 +130,10 @@ class IllnessTest < ActiveSupport::TestCase
 				end
 			end
 		end
-		assert @pc.illnesses.size == 3
+		assert_equal 3, @pc.illnesses.size
 		@pc.infections.first.destroy
 		@pc.infections.first.destroy
-		assert @pc.illnesses.size == 1
+		assert_equal 1, @pc.illnesses.size
 		@disease = @pc.infections.first.disease
 		assert_difference '@pc.stat.str', +5 do
 			assert_difference '@pc.stat.int', +5 do
@@ -142,7 +142,7 @@ class IllnessTest < ActiveSupport::TestCase
 				end
 			end
 		end
-		assert @pc.illnesses.size == 0
-		assert @pc.health.wellness == SpecialCode.get_code('wellness','alive')
+		assert_equal 0, @pc.illnesses.size
+		assert_equal SpecialCode.get_code('wellness','alive'), @pc.health.wellness
 	end
 end

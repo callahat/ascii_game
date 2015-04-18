@@ -39,15 +39,15 @@ class EventCreatureTest < ActiveSupport::TestCase
   test "create creature event" do
     e = EventCreature.new(@standard_new.merge(:flex => "0;0"))
     assert !e.valid?
-    assert e.errors.full_messages.size == 3, e.errors.full_messages
+    assert_equal 3, e.errors.full_messages.size
     e.creature = Creature.find(:first)
     assert !e.valid?
-    assert e.errors.full_messages.size == 2, e.errors.full_messages.size
+    assert_equal 2, e.errors.full_messages.size
     e.flex = "4;9"
-    assert e.valid?,e.errors.full_messages
-    assert e.errors.full_messages.size == 0
+    assert e.valid?,e.errors.full_messages.inspect
+    assert_equal 0, e.errors.full_messages.size
     assert e.save!
-    assert e.price > 0, e.price
-    assert e.total_cost > 500, e.total_cost
+    assert e.price > 0, e.price.inspect
+    assert e.total_cost > 500, e.total_cost.inspect
   end
 end

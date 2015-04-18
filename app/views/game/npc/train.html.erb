@@ -9,7 +9,9 @@
 		<td>Gold per Point</td>
 	</tr>
 	<% Stat.symbols.each{|atr|
-			next unless (@gainable = (@pc.base_stat[atr] * @max_skill / 100.0).to_i - @pc.trn_stat[atr]) > 0 and (@flag = true) %>
+      @gainable = (@pc.base_stat[atr] * @max_skill / 100.0).to_i - @pc.trn_stat[atr]
+      @flag = true
+      next unless @gainable > 0 and @flag %>
 	<tr>
 		<td><%= Stat.human_attr(atr).capitalize %></td>
 		<td><%= text_field("atrib",atr.to_s) %></td>

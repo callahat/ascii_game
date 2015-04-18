@@ -17,7 +17,7 @@ fe_two_b:
   chance: 100
   priority: 1
   choice: true
-	
+
 fe_two_c:
   feature: feature_multi_event
   event: disease_event

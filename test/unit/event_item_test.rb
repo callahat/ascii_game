@@ -43,12 +43,12 @@ class EventItemTest < ActiveSupport::TestCase
 		assert e.errors.full_messages.size == 2
 		e.item = Item.find_by_name("Item99")
 		assert !e.valid?
-		assert e.errors.full_messages.size == 1, e.errors.full_messages.size
+		assert e.errors.full_messages.size == 1, e.errors.full_messages.size.inspect
 		e.flex = 4
-		assert e.valid?,e.errors.full_messages
+		assert e.valid?,e.errors.full_messages.inspect
 		assert e.errors.full_messages.size == 0
 		assert e.save!
-		assert e.price >= e.item.price, e.price
-		assert e.total_cost > 500, e.total_cost
+		assert e.price >= e.item.price, e.price.inspect
+		assert e.total_cost > 500, e.total_cost.inspect
 	end
 end

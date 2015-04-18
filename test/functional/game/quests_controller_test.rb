@@ -25,7 +25,7 @@ class Game::QuestsControllerTest < ActionController::TestCase
 		@direction, @completed, @message = session[:player_character].current_event.event.happens(session[:player_character])
 		session[:player_character].current_event.update_attribute(:completed, @completed)
 		session[:player_character].reload
-		assert session[:player_character].current_event.event.class == EventQuest, session[:player_character].current_event.event.class
+		assert_equal EventQuest, session[:player_character].current_event.event.class
 	end
 	
 	def setup_sub2

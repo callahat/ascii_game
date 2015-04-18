@@ -28,13 +28,13 @@ class EventNpcTest < ActiveSupport::TestCase
 	test "create npc event" do
 		e = EventNpc.new(@standard_new)
 		assert !e.valid?
-		assert e.errors.full_messages.size == 2
+		assert_equal 2, e.errors.full_messages.size
 		e.npc = Npc.find :first
 		e.flex = LevelMap.find :first
 		assert e.valid?
-		assert e.errors.full_messages.size == 0
+		assert_equal 0, e.errors.full_messages.size
 		assert e.save!
-		assert e.price == 0, e.price
-		assert e.total_cost == 500, e.total_cost
+		assert_equal 0, e.price
+		assert_equal 500, e.total_cost
 	end
 end

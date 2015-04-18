@@ -106,7 +106,7 @@ class ForumNodePostTest < ActiveSupport::TestCase
 
         @np.player_id = @player_one.id
         
-        assert @np.save, @np.errors.full_messages
+        assert @np.save, @np.errors.full_messages.inspect
         @thred.reload
         assert @thred.last_post_id == @np.id, "Thred last post id:" + @thred.last_post_id.to_s + " " + "post id:" + @np.id.to_s
         assert @thred.board.last_post_id == @thred.last_post_id, @thred.last_post_id.to_s + " " + @thred.board.last_post_id.to_s
@@ -116,7 +116,7 @@ class ForumNodePostTest < ActiveSupport::TestCase
         
         @np2.player_id = @mod_one.id
         
-        assert @np2.save, @np2.errors.full_messages
+        assert @np2.save, @np2.errors.full_messages.inspect
         @locked_thred.reload
         assert @locked_thred.last_post_id == @np2.id, "Thred id:" + @thred.last_post_id.to_s + " " + "post id:" + @np2.id.to_s
         assert @locked_thred.board.last_post_id == @locked_thred.last_post_id,

@@ -18,7 +18,7 @@ class Race < ActiveRecord::Base
   end
   def self.num_equip_loc_xp(n)
     #up to 10 equip locations with no XP penalty
-    3.power!(n-11).floor*10
+    (3**(n-11)).floor*10
   end
   
   #Pagination related stuff

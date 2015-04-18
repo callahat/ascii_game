@@ -26,7 +26,7 @@ class CurrentEventTest < ActiveSupport::TestCase
 		@current_k_event.update_attribute(:location_id, @location.id)
 		@next, @ev = @current_k_event.next_event
 
-		assert @next == 1, @next
+		assert @next == 1, @next.inspect
 		assert @ev.class.base_class == Event, @ev.inspect
 		
 		@current_k_event.update_attribute(:priority, @next)
@@ -40,27 +40,27 @@ class CurrentEventTest < ActiveSupport::TestCase
 		@current_k_event.update_attribute(:location_id, @location.id)
 		@next, @ev = @current_k_event.next_event
 		
-		assert @next == 1, @next
-		assert @ev.class == Array, @ev.inspect
-		assert @ev.size == 2, @ev.size
+		assert_equal 1, @next, @next.inspect
+		assert_equal Array, @ev.class, @ev.inspect
+		assert_equal 2, @ev.size, @ev.size
 		
 		@current_k_event.update_attribute(:priority, @next)
 		@next, @ev = @current_k_event.next_event
 		
-		assert @next == 2, @next
-		assert @ev.class.base_class == Event, @ev.inspect
-		
+		assert_equal 2, @next, @next.inspect
+		assert_equal Event, @ev.class.base_class, @ev.inspect
+
 		@current_k_event.update_attribute(:priority, @next)
 		@next, @ev = @current_k_event.next_event
 		
-		assert @next == 3, @next
+		assert_equal 3, @next, @next.inspect
 		assert (@ev.class == Array && @ev.size == 1) || @ev.class.base_class == Event
 		
 		@current_k_event.update_attribute(:priority, @next)
 		@next, @ev = @current_k_event.next_event
 		
-		assert @next == 7, @next
-		assert @ev.class.base_class == Event, @ev.inspect
+		assert_equal 7, @next, @next.inspect
+		assert_equal Event, @ev.class.base_class, @ev.inspect
 	end
 	
 	test "create new feature event based on pc location" do
@@ -68,17 +68,17 @@ class CurrentEventTest < ActiveSupport::TestCase
 		@wm = @world.world_maps.find(:first, :conditions => ['xpos = 1 and ypos = 1 and bigxpos = 0 and bigypos = 0'])
 		
 		@current_loc_event = CurrentEvent.make_new(@pc, @kl.id)
-		assert @current_loc_event.class == CurrentKingdomEvent, @current_loc_event.class
-		assert @current_loc_event.location_id == @kl.id
-		assert @current_loc_event.player_character_id == @pc.id
+		assert_equal CurrentKingdomEvent, @current_loc_event.class
+		assert_equal @kl.id, @current_loc_event.location_id
+		assert_equal @pc.id, @current_loc_event.player_character_id
 		
 		@pc.update_attribute(:in_kingdom,nil)
 		@pc.update_attribute(:kingdom_level,nil)
 		
 		@current_w_event = CurrentEvent.make_new(@pc, @wm.id)
-		assert @current_w_event.class == CurrentWorldEvent
-		assert @current_w_event.location_id == @wm.id, @current_w_event.location
-		assert @current_w_event.player_character_id == @pc.id
+		assert_equal CurrentWorldEvent, @current_w_event.class
+		assert_equal @wm.id, @current_w_event.location_id, @current_w_event.location.inspect
+		assert_equal @pc.id, @current_w_event.player_character_id
 	end
 	
 	test "current event complete" do
@@ -107,13 +107,13 @@ class CurrentEventTest < ActiveSupport::TestCase
 		
 		@current_loc_event.update_attribute(:completed, EVENT_COMPLETED)
 		@next, @it = @current_loc_event.complete
-		assert @next == 2, @next
+		assert @next == 2, @next.inspect
 		assert @it.class.base_class == Event, @it.inspect
 		
 		@current_loc_event.update_attribute(:priority, 4)
 		@current_loc_event.update_attribute(:completed, EVENT_SKIPPED)
 		@next, @it = @current_loc_event.complete
-		assert @next == 5, @next
+		assert @next == 5, @next.inspect
 		assert @it.class.base_class == Event, @it.inspect
 		
 		#QuestExplore
@@ -130,7 +130,7 @@ class CurrentEventTest < ActiveSupport::TestCase
 																			:conditions => ['event_id = ? and location_id = ?',
 																			@current_loc_event.event_id, @current_loc_event.location_id])
 		@pc.log_quests.find_by_quest_id(q.id).reqs.reload
-		assert @pc.log_quests.find_by_quest_id(q.id).reqs.size == 5, @pc.log_quests.find_by_quest_id(q.id).reqs.size
+		assert_equal 5, @pc.log_quests.find_by_quest_id(q.id).reqs.size
 		assert @de
 		assert @de.class == DoneLocalEvent
 	end

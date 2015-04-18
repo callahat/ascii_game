@@ -13,44 +13,44 @@ class FeatureTest < ActiveSupport::TestCase
 	test "available events" do
 		#feature without any events will not have any
 		@choices, @autos = @feature_ne.available_events(1, @location, @pc.id)
-		assert @choices.size == 0,@choices
-		assert @autos.size == 0,@autos
+		assert_equal 0, @choices.size
+		assert_equal 0, @autos.size
 		
 		#feaure with one priority level
 		@choices, @autos = @feature_c.available_events(1, @location, @pc.id)
-		assert @choices.size == 0,@choices
-		assert @autos.size == 1,@autos
+		assert_equal 0, @choices.size
+		assert_equal 1, @autos.size
 		
 		@choices, @autos = @feature_c.available_events(3, @location, @pc.id)
-		assert @choices.size == 0,@choices
-		assert @autos.size == 0,@autos
+		assert_equal 0, @choices.size
+		assert_equal 0, @autos.size
 		
 		#feature with many priority levels and many events at each priority level
 		@choices, @autos = @feature_m.available_events(1, @location, @pc.id)
-		assert @choices.size == 2,@choices
-		assert @autos.size == 0,@autos
+		assert_equal 2, @choices.size
+		assert_equal 0, @autos.size
 		
 		@choices, @autos = @feature_m.available_events(2, @location, @pc.id)
-		assert @choices.size == 0,@choices
-		assert @autos.size == 2,@autos
+		assert_equal 0, @choices.size
+		assert_equal 2, @autos.size
 		
 		@choices, @autos = @feature_m.available_events(3, @location, @pc.id)
-		assert @choices.size == 1,@choices
-		assert @autos.size == 2,@autos
+		assert_equal 1, @choices.size
+		assert_equal 2, @autos.size
 		
 		#one event at priority with zero chance
 		@choices, @autos = @feature_m.available_events(4, @location, @pc.id)
-		assert @choices.size == 0,@choices
-		assert @autos.size == 0,@autos
+		assert_equal 0, @choices.size
+		assert_equal 0, @autos.size
 		
 		#one event thats been done at this place
 		@choices, @autos = @feature_m.available_events(5, @location, @pc.id)
-		assert @choices.size == 0,@choices
-		assert @autos.size == 0,@autos
+		assert_equal 0, @choices.size
+		assert_equal 0, @autos.size
 		
 		@choices, @autos = @feature_m.available_events(7, @location, @pc.id)
-		assert @choices.size == 0,@choices
-		assert @autos.size == 1,@autos
+		assert_equal 0, @choices.size
+		assert_equal 1, @autos.size
 	end
 	
 	test "next priority" do

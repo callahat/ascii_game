@@ -67,7 +67,7 @@ class EventMoveLocalTest < ActiveSupport::TestCase
 		@kingdom.kingdom_entry.update_attribute(:allowed_entry, SpecialCode.get_code('entry_limitations','no one'))
 	
 		direct, comp, msg = e.happens(@pc)
-		assert @pc.in_kingdom.nil?, @pc.in_kingdom
+		assert @pc.in_kingdom.nil?, @pc.in_kingdom.inspect
 		assert @pc.kingdom_level.nil?
 		assert msg =~ /one may enter/
 	end
@@ -79,7 +79,7 @@ class EventMoveLocalTest < ActiveSupport::TestCase
 		direct, comp, msg = e.happens(@pc)
 		assert msg !~ /you are dead/
 		
-		assert @pc.in_kingdom.nil?, @pc.in_kingdom
+		assert @pc.in_kingdom.nil?, @pc.in_kingdom.inspect
 		assert @pc.kingdom_level.nil?
 		assert msg =~ /one may enter/
 	end
@@ -89,7 +89,7 @@ class EventMoveLocalTest < ActiveSupport::TestCase
 		@kingdom.kingdom_entry.update_attribute(:allowed_entry, SpecialCode.get_code('entry_limitations','allies'))
 		
 		direct, comp, msg = e.happens(@pc)
-		assert @pc.in_kingdom.nil?, @pc.in_kingdom
+		assert @pc.in_kingdom.nil?, @pc.in_kingdom.inspect
 		assert @pc.kingdom_level.nil?
 		assert msg =~ /Only the kings men may pass/
 	end
@@ -101,7 +101,7 @@ class EventMoveLocalTest < ActiveSupport::TestCase
 		direct, comp, msg = e.happens(@pc)
 		assert msg !~ /you are dead/
 		
-		assert @pc.in_kingdom.nil?, @pc.in_kingdom
+		assert @pc.in_kingdom.nil?, @pc.in_kingdom.inspect
 		assert @pc.kingdom_level.nil?
 		assert msg =~ /Only the kings men may pass/
 	end
@@ -173,12 +173,12 @@ class EventMoveLocalTest < ActiveSupport::TestCase
 	test "create local move event" do
 		e = EventMoveLocal.new(@standard_new)
 		assert !e.valid?
-		assert e.errors.full_messages.size == 1
+		assert_equal 1, e.errors.full_messages.size
 		e.thing_id = Level.first.id
 		assert e.valid?
-		assert e.errors.full_messages.size == 0
+		assert_equal 0, e.errors.full_messages.size
 		assert e.save!
-		assert e.price == 0, e.price
-		assert e.total_cost == 500, e.total_cost
+		assert_equal 0, e.price
+		assert_equal 500, e.total_cost
 	end
 end

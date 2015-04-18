@@ -26,7 +26,7 @@ class ForumNodeBoardTest < ActiveSupport::TestCase
   end
   
   test "who can view board" do
-    assert ForumRestriction.no_viewing(@banned_player), @banned_player.forum_restrictions
+    assert ForumRestriction.no_viewing(@banned_player), @banned_player.forum_restrictions.inspect
   
     assert @board1.can_be_viewed_by(@junior_mod)
     assert @board1.can_be_viewed_by(@non_mod)

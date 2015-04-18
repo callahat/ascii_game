@@ -14,7 +14,7 @@ class Health < ActiveRecord::Base
                    (st[:dfn] / 10 ).floor + lvl / 2
            
     self.base_MP = ((st[:mag] / 2) * 
-                    (st[:int] / 2) * lvl.power!(0.25) ) / 10
+                    (st[:int] / 2) * lvl.**(0.25) ) / 10
     
     self.HP += self.base_HP
     self.MP += self.base_MP

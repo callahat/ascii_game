@@ -38,32 +38,36 @@ class EventDiseaseTest < ActiveSupport::TestCase
 		assert_difference ['@pc.stat.str','@pc.stat.mag','@pc.stat.dex'], +5 do
 			direct,comp,msg = ed.happens(@pc)
 			@pc.stat.reload
-		end
-		assert @pc.illnesses.size == 0
-		assert @pc.health.wellness == SpecialCode.get_code('wellness','alive')
+    end
+    @pc.reload
+    @pc.health.reload
+		assert_equal 0, @pc.illnesses.size
+		assert_equal SpecialCode.get_code('wellness','diseased'), @pc.health.wellness
 		assert_difference ['@pc.stat.str','@pc.stat.mag','@pc.stat.dex'], +0 do
 			direct,comp,msg = ed.happens(@pc)
-			assert msg =~ /Nothing/
+			assert_match /Nothing/, msg
 			@pc.stat.reload
-		end
-		assert @pc.illnesses.size == 0
-		assert @pc.health.wellness == SpecialCode.get_code('wellness','alive')
+    end
+    @pc.reload
+    @pc.health.reload
+		assert_equal 0, @pc.illnesses.size
+		assert_equal SpecialCode.get_code('wellness','diseased'), @pc.health.wellness
 		
 		#assert fails if pc dead
 		@pc.health.update_attribute(:wellness, SpecialCode.get_code('wellness','dead'))
 		direct, comp, msg = ed.happens(@pc)
-		assert msg =~ /you are dead/
+		assert_match /you are dead/, msg
 	end
 	
 	test "create disease event" do
 		e = EventDisease.new(@standard_new)
 		assert !e.valid?
-		assert e.errors.full_messages.size == 1
+		assert_equal 1, e.errors.full_messages.size
 		e.disease = Disease.find(:first)
 		assert e.valid?
-		assert e.errors.full_messages.size == 0
+		assert_equal 0, e.errors.full_messages.size
 		assert e.save!
-		assert e.price == 0, e.price
-		assert e.total_cost == 500, e.total_cost
+		assert_equal 0, e.price
+		assert_equal 500, e.total_cost
 	end
 end

@@ -29,7 +29,7 @@ class EventMoveRelativeTest < ActiveSupport::TestCase
 
     test "when relative move pc dead" do
         e = EventMoveRelative.find_by_name("relative move event")
-        assert @pc.present_level.level == 0, @pc.present_level
+        assert @pc.present_level.level == 0, @pc.present_level.inspect
 
         #assert does not fail if pc dead
         @pc.health.update_attribute(:wellness, SpecialCode.get_code('wellness','dead'))
@@ -50,12 +50,12 @@ class EventMoveRelativeTest < ActiveSupport::TestCase
     test "create relative move event" do
         e = EventMoveRelative.new(@standard_new)
         assert !e.valid?
-        assert e.errors.full_messages.size == 1
+        assert_equal 1, e.errors.full_messages.size
         e.flex = '1'
         assert e.valid?
-        assert e.errors.full_messages.size == 0
+        assert_equal 0, e.errors.full_messages.size
         assert e.save!
-        assert e.price == 0, e.price
-        assert e.total_cost == 500, e.total_cost
+        assert_equal 0, e.price
+        assert_equal 500, e.total_cost
     end
 end

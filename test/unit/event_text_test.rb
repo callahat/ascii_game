@@ -26,12 +26,12 @@ class EventTextTest < ActiveSupport::TestCase
 	test "create text event" do
 		e = EventText.new(@standard_new)
 		assert e.valid?
-		assert e.errors.full_messages.size == 0
+		assert_equal 0, e.errors.full_messages.size
 		e.text = "Text event text"
 		assert e.valid?
-		assert e.errors.full_messages.size == 0
+		assert_equal 0, e.errors.full_messages.size
 		assert e.save!
-		assert e.price == 0, e.price
-		assert e.total_cost == 500, e.total_cost
+		assert_equal 0, e.price
+		assert_equal 500, e.total_cost
 	end
 end

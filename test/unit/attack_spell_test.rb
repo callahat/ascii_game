@@ -26,7 +26,7 @@ class AttackSpellTest < ActiveSupport::TestCase
 		
 		@pc.health.update_attributes(:MP => 10)
 		assert @weak.pay_casting_cost(@pc)
-		assert @pc.health.MP == 5,@pc.health.MP
+		assert @pc.health.MP == 5,@pc.health.MP.inspect
 		
 		@pc.health.update_attributes(:HP => 5, :MP => 5)
 		assert !@mphp.pay_casting_cost(@pc)

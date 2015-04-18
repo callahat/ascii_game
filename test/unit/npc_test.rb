@@ -201,20 +201,20 @@ class NpcTest < ActiveSupport::TestCase
 	end
 	
 	test "npc max head HP and MP" do
-		assert @npc.max_heal(@sick_pc, "HP") == 10, @npc.max_heal(@sick_pc, "HP")
-		assert @npc.max_heal(@sick_pc, "MP") == 0
+		assert_equal 10, @npc.max_heal(@sick_pc, "HP")
+		assert_equal 0, @npc.max_heal(@sick_pc, "MP")
 		
 		@sick_pc.health.update_attribute(:HP, 28)
 		@sick_pc.health.update_attribute(:MP, 23)
 		
-		assert @npc.max_heal(@sick_pc, "HP") == 2
-		assert @npc.max_heal(@sick_pc, "MP") == 7
+		assert_equal 2, @npc.max_heal(@sick_pc, "HP")
+		assert_equal 7, @npc.max_heal(@sick_pc, "MP")
 		
 		@sick_pc.health.update_attribute(:HP, 30)
 		@sick_pc.health.update_attribute(:MP, 35)
 		
-		assert @npc.max_heal(@sick_pc, "HP") == 0
-		assert @npc.max_heal(@sick_pc, "MP") == 0, @npc.max_heal(@sick_pc, "MP")
+		assert_equal 0, @npc.max_heal(@sick_pc, "HP")
+		assert_equal 0, @npc.max_heal(@sick_pc, "MP")
 	end
 	
 	test "npc heal HP and MP" do
@@ -282,15 +282,15 @@ class NpcTest < ActiveSupport::TestCase
 			@stat[at] = (base_at * max_train / 100.0).to_i - 1
 			res, msg = @npc.train(@pc, @stat)
 			assert !res, msg
-			assert @stat.errors.size == 0, @stat.errors.full_messages
+			assert @stat.errors.size == 0, @stat.errors.full_messages.inspect
 			assert msg =~ /Not enough gold/
 			
 			#at limit, not enough cash
 			@stat[at] = (base_at * max_train / 100.0).to_i - 1
 			res, msg = @npc.train(@pc, @stat)
 			assert !res, msg
-			assert @stat.errors.size == 0, @stat.errors.full_messages
-			assert msg =~ /Not enough gold/
+			assert_equal 0, @stat.errors.size, @stat.errors.full_messages.inspect
+			assert_match /Not enough gold/, msg
 			
 			#with limit, enough cash
 			@pc.update_attribute(:gold, 10000)

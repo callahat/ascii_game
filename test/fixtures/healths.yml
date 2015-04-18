@@ -39,7 +39,7 @@ test_hollow_pc_health:
   wellness: <%= SpecialCode.get_code('wellness','alive') %>
   owner: test_hollow_pc
   kind: "HealthPc"
-  
+
 test_mod_pc_health:
   base_HP: 60
   base_MP: 60
@@ -48,7 +48,7 @@ test_mod_pc_health:
   wellness: <%= SpecialCode.get_code('wellness','alive') %>
   owner: test_mod_pc
   kind: "HealthPc"
-  
+
 npc_one_health:
   wellness: <%= SpecialCode.get_code('wellness','alive') %>
   base_HP: 30
@@ -61,7 +61,7 @@ sick_npc_health:
   HP: 9
   owner_id: 2
   kind: "HealthNpc"
-	
+
 <% 1.upto(10){|i| %>
 guard_<%= i %>_health:
   wellness: <%= SpecialCode.get_code('wellness','alive') %>

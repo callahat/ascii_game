@@ -24,20 +24,26 @@ class AccountController < ApplicationController
 
   def create
     @player = Player.new(params[:player])
-    
+
     @player.account_status = SpecialCode.get_code('account_status','active')
     @player.admin = false
     @player.joined = Time.now
-    
-    if @player.save
-      flash[:notice] = 'Player was successfully created.'
-      session[:player] = @player
-      if params[:race_id] != "" || params[:c_class_id] != ""
-        redirect_to :controller => 'character', :action => 'namenew', :race_id => params[:race_id], :c_class_id => params[:c_class_id]
+
+    if verify_recaptcha
+      if @player.save
+        flash[:notice] = 'Player was successfully created.'
+        session[:player] = @player
+        if params[:race_id] != "" || params[:c_class_id] != ""
+          redirect_to :controller => 'character', :action => 'namenew', :race_id => params[:race_id], :c_class_id => params[:c_class_id]
+        else
+          redirect_to :controller => 'character', :action => 'menu'
+        end
       else
-        redirect_to :controller => 'character', :action => 'menu'
+        render :action => 'new'
       end
     else
+      flash.delete(:recaptcha_error) # get rid of the recaptcha error being flashed by the gem.
+      flash.now[:error] = 'reCAPTCHA is incorrect. Please try again.'
       render :action => 'new'
     end
   end
@@ -53,7 +59,7 @@ class AccountController < ApplicationController
       redirect_to :controller => 'character', :acton => 'menu'
       return
     end
-    
+
     if @player.update_attributes(params[:player])
       flash[:notice] = 'Player was successfully updated.'
       redirect_to :action => 'show', :id => @player
@@ -76,7 +82,7 @@ class AccountController < ApplicationController
     end
 
     @player = Player.authenticate(params[:player][:handle],params[:player][:passwd])
-    if @player.nil? || 
+    if @player.nil? ||
         !Player.authenticate?(params[:player][:handle],params[:player][:passwd])
       flash[:notice] = "Invalid handle/password."
       redirect_to :action => 'login'
@@ -96,10 +102,10 @@ class AccountController < ApplicationController
     reset_session
     redirect_to :action => 'login'
   end
-  
+
   def what
   end
-  
+
 protected
   def verify_player_is_player
     if session[:player][:id] != @player.id

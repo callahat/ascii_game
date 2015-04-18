@@ -86,7 +86,7 @@ class Management::ImagesControllerTest < ActionController::TestCase
 		assert_redirected_to :controller => 'management/images', :action => 'show', :id => @f_image.id
 		assert flash[:notice] =~ /updated/
 		@new_f_image = Image.find(@f_image.id)
-		assert @new_f_image.image_text.split("\n").size == 10, @new_f_image.image_text.split("\n").size
+		assert_equal 10, @new_f_image.image_text.split("\n").size
 		@new_f_image.image_text.split("\n").each{|r|
 			assert r.length == 15 }
 	end

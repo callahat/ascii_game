@@ -15,15 +15,15 @@ class HealingSpellTest < ActiveSupport::TestCase
 		
 		@pc.health.update_attributes(:MP => 0)
 		assert !@hp_heal.pay_casting_cost(@pc)
-		assert @pc.health.MP == 0
+		assert_equal 0, @pc.health.MP
 		
 		@pc.health.update_attributes(:MP => 2)
 		assert !@hp_heal.pay_casting_cost(@pc)
-		assert @pc.health.MP == 2
+		assert_equal 2, @pc.health.MP
 		
 		@pc.health.update_attributes(:MP => 10)
 		assert @hp_heal.pay_casting_cost(@pc)
-		assert @pc.health.MP == 0,@pc.health.MP
+		assert_equal 0, @pc.health.MP
   end
 	
 	test "cast healing spells" do
@@ -39,30 +39,30 @@ class HealingSpellTest < ActiveSupport::TestCase
 		Illness.infect(@pc, @not_sars)
 		
 		healed, disease = @hp_heal.cast(@pc, @pc)
-		assert healed == 15, healed
-		assert @pc.health.HP == 25
+		assert_equal 15, healed
+		assert_equal 25, @pc.health.HP
 		assert disease.nil?
 		
 		healed, disease = @hp_heal.cast(@pc, @pc)
-		assert healed == 5
-		assert @pc.health.HP == 30
+		assert_equal 5, healed
+		assert_equal 30, @pc.health.HP
 		assert disease.nil?
 		
 		@pc.health.update_attributes(:HP => 10)
 		healed, disease = @cure_sars.cast(@pc, @pc)
-		assert @pc.health.HP == 10
-		assert healed == 0
-		assert disease == @sars
+		assert_equal 10, @pc.health.HP
+		assert_equal 0, healed
+		assert_equal @sars, disease
 		
 		healed, disease = @cure_sars.cast(@pc, @pc)
-		assert @pc.health.HP == 10
-		assert healed == 0
+		assert_equal 10, @pc.health.HP
+		assert_equal 0, healed
 		assert disease.nil?
 		
 		Illness.infect(@pc, @sars)
 		healed, disease = @cure_and_heal.cast(@pc, @pc)
-		assert @pc.health.HP == 30, @pc.health.HP
-		assert healed == 20
-		assert disease == @sars
+		assert_equal 30, @pc.health.HP
+		assert_equal 20, healed
+		assert_equal @sars, disease
 	end
 end

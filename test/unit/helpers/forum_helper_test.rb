@@ -1,19 +1,14 @@
 require 'test_helper'
 
 class ForumHelperTest < ActionView::TestCase
-  test "link_to unaffected" do
-    assert_equal link_to("here", :controller => "forums"), "<a href=\"/forums\">here</a>"
-  end
 
-  #can't test, link_to function does not work properly
   test "forum_node_statuses" do
-    #override the link to, otherwise no rout matches errors are thrown for this test, even though 
-    #it works fine and gets the correct url when hitting the page in the browser
+    #stub
     def link_to(text, params)
       text + params.inspect
     end
     
-    assert link_to("here", :controller => "forums") =~ /:controller/
+    assert_match /:controller/, link_to("here", :controller => "forums")
   
     mock_player = Player.first
     

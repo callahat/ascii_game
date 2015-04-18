@@ -107,7 +107,7 @@ air_disease2_stat:
 new_sickness_stat:
   <<: *default_disease_stat5
   owner: new_sickness
-  
+
 race_one_stat:
   <<: *default_stat10
   owner_id: 1
@@ -116,7 +116,7 @@ race_two_stat:
   <<: *default_stat10
   owner_id: 2
   kind: "StatRace"
-  
+
 cclass_one_stat:
   <<: *default_stat10
   owner_id: 1
@@ -125,7 +125,7 @@ cclass_two_stat:
   <<: *default_stat10
   owner_id: 2
   kind: "StatCClass"
-  
+
 npc_one_stat:
   <<: *default_stat10
   kind: "StatNpc"
@@ -140,14 +140,14 @@ sick_npc_stat:
   dam: 3
   kind: "StatNpc"
   owner_id: 2
-	
+
 <% 1.upto(10){|i| %>
 guard_<%= i %>_stat:
   <<: *default_stat10
   kind: "StatNpc"
   owner: guard_<%= i.to_s %>
 <% } %>
-	
+
 wild_foo_stat:
   <<: *default_stat10
   kind: "StatCreature"
