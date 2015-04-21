@@ -1,3 +1,5 @@
 PassengerEnabled On
 PassengerAppRoot /home/callahat/projects/rails/dev.asciigame.com
+PassengerRuby /usr/local/ruby20/bin/ruby
+PassengerLoadShellEnvVars On
 RailsEnv development

@@ -3,4 +3,6 @@ PassengerMinInstances 3
 PassengerMaxPoolSize 10
 PassengerPoolIdleTime 0
 PassengerAppRoot /home/callahat/projects/rails/asciigame.com
+PassengerRuby /usr/local/ruby20/bin/ruby
+PassengerLoadShellEnvVars On
 RailsEnv beta
