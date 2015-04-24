@@ -50,7 +50,7 @@ class Management::CreaturesControllerTest < ActionController::TestCase
 		
 		orig_c_image = @c.image.image_text
 		
-		post 'update', {:id => @c.id, :creature => {:gold => nil}, :image => @c.image, :stat => {}}, session.to_hash
+		post 'update', {:id => @c.id, :creature => {:gold => nil}, :image => @c.image.attributes, :stat => {}}, session.to_hash
 		assert_response :success
 		assert_template 'edit'
 		

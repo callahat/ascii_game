@@ -42,7 +42,7 @@ class EventDiseaseTest < ActiveSupport::TestCase
     @pc.reload
     @pc.health.reload
 		assert_equal 0, @pc.illnesses.size
-		assert_equal SpecialCode.get_code('wellness','diseased'), @pc.health.wellness
+		assert_equal SpecialCode.get_code('wellness','alive'), @pc.health.wellness
 		assert_difference ['@pc.stat.str','@pc.stat.mag','@pc.stat.dex'], +0 do
 			direct,comp,msg = ed.happens(@pc)
 			assert_match /Nothing/, msg
@@ -51,7 +51,7 @@ class EventDiseaseTest < ActiveSupport::TestCase
     @pc.reload
     @pc.health.reload
 		assert_equal 0, @pc.illnesses.size
-		assert_equal SpecialCode.get_code('wellness','diseased'), @pc.health.wellness
+		assert_equal SpecialCode.get_code('wellness','alive'), @pc.health.wellness
 		
 		#assert fails if pc dead
 		@pc.health.update_attribute(:wellness, SpecialCode.get_code('wellness','dead'))
