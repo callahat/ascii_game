@@ -2,7 +2,8 @@ source 'http://rubygems.org'
 
 gem 'rake', '0.9.6'
 
-gem 'rails', '~> 3.2.11'
+gem 'mysql2', '~> 0.2.7'
+gem 'rails', '3.0.5'
 
 gem 'recaptcha'
 
@@ -14,8 +15,7 @@ gem 'recaptcha'
 #gem 'activesupport', '3.0.5'
 
 
-#gem 'mysql2', '>= 0.3.11'
-gem 'mysql2'
+
 
 
 gem 'will_paginate', '~> 3.0.5'
