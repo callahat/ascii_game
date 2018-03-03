@@ -1,5 +1,5 @@
 class NpcBlacksmithItem < ActiveRecord::Base
-  belongs_to :npc_merchant
+  belongs_to :npc_merchant, foreign_key: 'npc_id'
   belongs_to :item
   
   def self.gen_blacksmith_items(npc, sales, new)

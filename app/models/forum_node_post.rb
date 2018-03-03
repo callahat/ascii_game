@@ -6,7 +6,7 @@ class ForumNodePost < ForumNode
   
   validates_presence_of :text
   
-  default_scope :order => 'created_at ASC'
+  default_scope { order('created_at ASC') }
   
   class CanMakePostValidator < ActiveModel::EachValidator
     def validate_each(record, attribute, value)

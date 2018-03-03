@@ -17,7 +17,7 @@ class ForumNodeThread < ForumNode
   
   validates_presence_of :name
   
-  default_scope :order => 'updated_at ASC'
+  default_scope { order('updated_at ASC') }
   
   def can_be_made_by(user)
     return false unless user

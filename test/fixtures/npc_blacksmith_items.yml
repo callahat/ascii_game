@@ -1,5 +1,5 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 sick_npc_bs_item_one:
-  npc_id: 1
-  item_id: 1
+  npc_merchant: sick_npc
+  item: cool_item
   min_sales: 0

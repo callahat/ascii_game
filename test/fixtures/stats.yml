@@ -7,13 +7,13 @@ one_pc_stat: &default_stat10
   con: 10
   dfn: 10
   dam: 10
-  owner_id: 1
+  owner: pc_one
   kind: "StatPc"
 one_pc_stat_base:
   <<: *default_stat10
   kind: "StatPcBase"
 one_pc_stat_trn:
-  owner_id: 1
+  owner: pc_one
   kind: "StatPcTrn"
 
 sick_pc_stat:
@@ -24,14 +24,14 @@ sick_pc_stat:
   con: 2
   dfn: 2
   dam: 3
-  owner_id: 2
+  owner: sick_pc
   kind: "StatPc"
 sick_pc_stat_base:
   <<: *default_stat10
-  owner_id: 2
+  owner: sick_pc
   kind: "StatPcBase"
 sick_pc_stat_trn:
-  owner_id: 2
+  owner: sick_pc
   kind: "StatPcTrn"
 
 test_pc_one_stat:
@@ -110,26 +110,26 @@ new_sickness_stat:
 
 race_one_stat:
   <<: *default_stat10
-  owner_id: 1
+  owner: race_one
   kind: "StatRace"
 race_two_stat:
   <<: *default_stat10
-  owner_id: 2
+  owner: race_two
   kind: "StatRace"
 
 cclass_one_stat:
   <<: *default_stat10
-  owner_id: 1
+  owner: c_class_one
   kind: "StatCClass"
 cclass_two_stat:
   <<: *default_stat10
-  owner_id: 2
+  owner: c_class_two
   kind: "StatCClass"
 
 npc_one_stat:
   <<: *default_stat10
   kind: "StatNpc"
-  owner_id: 1
+  owner: npc_one
 sick_npc_stat:
   str: 1
   dex: 0
@@ -139,7 +139,7 @@ sick_npc_stat:
   dfn: 2
   dam: 3
   kind: "StatNpc"
-  owner_id: 2
+  owner: sick_npc
 
 <% 1.upto(10){|i| %>
 guard_<%= i %>_stat:
@@ -151,7 +151,7 @@ guard_<%= i %>_stat:
 wild_foo_stat:
   <<: *default_stat10
   kind: "StatCreature"
-  owner_id: 1
+  owner: wild_foo
 Peasant_stat:
   <<: *default_stat10
   kind: "StatCreature"

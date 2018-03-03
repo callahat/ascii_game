@@ -3,7 +3,7 @@ class Feature < ActiveRecord::Base
   belongs_to :kingdom
   belongs_to :image
 
-  has_many :feature_events, :order => 'priority'
+  has_many :feature_events, ->{ order('priority') }
   has_many :level_maps
   has_many :world_maps
 

@@ -30,12 +30,12 @@ guard_image_kingdom_one:
   <<: *char_img_defs
   name: "HealthyTestKingdom Guard Image"
   image_text: "v_v"
-  kingdom_id: 1
+  kingdom: kingdom_one
 
 feature_image: &feature_img_defs
   name: "Feature image"
   player: test_player_one
-  kingdom_id: 1
+  kingdom: kindgom_one
   public: 0
   image_text: "[_]"
   image_type: <%= SpecialCode.get_code('image_type','kingdom') %>
@@ -51,7 +51,7 @@ castle_image:
 creature_image2:
   name: "creature image2"
   player: test_player_one
-  kingdom_id: 1
+  kingdom: kingdom_one
   public: 0
   image_text: "I am some image\ntext for a creatures"
   image_type: <%= SpecialCode.get_code('image_type','creature') %>

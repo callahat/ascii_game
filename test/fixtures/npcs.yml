@@ -1,15 +1,13 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 #merchants
-one:
-  id: 1
+npc_one:
   name: "Healthy Npc"
-  kingdom_id: 1
+  kingdom: kingdom_one
   image: npc_image
   kind: "NpcMerchant"
 
 sick_npc:
-  id: 2
-  kingdom_id: 1
+  kingdom: kingdom_one
   name: "Sick NPC"
   image: npc_image
   kind: "NpcMerchant"
@@ -19,7 +17,7 @@ guard_<%= i %>:
   name: <%= "Guard " + i.to_s %>
   is_hired: true
   gold: 50
-  kingdom_id: 1
+  kingdom: kingdom_one
   image: guard_image
   kind: "NpcGuard"
 <% } %>

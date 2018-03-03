@@ -18,7 +18,7 @@ class HealthTest < ActiveSupport::TestCase
       assert pc.base_stat
       assert pc.trn_stat }
     [Disease, Npc].each{|t| t.all.each{|c|
-      assert c.stat
+      assert c.stat, c.inspect
     } }
     [Race, CClass].each{|t| t.all.each{|c|
       assert c.stat
@@ -46,7 +46,7 @@ class HealthTest < ActiveSupport::TestCase
   end
   
   test "test stat to symbol hash" do
-    stat = Stat.find(:first)
+    stat = stats(:one_pc_stat)
     stat_hash = Stat.to_symbols_hash(stat)
     assert stat_hash.class == Hash
     stat_hash[:owner_id] = 555
@@ -70,13 +70,13 @@ class HealthTest < ActiveSupport::TestCase
   
   test "stat additions" do
     #There are only two StatNpc entries, with all attribs 10
-    s1 = StatNpc.find(:first)
-    s2 = StatNpc.find(:first)
+    s1 = stats(:npc_one_stat)
+    s2 = stats(:npc_one_stat).dup
     assert s3 = Stat.add_stats(s1,s2)
     Stat.symbols.each{|sym|
       assert s3[sym] == 20
       assert s3[sym] == s1[sym] + s2[sym] }
-      
+
     s1_old = s1.dup
     s2_old = s2.dup
     assert s1.add_stats(s2)
@@ -87,8 +87,8 @@ class HealthTest < ActiveSupport::TestCase
   end
   
   test "stat subtractions" do
-    s1 = StatNpc.find(:first)
-    s2 = StatDisease.find(:first)
+    s1 = stats(:npc_one_stat)
+    s2 = stats(:air_disease_stat)
     Stat.symbols.each{|sym|
       assert s1[sym] == 10
       assert s2[sym] == 5 }
@@ -100,7 +100,7 @@ class HealthTest < ActiveSupport::TestCase
   end
   
   test "to level" do
-    rstat = StatRace.find(:first)
+    rstat = stats(:race_one_stat)
     rstat_old = rstat.clone
     assert rstat.to_level(10)
     Stat.symbols.each{|sym|
@@ -127,8 +127,8 @@ class HealthTest < ActiveSupport::TestCase
   end
   
   test "sum points and est level" do
-    s1 = StatPc.find(:first)
-    s2 = StatDisease.find(:first)
+    s1 = stats(:one_pc_stat)
+    s2 = stats(:air_disease_stat)
     assert s1.sum_points == 70
     assert s2.sum_points == 35
     

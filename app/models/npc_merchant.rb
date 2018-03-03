@@ -3,7 +3,7 @@ class NpcMerchant < Npc
 #  include MiscMath
   
   has_many :npc_blacksmith_items, :foreign_key => 'npc_id'
-  has_many :npc_blacksmith_items_by_min_sales, :foreign_key => 'npc_id', :class_name => 'NpcBlacksmithItem', :order => 'min_sales'
+  has_many :npc_blacksmith_items_by_min_sales, ->{ order('min_sales') }, :foreign_key => 'npc_id', :class_name => 'NpcBlacksmithItem'
   has_many :npc_stocks, :foreign_key => 'owner_id', :class_name => 'NpcStock'
   
   has_one :npc_merchant_detail, :foreign_key => 'npc_id'

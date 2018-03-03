@@ -2,8 +2,8 @@ class Battle < ActiveRecord::Base
   has_many :enemies,    :class_name => "BattleEnemy"
   has_many :pcs,        :class_name => "BattlePc"
   has_many :npcs,        :class_name => "BattleNpc"
-  has_many :merchants,  :class_name => "BattleNpc", :conditions => {:special => "NpcMerchant"}
-  has_many :guards,      :class_name => "BattleNpc", :conditions => {:special => "NpcGuard"}
+  has_many :merchants, ->{ where(special: "NpcMerchant") },  :class_name => "BattleNpc"
+  has_many :guards,    ->{ where(special: "NpcGuard") },     :class_name => "BattleNpc"
   has_many :creatures,  :class_name => "BattleCreature"
   has_many :items,      :class_name => "BattleItem"
   has_many :groups,      :class_name => "BattleGroup"

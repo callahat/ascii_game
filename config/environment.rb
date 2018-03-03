@@ -5,5 +5,6 @@ require File.expand_path('../application', __FILE__)
 #ActiveSupport::Autoload.autoload ::Rails.root.to_s+"/lib"
 
 
-# Initialize the rails application
-AsciiGame3::Application.initialize!
+# Initialize the Rails application.
+Rails.application.initialize!
+

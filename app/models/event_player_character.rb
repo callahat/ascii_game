@@ -1,5 +1,6 @@
 class EventPlayerCharacter < EventLifeNeutral
   belongs_to :player_character, :foreign_key => 'thing_id'
+  belongs_to :thing, :foreign_key => 'thing_id', :class_name => 'PlayerCharacter'
 
   validates_presence_of :thing_id
   

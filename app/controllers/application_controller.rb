@@ -3,7 +3,9 @@
 
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
-  protect_from_forgery # See ActionController::RequestForgeryProtection for details
+  # Prevent CSRF attacks by raising an exception.
+  # For APIs, you may want to use :null_session instead.
+  protect_from_forgery with: :exception
 
   # Scrub sensitive parameters from your log
   # filter_parameter_logging :password
@@ -54,14 +56,22 @@ class ApplicationController < ActionController::Base
   
   #Checks that the player is a king
   def is_king
-    pcs = PlayerCharacter.find(:all, :conditions => ['player_id = ? AND char_stat = ?', session[:player][:id], SpecialCode.get_code('char_stat','active')])
-    for pc in pcs
-      if Kingdom.find(:first, :conditions => ['player_character_id = ?', pc.id])
-        session[:kingbit] = true
-        return true
-      end
-     end
-    return false
+    # pcs = PlayerCharacter.where(player_id: session[:player][:id], char_stat: SpecialCode.get_code('char_stat','active'))
+    # for pc in pcs
+    #   if Kingdom.find_by(player_character_id: pc.id)
+    #     session[:kingbit] = true
+    #     return true
+    #   end
+    #  end
+    # return false
+    player = Player.find(session[:player][:id])
+    if player.player_characters.where(char_stat: SpecialCode.get_code('char_stat','active')).joins(:kingdoms).any?
+      session[:kingbit] = true
+      return true
+    else
+      session[:kingbit] = false
+      return false
+    end
   end
   
   def king_filter

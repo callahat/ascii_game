@@ -1,12 +1,12 @@
 npc_merchant_one:
-  npc_id: 1
+  npc_merchant: npc_one
   healing_sales: 10
   blacksmith_sales: 10
   trainer_sales: 10
   consignor: true
   race_body_type: <%= SpecialCode.get_code('race_body_type','human') %>
 npc_merchant_two:
-  npc_id: 2
+  npc_merchant: sick_npc
   healing_sales: 100
   blacksmith_sales: 0
   trainer_sales: 0

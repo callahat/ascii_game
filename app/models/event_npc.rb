@@ -1,5 +1,6 @@
 class EventNpc < EventLifeNeutral
   belongs_to :npc, :foreign_key => 'thing_id'
+  belongs_to :thing, :foreign_key => 'thing_id', :class_name => 'Npc'
   belongs_to :level_map, :foreign_key => 'flex'
 
   validates_presence_of :thing_id,:flex

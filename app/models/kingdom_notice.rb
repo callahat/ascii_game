@@ -3,7 +3,7 @@ class KingdomNotice < ActiveRecord::Base
 
   validates_presence_of :text,:shown_to
 
-  default_scope order("created_at DESC")
+  default_scope { order("created_at DESC") }
 
   def self.create_storm_gate_notice(name, kid)
     #create kingdom notice of a player storming the gate

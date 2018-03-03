@@ -1,51 +1,37 @@
 source 'http://rubygems.org'
 
-gem 'rake', '0.9.6'
+gem 'rake'
 
-gem 'mysql2', '~> 0.2.7'
-gem 'rails', '3.0.5'
+gem 'rails', '4.2.10'
+gem 'activerecord-session_store'
+gem 'protected_attributes'
 
-gem 'recaptcha'
+gem 'mysql2'
 
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
+gem 'recaptcha', require: "recaptcha/rails"
 
-
-#gem 'activesupport', '3.2.11'
-#gem 'activesupport', '3.0.5'
-
-
-
-
-
-gem 'will_paginate', '~> 3.0.5'
+gem 'will_paginate'
 #gem 'verification'
 gem 'dynamic_form'
-
-
-#gem 'prototype-rails', '4.0.0'
-#gem 'prototype-rails'
-
-
-# Use unicorn as the web server
-# gem 'unicorn'
 
 # Deploy with Capistrano
 # gem 'capistrano'
 
-# To use debugger (ruby-debug for Ruby 1.8.7+, ruby-debug19 for Ruby 1.9.2+)
-# gem 'ruby-debug'
-# gem 'ruby-debug19', :require => 'ruby-debug'
-
 # Bundle the extra gems:
 # gem 'bj'
 # gem 'nokogiri'
-# gem 'sqlite3-ruby', :require => 'sqlite3'
 # gem 'aws-s3', :require => 'aws/s3'
 
-# Bundle gems for the local environment. Make sure to
-# put test-only gems in this group so their generators
-# and rake tasks are available in development mode:
-# group :development, :test do
-#   gem 'webrat'
-# end
+group :development, :test do
+  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem 'byebug'
+end
+
+group :development do
+  # Access an IRB console on exception pages or by using <%= console %> in views
+  gem 'web-console', '~> 2.0'
+
+  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  # gem 'spring'
+end
+

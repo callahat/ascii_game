@@ -5,7 +5,7 @@ feature_creature_one: &default_feature
   image: feature_image
   player: test_player_one 
   world_feature: 0
-  kingdom_id: 1
+  kingdom: kingdom_one
   public: 0
   cost: 1000
   num_occupants: 0

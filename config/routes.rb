@@ -1,4 +1,4 @@
-AsciiGame3::Application.routes.draw do
+Rails.application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -10,78 +10,80 @@ AsciiGame3::Application.routes.draw do
   #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action
 
-  match     'login'             =>  'account#login'
-  match     'logout'            =>  'account#logout'
-  match     'register'          =>  'account#new'
-  match     'character'         =>  'character#menu'
-  match     'choose_character'  =>  'character#choose_character'
+  get       'login'             =>  'account#login'
+  get       'logout'            =>  'account#logout'
+  get       'register'          =>  'account#new'
+  get       'character'         =>  'character#menu'
+  get       'choose_character'  =>  'character#choose_character'
 
-  match     'characterse'       =>  'characterse#menu'
+  get       'characterse'       =>  'characterse#menu'
 
-  match     'game_feature'      =>  'game#feature'
-  match     'game_main'         =>  'game#main'
-  match     'complete'          =>  'game#complete'
+  get       'game_feature'      =>  'game#feature'
+  get       'game_main'         =>  'game#main'
+  get       'complete'          =>  'game#complete'
 
   #Game::* controllers
-  match     'game/battle'           =>  'game/battle', :action => :battle
-  match     'game/battle/:action'   =>  'game/battle'
-  match     'game/court/:action'    =>  'game/court'
+  get       'game/battle'           =>  'game/battle', :action => :battle
+  get       'game/battle/:action'   =>  'game/battle'
+  get       'game/court/:action'    =>  'game/court'
 
-  match     'game/do_heal'        =>  'game#do_heal',    :via => :post
-  match     'game/do_choose'      =>  'game#do_choose',  :via => :post
-  match     'game/do_train'       =>  'game#do_train',   :via => :post
-  match     'game/do_spawn'       =>  'game#do_spawn',   :via => :post
+  get       'game/do_heal'        =>  'game#do_heal',    :via => :post
+  get       'game/do_choose'      =>  'game#do_choose',  :via => :post
+  get       'game/do_train'       =>  'game#do_train',   :via => :post
+  get       'game/do_spawn'       =>  'game#do_spawn',   :via => :post
 
-  match     'game/do_heal'        =>  'game#feature',    :via => :get
-  match     'game/do_choose'      =>  'game#feature',    :via => :get
-  match     'game/do_train'       =>  'game#feature',    :via => :get
-  match     'game/do_spawn'       =>  'game#feature',    :via => :get
+  get       'game/do_heal'        =>  'game#feature',    :via => :get
+  get       'game/do_choose'      =>  'game#feature',    :via => :get
+  get       'game/do_train'       =>  'game#feature',    :via => :get
+  get       'game/do_spawn'       =>  'game#feature',    :via => :get
 
-  match     'game/leave_kingdom'  =>  'game#leave_kingdom'
-  match     'game/spawn_kingdom'  =>  'game#spawn_kingdom'
-  match     'game/make_camp'      =>  'game#make_camp'
-  match     'game/world_move/:id' =>  'game#world_move'
+  get       'game/leave_kingdom'  =>  'game#leave_kingdom'
+  get       'game/spawn_kingdom'  =>  'game#spawn_kingdom'
+  get       'game/make_camp'      =>  'game#make_camp'
+  get       'game/world_move/:id' =>  'game#world_move'
 
   #Game::QuestController
-  match     'quest_index'       =>  'game/quests#index'
-  match     'do_decline'        =>  'game/quests#do_decline'
-  match     'do_join_quest'     =>  'game/quests#do_join'
-  match     'do_complete_quest' =>  'game/quests#do_complete'
-  match     'do_reward_quest'   =>  'game/quests#do_reward'
+  get       'quest_index'       =>  'game/quests#index'
+  get       'do_decline'        =>  'game/quests#do_decline'
+  get       'do_join_quest'     =>  'game/quests#do_join'
+  get       'do_complete_quest' =>  'game/quests#do_complete'
+  get       'do_reward_quest'   =>  'game/quests#do_reward'
 
   #Game::NpcController
-  match     'npc_index'         =>  'game/npc#npc'
-  match     'npc_smithy'        =>  'game/npc#smithy'
-  match     'npc_do_buy_new'    =>  'game/npc#do_buy_new'
-  match     'npc_heal'          =>  'game/npc#heal'
-  match     'npc_do_heal'       =>  'game/npc#do_heal'
-  match     'npc_train'         =>  'game/npc#train'
-  match     'npc_do_train'      =>  'game/npc#do_train'
-  match     'npc_buy'           =>  'game/npc#buy'
-  match     'npc_do_buy'        =>  'game/npc#do_buy'
-  match     'npc_sell'          =>  'game/npc#sell'
-  match     'npc_do_sell'       =>  'game/npc#do_sell'
+  get       'npc_index'         =>  'game/npc#npc'
+  get       'npc_smithy'        =>  'game/npc#smithy'
+  get       'npc_do_buy_new'    =>  'game/npc#do_buy_new'
+  get       'npc_heal'          =>  'game/npc#heal'
+  get       'npc_do_heal'       =>  'game/npc#do_heal'
+  get       'npc_train'         =>  'game/npc#train'
+  get       'npc_do_train'      =>  'game/npc#do_train'
+  get       'npc_buy'           =>  'game/npc#buy'
+  get       'npc_do_buy'        =>  'game/npc#do_buy'
+  get       'npc_sell'          =>  'game/npc#sell'
+  get       'npc_do_sell'       =>  'game/npc#do_sell'
 
-  match     'management'        =>  'management#main_index'
+  get       'management'        =>  'management#main_index'
 
   #ManagementController
-  match     'mgmt_levels'       =>  'management/levels#index'
-  match     'mgmt_levels_show'  =>  'management/levels#show'
-  match     'mgmt_levels_new'   =>  'management/levels#new'
-  match     'mgmt_levels_create'=>  'management/levels#create'
-  match     'mgmt_levels_edit'  =>  'management/levels#edit'
-  match     'mgmt_levels_update'=>  'management/levels#update'
+  get       'mgmt_levels'       =>  'management/levels#index'
+  get       'mgmt_levels_show'  =>  'management/levels#show'
+  get       'mgmt_levels_new'   =>  'management/levels#new'
+  post      'mgmt_levels_create'=>  'management/levels#create'
+  get       'mgmt_levels_edit'  =>  'management/levels#edit'
+  post      'mgmt_levels_update'=>  'management/levels#update'
 
   #PrefListController
-  match     'management/pref_list'                =>  'management/pref_list#index',          :via => :get
-  match     'management/pref_list/drop_from_list' =>  'management/pref_list#drop_from_list', :via => :post
-  match     'management/pref_list/add_to_list'    =>  'management/pref_list#add_to_list',    :via => :post
-  match     'management/pref_list/drop_from_list' =>  'management/pref_list#index',          :via => :get
-  match     'management/pref_list/add_to_list'    =>  'management/pref_list#index',          :via => :get
+  get       'management/pref_list'                =>  'management/pref_list#index'
+  post      'management/pref_list/drop_from_list' =>  'management/pref_list#drop_from_list'
+  post      'management/pref_list/add_to_list'    =>  'management/pref_list#add_to_list'
+  # TODO: probably don't need these routes
+  get       'management/pref_list/drop_from_list' =>  'management/pref_list#index', as: 'management_pref_list_from_drop_from_list'
+  get       'management/pref_list/add_to_list'    =>  'management/pref_list#index', as: 'management_pref_list_from_add_to_list'
 
-  match     'management/main_index'  => 'management#main_index', :as => "management"
+  # TODO: is this needed?
+  get       'management/main_index'  => 'management#main_index', :as => "management_main_index"
 
-  match     'management/events/new' => 'management/events#new'
+  get       'management/events/new' => 'management/events#new'
 
   namespace :management do
     resources :castles do
@@ -154,13 +156,13 @@ AsciiGame3::Application.routes.draw do
   end
 
   #ForumsController
-  match     'forums'                                        =>  'forum#boards',     :as => "forums"
-  match     'forums/:bname'                                 =>  'forum#threds',     :as => "boards"
-  match     'forums/:bname/:tname'                          =>  'forum#view_thred', :as => "threds"
+  get       'forums'                                        =>  'forum#boards',     :as => "forums"
+  get       'forums/:bname'                                 =>  'forum#threds',     :as => "boards"
+  get       'forums/:bname/:tname'                          =>  'forum#view_thred', :as => "threds"
 
-  match     'forum_action/:bname/:tname/:forum_node_id/:action' =>  'forum',            :as => "thred_action"
-  match     'forum_action/:bname/:forum_node_id/:action'        =>  'forum',            :as => "board_action"
-  match     'forum_action/:forum_node_id/:action'               =>  'forum',            :as => "forum_action"
+  get       'forum_action/:bname/:tname/:forum_node_id/:action' =>  'forum',            :as => "thred_action"
+  get       'forum_action/:bname/:forum_node_id/:action'        =>  'forum',            :as => "board_action"
+  get       'forum_action/:forum_node_id/:action'               =>  'forum',            :as => "forum_action"
 
 
 
@@ -211,6 +213,6 @@ AsciiGame3::Application.routes.draw do
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
 
-
-  match     ':controller(/:action(/:id(.:format)))'
+  # TODO: Take this away
+  get     ':controller(/:action(/:id(.:format)))'
 end

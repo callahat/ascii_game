@@ -5,43 +5,43 @@ class Kingdom < ActiveRecord::Base
   has_one :kingdom_entry
 
   has_many :races
-  has_many :creatures, :order => 'name'
+  has_many :creatures, ->{ order(:name) }
   has_many :events
   has_many :event_texts
-  has_many :features, :conditions => ['armed = true']
+  has_many :features, ->{ where(armed: true) }
   has_many :all_features, :foreign_key => "kingdom_id", :class_name => "Feature"
-  has_many :images, :order => 'name'
+  has_many :images, ->{ order(:name) }
   has_many :kingdom_bans
   has_many :kingdom_items, :foreign_key => "owner_id"
-  has_many :levels, :order => 'level'
-  has_many :npcs, :order => 'name'
-  has_many :guards, :class_name => 'NpcGuard', :include => :health,
-                    :conditions => ['is_hired = true AND healths.wellness != ?',
-                     SpecialCode.get_code('wellness','dead')]
-  has_many :merchants, :class_name => 'NpcMerchant', :include => :health,
-                    :conditions => ['is_hired = true AND healths.wellness != ?',
-                    SpecialCode.get_code('wellness','dead')]
-  has_many :hireable_guards, :class_name => 'NpcGuard', :include => :health,
-                    :conditions => ['is_hired = false AND healths.wellness != ?',
-                     SpecialCode.get_code('wellness','dead')]
-  has_many :hireable_merchants, :class_name => 'NpcMerchant', :include => :health,
-                    :conditions => ['is_hired = false AND healths.wellness != ?',
-                    SpecialCode.get_code('wellness','dead')]
-  has_many :live_npcs, :class_name => 'Npc', :include => :health,
-                       :conditions => ['is_hired = true AND healths.wellness != ?',
-                       SpecialCode.get_code('wellness','dead')], :order => 'name'
+  has_many :levels, ->{ order(:level) }
+  has_many :npcs, ->{ order(:name) }
+  has_many :guards, ->{ where(['is_hired = true AND healths.wellness != ?',
+                               SpecialCode.get_code('wellness','dead')]) },
+                    :class_name => 'NpcGuard', :join_table => :health
+  has_many :merchants, ->{ where(['is_hired = true AND healths.wellness != ?',
+                                  SpecialCode.get_code('wellness','dead')]) },
+                    :class_name => 'NpcMerchant', :join_table => :health
+  has_many :hireable_guards, ->{ where(['is_hired = false AND healths.wellness != ?',
+                                        SpecialCode.get_code('wellness','dead')]) },
+                    :class_name => 'NpcGuard', :join_table => :health
+  has_many :hireable_merchants, ->{ where(['is_hired = false AND healths.wellness != ?',
+                                           SpecialCode.get_code('wellness','dead')])},
+           :class_name => 'NpcMerchant', :join_table => :health
+  has_many :live_npcs, ->{ where(['is_hired = true AND healths.wellness != ?',
+                                  SpecialCode.get_code('wellness','dead')]).order(:name) },
+                       :class_name => 'Npc', :join_table => :health
   has_many :pandemics, :foreign_key => 'owner_id'
   has_many :illnesses, :foreign_key => 'owner_id', :class_name => 'Pandemic'
   has_many :player_characters
-  has_many :quests, :order => '\'quest_status\',\'name\''
-  has_many :active_quests, :class_name => 'Quest', :conditions => {:quest_status => SpecialCode.get_code('quest_status','active')}, :order => '\'quest_status\',\'name\''
+  has_many :quests, ->{ order(:quest_status, :name) }
+  has_many :active_quests, ->{ where(quest_status: SpecialCode.get_code('quest_status','active')).order(:quest_status, :name) }, :class_name => 'Quest'
   has_many :quest_kill_n_npcs
   has_many :kingdom_empty_shops
-  has_many :kingdom_notices, :order => '"datetime DESC"'
+  has_many :kingdom_notices, ->{ order("datetime DESC") }
   
-  has_many :pref_list_creatures, :include => 'creature', :order => 'creatures.public,creatures.name'
-  has_many :pref_list_events, :include => 'event',  :order => 'events.name'
-  has_many :pref_list_features, :include => 'feature', :order => 'features.public,features.name'
+  has_many :pref_list_creatures, ->{ order('creatures.public,creatures.name') }, :join_table => 'creature'
+  has_many :pref_list_events, ->{ order('events.name') }, :join_table => 'event'
+  has_many :pref_list_features, ->{ order('features.public,features.name') }, :join_table => 'feature'
   
   has_many :pref_lists
   

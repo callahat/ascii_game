@@ -1,55 +1,55 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
-  id: 1
+pc_one:
+  player: test_player_one
   name: "pc one"
-  c_class_id: 1
-  race_id: 1
+  c_class: c_class_one
+  race: race_one
   image: pc_image
   level: 1
 sick_pc:
-  id: 2
+  player: test_player_one
   name: "sick pc"
-  c_class_id: 1
-  race_id: 1
+  c_class: c_class_one
+  race: race_one
   image: pc_image
   level: 1
 
 test_king:
   name: "Test King"
   player: test_player_one
-  c_class_id: 1
-  race_id: 1
-  kingdom_id: 1
+  c_class: c_class_one
+  race: race_one
+  kingdom: kingdom_one
   image: pc_image
   level: 20
   
 test_hollow_pc:
   name: "Banned players char"
   player: banned_player
-  c_class_id: 1
-  race_id: 1
-  kingdom_id: 1
+  c_class: c_class_one
+  race: race_one
+  kingdom: kingdom_one
   image: pc_image
   level: 11
 test_mod_pc:
   name: "mod players char"
   player: test_player_mod
-  c_class_id: 1
-  race_id: 1
-  kingdom_id: 1
+  c_class: c_class_one
+  race: race_one
+  kingdom: kingdom_one
   image: pc_image
   level: 11
 
 test_pc_one:
   name: "Test PC One"
   player: test_player_one
-  c_class_id: 1
-  race_id: 1
+  c_class: c_class_one
+  race: race_one
   level: 1
   next_level_at: 500
   experience: 6
   kingdom_id: 0
-  in_kingdom: 1
+  in_kingdom: kingdom_one
   present_level: first_kingdom_level_one
   house_x: 1
   house_y: 1

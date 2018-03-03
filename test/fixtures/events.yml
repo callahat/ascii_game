@@ -1,6 +1,6 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 creature_event:
-  kingdom_id: 1
+  kingdom: kingdom_one
   player: test_player_one
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
   name: "Weak Monster encounter"
@@ -10,7 +10,7 @@ creature_event:
   cost: 500
   flex: "7;7"
 creature2_event:
-  kingdom_id: 1
+  kingdom: kingdom_one
   player: test_player_one
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
   name: "Tough Monster encounter"
@@ -20,23 +20,23 @@ creature2_event:
   cost: 500
   flex: "7;7"
 pc_event:
-  kingdom_id: 1
+  kingdom: kingdom_one
   player: test_player_one
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
   name: "Sick PC encounter"
-  kind: "EventPlayerCharacter"
   armed: 1
   cost: 500
-  thing_id: 2
+  kind: "EventPlayerCharacter"
+  thing: sick_pc
 npc_event:
   kingdom_id: -1
   player_id: -1
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
   name: "Healthy Npc encounter"
-  kind: "EventNpc"
   armed: 1
   cost: 500
-  thing_id: 1
+  kind: "EventNpc"
+  thing: npc_one
 storm_gate_event:
   kingdom_id: -1
   player_id: -1
@@ -146,7 +146,6 @@ text_event_done:
   cost: 50
   text: "Some text here that probably wont appear since the quest is done."
 unarmed_text_event:
-  id: 1
   kingdom_id: 1
   player: test_player_one
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
@@ -157,7 +156,7 @@ unarmed_text_event:
   text: "Unarmed event"
 
 quest_event_one:
-  kingdom_id: 1
+  kingdom: kingdom_one
   player: test_player_one
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
   name: "Quest One Event"
@@ -166,7 +165,7 @@ quest_event_one:
   cost: 500
   quest: quest_one
 quest_event_two:
-  kingdom_id: 1
+  kingdom: kingdom_one
   player: test_player_one
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
   name: "Quest Two Event"
@@ -176,20 +175,20 @@ quest_event_two:
   quest: quest_two
 
 npc_event_healer:
-  kingdom_id: 1
+  kingdom: kingdom_one
   player: test_player_one
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
   name: "Healer NPC"
-  kind: "EventNpc"
   armed: 1
   cost: 500
-  thing_id: 2
+  kind: "EventNpc"
+  thing: sick_npc
 npc_event_multiclass:
-  kingdom_id: 1
+  kingdom: kingdom_one
   player: test_player_one
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
   name: "Multiclass NPC"
-  kind: "EventNpc"
   armed: 1
   cost: 500
-  thing_id: 1
+  kind: "EventNpc"
+  thing: npc_one

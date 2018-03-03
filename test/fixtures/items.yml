@@ -2,7 +2,6 @@
 #referenced by the inventories unit test
 <% 1.upto(34){ |it| %>
 item_<%= it %>:
-  id: <%= it %>
   name: "Item<%= it %>"
   price: 50
   min_level: 1
@@ -11,7 +10,6 @@ item_<%= it %>:
 <% } %>
   
 item_99:
-  id: 99
   name: "Item99"
   price: 99
   min_level: 1
