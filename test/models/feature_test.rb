@@ -6,8 +6,8 @@ class FeatureTest < ActiveSupport::TestCase
 		@feature_ne = Feature.find_by_name("Feature Nothing")
 		@feature_c = Feature.find_by_name("Creature Feature One")
 		@feature_m = Feature.find_by_name("Feature Multi")
-		@level = Level.where(["kingdom_id = 1 and level = 0"] ).first
-		@location = @level.level_maps.where(['xpos = 0 and ypos = 0']).first
+		@level = kingdoms(:kingdom_one).levels.find_by(level: 0)
+		@location = @level.level_maps.where(xpos: 0, ypos: 0).first
 	end
 	
 	test "available events" do

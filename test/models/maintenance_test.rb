@@ -3,8 +3,8 @@ require 'test_helper'
 #mostly a smoke test, since the model is really just a container for some methods.
 class MaintenanceTest < ActiveSupport::TestCase
 	def setup
-		@pc = PlayerCharacter.find_by_name("Test PC One")
-		@kingdom = Kingdom.find_by_name("HealthyTestKingdom")
+		@pc = player_characters(:test_pc_one)
+		@kingdom = kingdoms(:kingdom_one)
 	end
 	
 	def teardown

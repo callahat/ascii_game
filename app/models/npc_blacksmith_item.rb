@@ -62,19 +62,17 @@ class NpcBlacksmithItem < ActiveRecord::Base
                       :item_id => @new_item.id,
                       :min_sales => sales)
     else #check that a comprable item exists and can be made, otherwise fallback on generateing new item
-      if ( @next_item_level_rough_price = BlacksmithSkill.find(:first, :conditions => ['min_sales > ?',sales]) )
+      if ( @next_item_level_rough_price = BlacksmithSkill.find_by(['min_sales > ?',sales]) )
         @next_item_level_rough_price = @next_item_level_rough_price.min_sales
       else
         @next_item_level_rough_price = sales ** 1.234
       end
       
-      if @prefab_item = Item.find(:first,
-                                  :conditions => ['npc_id is null and base_item_id = ? and price < ? and price > ?',
-                                                  base_item.id,
-                                                  @next_item_level_rough_price / 40,
-                                                  @next_item_level_rough_price / 60],
-                                  :order => 'rand()')
-      #then
+      if @prefab_item = Item.where(npc_id: nil, base_item_id: base_item.id) \
+                            .order('rand()') \
+                            .find_by( ['price < ? and price > ?',
+                                       @next_item_level_rough_price / 40,
+                                       @next_item_level_rough_price / 60])
         return self.new(:npc_id => npc.id,
                         :item_id => @prefab_item.id,
                         :min_sales => sales)

@@ -12,7 +12,7 @@
    <tr>
      <td><%=h @y %></td>
 <%   while @x <= @world.maxbigx 
-        square = WorldMap.find(:all, :conditions => ['world_id = ? and bigypos = ? and bigxpos = ?', session[:wid], @y, @x]).last %>
+        square = WorldMap.where(world_id: session[:wid], bigypos: @y, bigxpos: @x).last %>
     <td>
       <% if !square.nil? %>
         <%= link_to "#{square.bigxpos}, #{square.bigypos}", :action => 'show_map', :bigxpos => square.bigxpos, :bigypos => square.bigypos %>

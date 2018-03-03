@@ -5,7 +5,7 @@ class Management::CastlesController < ApplicationController
   layout 'main'
 
   def index
-    @moves = session[:kingdom].levels.find(:all, :conditions => ['level = ?', 0]).last
+    @moves = session[:kingdom].levels.where(level: 0).last
   end
 
 #  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
@@ -42,7 +42,7 @@ class Management::CastlesController < ApplicationController
 
     @levels = session[:kingdom].levels
     @level = Level.find(params[:level][:id])
-    @feature = Feature.find(:first, :conditions => ['name = ?', "\nCastle #{session[:kingdom].name}"])
+    @feature = Feature.find_by(name: "\nCastle #{session[:kingdom].name}")
 
     build_stairway(@level,@feature)
 
@@ -53,7 +53,7 @@ class Management::CastlesController < ApplicationController
 
   def destroy
     #destroy the stair. no money back though.
-    @feature_event = Feature.find(:first, :conditions => ['name = ?', "\nCastle #{session[:kingdom].name}"]).feature_events.find(params[:id])
+    @feature_event = Feature.find_by(name: "\nCastle #{session[:kingdom].name}").feature_events.find(params[:id])
     @event = @feature_event.event
 
     @feature_event.destroy
@@ -63,7 +63,7 @@ class Management::CastlesController < ApplicationController
   end
 
   def throne
-    @throne = Feature.find(:all, :conditions => ['name = ?', "\nThrone #{session[:kingdom].name}"]).last
+    @throne = Feature.where(name: "\nThrone #{session[:kingdom].name}").last
   end
 
   def throne_level
@@ -85,19 +85,19 @@ class Management::CastlesController < ApplicationController
 
   def set_throne
     #delete the old throne by setting that the old square to nil (unless this is the first set_throne)
-    @throne = Feature.find(:all, :conditions => ['name = ?', "\nThrone #{session[:kingdom].name}"]).last
+    @throne = Feature.where(name: "\nThrone #{session[:kingdom].name}").last
     @level_map = LevelMap.find(params[:throne][:spot])
     @level = @level_map.level
     if @throne.nil?
       #This assumes that the throne event was created when the kingom itself was created!
-      @throne_event = Event.find(:first, :conditions => ['name = ?', "\nThrone #{session[:kingdom].name} event"])
-      @old_fe = Feature.find(:all, :conditions => ['name = ?', "\nCastle #{session[:kingdom].name}"]).last.feature_events.find(:all, :conditions => ['event_id = ?', @throne_event ]).last
+      @throne_event = Event.find_by(name: "\nThrone #{session[:kingdom].name} event")
+      @old_fe = Feature.where(name: "\nCastle #{session[:kingdom].name}").last.feature_events.where(event_id: @throne_event).last
       if !@old_fe.nil?
         @old_fe.destroy
       end
 
       #TAKE CARE OF IMAGE HERE
-      @image = Image.find(:first, :conditions => ['name = ?', 'DEFAULT THRONE'])
+      @image = Image.find_by(name: 'DEFAULT THRONE')
       @new_image = Image.deep_copy(@image)
       @new_image.kingdom_id = session[:kingdom][:id]
       @new_image.name = "Throne Image"

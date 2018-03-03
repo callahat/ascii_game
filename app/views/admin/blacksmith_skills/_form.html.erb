@@ -11,7 +11,7 @@
 <%= text_field 'blacksmith_skill', 'max_mod'  %></p>
 
 <p><label for="blacksmith_skill_min_sales">Base Item</label><br/>
-<%= collection_select('blacksmith_skill',                      'base_item_id',                      BaseItem.find(:all, :conditions => [']),                       'id', 'name' ) %></p>
+<%= collection_select('blacksmith_skill',                      'base_item_id',                      BaseItem.all,                       'id', 'name' ) %></p>
 
 <!--[eoform:blacksmith_skill]-->
 

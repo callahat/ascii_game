@@ -29,7 +29,7 @@ module GameHelper
     0.upto(where.maxy-1){|y|
       @ret += "<tr>\n"
       0.upto(where.maxx-1){|x|
-        level_map = where.level_maps.find(:last,:conditions => ['ypos = ? AND xpos = ?', y, x])
+        level_map = where.level_maps.where(ypos: y, xpos: x).last
         if level_map && feature = level_map.feature
           @ret += "<td>\n<a href=\"/game/feature?id=" + level_map.id.to_s + "\" class=\"map\">" + 
                   "<span class=\"feature image\" title=\"" + (feature.name.split("::").first) + "\">"  + html_escape(feature.image.image_text) + "</span>\n</a></td>\n"
@@ -77,7 +77,7 @@ module GameHelper
     1.upto(where[0].maxy){|y|
       @ret += "<tr>"
       1.upto(where[0].maxx){|x|
-        wm = where[0].world_maps.find(:last, :conditions => ['bigypos = ? and bigxpos = ? and ypos = ? and xpos = ?', where[2], where[1], y, x])
+        wm = where[0].world_maps.where(bigypos: where[2], bigxpos: where[1], ypos: y, xpos: x).last
         if wm && f = wm.feature
           @ret += "<td><a href=\"/game/feature?id=" + wm.id.to_s + "\" class=\"map\">" +
                   "<span class=\"world_feature image\" title=\"" + h(f.name.split("::").first) + "\">" + h(f.image.image_text) + "</span>" +

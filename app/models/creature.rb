@@ -44,7 +44,7 @@ class Creature < ActiveRecord::Base
   end
 
   def self.update_all_exps
-    @creatures = Creature.find(:all, :order => 'name')
+    @creatures = Creature.all.order(:name)
     @creatures.each{|c|
       print "Updating " + c.name + " from " + c.experience.to_s + " to "
       c.experience = Creature.exp_worth(c.stat.dam, c.stat.dfn, c.HP, c.fecundity)

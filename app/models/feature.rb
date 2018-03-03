@@ -33,11 +33,11 @@ class Feature < ActiveRecord::Base
   #returns two arrays, 1st: events user can choose from, 2nd: events user cannot choose
   def available_events(p, loc, pid, chance=(rand(100)+1) )
     [true, false].inject([]) {|ret, c|
-      conds = {:conditions => ['priority = ? and chance >= ? and choice = ?', p, chance, c]}
-      ret << feature_events.find(:all, conds).inject([]){|a,fe|
+      conds = ['priority = ? and chance >= ? and choice = ?', p, chance, c]
+      ret << feature_events.where(conds).inject([]){|a,fe|
         e = fe.event
         if (e.class == EventQuest) && (q = e.quest) &&
-            (((lq = q.log_quests.find(:first, :conditions => ['player_character_id = ?', pid])) && lq.rewarded) )
+            (((lq = q.log_quests.find_by(player_character_id: pid)) && lq.rewarded) )
             #|| q.quest_id && DoneQuest.find(:first,:conditions => ['quest_id = ? and player_character_id = ?', q.quest_id, pid ]).nil?)
           a
         else
@@ -58,7 +58,7 @@ class Feature < ActiveRecord::Base
   
   #get the next priority 
   def next_priority(priority)
-    pri = feature_events.find(:first, :conditions => ['priority > ?', priority])
+    pri = feature_events.find_by(['priority > ?', priority])
     return nil unless pri
     pri.priority
   end

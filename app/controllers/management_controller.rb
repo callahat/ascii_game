@@ -24,12 +24,7 @@ class ManagementController < ApplicationController
 
       #get the kingdoms for the drop down menu
       for pc in @pcs
-        @ks=Kingdom.find(:all,:conditions => ['player_character_id = ?', pc.id], :order => 'name')
-        if @ks.size > 0
-          for k in @ks
-            @kingdoms << k
-          end
-        end
+        @kingdoms.concat pc.kingdoms.order(:name)
       end
     end
   end
@@ -58,7 +53,7 @@ class ManagementController < ApplicationController
       @message = 'Really leave the kingdom without a monarch?'
     elsif params[:new_king]
       print "in here"
-      @player_character = PlayerCharacter.find(:first, :conditions => ['name = ?', params[:new_king]])
+      @player_character = PlayerCharacter.find_by(name: params[:new_king])
       session[:new_king] = @player_character
       if @player_character.nil?
         @message = 'No such character by the name "' + params[:new_king] + '" was found.'
@@ -77,7 +72,7 @@ class ManagementController < ApplicationController
       redirect_to :action => 'retire'
     else
       if session[:new_king]
-        @player_character = PlayerCharacter.find(:first, :conditions => ['name = ?', session[:new_king].name])
+        @player_character = PlayerCharacter.find_by(name: session[:new_king].name)
       end
       if @player_character.nil?
         @pc_id = nil

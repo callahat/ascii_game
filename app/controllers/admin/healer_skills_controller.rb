@@ -22,12 +22,12 @@ class Admin::HealerSkillsController < ApplicationController
 
   def new
     @healer_skill = HealerSkill.new
-    @diseases = Disease.find(:all)
+    @diseases = Disease.all
   end
 
   def create
     @healer_skill = HealerSkill.new(params[:healer_skill])
-    @diseases = Disease.find(:all)
+    @diseases = Disease.all
     if @healer_skill.save
       flash[:notice] = 'HealerSkill was successfully created.'
       redirect_to :action => 'list'
@@ -38,12 +38,12 @@ class Admin::HealerSkillsController < ApplicationController
 
   def edit
     @healer_skill = HealerSkill.find(params[:id])
-    @diseases = Disease.find(:all)
+    @diseases = Disease.all
   end
 
   def update
     @healer_skill = HealerSkill.find(params[:id])
-    @diseases = Disease.find(:all)
+    @diseases = Disease.all
     if @healer_skill.update_attributes(params[:healer_skill])
       flash[:notice] = 'HealerSkill was successfully updated.'
       redirect_to :action => 'show', :id => @healer_skill

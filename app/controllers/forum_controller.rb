@@ -189,7 +189,7 @@ class ForumController < ApplicationController
   end
   
   def kill_ban
-    @ban = ForumRestriction.find(:first, :conditions => ['id = ?', params[:ban_id]])
+    @ban = ForumRestriction.find(params[:ban_id])
     (redirect_to(:back) && return) unless @ban
     res, msg = @ban.kill_ban(session[:player])
     flash[:notice] = msg    
@@ -218,12 +218,12 @@ class ForumController < ApplicationController
   end
   
   def toggle_locked
-    toggle_filter(ForumNode.find(:first, :conditions => ['id = ?', params[:forum_node_id]]), :is_locked)
+    toggle_filter(ForumNode.find(params[:forum_node_id]), :is_locked)
     redirect_to :back
   end
   
   def toggle_hidden
-    toggle_filter(ForumNode.find(:first, :conditions => ['id = ?', params[:forum_node_id]]), :is_hidden)
+    toggle_filter(ForumNode.find(params[:forum_node_id]), :is_hidden)
     redirect_to :back
   end
   
@@ -233,7 +233,7 @@ class ForumController < ApplicationController
   end
   
   def toggle_mods_only
-    toggle_filter(ForumNode.find(:first, :conditions => ['id = ?', params[:forum_node_id]]), :is_mods_only)
+    toggle_filter(ForumNode.find(params[:forum_node_id]), :is_mods_only)
     redirect_to :back
   end
   
@@ -252,13 +252,13 @@ protected
   end
   
   def load_board
-    @board = ForumNodeBoard.find(:first, :conditions => {:name => params[:bname] } )
+    @board = ForumNodeBoard.find_by(name: params[:bname])
     (redirect_to(forums_url) && return) if @board.nil?
   end
   
   def load_thread
     load_board
-    @thred = ForumNodeThread.find(:first, :conditions => {:name => params[:tname], :forum_node_id => @board.id } )
+    @thred = ForumNodeThread.find_by(name: params[:tname], forum_node_id: @board.id)
     redirect_to(boards_url(:bname => @board.name)) && return  if @thred.nil?
   end
   
@@ -316,7 +316,7 @@ protected
   end
 
   def filter_mod_level_for_promotion
-    @player = Player.find(:first, :conditions => ['id = ?', params[:player_id]])
+    @player = Player.find(params[:player_id])
     if @player.nil?
       redirect_to :action => 'view_thred'
       return false

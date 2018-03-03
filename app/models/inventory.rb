@@ -28,12 +28,12 @@ class Inventory < ActiveRecord::Base
   def self.find_or_create(oid, iid)
     conds = {:owner_id => oid, :item_id =>  iid }
 
-    it = find(:first, :conditions => conds)
+    it = find_by(conds)
     return it unless it.nil?
   
     TableLock.transaction do
-      tl = TableLock.find_by_name(self.sti_name, :lock => true)
-      it = find(:first, :conditions => conds) || create(conds)
+      tl = TableLock.find_by_name(self.sti_name).lock!
+      it = find_or_create_by(conds)
       tl.save!
     end
     return it

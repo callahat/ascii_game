@@ -3,10 +3,10 @@ require 'test_helper'
 class GameHelperTest < ActionView::TestCase
 	def setup
 		@creature = Creature.find_by_name("Wimp Monster")
-		@level = Level.where(['kingdom_id = ? and level = 0', 1]).first
+		@level = Level.where(['kingdom_id = ? and level = 0', kingdoms(:kingdom_one).id]).first
 		@world = World.first
 		@pc = PlayerCharacter.find_by_name("Test PC One")
-		@pc[:in_kingdom] = 1
+		@pc[:in_kingdom] = kingdoms(:kingdom_one)
 		@pc.present_world = @world
 		@pc.present_level = @level
 		@controller = GameController.new

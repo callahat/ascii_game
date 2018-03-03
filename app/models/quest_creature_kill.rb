@@ -1,5 +1,6 @@
 class QuestCreatureKill < QuestReq
   belongs_to :creature, :foreign_key => 'detail'
+  belongs_to :objective, :foreign_key => 'detail', :class_name => 'Creature'
 
   has_many :log_quests
   has_many :log_quest_creature_kills

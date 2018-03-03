@@ -2,9 +2,9 @@ require 'test_helper'
 
 class EventMoveRelativeTest < ActiveSupport::TestCase
     def setup
-        @pc = PlayerCharacter.find_by_name("Test PC One")
+        @pc = player_characters(:test_pc_one)
         @standard_new = {:kingdom_id => Kingdom.first.id,
-                                            :player_id => Player.first.id,
+                                            :player_id => players(:test_player_mod).id,
                                             :event_rep_type => SpecialCode.get_code('event_rep_type','unlimited'),
                                             :name => 'Created event name',
                                             :armed => 1,

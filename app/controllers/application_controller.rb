@@ -131,7 +131,7 @@ protected
     #MAKE SUB EVENT
     @event_creature = EventCreature.new
     @event_creature.event_id = @event.id
-    @event_creature.creature_id = Creature.find(:first, :conditions => ['name = ?', "Peasant"]).id
+    @event_creature.creature = Creature.find_by(name: "Peasant")
     @event_creature.low = 1
     @event_creature.high = feature.num_occupants
     

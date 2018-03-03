@@ -17,7 +17,7 @@ class NameTitle < ActiveRecord::Base
     
     #if max and min are within 15% of the average, then use the all title for the avg
     if @stat_array.min >= (@avg * 0.85) && (@stat_array.max <= @avg * 1.15)
-      return NameTitle.find(:first, :conditions => ['stat = ? and points <= ?', "all", @avg], :order => '"points DESC"').title
+      return NameTitle.where(['points <= ?', @avg]).find_by(stat: "all").order("points DESC").title
     end
     
     #otherwise find the max (if several are max, randomly pick one)
@@ -33,7 +33,7 @@ class NameTitle < ActiveRecord::Base
       end
     end
     
-    return NameTitle.find(:first, :conditions => ['stat = ? and points <= ?', @max_stat[rand(@max_stat.size)], @max_val], :order => '"points DESC"').title
+    return NameTitle.where(stat: @max_stat.sample).order("points DESC").find_by(['points <= ?', @max_val]).title
   end
   
   #Pagination related stuff

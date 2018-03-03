@@ -200,7 +200,7 @@ class Game::NpcControllerTest < ActionController::TestCase
 	
 	test "multiclass npc pc sells item" do
 		setup_sub1(@kl_multi)
-		@item1 = Item.find(1)
+		@item1 = items(:item_1)
 		
 		get 'do_sell', {}, session.to_hash
 		assert_redirected_to npc_sell_url()

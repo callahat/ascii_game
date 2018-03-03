@@ -32,13 +32,13 @@ class Management::QuestsController < ApplicationController
 
   def new
     @quest = Quest.new
-    @prereqs = session[:kingdom].quests.find(:all, :conditions => ['quest_status = ?', SpecialCode.get_code('quest_status','active')])
+    @prereqs = session[:kingdom].quests.where(quest_status: SpecialCode.get_code('quest_status','active'))
     setup_reward_items
   end
 
   def create
     @quest = Quest.new(params[:quest])
-    @prereqs = session[:kingdom].quests.find(:all, :conditions => ['quest_status = ?', SpecialCode.get_code('quest_status','active')])
+    @prereqs = session[:kingdom].quests.where(quest_status: SpecialCode.get_code('quest_status','active'))
     setup_reward_items
     
     if @quest.quest && !verify_quest_owner(@quest.quest)
@@ -61,14 +61,14 @@ class Management::QuestsController < ApplicationController
 
   def edit
     @quest = Quest.find(params[:id])
-    @prereqs = session[:kingdom].quests.find(:all, :conditions => ['quest_status = ?', SpecialCode.get_code('quest_status','active')])
+    @prereqs = session[:kingdom].quests.where(quest_status: SpecialCode.get_code('quest_status','active'))
     setup_reward_items
   end
 
   def update
     @quest = Quest.find(params[:id])
-    @prereq = Quest.find(:first, :conditions => ['quest_id = ?', params[:quest][:quest_id]])
-    @prereqs = session[:kingdom].quests.find(:all, :conditions => ['quest_status = ?', SpecialCode.get_code('quest_status','active')])
+    @prereq = Quest.find_by(quest_id: params[:quest][:quest_id])
+    @prereqs = session[:kingdom].quests.where(quest_status: SpecialCode.get_code('quest_status','active'))
     if !verify_quest_owner(@quest) || !verify_quest_not_in_use(@quest) || 
        (@prereq && !verify_quest_owner(@prereq))
       redirect_to :action => 'index'
@@ -94,7 +94,7 @@ class Management::QuestsController < ApplicationController
       return
     end
     
-    if session[:kingdom].quests.find(:all, :conditions => ['quest_status = ?', '1']).size > 16
+    if session[:kingdom].quests.where(quest_status: '1').size > 16
       flash[:notice] = 'A kingdom can have only 16 active quests at a time.'
     elsif @quest.reqs.size == 0
       flash[:notice] = "Quest must have at least one requirement in order to be activated"
@@ -236,22 +236,22 @@ protected
       @creatures = session[:kingdom].creatures
     elsif params[:type] == 'explore'
       @quest_req = QuestExplore.new(params[:quest_req])
-      @events = session[:kingdom].event_texts.find(:all, :conditions => ['armed = true'])
+      @events = session[:kingdom].event_texts.where(armed: true)
     elsif params[:type] == 'item'
       @quest_req = QuestItem.new(params[:quest_req])
-      @items = Item.find(:all)
+      @items = Item.all
     elsif params[:type] == 'kill_any_npc'
       @quest_req = QuestKillNNpc.new(params[:quest_req])
       @npc_types = [ ['merchant', 'NpcMerchant'], ['guard', 'NpcGuard'] ]
-      @kingdoms = Kingdom.find(:all,:order => 'name')
+      @kingdoms = Kingdom.all.order(:name)
     elsif params[:type] == 'kill_pc'
       @quest_req = QuestKillPc.new(params[:quest_req])
-      @pcs = PlayerCharacter.find(:all,:order => 'name') #might need to add a check for the hardcore to prevent targeting an already final dead char
+      @pcs = PlayerCharacter.all.order(:name) #might need to add a check for the hardcore to prevent targeting an already final dead char
     elsif params[:type] == 'kill_specific_npc'
       @quest_req = QuestKillSNpc.new(params[:quest_req])
-      @npcs = Npc.find(:all, :include => :health,
-                        :conditions => ['healths.wellness = ? or healths.wellness = ?',
-                        SpecialCode.get_code('wellness','alive'), SpecialCode.get_code('wellness','diseased')],:order => 'name')
+      @npcs = Npc.all.joins(:health).where(
+                        ['healths.wellness = ? or healths.wellness = ?',
+                        SpecialCode.get_code('wellness','alive'), SpecialCode.get_code('wellness','diseased')]).order(:name)
     else
       flash[:notice] = 'Invalid type!'
       redirect_to :action => 'show',:id => params[:id]
@@ -263,18 +263,18 @@ protected
     if @quest_req.kind == 'QuestCreatureKill'
       @creatures = session[:kingdom].creatures
     elsif @quest_req.kind == 'explore'
-      @events = session[:kingdom].events.find(:all, :conditions => ['event_type = ?', SpecialCode.get_code('event_type','quest')])
+      @events = session[:kingdom].events.where(event_type: SpecialCode.get_code('event_type','quest'))
     elsif @quest_req.kind == 'QuestItem'
-      @items = Item.find(:all)
+      @items = Item.all
     elsif @quest_req.kind == 'QuestKillNNpc'
       @npc_types = [ ['merchant', 'NpcMerchant'], ['guard', 'NpcGuard'] ]
-      @kingdoms = Kingdom.find(:all,:order => 'name')
+      @kingdoms = Kingdom.all.order(:name)
     elsif @quest_req.kind == 'QuestKillPc'
-      @pcs = PlayerCharacter.find(:all,:order => 'name')
+      @pcs = PlayerCharacter.all.order(:name)
     elsif @quest_req.kind == 'QuestKillSNpc'
-      @npcs = Npc.find(:all, :include => :health,
-                        :conditions => ['healths.wellness = ? or healths.wellness = ?',
-                        SpecialCode.get_code('wellness','alive'), SpecialCode.get_code('wellness','diseased')],:order => 'name')
+      @npcs = Npc.all.joins(:health).where(
+                        ['healths.wellness = ? or healths.wellness = ?',
+                        SpecialCode.get_code('wellness','alive'), SpecialCode.get_code('wellness','diseased')]).order(:name)
     else
       flash[:notice] = 'Invalid type!'
       redirect_to :action => 'show',:id => params[:id]

@@ -22,7 +22,7 @@ class Player < ActiveRecord::Base
   #
   def self.authenticate(name, pass)
     #print sha1(pass).inspect
-    find(:first, :conditions => ["handle = ? AND passwd = ?", name, sha1(pass)])
+    find_by(["handle = ? AND passwd = ?", name, sha1(pass)])
   end
   
   def self.authenticate?(handle, pass)

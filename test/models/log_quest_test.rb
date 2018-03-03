@@ -42,7 +42,7 @@ class LogQuestTest < ActiveSupport::TestCase
 	test "complete quest" do
 		joined, msg = LogQuest.join_quest(@pc, @quest1.id)
 		assert joined
-		assert @pc.done_quests.find(:first, :conditions => ['quest_id = ?', @quest1.id]).nil?
+		assert @pc.done_quests.find_by(quest_id: @quest1.id).nil?
 		
 		@quest_log = @pc.log_quests.find_by_quest_id(@quest1.id)
 		assert @quest_log.reqs.size == 6 #since one is QuestItem and has no log
@@ -55,10 +55,12 @@ class LogQuestTest < ActiveSupport::TestCase
 		
 		@quest_log.quest.update_attribute(:quest_status, SpecialCode.get_code('quest_status','active'))
 		assert @quest_log.complete_quest
-		assert @pc.done_quests.find(:first, :conditions => ['quest_id = ?', @quest1.id])
+		assert @pc.done_quests.find_by(quest_id: @quest1.id)
 	end
 	
 	test "collect reward using kingdom gold" do
+		@item_99 = items(:item_99)
+
 		joined, msg = LogQuest.join_quest(@pc, @quest1.id)
 		assert joined
 		@quest_log = @pc.log_quests.find_by_quest_id(@quest1.id)
@@ -74,15 +76,15 @@ class LogQuestTest < ActiveSupport::TestCase
 		assert msg =~ /Not enough gold/, msg
 		
 		@quest_log.quest.kingdom.update_attribute(:gold, 500)
-		
-		@quest_log.quest.update_attribute(:item_id, 99)
+
+		@quest_log.quest.update_attribute(:item_id, @item_99.id)
 		res, msg = @quest_log.collect_reward
-		assert !res
+		assert !res, msg
 		assert msg =~ /Insufficient resources/, msg
 		
 		@quest_log.quest.kingdom.update_attribute(:gold, 1000000)
 		
-		assert @pc.items.find(:first, :conditions => ['item_id = ?', 99]).nil?
+		assert @pc.items.find_by(item_id: @item_99.id).nil?
 		assert_difference '@quest_log.quest.kingdom.gold', -(500+99*50) do
 			assert_difference '@pc.gold', +500 do
 				res, msg = @quest_log.collect_reward
@@ -91,8 +93,8 @@ class LogQuestTest < ActiveSupport::TestCase
 				@pc.items.reload
 			end
 		end
-		assert @pc.items.find(:first, :conditions => ['item_id = ?', 99])
-		assert @pc.items.find(:first, :conditions => ['item_id = ?', 99]).quantity == 1
+		assert @pc.items.find_by(item_id: @item_99.id)
+		assert @pc.items.find_by(item_id: @item_99.id).quantity == 1
 	end
 	
 	test "collect reward using kingdom gold and item" do
@@ -101,14 +103,16 @@ class LogQuestTest < ActiveSupport::TestCase
 		@quest_log = @pc.log_quests.find_by_quest_id(@quest1.id)
 		@quest_log.reqs.destroy_all
 		@quest_log.complete_quest
+
+		@item2 = items(:item_2)
 		
 		@quest_log.quest.kingdom.update_attribute(:gold, 500)
-		@quest_log.quest.update_attribute(:item_id, 2)
+		@quest_log.quest.update_attribute(:item_id, @item2.id)
 
-		assert @pc.items.find(:first, :conditions => ['item_id = ?', 2]).nil?
+		assert @pc.items.find_by(item_id: @item2.id).nil?
 		assert_difference '@quest_log.quest.kingdom.gold', -(500) do
 			assert_difference '@pc.gold', +500 do
-				assert_difference '@quest_log.quest.kingdom.kingdom_items.find(:first, :conditions => ["item_id = ?", 2]).quantity', -1 do
+				assert_difference '@quest_log.quest.kingdom.kingdom_items.find_by(item_id: @item2.id).quantity', -1 do
 					res, msg = @quest_log.collect_reward
 					assert res
 					@pc.reload
@@ -116,7 +120,7 @@ class LogQuestTest < ActiveSupport::TestCase
 				end
 			end
 		end
-		assert @pc.items.find(:first, :conditions => ['item_id = ?', 2])
-		assert @pc.items.find(:first, :conditions => ['item_id = ?', 2]).quantity == 1
+		assert @pc.items.find_by(item_id: @item2.id)
+		assert @pc.items.find_by(item_id: @item2.id).quantity == 1
 	end
 end

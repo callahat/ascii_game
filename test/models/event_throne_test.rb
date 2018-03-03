@@ -5,21 +5,21 @@ class EventThroneTest < ActiveSupport::TestCase
 		@pc = PlayerCharacter.find_by_name("Test PC One")
 		@pc.update_attribute(:in_kingdom, nil)
 		@pc.update_attribute(:kingdom_level, nil)
-		@standard_new = {:kingdom_id => Kingdom.find(:first).id,
-											:player_id => Player.find(:first).id,
+		@standard_new = {:kingdom_id => Kingdom.first.id,
+											:player_id => Player.first.id,
 											:event_rep_type => SpecialCode.get_code('event_rep_type','unlimited'),
 											:name => 'Created event name',
 											:armed => 1,
 											:cost => 50}
-		@kingdom = Kingdom.find(1)
+		@kingdom = kingdoms(:kingdom_one)
 		@disease = Disease.find_by_name("airbourne disease")
-		@level = Level.find(:first, :conditions => ["kingdom_id = 1 and level = 0"] )
+		@level = Level.find_by(kingdom_id: 1, level: 0)
 	end
 	
 	test "throne event" do
 		e = EventThrone.find_by_name("throne event")
 		@pc.in_kingdom = @kingdom.id
-		@pc.kingdom_level = @kingdom.levels.find(:first, :conditions => ['level = 0']).id
+		@pc.kingdom_level = @kingdom.levels.find_by(level: 0).id
 		
 		direct, comp, msg = e.happens(@pc)
 		assert comp == EVENT_COMPLETED
@@ -39,7 +39,7 @@ class EventThroneTest < ActiveSupport::TestCase
 	test "throne event completes" do
 		e = EventThrone.find_by_name("throne event")
 		@pc.in_kingdom = @kingdom.id
-		@pc.kingdom_level = @kingdom.levels.find(:first, :conditions => ['level = 0']).id
+		@pc.kingdom_level = @kingdom.levels.find_by(level: 0).id
 		e.completes(@pc)
 		
 		#king not killed by pc

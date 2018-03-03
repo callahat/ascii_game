@@ -142,7 +142,7 @@ class Management::EventsController < ApplicationController
 protected
   def good_event_params
     if @event.class == EventCreature
-      if Creature.find(:first,:conditions => ['armed = true AND (public = true or kingdom_id = ? or player_id  = ?) AND id = ?', session[:kingdom][:id], session[:player][:id],params[:event][:thing_id]])
+      if Creature.where(armed: true, id: params[:event][:thing_id]).find_by(['public = true or kingdom_id = ? or player_id  = ?', session[:kingdom][:id], session[:player][:id]])
         return true
       else
         flash[:notice] = "You can't use that creature"
@@ -180,9 +180,9 @@ protected
       when "EventCreature"
         @creatures = @kingdom.pref_list_creatures.reload.collect{|plc| plc.creature}
       when "EventDisease"
-        @diseases = Disease.find(:all)
+        @diseases = Disease.all
       when "EventItem"
-        @items = Item.find(:all)
+        @items = Item.all
       when "EventMoveLocal"
         @levels = @kingdom.levels
       when "EventNpc"

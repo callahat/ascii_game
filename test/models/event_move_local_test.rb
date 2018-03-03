@@ -11,7 +11,7 @@ class EventMoveLocalTest < ActiveSupport::TestCase
 											:name => 'Created event name',
 											:armed => 1,
 											:cost => 50}
-		@kingdom = Kingdom.find(1)
+		@kingdom = kingdoms(:kingdom_one)
 		@disease = Disease.find_by_name("airbourne disease")
 	end
 	

@@ -49,12 +49,12 @@ protected
     @event = @pc.current_event.event
     @quest = @event.quest
     if @quest.quest_id && 
-        DoneQuest.find(:first,:conditions => ['quest_id = ? and player_character_id = ?', @quest.quest_id, @pc.id ]).nil?
+        DoneQuest.find_by(quest_id: @quest.quest_id, player_character_id: @pc.id ).nil?
       flash[:notice] = "Nothing happens"
        @pc.current_event.destroy
       redirect_to :controller => '/game', :action => 'main'
     else
-      @log_quest = @pc.log_quests.find(:first, :conditions => ['quest_id = ?', @quest.id])
+      @log_quest = @pc.log_quests.find_by(quest_id: @quest.id)
     end
   end
   

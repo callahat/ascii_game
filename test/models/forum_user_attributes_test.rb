@@ -8,7 +8,7 @@ class ForumUserAttributesTest < ActiveSupport::TestCase
       assert p.forum_attribute.posts
     end
     
-    player = Player.last.attributes
+    player = Player.last.attributes.except("id")
     player[:handle] = "MostUniqueUserName12353"
     player[:passwd] = "blah"
     new_player = Player.create(player)

@@ -42,7 +42,13 @@ class PlayerCharacter < ActiveRecord::Base
   validates_presence_of :name, :race, :c_class, :player_id, :c_class_id, :race_id, :char_stat
   validates_length_of :name, :in => 1..32
   validates_uniqueness_of :name
-  
+
+  scope :active,      ->{ where(char_stat: SpecialCode.get_code("char_stat","active")) }
+  scope :retired,     ->{ where(char_stat: SpecialCode.get_code("char_stat","retired")) }
+  scope :dead,        ->{ where(char_stat: SpecialCode.get_code("char_stat","final death")) }
+  scope :deleted,     ->{ where(char_stat: SpecialCode.get_code("char_stat","deleted")) }
+  scope :not_deleted, ->{ where.not(char_stat: SpecialCode.get_code("char_stat","deleted")) }
+
   def gain_level(freedist)
     return -1, "Not enough experience to gain level." if self.experience < self.next_level_at
     return 0, "Invalid distribution" if !freedist.valid_distrib(freepts)

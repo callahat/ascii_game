@@ -11,14 +11,14 @@ class EventItemTest < ActiveSupport::TestCase
 											:name => 'Created event name',
 											:armed => 1,
 											:cost => 50}
-		@kingdom = Kingdom.find(1)
+		@kingdom = kingdoms(:kingdom_one)
 		@disease = Disease.find_by_name("airbourne disease")
 	end
 	
 	test "item event" do
 		ei = EventItem.find_by_name("Item event")
-		assert @pc.items.where(:item_id => ei.thing_id).size == 0
-		assert ei.item.name == "Cool item"
+		assert_equal 0, @pc.items.where(:item_id => ei.thing_id).size
+		assert ei.item.name == "Item20"
 		assert_difference '@pc.items.size', +1 do
 			direct,comp,msg = ei.happens(@pc)
 			@pc.items.reload
@@ -30,13 +30,13 @@ class EventItemTest < ActiveSupport::TestCase
 			@pc.items.reload
 		end
 		assert @pc.items.where(:item_id => ei.thing_id).first.quantity == 6
-		
+
 		#assert fails if pc dead
 		@pc.health.update_attribute(:wellness, SpecialCode.get_code('wellness','dead'))
 		direct, comp, msg = ei.happens(@pc)
 		assert msg =~ /you are dead/
 	end
-	
+
 	test "create item event" do
 		e = EventItem.new(@standard_new.merge(:flex => 105))
 		assert !e.valid?
@@ -44,8 +44,10 @@ class EventItemTest < ActiveSupport::TestCase
 		e.item = Item.find_by_name("Item99")
 		assert !e.valid?
 		assert e.errors.full_messages.size == 1, e.errors.full_messages.size.inspect
+		e.errors.clear
 		e.flex = 4
-		assert e.valid?,e.errors.full_messages.inspect
+
+		assert e.valid?,e.errors.full_messages.inspect + ' ' + e.flex.inspect
 		assert e.errors.full_messages.size == 0
 		assert e.save!
 		assert e.price >= e.item.price, e.price.inspect

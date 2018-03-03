@@ -68,7 +68,7 @@ class CharacterseController < ApplicationController
   def do_equip
     equip
     
-    @pc_item = @pc.items.find(:first, :conditions => ['id = ?', params[:iid]])
+    @pc_item = @pc.items.find(params[:iid])
   
     if @pc_item.nil?
       flash[:notice] = "You don't have any of those to equip"

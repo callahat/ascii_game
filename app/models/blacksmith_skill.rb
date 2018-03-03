@@ -7,10 +7,7 @@ class BlacksmithSkill < ActiveRecord::Base
       @cond_array[0] += ' and (base_items.race_body_type is null or base_items.race_body_type = ?)'
       @cond_array << rbt
     end
-    find(:all,
-        :include => 'base_item', 
-        :conditions => @cond_array,
-        :order => 'min_sales')
+    all.joins(:base_item).where(@cond_array).order(:min_sales)
   end
 
   validates_presence_of :min_sales,:base_item_id

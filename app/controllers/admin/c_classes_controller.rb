@@ -17,7 +17,8 @@ class Admin::CClassesController < ApplicationController
   end
 
   def show_levels
-    @c_class_levels = CClassLevel.find(:all, :conditions => ['c_class_id = ?', params[:id]])
+    # TODO: This doesnt appear to be a valid class anymroe
+    @c_class_levels = CClassLevel.where(c_class_id: params[:id])
   end
 
   def new
@@ -50,7 +51,7 @@ class Admin::CClassesController < ApplicationController
 
   def destroy
     #first destroy the related levels
-    @cleanup = CClassLevel.find(:all, :conditions => ['c_class_id = ?', params[:id]])
+    @cleanup = CClassLevel.where(c_class_id: params[:id])
     clear_cleanup
 
     if CClass.find(params[:id]).destroy
@@ -59,7 +60,7 @@ class Admin::CClassesController < ApplicationController
       flash[:notice] = 'Character class was not destroyed. <br/>'
     end
 
-    if CClassLevel.find(:all, :conditions => ['c_class_id = ?', params[:id]]).size == 0
+    if CClassLevel.where(c_class_id: params[:id]).size == 0
       flash[:notice] += 'Character Class levels destroyed.'
     else
       flash[:notice] += 'Character Class levels were not destroyed.'
@@ -89,7 +90,7 @@ class Admin::CClassesController < ApplicationController
   end
 
   def edit_first_level
-    @stat = CClassLevel.find(:all, :conditions => ['c_class_id = ? and level = ?', params[:id], '0'])[0]
+    @stat = CClassLevel.find_by(c_class_id: params[:id], level: 0 )
     if @stat.nil?
       redirect_to :action => 'first_level',:id => params[:id]
     else
@@ -121,7 +122,7 @@ class Admin::CClassesController < ApplicationController
 
       if params[:pres].nil?
         #first, kill off all the levels for this class polluting the DB
-        @cleanup = CClassLevel.find(:all, :conditions => ['c_class_id = ?', session[:base_level][:c_class_id]])
+        @cleanup = CClassLevel.where(c_class_id: session[:base_level][:c_class_id])
         clear_cleanup
       end
 
@@ -130,17 +131,17 @@ class Admin::CClassesController < ApplicationController
     else
       #if this is the case, then were just are adding levels, and nothing changing
       #redirect to first_level if there are none
-      @lvls = CClassLevel.find(:all, :conditions => ['c_class_id = ?', params[:id]]).size
+      @lvls = CClassLevel.where(c_class_id: params[:id]).count
       if @lvls == 0
         redirect_to :action => 'first_level', :id => params[:id]
         return
       end
 
       @bob=Array.new(params[:add].to_i)
-      @cumsum =  CClassLevel.find(:first, :conditions => ['c_class_id = ? and level = ?', params[:id], @lvls-1])
-      @base = CClassLevel.find(:first, :conditions => ['c_class_id = ? and level = ?', params[:id], @lvls-1])
+      @cumsum =  CClassLevel.find_by(c_class_id: params[:id], level: @lvls-1)
+      @base = CClassLevel.find_by(c_class_id: params[:id], level: @lvls-1)
       
-      @older = CClassLevel.find(:first, :conditions => ['c_class_id = ? and level = ?', params[:id], @lvls-2])
+      @older = CClassLevel.find_by(c_class_id: params[:id], level: @lvls-2)
       if @older
         @older_xp = @older.min_xp
       else
@@ -190,7 +191,7 @@ class Admin::CClassesController < ApplicationController
       @last_xp = @c_class_level.min_xp
       @base.level += 1
     end
-    flash[:notice] = 'CClassLevels populated for the "' + @c_class_level.c_class.name + '" class! generated: ' + @nummade.to_s + '; updates: ' + @numup.to_s + '; current: ' + CClassLevel.find(:all, :conditions => ['c_class_id = ?', @base.c_class_id]).size.to_s + '; out of ' + @bob.size.to_s + ' rows.'
+    flash[:notice] = 'CClassLevels populated for the "' + @c_class_level.c_class.name + '" class! generated: ' + @nummade.to_s + '; updates: ' + @numup.to_s + '; current: ' + CClassLevel.where(c_class_id: @base.c_class_id).count.to_s + '; out of ' + @bob.size.to_s + ' rows.'
     redirect_to :action => 'list'
   end
 

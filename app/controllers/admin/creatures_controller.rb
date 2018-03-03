@@ -21,13 +21,13 @@ class Admin::CreaturesController < ApplicationController
   def new
     @creature = Creature.new(params[:creature])
     @stat = StatCreature.new(params[:stat])
-    @diseases = Disease.find(:all)
+    @diseases = Disease.all
     @kingdom_id = -1
     @player_id = -1
     @image = @creature.image || Image.new(params[:image])
-    @images = Image.find(:all,
-                :conditions => ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
-                @player_id,@kingdom_id,SpecialCode.get_code('image_type', 'creature')], :order => 'name')
+    @images = Image.where(image_type: SpecialCode.get_code('image_type', 'creature')).where(
+                ['public = true or player_id = ? or kingdom_id = ?',
+                @player_id,@kingdom_id,]).order(:name)
   end
 
   def create
@@ -64,13 +64,13 @@ class Admin::CreaturesController < ApplicationController
   def edit
     @creature = Creature.find(params[:id])
     @stat = @creature.stat
-    @diseases = Disease.find(:all)
+    @diseases = Disease.all
     @image = @creature.image
     @kingdom_id = -1
     @player_id = -1
-    @images = Image.find(:all,
-                :conditions => ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
-                @player_id,@kingdom_id,SpecialCode.get_code('image_type', 'creature')], :order => 'name')
+    @images = Image.where(image_type: SpecialCode.get_code('image_type', 'creature'))
+                  .where(['(public = true or player_id = ? or kingdom_id = ?) and  = ?',
+                  @player_id,@kingdom_id,]).order(:name)
   end
 
   def update

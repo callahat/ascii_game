@@ -27,7 +27,7 @@ class Management::KingdomBansController < ApplicationController
   def create
     @kingdom_ban = KingdomBan.new(params[:kingdom_ban])
     @kingdom_ban.kingdom_id = session[:kingdom][:id]
-    @kingdom_ban.player_character_id = PlayerCharacter.find(:first, :conditions => ['name = ?', params[:kingdom_ban][:name]]).id
+    @kingdom_ban.player_character_id = PlayerCharacter.find_by(name: params[:kingdom_ban][:name]).id
     
     if @kingdom_ban.save
       flash[:notice] = @kingdom_ban.name + ' was banned.'

@@ -63,7 +63,7 @@ item_event:
   kind: "EventItem"
   armed: 1
   cost: 50
-  item: cool_item
+  item: item_20
   flex: 3
 disease_event:
   kingdom_id: -1

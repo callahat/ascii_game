@@ -12,7 +12,7 @@
    <tr>
      <td><%=h @y %></td>
 <%   while @x <= @world.maxx 
-        @f = @world.world_maps.find(:all, :conditions => ['bigypos = ? and bigxpos = ? and ypos = ? and xpos = ?', session[:bigypos], session[:bigxpos], @y, @x]).last.feature %>
+        @f = @world.world_maps.where(bigypos: session[:bigypos], bigxpos: session[:bigxpos], ypos: @y, xpos: @x).last.feature %>
     <td>
       <% if !@f.nil? %><pre class="world_feature"><%=h @f.image.image_text %></pre><% else %>*EMPTY*<% end %>
     </td>

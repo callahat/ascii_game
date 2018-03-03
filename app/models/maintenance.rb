@@ -16,11 +16,11 @@ class Maintenance < ActiveRecord::Base
   #Allocate NPCs/create NPCs and assign to existing kingdom
   def self.new_kingdom_npcs(kingdom)
     @@report << "NEW KINGDOM NPCS FOR " + kingdom.name
-    kingdom.npcs.find(:all, :conditions => ['is_hired = ?', 0]).each{
+    kingdom.npcs.where(is_hired: 0).each{
       |uh| uh.update_attribute(:kingdom_id, nil) if rand > 0.75 }
 
-    @unhired_merchants = kingdom.merchants.find(:all, :conditions => ['is_hired = 0'])
-    @unhired_guards = kingdom.guards.find(:all, :conditions => ['is_hired = 0'])
+    @unhired_merchants = kingdom.merchants.where(is_hired: 0)
+    @unhired_guards = kingdom.guards.where(is_hired: 0)
 
     if @unhired_merchants.size < kingdom.kingdom_empty_shops.size * 1.5
       npc_solicitation(kingdom, NpcMerchant)
@@ -31,7 +31,7 @@ class Maintenance < ActiveRecord::Base
   def self.npc_solicitation(kingdom, npc_class)
     if @unhired_merchants.size < kingdom.player_character.level * 2
 
-      @npc_from_pool = npc_class.find(:first, :conditions => ['kingdom_id is NULL'], :order => 'rand()')
+      @npc_from_pool = npc_class.order('rand()').find_by(kingdom_id: nil)
 
       if @npc_from_pool.nil? || rand > 0.75
         @new_guy = npc_class.generate(kingdom.id)
@@ -65,7 +65,7 @@ class Maintenance < ActiveRecord::Base
         npc.health.base_HP += rand(7)
         npc.health.HP += npc.health.base_HP - @disease_damage
 
-        @terminal_diseases = npc.illnesses.find(:all, :include => 'disease', :conditions => ['diseases.NPC_fatal = true'])
+        @terminal_diseases = npc.illnesses.joins(:disease).where(diseases: {NPC_fatal: true})
         if @terminal_diseases.size > 0
           if npc.health.HP <= 0
             npc.health.wellness = SpecialCode.get_code('wellness','dead')
@@ -88,8 +88,8 @@ class Maintenance < ActiveRecord::Base
           if npc.npc_merchant_detail.healing_sales.to_i > 0
             #can any pandemics be cured?
             for pandemic in kingdom.pandemics
-              if HealerSkill.find(:first, :conditions => ['disease_id = ? AND min_sales <= ?',
-                                  pandemic.disease_id, npc.npc_merchant_detail.healing_sales]) &&
+              if HealerSkill.where(disease_id: pandemic.disease_id) \
+                     .find_by('min_sales <= ?', npc.npc_merchant_detail.healing_sales) &&
                   rand(pandemic.disease.virility) < npc.int / 10  #then NPC has cured the pandemic
                 text = npc.name + " has discovered a cure for the " + pandemic.disease.name +
                        " pandemic which had been tormenting the kingdom for " + pandemic.day + " days."
@@ -152,7 +152,7 @@ class Maintenance < ActiveRecord::Base
 
   #main routine to take care of all the kingdom maintenance that needs done
   def self.kingdom_maintenance
-    @kingdoms = Kingdom.find(:all, :conditions => ['id > 0'])
+    @kingdoms = Kingdom.where('id > 0')
     @updates = 0
     for kingdom in @kingdoms
       @@report << "Maintenance for " + kingdom.name
@@ -209,7 +209,7 @@ class Maintenance < ActiveRecord::Base
   #mostly just gives players characters more time units, but could be expanded later.
   def self.player_character_maintenance
     #add turns for player characters that are active only, and have used turns since last time
-    @player_characters = PlayerCharacter.find(:all, :conditions => ['char_stat = ? and turns < 200', SpecialCode.get_code('char_stat','active')])
+    @player_characters = PlayerCharacter.where(char_stat: SpecialCode.get_code('char_stat','active')).where('turns < 200')
     @updated_count = 0
     for pc in @player_characters
       begin
@@ -251,7 +251,7 @@ class Maintenance < ActiveRecord::Base
 
   def self.creature_maintenance
     @@report << "Creature maintenance"
-    Creature.find(:all, :conditions => ['armed = true AND being_fought > 0']).each{|c|
+    Creature.where(armed: true).where('being_fought > 0').each{|c|
     begin
       c.lock!
       c.number_alive += c.being_fought

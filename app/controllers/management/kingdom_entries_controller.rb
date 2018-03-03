@@ -14,12 +14,12 @@ class Management::KingdomEntriesController < ApplicationController
   end
 
   def edit
-    @kingdom_entry = KingdomEntry.find(:first, :conditions => ['kingdom_id = ?', session[:kingdom][:id]])
+    @kingdom_entry = KingdomEntry.find_by(kingdom_id: session[:kingdom][:id])
     @entry_types = SpecialCode.get_codes_and_text('entry_limitations')
   end
 
   def update
-    @kingdom_entry = KingdomEntry.find(:first, :conditions => ['kingdom_id = ?', session[:kingdom][:id]])
+    @kingdom_entry = KingdomEntry.find_by(kingdom_id: session[:kingdom][:id])
     @kingdom_entry.allowed_entry = params[:kingdom_entry][:allowed_entry]
     if @kingdom_entry.save
       session[:kingdom].reload

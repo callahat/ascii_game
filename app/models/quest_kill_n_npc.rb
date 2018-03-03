@@ -2,7 +2,7 @@ class QuestKillNNpc < QuestReq
   #belongs_to :kingdom
 
   has_many :log_quest_kill_n_npcs
-  
+
   validates_presence_of :quest_id,:quantity,:detail
   validates_inclusion_of :quantity, :in => 1..100000, :message => ' must be between 1 and 100000.'
   

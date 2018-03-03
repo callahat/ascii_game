@@ -27,9 +27,9 @@ class Management::FeaturesController < ApplicationController
     @kingdom_id = session[:kingdom][:id]
     @player_id = session[:player][:id]
     @image = @feature.image || Image.new(params[:image])
-    @images = Image.find(:all,
-                :conditions => ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
-                @player_id,@kingdom_id,SpecialCode.get_code('image_type', 'kingdom')], :order => 'name')
+    @images = Image.where(
+                ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
+                @player_id,@kingdom_id,SpecialCode.get_code('image_type', 'kingdom')]).order(:name)
   end
   
   def create
@@ -59,9 +59,10 @@ class Management::FeaturesController < ApplicationController
     @image = @feature.image
     @kingdom_id = session[:kingdom][:id]
     @player_id = session[:player][:id]
-    @images = Image.find(:all,
-                :conditions => ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
-                @player_id,@kingdom_id,SpecialCode.get_code('image_type', 'kingdom')], :order => 'name')
+    @images = Image.where(image_type: SpecialCode.get_code('image_type', 'kingdom'))
+                   .where(:conditions => ['(public = true or player_id = ? or kingdom_id = ?)',
+                          @player_id,@kingdom_id,])
+                   .order(:name)
     if !is_feature_owner || !is_feature_not_in_use
       redirect_to :action => 'index'
       return
@@ -172,7 +173,7 @@ class Management::FeaturesController < ApplicationController
     #create the peasant feature encounters if applicable
     #must have the peasant creature and event in the database or this will fail
     flash[:notice] = ''
-    @peasant = Creature.find(:first, :conditions => ['name = ?', 'Peasant'])
+    @peasant = Creature.find_by(name: 'Peasant')
     if @peasant.nil?
       flash[:notice] += 'The Peasants haven\'t been created yet!<br/>'
     elsif !@feature.num_occupants.nil? && @feature.num_occupants > 0
@@ -228,7 +229,7 @@ class Management::FeaturesController < ApplicationController
   
 protected
   def good_event
-    if Event.find(:first,:conditions => ['armed = true AND (kingdom_id = ? or player_id  = ?) AND id = ?', session[:kingdom][:id], session[:player][:id], params[:feature_event][:event_id]])
+    if Event.where(armed: true, id: params[:feature_event][:event_id]).find_by(['kingdom_id = ? or player_id  = ?', session[:kingdom][:id], session[:player][:id]])
       return true
     else
       flash[:notice] = "You can't use that event"

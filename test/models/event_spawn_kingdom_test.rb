@@ -11,7 +11,7 @@ class EventSpawnKingdomTest < ActiveSupport::TestCase
 											:name => 'Created event name',
 											:armed => 1,
 											:cost => 50}
-		@kingdom = Kingdom.find(1)
+		@kingdom = kingdoms(:kingdom_one)
 	end
 
 	test "spawn kingdom event" do

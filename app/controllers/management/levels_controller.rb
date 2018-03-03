@@ -9,7 +9,7 @@ class Management::LevelsController < ManagementController
 #  verify :method => :post, :only => [ :create, :update ], :redirect_to => { :action => :index }
 
   def show
-    @level = @kingdom.levels.find(:first, :conditions => ['id = ?', params[:id] ] )
+    @level = @kingdom.levels.find_by(id: params[:id])
   end
 
   def new
@@ -31,7 +31,7 @@ class Management::LevelsController < ManagementController
       redirect_to mgmt_levels_new_url()
     else
       if @level.save
-        @emtpy_feature = Feature.find(:first, :conditions => ['name = ? and kingdom_id = ? and player_id = ?', "\nEmpty", -1, -1])
+        @emtpy_feature = Feature.find_by(name: "\nEmpty", kingdom_id: -1, player_id: -1)
         LevelMap.gen_level_map_squares(@level, @emtpy_feature)
         flash[:notice] = 'Level ' + @level.level.to_s + ' was successfully created.'
         flash[:notice] += '<br/>' + @savecount.to_s + ' map squares out of ' + (@level.maxy * @level.maxx).to_s + ' created.'
@@ -61,7 +61,7 @@ class Management::LevelsController < ManagementController
     else
       0.upto(@level.maxy-1){|y|
         0.upto(@level.maxx-1){|x|
-          @temp = @level.level_maps.find(:all, :conditions => ['ypos = ? and xpos = ?', y, x]).last
+          @temp = @level.level_maps.where(ypos: y, xpos: x).last
           Rails.logger.info @temp.feature.name == "\nEmpty"
           if params[:map][y.to_s][x.to_s] != "" && (@temp.feature_id.to_i != params[:map][y.to_s][x.to_s].to_i) &&
              (@temp.feature.nil? || @temp.feature.name[0..0] != "\n" || @temp.feature.name == "\nEmpty" )
@@ -111,7 +111,7 @@ protected
     Rails.logger.info "Calculating cost of updated kingdom level, one feature at a time"
     0.upto(@level.maxy-1){|y|
       0.upto(@level.maxx-1){|x|
-        old = @level.level_maps.find(:all, :conditions => ['ypos = ? and xpos = ?', y, x]).last.feature
+        old = @level.level_maps.where(ypos: y, xpos: x).last.feature
         new = ( params[:map][y.to_s][x.to_s] && params[:map][y.to_s][x.to_s] != "" ?
                   Feature.find(params[:map][y.to_s][x.to_s]) : nil )
         Rails.logger.info "#{ new ? new.id : 'Nothing' } - #{ old ? old.id : 'Nothing' }"

@@ -17,7 +17,7 @@ class EventMoveLocal < EventLifeNeutral
         @inf_flag = false #flag that will be true if player can enter kingdom, and contact possible disease
       
         #gotta check for the player not being allowed in.
-        if who.kingdom_bans.find(:first, :conditions => ['kingdom_id = ?', self.level.kingdom_id] )
+        if who.kingdom_bans.find_by(kingdom_id: self.level.kingdom_id)
           @message = '"You are prevented from entry, by order of the king" a gaurd shouts'
         elsif SpecialCode.get_code('entry_limitations','no one') == self.level.kingdom.kingdom_entry.allowed_entry
           @message = '"No one may enter the kingdom today" the gaurd explains'

@@ -16,7 +16,7 @@
    <tr>
      <td><%=h @y %></td>
 <%   while @x <= @world.maxbigx 
-        square = WorldMap.find(:all, :conditions => ['world_id = ? and bigypos = ? and bigxpos = ?', session[:wid], @y, @x]) %>
+        square = WorldMap.where(world_id: session[:wid], bigypos: @y, bigxpos: @x) %>
     <td>
       <%= radio_button "map", "loc", "#{@x},#{@y}", :disabled => square.size > 0 %>
     </td>

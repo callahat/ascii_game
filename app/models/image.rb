@@ -22,7 +22,7 @@ class Image < ActiveRecord::Base
   end
   
   def self.new_castle(k)
-    @image = Image.find(:first, :conditions => ['name = ? and kingdom_id = ? and player_id = ?', 'DEFAULT CASTLE', -1, -1])
+    @image = Image.find_by(name: 'DEFAULT CASTLE', kingdom_id: -1, player_id: -1)
     @new_image = Image.deep_copy(@image)
     @new_image.kingdom_id = k.id
     @new_image.name = k.name + " Castle Image"

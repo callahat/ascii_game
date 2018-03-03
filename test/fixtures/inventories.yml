@@ -23,13 +23,18 @@ pcinv_4:
   kind:     "PlayerCharacterItem"
 pcinv_5:
   owner:    sick_pc
-  item_id:  item_3
+  item:     item_3
   quantity: 9
   kind:     "PlayerCharacterItem"
 pcinv_6:
-  player_character: test_pc_one
+  owner:    test_pc_one
   item:     item_1
   quantity: 1
+  kind:     "PlayerCharacterItem"
+pcinv_7:
+  owner:    test_pc_one
+  item:     cool_item
+  quantity: 0
   kind:     "PlayerCharacterItem"
 
 #
@@ -64,10 +69,10 @@ kinv_1:
   item:     item_1
   quantity: 1
   kind:     "KingdomItem"
-<% 2.upto(31){|i| %>
+<% 2.upto(31) do |i| %>
 kinv_<%= i %>:
-  owner: kingdom_one
+  owner:    kingdom_one
   item:     item_<%= i %>
   quantity: 100
   kind:     "KingdomItem"
-<% } %>
+<% end %>

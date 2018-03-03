@@ -6,7 +6,7 @@ class CurrentEventTest < ActiveSupport::TestCase
 		@feature_ne = Feature.find_by_name("Feature Nothing")
 		@feature_c = Feature.find_by_name("Creature Feature One")
 		@feature_m = Feature.find_by_name("Feature Multi")
-		@level = Level.find(:first, :conditions => ["kingdom_id = 1 and level = 0"] )
+		@level = kingdoms(:kingdom_one).levels.find_by(level: 0)
 		@world = World.find_by_name("WorldOne")
 
 		#starting priority defaults at zero,btw
@@ -14,7 +14,7 @@ class CurrentEventTest < ActiveSupport::TestCase
 	end
 
 	test "next event on feature with no events" do
-		@location = @level.level_maps.find(:first, :conditions => ['xpos = 2 and ypos = 2'])
+		@location = @level.level_maps.find_by(xpos: 2, ypos: 2)
 		@current_k_event.update_attribute(:location_id, @location.id)
 		@next_pri, @next_ev = @current_k_event.next_event
 		assert @next_pri.nil?
@@ -22,7 +22,7 @@ class CurrentEventTest < ActiveSupport::TestCase
 	end
 	
 	test "next event on feature with one priority level one auto" do
-		@location = @level.level_maps.find(:first, :conditions => ['xpos = 1 and ypos = 1'])
+		@location = @level.level_maps.find_by(xpos: 1, ypos: 1)
 		@current_k_event.update_attribute(:location_id, @location.id)
 		@next, @ev = @current_k_event.next_event
 
@@ -36,7 +36,7 @@ class CurrentEventTest < ActiveSupport::TestCase
 	end
 	
 	test "next event on feature with multiple priority levels" do
-		@location = @level.level_maps.find(:first, :conditions => ['xpos = 0 and ypos = 0'])
+		@location = @level.level_maps.find_by(xpos: 0, ypos: 0)
 		@current_k_event.update_attribute(:location_id, @location.id)
 		@next, @ev = @current_k_event.next_event
 		
@@ -64,8 +64,8 @@ class CurrentEventTest < ActiveSupport::TestCase
 	end
 	
 	test "create new feature event based on pc location" do
-		@kl = @level.level_maps.find(:first, :conditions => ['xpos = 2 and ypos = 2'])
-		@wm = @world.world_maps.find(:first, :conditions => ['xpos = 1 and ypos = 1 and bigxpos = 0 and bigypos = 0'])
+		@kl = @level.level_maps.find_by(xpos: 2, ypos: 2)
+		@wm = @world.world_maps.find_by(xpos: 1, ypos: 1, bigxpos: 0, bigypos: 0)
 		
 		@current_loc_event = CurrentEvent.make_new(@pc, @kl.id)
 		assert_equal CurrentKingdomEvent, @current_loc_event.class
@@ -87,7 +87,7 @@ class CurrentEventTest < ActiveSupport::TestCase
 		joined, msg = LogQuest.join_quest(@pc, q.id)    
 		assert joined
 
-		@kl = @level.level_maps.find(:first, :conditions => ['xpos = 0 and ypos = 0'])
+		@kl = @level.level_maps.find_by(xpos: 0, ypos: 0)
 		@current_loc_event = CurrentEvent.make_new(@pc, @kl.id)
 		assert @current_loc_event.class == CurrentKingdomEvent
 		
@@ -126,9 +126,8 @@ class CurrentEventTest < ActiveSupport::TestCase
 		@next, @it = @current_loc_event.complete
 		assert @next == 7
 		
-		@de = @pc.done_local_events.find(	:first,
-																			:conditions => ['event_id = ? and location_id = ?',
-																			@current_loc_event.event_id, @current_loc_event.location_id])
+		@de = @pc.done_local_events.find_by(event_id: @current_loc_event.event_id,
+																				location_id: @current_loc_event.location_id)
 		@pc.log_quests.find_by_quest_id(q.id).reqs.reload
 		assert_equal 5, @pc.log_quests.find_by_quest_id(q.id).reqs.size
 		assert @de

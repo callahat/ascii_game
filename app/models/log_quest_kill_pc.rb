@@ -3,7 +3,7 @@ class LogQuestKillPc < LogQuestReq
   belongs_to :player_character, :foreign_key => 'detail'
   
   def self.complete_req(pcid,kill_pcid)
-    @lq = LogQuestKillPc.find(:all, :conditions => ['owner_id = ? AND detail = ?', pcid, kill_pcid])
+    @lq = LogQuestKillPc.where(owner_id: pcid, detail: kill_pcid)
     
     for lq in @lq
       lq.destroy

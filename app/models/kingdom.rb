@@ -15,19 +15,19 @@ class Kingdom < ActiveRecord::Base
   has_many :kingdom_items, :foreign_key => "owner_id"
   has_many :levels, ->{ order(:level) }
   has_many :npcs, ->{ order(:name) }
-  has_many :guards, ->{ where(['is_hired = true AND healths.wellness != ?',
+  has_many :guards, ->{ joins(:health).where(['is_hired = true AND healths.wellness != ?',
                                SpecialCode.get_code('wellness','dead')]) },
                     :class_name => 'NpcGuard', :join_table => :health
-  has_many :merchants, ->{ where(['is_hired = true AND healths.wellness != ?',
+  has_many :merchants, ->{ joins(:health).where(['is_hired = true AND healths.wellness != ?',
                                   SpecialCode.get_code('wellness','dead')]) },
                     :class_name => 'NpcMerchant', :join_table => :health
-  has_many :hireable_guards, ->{ where(['is_hired = false AND healths.wellness != ?',
+  has_many :hireable_guards, ->{ joins(:health).where(['is_hired = false AND healths.wellness != ?',
                                         SpecialCode.get_code('wellness','dead')]) },
                     :class_name => 'NpcGuard', :join_table => :health
-  has_many :hireable_merchants, ->{ where(['is_hired = false AND healths.wellness != ?',
+  has_many :hireable_merchants, ->{ joins(:health).where(['is_hired = false AND healths.wellness != ?',
                                            SpecialCode.get_code('wellness','dead')])},
            :class_name => 'NpcMerchant', :join_table => :health
-  has_many :live_npcs, ->{ where(['is_hired = true AND healths.wellness != ?',
+  has_many :live_npcs, ->{ joins(:health).where(['is_hired = true AND healths.wellness != ?',
                                   SpecialCode.get_code('wellness','dead')]).order(:name) },
                        :class_name => 'Npc', :join_table => :health
   has_many :pandemics, :foreign_key => 'owner_id'
@@ -39,9 +39,9 @@ class Kingdom < ActiveRecord::Base
   has_many :kingdom_empty_shops
   has_many :kingdom_notices, ->{ order("datetime DESC") }
   
-  has_many :pref_list_creatures, ->{ order('creatures.public,creatures.name') }, :join_table => 'creature'
-  has_many :pref_list_events, ->{ order('events.name') }, :join_table => 'event'
-  has_many :pref_list_features, ->{ order('features.public,features.name') }, :join_table => 'feature'
+  has_many :pref_list_creatures, ->{ joins(:creature).order('creatures.public,creatures.name') }
+  has_many :pref_list_events, ->{ joins(:event).order('events.name') }
+  has_many :pref_list_features, ->{ joins(:feature).order('features.public,features.name') }
   
   has_many :pref_lists
   
@@ -51,7 +51,7 @@ class Kingdom < ActiveRecord::Base
   
   def self.pay_tax(tax, kingdom_id)
     Kingdom.transaction do
-      @kingdom = self.find(kingdom_id, :lock => true)
+      @kingdom = self.find(kingdom_id).lock!
       @kingdom.gold += tax
       @kingdom.save!
     end
@@ -122,7 +122,7 @@ class Kingdom < ActiveRecord::Base
   end
 
   def build_the_rest(wm)
-    @emtpy_feature = Feature.find(:first, :conditions => ['name = ? and kingdom_id = -1 and player_id = -1', "\nEmpty"])
+    @emtpy_feature = Feature.find_by(name: "\nEmpty", kingdom_id: -1, player_id: -1)
     @unlimited = SpecialCode.get_code('event_rep_type','unlimited')
     @ec = EventCastle.sys_gen!(:name => "\nCastle #{self.name} event",
                               :event_rep_type => @unlimited)

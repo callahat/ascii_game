@@ -18,21 +18,21 @@ class CharacterController < ApplicationController
   def menu
     #the menu for dealing with your character(s)
     @player_characters = @player.player_characters
-    @active_chars = @player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","active")])
-    @retired_chars = @player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","retired")])
-    @dead_chars = @player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","final death")])
+    @active_chars = @player_characters.active
+    @retired_chars = @player_characters.retired
+    @dead_chars = @player_characters.dead
   end
 
   def choose_character
     #code to load up a character into the session to play
-    @select_chars = @player.player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","active")])
+    @select_chars = @player.player_characters.active
     @next_action = 'do_choose'
   end
 
   def do_choose
     clear_fe_data
     
-    @player_character = @player.player_characters.find(:first, :conditions => ['id = ?', params[:id]])
+    @player_character = @player.player_characters.find_by(id: params[:id])
     if @player_character
       session[:player_character] = nil
       session[:player_character] = @player_character
@@ -46,7 +46,7 @@ class CharacterController < ApplicationController
 
   def edit_character
     #code to load up a character into the session to play
-    @select_chars = @player.player_characters.find(:all, :conditions => ['char_stat != ?', SpecialCode.get_code("char_stat","deleted")])
+    @select_chars = @player.player_characters.not_deleted
     @next_action = 'do_image_update'
   end
 
@@ -85,8 +85,8 @@ class CharacterController < ApplicationController
 
   def new
     #code to create a new character
-    @c_classes = CClass.find(:all,:order => 'name')
-    @races = Race.find(:all,:order => 'name')
+    @c_classes = CClass.all.order(:name)
+    @races = Race.all.order(:name)
     session[:nplayer_character] = PlayerCharacter.new
   end
 
@@ -101,7 +101,7 @@ class CharacterController < ApplicationController
     
       #give the character a name, pick a kingdom, let the good tiems roll
       #mainly create the player's character stats
-      @kingdoms = Kingdom.find(:all, :conditions => ['id > -1'])
+      @kingdoms = Kingdom.where(['id > -1'])
       @player_character = session[:nplayer_character]
 
       @ori_image = @race.image
@@ -160,7 +160,7 @@ class CharacterController < ApplicationController
     session[:nplayer_character][:name] = params[:player_character][:name]
     session[:nplayer_character][:player_id] = @player.id
 
-    @kingdom = Kingdom.find(:first, :conditions => ['id = ?', params[:kingdom][:id].to_i])
+    @kingdom = Kingdom.find(params[:kingdom][:id])
     session[:nplayer_character][:bigx] = @kingdom.bigx
     session[:nplayer_character][:bigy] = @kingdom.bigy
     session[:nplayer_character][:in_world] = @kingdom.world_id
@@ -179,9 +179,9 @@ class CharacterController < ApplicationController
     end
 
     #make the player character equip loc rows!
-    @equip_locs = RaceEquipLoc.find(:all, :conditions => ['race_id = ?', pc[:race_id]])
+    @equip_locs = RaceEquipLoc.where(race_id: pc[:race_id])
     #but make sure they haven't already been populate!
-    @pc_equip_locs = PlayerCharacterEquipLoc.find(:all, :conditions => ['player_character_id = ?', pc[:id]])
+    @pc_equip_locs = PlayerCharacterEquipLoc.where(player_character_id: pc[:id])
 
     if @pc_equip_locs.size >= @equip_locs.size
       flash[:notice] += 'Equiplocs already created!<br/>'
@@ -228,7 +228,7 @@ class CharacterController < ApplicationController
     #code to delete a character completely. Don't know why someone
     #would want to do this, as they can have several chars. Unless
     #its a soft game where characters never really die.
-    @select_chars = @player.player_characters.find(:all, :conditions => ['char_stat != ?', SpecialCode.get_code("char_stat","deleted")])
+    @select_chars = @player.player_characters.not_deleted
     @next_action = 'do_destroy'
   end
 
@@ -271,7 +271,7 @@ class CharacterController < ApplicationController
     #play them anymore. These players lose all their stuff, but keep
     #their stats and other attributes, as well as what they are
     #equipped with. All gold and inventory items are forfit though.
-    @select_chars = @player.player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","active")])
+    @select_chars = @player.player_characters.active
     @next_action = 'do_retire'
   end
 
@@ -303,12 +303,12 @@ class CharacterController < ApplicationController
   def unretire
     #Bring a character back into action. Make sure this won't bring
     #the player's number of active characters over the limit though.
-    @select_chars = @player.player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","retired")])
+    @select_chars = @player.player_characters.retired
     @next_action = 'do_unretire'
   end
 
   def do_unretire
-    if @player.player_characters.find(:all, :conditions => ['char_stat = ?', SpecialCode.get_code("char_stat","active")]).size >= 3
+    if @player.player_characters.active.size >= 3
       flash[:notice] = 'Cannot have more than three active characters.'
       redirect_to :action => 'menu'
       return

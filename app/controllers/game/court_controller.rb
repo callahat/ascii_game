@@ -57,7 +57,8 @@ class Game::CourtController < ApplicationController
     PlayerCharacter.transaction do
       @pc.lock!
 
-      @event = Feature.find(:first, :conditions => ['name = ?', "\nCastle #{@pc.present_kingdom.name}"]).feature_events.find(:first, :conditions => ['event_id = ?', params[:id]])
+      # could break if the feature is not found
+      @event = Feature.find_by(name: "\nCastle #{@pc.present_kingdom.name}").feature_events.find_by(event_id: params[:id])
 
       if @event
         @event_move = @event.event

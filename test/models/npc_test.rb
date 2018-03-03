@@ -2,11 +2,11 @@ require 'test_helper'
 
 class NpcTest < ActiveSupport::TestCase
 	def setup
-		@npc = Npc.find_by_name("Healthy Npc")
-		@npc2 = Npc.find_by_name("Sick NPC")
-		@kingdom = Kingdom.find(1)
-		@pc = PlayerCharacter.find_by_name("Test PC One")
-		@sick_pc = PlayerCharacter.find_by_name("sick pc")
+		@npc = npcs(:npc_one)
+		@npc2 = npcs(:sick_npc)
+		@kingdom = kingdoms(:kingdom_one)
+		@pc = player_characters(:test_pc_one)
+		@sick_pc = player_characters(:sick_pc)
 	end
 
 	test "set npc stats" do
@@ -91,32 +91,30 @@ class NpcTest < ActiveSupport::TestCase
 	
 	test "npc manufacture" do
 		@pc.update_attribute(:gold, 150)
-		@item1 = Item.find_by_name("Item1")
-		@item2 = Item.find_by_name("Item2")
+		@item1 = items(:item_1)
+		@item2 = items(:cool_item)
 		assert_difference '@npc.gold', +0 do
 			assert_difference '@pc.gold', +0 do
-				assert_difference '@pc.items.where(:item_id => 1).first.quantity', +0 do
+				assert_difference "@pc.items.where(item_id: #{@item1.id}).first.quantity", +0 do
 					res, msg = @npc.manufacture(@pc, -1)
 					assert !res
 					assert msg =~ /cannot make that/
 				end
 			end
 		end
-		
+
 		assert_difference '@npc.gold', +0 do
 			assert_difference '@pc.gold', +0 do
-				assert_difference '@pc.items.where(:item_id => 1).first.quantity', +0 do
-					res, msg = @npc.manufacture(@pc, @item2.id)
-					assert !res
-					assert msg =~ /cannot make #{@item2.name}/, msg
-				end
+				res, msg = @npc.manufacture(@pc, @item2.id)
+				assert !res
+				assert msg =~ /cannot make #{@item2.name}/, msg
 			end
 		end
-		
+
 		@pc.update_attribute(:gold, 0)
 		assert_difference '@npc.gold', +0 do
 			assert_difference '@pc.gold', +0 do
-				assert_difference '@pc.items.where(:item_id => 1).first.quantity', +0 do
+				assert_difference "@pc.items.where(:item_id => #{@item1.id}).first.quantity", +0 do
 					res, msg = @npc.manufacture(@pc, @item1.id)
 					assert !res
 					assert msg =~ /Insufficient gold/
@@ -130,7 +128,7 @@ class NpcTest < ActiveSupport::TestCase
 		pc_orig_gold = @pc.gold
 		orig_kingdom_gold = @npc.kingdom.gold
 		assert_difference '@npc.gold', +50 do
-			assert_difference '@pc.items.where(:item_id => 1).first.quantity', +1 do
+			assert_difference "@pc.items.where(:item_id => #{@item1.id}).first.quantity", +1 do
 				res, msg = @npc.manufacture(@pc, @item1.id)
 				assert res
 				assert msg =~ /Bought/
@@ -139,7 +137,7 @@ class NpcTest < ActiveSupport::TestCase
 		assert pc_orig_gold - @pc.gold >= 50
 		assert (orig_kingdom_gold + pc_orig_gold - @pc.gold - 50) == @npc.kingdom.gold
 		
-		@pc.items.where(:item_id => 1).first.destroy
+		@pc.items.where(:item_id => @item1.id).first.destroy
 		
 		npc_orig_gold = @npc.gold
 		pc_orig_gold = @pc.gold
@@ -151,8 +149,8 @@ class NpcTest < ActiveSupport::TestCase
 		end
 		assert pc_orig_gold - @pc.gold >= 50
 		assert (orig_kingdom_gold + pc_orig_gold - @pc.gold - 50) == @npc.kingdom.gold
-		assert @pc.items.exists?(:item_id => 1)
-		assert @pc.items.find(:first, :conditions => {:item_id => 1}).quantity == 1
+		assert @pc.items.exists?(:item_id => @item1.id)
+		assert @pc.items.find_by(:item_id => @item1.id).quantity == 1
 	end
 	
 	test "npc cure disease" do
@@ -256,10 +254,11 @@ class NpcTest < ActiveSupport::TestCase
 	
 	test "npc train" do
 		max_train = @npc.npc_merchant_detail.max_skill_taught
+		initial_training_sales = @npc.npc_merchant_detail.trainer_sales
 		
 		Stat.symbols.each{|at|
 			@stat = Stat.new
-			base_at = @pc.base_stat[at]
+			base_at = @pc.reload.base_stat[at]
 			
 			#negative stat
 			@stat[at] = -1
@@ -268,13 +267,13 @@ class NpcTest < ActiveSupport::TestCase
 			assert @stat.errors.size == 1
 			assert @stat.errors.full_messages.first =~ /negative/
 			@stat.errors.clear
-			
+
 			#greater than npc is able
-			@stat[at] = (base_at * max_train / 100.0).to_i + 1
+			@stat[at] = (base_at * (max_train / 100.0) + 1).to_i + 1
 			res, msg = @npc.train(@pc, @stat)
-			assert !res
+			assert !res, msg
 			assert @stat.errors.size == 1
-			assert @stat.errors.full_messages.first =~ /cannot gain/
+			assert @stat.errors.full_messages.first =~ /cannot gain/, @stat.errors.full_messages
 			@stat.errors.clear
 			
 			#within limit, not enough cash
@@ -286,7 +285,7 @@ class NpcTest < ActiveSupport::TestCase
 			assert msg =~ /Not enough gold/
 			
 			#at limit, not enough cash
-			@stat[at] = (base_at * max_train / 100.0).to_i - 1
+			@stat[at] = (base_at * max_train / 100.0).to_i
 			res, msg = @npc.train(@pc, @stat)
 			assert !res, msg
 			assert_equal 0, @stat.errors.size, @stat.errors.full_messages.inspect
@@ -314,6 +313,8 @@ class NpcTest < ActiveSupport::TestCase
 					end
 				end
 			end
+
+			@npc.npc_merchant_detail.update_attributes trainer_sales: initial_training_sales
 		}
 		
 		#multi attribute update
@@ -352,36 +353,36 @@ class NpcTest < ActiveSupport::TestCase
 	end
 	
 	test "npc sell used to pc" do
-		@item4 = Item.find(4)
-		@item5 = Item.find(5)
+		@item4 = items(:item_4)
+		@item5 = items(:item_5)
 		res, msg = @npc.sell_used_to(@pc, @item5.id)
 		assert !res
 		assert msg =~ /does not have one/
 		
 		@pc.update_attribute(:gold, 0)
 		
-		assert @pc.items.find(:first, :conditions => ["item_id = ?", @item4.id]).nil?
+		assert @pc.items.find_by(item_id: @item4.id).nil?
 		assert_difference '@npc.gold', +0 do
-			assert_difference '@npc.npc_stocks.find(:first, :conditions => ["item_id = ?", @item4.id]).quantity', -0 do
+			assert_difference '@npc.npc_stocks.find_by(item_id: @item4.id).quantity', -0 do
 				res, msg = @npc.sell_used_to(@pc, @item4.id)
 				assert !res
 				assert msg =~ /price range/
 			end
 		end
-		assert @pc.items.find(:first, :conditions => ["item_id = ?", @item4.id]).nil?
+		assert @pc.items.find_by(item_id: @item4.id).nil?
 		
 		@pc.update_attribute(:gold, 1000)
 		npc_orig_gold = @npc.gold
 		pc_orig_gold = @pc.gold
 		orig_kingdom_gold = @npc.kingdom.gold
 		assert_difference '@npc.gold', +@item4.used_price do
-			assert_difference '@npc.npc_stocks.find(:first, :conditions => ["item_id = ?", @item4.id]).quantity', -1 do
+			assert_difference '@npc.npc_stocks.find_by(item_id: @item4.id).quantity', -1 do
 				res, msg = @npc.sell_used_to(@pc, @item4.id)
 				assert res
 				assert msg =~ /Bought a/
 			end
 		end
-		assert @pc.items.find(:first, :conditions => ["item_id = ?", @item4.id]).quantity == 1
+		assert @pc.items.find_by(item_id: @item4.id).quantity == 1
 		@npc.reload
 		assert pc_orig_gold - @pc.gold == (@npc.gold - npc_orig_gold) + (@npc.kingdom.gold - orig_kingdom_gold)
 		
@@ -391,15 +392,15 @@ class NpcTest < ActiveSupport::TestCase
 	end
 	
 	test "npc buy from pc" do
-		@item1 = Item.find(1)
-		@item5 = Item.find(5)
+		@item1 = items(:item_1)
+		@item5 = items(:item_5)
 		
 		res, msg = @npc.buy_from(@pc, @item5.id)
 		assert !res
 		assert msg =~ /not have one/
 		
 		assert_difference '@pc.gold', +@item1.resell_value do
-			assert_difference '@npc.npc_stocks.find(:first, :conditions => ["item_id = ?", @item1.id]).quantity', +1 do
+			assert_difference '@npc.npc_stocks.find_by(item_id: @item1.id).quantity', +1 do
 				res, msg = @npc.buy_from(@pc, @item1.id)
 				assert res
 				assert msg =~ /Sold/

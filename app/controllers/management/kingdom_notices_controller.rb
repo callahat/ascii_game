@@ -17,12 +17,12 @@ class Management::KingdomNoticesController < ApplicationController
   end
 
   def new
-    @shows = SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'shown_to'])
+    @shows = SpecialCode.get_codes_and_text('shown_to')
     @kingdom_notice = KingdomNotice.new
   end
 
   def create
-    @shows = SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'shown_to'])
+    @shows = SpecialCode.get_codes_and_text('shown_to')
     @kingdom_notice = KingdomNotice.new(params[:kingdom_notice])
     @kingdom_notice.datetime = Time.now.strftime("%I:%M%p %m/%d/%Y")
     @kingdom_notice.kingdom_id = session[:kingdom][:id]
@@ -35,13 +35,13 @@ class Management::KingdomNoticesController < ApplicationController
   end
 
   def edit
-    @shows = SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'shown_to'])
-    @kingdom_notice = KingdomNotice.find(:first, :conditions => ['id = ?', params[:id]])
+    @shows = SpecialCode.get_codes_and_text('shown_to')
+    @kingdom_notice = KingdomNotice.find_by(id: params[:id])
   end
 
   def update
-    @shows = SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'shown_to'])
-    @kingdom_notice = KingdomNotice.find(:first, :conditions => ['id = ?', params[:id]])
+    @shows = SpecialCode.get_codes_and_text('shown_to')
+    @kingdom_notice = KingdomNotice.find_by(id: params[:id])
     
     verify_notice_owner
     
@@ -54,7 +54,7 @@ class Management::KingdomNoticesController < ApplicationController
   end
 
   def destroy
-    @kingdom_notice = KingdomNotice.find(:first, :conditions => ['id = ?', params[:id]])
+    @kingdom_notice = KingdomNotice.find_by(id: params[:id])
     verify_notice_owner
   
     @kingdom_notice.destroy

@@ -17,10 +17,10 @@
 <%= text_field 'base_item', 'price'  %></p>
 
 <p><label for="base_item_equip_loc">Equip loc</label><br/>
-<%= collection_select('base_item',                      'equip_loc',                      SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'equip_loc']),                       'col_num', 'text', {:include_blank => true} ) %></p>
+<%= collection_select('base_item',                      'equip_loc',                      SpecialCode.get_codes_and_text('equip_loc'),                       'col_num', 'text', {:include_blank => true} ) %></p>
 
 <p><label for="base_item_race_body_type">Race body type</label><br/>
-<%= collection_select('base_item',                      'race_body_type',                      SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'race_body_type']),                       'col_num', 'text', {:include_blank => true} ) %></p>
+<%= collection_select('base_item',                      'race_body_type',                      SpecialCode.get_codes_and_text('race_body_type'),                       'col_num', 'text', {:include_blank => true} ) %></p>
 
 <!--[eoform:base_item]-->
 

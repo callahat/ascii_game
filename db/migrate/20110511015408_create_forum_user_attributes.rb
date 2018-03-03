@@ -31,14 +31,14 @@ class CreateForumUserAttributes < ActiveRecord::Migration
     #end
     p "Updating thread post counts"
     ForumNodeThread.all.each do |fn|
-      visible_posts = fn.posts.find(:all, :conditions => { :is_hidden => false, :is_deleted => false, :is_mods_only => false } )
+      visible_posts = fn.posts.where( :is_hidden => false, :is_deleted => false, :is_mods_only => false )
       fn.post_count = visible_posts.size
       p fn.last_post_id = visible_posts.last.id if visible_posts.last
       p fn.save
     end
     p "Updating board thred counts"
     ForumNodeBoard.all.each do |fn|
-      visible_threds = fn.threads.find(:all, :conditions => { :is_hidden => false, :is_deleted => false, :is_mods_only => false } )
+      visible_threds = fn.threads.where( :is_hidden => false, :is_deleted => false, :is_mods_only => false )
       fn.post_count = visible_threds.size
       if visible_threds.size > 0
         threds = visible_threds.inject(visible_threds.first){|h,m| h = (h.updated_at >= m.updated_at ? h : m )  } 

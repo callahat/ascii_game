@@ -59,7 +59,7 @@
 <% if @pc && session[:kingdom].player_character_id == @pc.id %><%= link_to 'Kingdom Storerooms', :controller => 'management/kingdom_items' %><% end %>
 </td></tr>
 <tr><td>
-<%= link_to 'NPC\'s of the kingdom', :controller => 'management/kingdom_npcs' %><% if session[:kingdom].npcs.exists?(:is_hired => false) %> (<%= session[:kingdom].npcs.find(:all, :conditions => ['is_hired = ?', false]).size %> new)<% end %>
+<%= link_to 'NPC\'s of the kingdom', :controller => 'management/kingdom_npcs' %><% if session[:kingdom].npcs.exists?(:is_hired => false) %> (<%= session[:kingdom].npcs.where(is_hired: false).count %> new)<% end %>
 </td></tr>
 </table>
 

@@ -13,8 +13,8 @@ class HealthTest < ActiveSupport::TestCase
   
   test "adjusting pc and npc health for stats" do
     npc = Npc.find_by_name("Healthy Npc")
-    pc = PlayerCharacter.find(1)
-    stat = Stat.find_by_kind_and_owner_id("StatPc", 1)
+    pc = player_characters(:pc_one)
+    stat = pc.stat
     assert npc.health.HP == 30
     assert npc.health.base_HP == 30
     assert npc.health.wellness == SpecialCode.get_code('wellness','alive')
@@ -42,7 +42,7 @@ class HealthTest < ActiveSupport::TestCase
   end
   
   test "test health to symbol hash" do
-    health = Health.find(:first)
+    health = Health.first
     health_hash = Health.to_symbols_hash(health)
     assert health_hash.class == Hash
     Health.symbols.each{|sym|

@@ -3,7 +3,7 @@ class LogQuestExplore < LogQuestReq
   belongs_to :event, :foreign_key => 'detail'
   
   def self.complete_req(pcid,event_id)
-    @lq = LogQuestExplore.find(:all, :conditions => ['owner_id = ? AND detail = ?', pcid, event_id])
+    @lq = LogQuestExplore.where(owner_id: pcid, detail: event_id)
     
     for lq in @lq
       lq.destroy

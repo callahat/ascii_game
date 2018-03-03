@@ -2,10 +2,10 @@ require 'test_helper'
 
 class InventoryTest < ActiveSupport::TestCase
 	test "verify inventory fixtures loaded" do
-		assert Inventory.count == 41
-		assert PlayerCharacterItem.count == 6
-		assert NpcStock.count == 4
-		assert KingdomItem.count == 31
+		assert_equal 42, Inventory.count
+		assert_equal  7, PlayerCharacterItem.count
+		assert_equal  4, NpcStock.count
+		assert_equal 31, KingdomItem.count
 	end
 
 	test "remove item" do
@@ -52,12 +52,12 @@ class InventoryTest < ActiveSupport::TestCase
 
 	test "pagination" do
 		assert Inventory.get_page(1).to_a.size == 25, Inventory.get_page(1).size.to_s
-		assert PlayerCharacterItem.get_page(1).to_a.size == 6
-		assert NpcStock.get_page(1).to_a.size == 4
-		assert KingdomItem.get_page(1).to_a.size == 25
-		assert_equal KingdomItem.get_page(2).to_a.size, 6
-		assert KingdomItem.get_page(1,1).to_a.size == 25
-		assert KingdomItem.get_page(2,1).to_a.size == 5
-		assert KingdomItem.get_page(1,2).to_a.size == 1
+		assert_equal  6, PlayerCharacterItem.get_page(1).to_a.size
+		assert_equal  4, NpcStock.get_page(1).to_a.size
+		assert_equal 25, KingdomItem.get_page(1).to_a.size
+		assert_equal  6, KingdomItem.get_page(2).to_a.size
+		assert_equal 25, KingdomItem.get_page(1,kingdoms(:kingdom_one).id).to_a.size
+		assert_equal  5, KingdomItem.get_page(2,kingdoms(:kingdom_one).id).to_a.size
+		assert_equal  1, KingdomItem.get_page(1,kingdoms(:sick_kingdom).id).to_a.size
 	end
 end

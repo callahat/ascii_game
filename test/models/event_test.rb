@@ -2,8 +2,8 @@ require 'test_helper'
 
 class EventTest < ActiveSupport::TestCase
 	test "rep number valid" do
-		@event = Event.new(:kingdom_id => Kingdom.find(:first).id,
-											:player_id => Player.find(:first).id,
+		@event = Event.new(:kingdom_id => Kingdom.first.id,
+											:player_id => Player.first.id,
 											:event_rep_type => SpecialCode.get_code('event_rep_type','unlimited'),
 											:name => 'Created event name',
 											:armed => 1,

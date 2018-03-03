@@ -2,11 +2,11 @@ require 'test_helper'
 
 class NpcBlacksmithItemTest < ActiveSupport::TestCase
 	def setup
-		@npc = Npc.find_by_name("Healthy Npc")
-		@npc2 = Npc.find_by_name("Sick NPC")
-		@knife = BaseItem.find_by_name("knife")
-		@mace = BaseItem.find_by_name("mace")
-		@sword = BaseItem.find_by_name("swerd")
+		@npc = npcs(:npc_one)
+		@npc2 = npcs(:sick_npc)
+		@knife = base_items(:base_item_one)
+		@mace = base_items(:base_item_one_b)
+		@sword = base_items(:base_item_three)
 	end
 
 	test "gen blacksmith item" do

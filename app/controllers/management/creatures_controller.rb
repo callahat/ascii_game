@@ -23,9 +23,9 @@ class Management::CreaturesController < ApplicationController
     @kingdom_id = session[:kingdom][:id]
     @player_id = session[:player][:id]
     @image = @creature.image || Image.new(params[:image])
-    @images = Image.find(:all,
-                :conditions => ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
-                @player_id,@kingdom_id,SpecialCode.get_code('image_type', 'creature')], :order => 'name')
+    @images = Image.where(
+                ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
+                @player_id, @kingdom_id, SpecialCode.get_code('image_type', 'creature')]).order(:name)
   end
 
   def create
@@ -69,9 +69,9 @@ class Management::CreaturesController < ApplicationController
     end
     @kingdom_id = session[:kingdom][:id]
     @player_id = session[:player][:id]
-    @images = Image.find(:all,
-                :conditions => ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
-                @player_id,@kingdom_id,SpecialCode.get_code('image_type', 'creature')], :order => 'name')
+    @images = Image.find(
+                ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
+                @player_id,@kingdom_id,SpecialCode.get_code('image_type', 'creature')]).order(:name)
   end
 
   def update

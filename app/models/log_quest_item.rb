@@ -3,7 +3,7 @@ class LogQuestItem < LogQuestReq
   belongs_to :item, :foreign_key => 'detail'
   
   def complete_req
-    return false unless owner_item = owner.items.find(:first, :conditions => ['item_id = ?', detail])
+    return false unless owner_item = owner.items.find_by(item_id: detail)
     PlayerCharacterItem.transaction do
       owner_item.lock!
       taken = (self.quantity > owner_item.quantity ? owner_item.quantity : self.quantity)

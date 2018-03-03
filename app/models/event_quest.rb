@@ -4,7 +4,7 @@ class EventQuest < Event
   #validates_presence_of :thing_id
 
   def make_happen(pc)
-    lq = pc.log_quests.find(:first, :conditions => ['quest_id = ?', thing_id])
+    lq = pc.log_quests.find_by(quest_id: thing_id)
     return {:controller => 'game/quests', :action => 'do_complete'}, EVENT_COMPLETED, "" if  lq && lq.reqs_met
     return {:controller => 'game/quests', :action => 'index'}, EVENT_INPROGRESS, ""
   end

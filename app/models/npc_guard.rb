@@ -1,7 +1,7 @@
 class NpcGuard < Npc
   def self.generate(kingdom_id)
     @kingdom_name = Kingdom.find(kingdom_id).name
-    @image = Image.find(:first, :conditions => ['name = ? and kingdom_id = ?', @kingdom_name + " Guard Image", kingdom_id])
+    @image = Image.find_by(name: @kingdom_name + " Guard Image", kingdom_id: kingdom_id)
 
     @new_stock_guard = self.create(
         :name => "Guard " + Name.gen_name,
@@ -17,7 +17,7 @@ class NpcGuard < Npc
 
   def self.create_image(kingdom_id)
     @kingdom_name = Kingdom.find(kingdom_id).name
-    @base_image = Image.find(:first, :conditions => ['name = ? and kingdom_id = ? and player_id = ?', "GUARD IMAGE", -1, -1])
+    @base_image = Image.find_by(name: "GUARD IMAGE", kingdom_id: -1, player_id: -1)
     @image = Image.deep_copy(@base_image)
     @image.kingdom_id = kingdom_id
     @image.name = @kingdom_name + " Guard Image"

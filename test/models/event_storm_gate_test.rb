@@ -11,7 +11,7 @@ class EventStormGateTest < ActiveSupport::TestCase
 											:name => 'Created event name',
 											:armed => 1,
 											:cost => 50}
-		@kingdom = Kingdom.find(1)
+		@kingdom = kingdoms(:kingdom_one)
 	end
 
 	test "storm gate" do
@@ -26,7 +26,7 @@ class EventStormGateTest < ActiveSupport::TestCase
 		#test where there are no guards
 		es.level.kingdom.npcs.destroy_all
 		assert_difference 'Battle.count', +0 do
-			@direct, @comp, @msg = es.happens(PlayerCharacter.find(1))
+			@direct, @comp, @msg = es.happens(player_characters(:pc_one))
 		end
 		assert @comp == EVENT_COMPLETED
 		assert @msg =~ /no resistance/

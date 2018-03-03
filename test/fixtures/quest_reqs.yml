@@ -2,37 +2,37 @@
 quest_req_one:
   quest: quest_one
   quantity: 10
-  detail: 1
+  objective: wild_foo
   kind: "QuestCreatureKill"
 quest_req_two:
   quest: quest_one
-  detail: "1"
+  objective: quest_event_one
   kind: "QuestExplore"
 quest_req_three:
   quest: quest_one
   quantity: 1
-  detail: "1"
+  objective: item_1
   kind: "QuestItem"
 quest_req_four:
   quest: quest_one
   quantity: 20
-  detail: "3:1"
+  detail: change_this_out
   kind: "QuestKillNNpc"
 quest_req_five:
   quest: quest_one
-  detail: "2"
+  objective: sick_pc
   kind: "QuestKillPc"
 quest_req_six:
   quest: quest_one
-  detail: 2
+  objective: sick_npc
   kind: "QuestKillSNpc"
   
 quest_req_seven:
   quest: quest_two
-  detail: "10"
+  objective: item_10
   quantity: 1000
   kind: "QuestItem"
 quest_req_eight:
   quest: quest_two
-  detail: "10"
+  objective: quest_event_two
   kind: "QuestExplore"

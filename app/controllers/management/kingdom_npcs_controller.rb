@@ -8,10 +8,11 @@ class Management::KingdomNpcsController < ManagementController
 #  verify :method => :post, :only => [ :hire_merchant, :hire_guard, :turn_away ],         :redirect_to => { :action => :list }
 
   def list
-    @merchs = @kingdom.merchants.find(:all, :include => :health, :order => 'healths.wellness')
-    @guards = @kingdom.guards.find(:all, :include => :health, :order => 'healths.wellness')
-    @npcs_for_hire = @kingdom.npcs.find(:all, :include => :health, :conditions => ['is_hired = ?  AND healths.wellness != ?',
-                        false, SpecialCode.get_code('wellness','dead')])
+    @merchs = @kingdom.merchants.joins(:health).order('healths.wellness')
+    @guards = @kingdom.guards.joins(:health).order('healths.wellness')
+    @npcs_for_hire = @kingdom.npcs.joins(:health) \
+                         .where(is_hired: false)  \
+                         .where.not(healths: { wellness: SpecialCode.get_code('wellness','dead')} )
   end
 
   def show

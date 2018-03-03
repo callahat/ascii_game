@@ -8,22 +8,22 @@ class Name < ActiveRecord::Base
     # 4 - last name     100
     #logical OR, if no change, then this name part is valid
     if @parts | 2 == @parts
-      @first = Name.find(:first, :offset => rand(Name.count)).name + " "
+      @first = Name.offset(rand(Name.count)).first.name + " "
     else
       @first = ""
     end
     #middle names more uncommon
     if @parts | 1 == @parts && (rand > 0.4 || @first == "")
-      @middle = Name.find(:first, :offset => rand(Name.count)).name + " "
+      @middle = Name.offset(rand(Name.count)).first.name + " "
     else
       @middle = ""
     end
     
     if @parts | 4 == @parts
-      @last = Name.find(:first, :offset => rand(Name.count)).name
+      @last = Name.offset(rand(Name.count)).first.name
       
       if rand > 0.25 #then name gets a surfix
-        @surfix = NameSurfix.find(:first,:offset => rand(NameSurfix.count)).name_surfixes
+        @surfix = NameSurfix.offset(rand(NameSurfix.count)).first.name_surfixes
         if @surfix[-1..-1] == "-"
           @last = @surfix[0..-2] + @last
         elsif @surfix[0..0] == "-"

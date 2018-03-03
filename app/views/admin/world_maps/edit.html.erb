@@ -8,7 +8,7 @@
    <tr>
 <%   while @x <= @world.maxx 
      #  square = session[:level_map][@y][@x] 
-        square = @world.world_maps.find(:all, :conditions => ['bigypos = ? and bigxpos = ? and ypos = ? and xpos = ?', session[:bigypos], session[:bigxpos], @y, @x]).last.feature %>
+        square = @world.world_maps.where(bigypos: session[:bigypos], bigxpos: session[:bigxpos], ypos: @y, xpos: @x).last.feature %>
     <td>
       <% if square.nil? %>
          <select name="<%= 'map[' + @y.to_s + '][' + @x.to_s + ']' %>">

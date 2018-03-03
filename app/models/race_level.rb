@@ -136,7 +136,7 @@ class RaceLevel < ActiveRecord::Base
   end
 
   def self.equip_loc_xp(r)
-    @locs = RaceEquipLoc.find(:all, :conditions => ['race_id = ?', r.id]).size
+    @locs = RaceEquipLoc.where(race_id: r.id).count
     num_equip_loc_xp(@locs)
   end
 

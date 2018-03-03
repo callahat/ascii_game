@@ -5,7 +5,7 @@ class KingdomTest < ActiveSupport::TestCase
 		@pc = PlayerCharacter.find_by_name("Test PC One")
 		@feature_k = Feature.find_by_name("Feature Nothing")
 		@kingdom = Kingdom.find_by_name("HealthyTestKingdom")
-		@world_map = WorldMap.find(:last, :conditions => ['xpos = 1 and ypos = 1 and bigxpos = 0 and bigypos = -1'])
+		@world_map = WorldMap.where(xpos: 1, ypos: 1, bigxpos: 0, bigypos: -1).last
 	end
 	
 	test "associations" do

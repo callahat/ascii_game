@@ -9,7 +9,7 @@ class NpcMerchant < Npc
   has_one :npc_merchant_detail, :foreign_key => 'npc_id'
 
   def self.generate(kingdom_id)
-    @new_image = Image.deep_copy(Image.find(:first, :conditions => ['name = ?', 'DEFAULT NPC']))
+    @new_image = Image.deep_copy(Image.find_by(name: 'DEFAULT NPC'))
     @new_image.kingdom_id = kingdom_id
     @new_image.save
 
@@ -138,13 +138,17 @@ class NpcMerchant < Npc
   def train(pc, stats)
     #double check the max skill taught from what was entered
     Stat.symbols.each{|at|
+      available_to_train = (pc.base_stat[at] * ( self.npc_merchant_detail.max_skill_taught / 100.0)).to_i
+      training_points_spent  = (stats[at] + pc.trn_stat[at])
+
       if stats[at] < 0
         stats.errors.add(at, "cannot be negative")
-      elsif (pc.base_stat[at] * ( self.npc_merchant_detail.max_skill_taught / 100.0)).to_i < (stats[at] + pc.trn_stat[at])
-        stats.errors.add(at, "cannot gain " + stats[at].to_s + " points") 
+      elsif training_points_spent > available_to_train
+        stats.errors.add(at, "cannot gain " + stats[at].to_s + " points")
       end
     }
-    return false, "" if stats.errors.size > 0
+
+    return([false, '']) if stats.errors.size > 0
     
     @pretax = stats.sum_points * pc.level * 10
     @tax = (@pretax * self.kingdom.tax_rate / 100.0).to_i
@@ -168,7 +172,7 @@ class NpcMerchant < Npc
   end
   
   def sell_used_to(pc, iid)
-    if @stock = self.npc_stocks.find(:first, :conditions => ['item_id = ?', iid]) and
+    if @stock = self.npc_stocks.find_by(item_id: iid) and
         NpcStock.update_inventory(self.id, @stock.item_id, -1)
       @pretax = @stock.item.used_price
       @tax = (@pretax * (self.kingdom.tax_rate / 100.0)).to_i
@@ -187,7 +191,7 @@ class NpcMerchant < Npc
   end
   
   def buy_from(pc, iid)
-    if @pc_item = pc.items.find(:first, :conditions => ['item_id = ?', iid]) and
+    if @pc_item = pc.items.find_by(item_id: iid) and
         PlayerCharacterItem.update_inventory(pc.id,@pc_item.item_id,-1)
       @cost = @pc_item.item.resell_value
       NpcStock.update_inventory(self.id,@pc_item.item_id,1)

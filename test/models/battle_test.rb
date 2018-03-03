@@ -114,7 +114,7 @@ class BattleTest < ActiveSupport::TestCase
     assert battle.regicide.nil?
     battle.report = {}
     assert battle.enemies.size == 1
-    battle.phys_damage_enemies(@pc, battle.groups.first.enemies)
+    battle.phys_damage_enemies(@pc, battle.groups.first.enemies.to_a)
     assert battle.enemies.size == 1
     assert battle.regicide.nil?
   end
@@ -127,7 +127,7 @@ class BattleTest < ActiveSupport::TestCase
     assert battle.regicide.nil?
     battle.report = {}
     assert_equal 1, battle.enemies.size
-    battle.phys_damage_enemies(@pc, battle.groups.first.enemies)
+    battle.phys_damage_enemies(@pc, battle.groups.first.enemies.to_a)
     battle.reload
     assert_equal 0, battle.enemies.size
     assert_equal @kingdom.id, battle.regicide
@@ -272,7 +272,7 @@ class BattleTest < ActiveSupport::TestCase
     battle1, msg = Battle.new_creature_battle(@pc, @wild_foo, 5, 5, nil)
     battle1.report = {}
     assert battle1.enemies.size == 5
-    battle1.phys_damage_enemies(@pc, battle1.groups.first.enemies)
+    battle1.phys_damage_enemies(@pc, battle1.groups.first.enemies.to_a)
     assert battle1.report[@pc.name].first =~ /wound|miss/ , battle1.report[@pc.name].first
     assert battle1.enemies.size == 5
 
@@ -281,7 +281,7 @@ class BattleTest < ActiveSupport::TestCase
     battle2, msg = Battle.new_creature_battle(@pc, @wimp_c, 10, 10, nil)
     battle2.report = {}
     assert battle2.enemies.size == 10
-    battle2.phys_damage_enemies(@pc, battle2.groups.first.enemies)
+    battle2.phys_damage_enemies(@pc, battle2.groups.first.enemies.to_a)
     battle2.reload
     assert battle2.report[@pc.name].first =~ /kill/, battle2.report[@pc.name].first
     assert_equal 9, battle2.enemies.size
@@ -295,7 +295,7 @@ class BattleTest < ActiveSupport::TestCase
     battle3.report = {}
     assert battle3.enemies.size == 10
     assert battle3.groups.first.name == "10 Wimp Monsters"
-    battle3.phys_damage_enemies(@pc, battle3.groups.first.enemies)
+    battle3.phys_damage_enemies(@pc, battle3.groups.first.enemies.to_a)
     battle3.reload
     assert battle3.report[@pc.name].size == 2
     assert battle3.report[@pc.name][0] =~ /kill/, battle3.report[@pc.name][0]
@@ -320,7 +320,7 @@ class BattleTest < ActiveSupport::TestCase
     battle1, msg = Battle.new_creature_battle(@pc, @wimp_c, 5, 5, nil)
     battle1.report = {}
     assert battle1.enemies.size == 5
-    battle1.mag_damage_enemies(@pc, @weak_spell, battle1.groups.first.enemies)
+    battle1.mag_damage_enemies(@pc, @weak_spell, battle1.groups.first.enemies.to_a)
     assert battle1.report[@pc.name][0] =~ /cannot cast Attack/, battle1.report[@pc.name].inspect
     assert battle1.enemies.size == 5
 
@@ -331,7 +331,7 @@ class BattleTest < ActiveSupport::TestCase
     battle1, msg = Battle.new_creature_battle(@pc, @wimp_c, 5, 5, nil)
     battle1.report = {}
     assert battle1.enemies.size == 5
-    battle1.mag_damage_enemies(@pc, @weak_spell, battle1.groups.first.enemies)
+    battle1.mag_damage_enemies(@pc, @weak_spell, battle1.groups.first.enemies.to_a)
     assert battle1.report[@pc.name][0] =~ /level is too low/, battle1.report[@pc.name].inspect
     assert battle1.enemies.size == 5
 
@@ -341,7 +341,7 @@ class BattleTest < ActiveSupport::TestCase
     battle1, msg = Battle.new_creature_battle(@pc, @wimp_c, 5, 5, nil)
     battle1.report = {}
     assert battle1.enemies.size == 5
-    battle1.mag_damage_enemies(@pc, @weak_spell, battle1.groups.first.enemies)
+    battle1.mag_damage_enemies(@pc, @weak_spell, battle1.groups.first.enemies.to_a)
     assert battle1.report[@pc.name][0] =~ /not enough HP and\/or MP/, battle1.report[@pc.name].inspect
     assert battle1.enemies.size == 5
 
@@ -352,7 +352,7 @@ class BattleTest < ActiveSupport::TestCase
     battle1.report = {}
     assert battle1.enemies.size == 5
     assert @pc.health.MP == 60
-    battle1.mag_damage_enemies(@pc, @weak_spell, battle1.groups.first.enemies)
+    battle1.mag_damage_enemies(@pc, @weak_spell, battle1.groups.first.enemies.to_a)
     assert battle1.report[@pc.name][0] =~ /cast/, battle1.report[@pc.name].inspect
     assert battle1.report[@pc.name][1] =~ /kill/, battle1.report[@pc.name].first
     battle1.reload
@@ -365,7 +365,7 @@ class BattleTest < ActiveSupport::TestCase
     battle2.report = {}
     num_orig_guards = battle2.npcs.size
     assert_equal 55, @pc.health.MP
-    battle2.mag_damage_enemies(@pc, @splash_spell, battle2.groups.first.enemies)
+    battle2.mag_damage_enemies(@pc, @splash_spell, battle2.groups.first.enemies.to_a)
     battle2.reload
     assert_equal num_orig_guards + 1, battle2.report[@pc.name].size
     assert_equal 15, @pc.health.MP
@@ -526,7 +526,7 @@ class BattleTest < ActiveSupport::TestCase
     battle2, msg = Battle.new_creature_battle(@pc, @wimp_c, 1, 1, nil)
     battle2.report = {}
     assert_equal 1, battle2.enemies.size
-    battle2.phys_damage_enemies(@pc, battle2.groups.first.enemies)
+    battle2.phys_damage_enemies(@pc, battle2.groups.first.enemies.to_a)
     battle2.reload
     assert gold = battle2.victory
     assert wimp_gold = @wimp_c.gold
@@ -561,16 +561,17 @@ class BattleTest < ActiveSupport::TestCase
     @pc.update_attributes(:level => 50)
 
     battle.report={}
-    assert battle.mag_damage_enemies(@pc, @splash_spell, battle.groups.first.enemies), battle.report.inspect
+    assert battle.mag_damage_enemies(@pc, @splash_spell, battle.groups.first.enemies.to_a), battle.report.inspect
     battle.enemies.reload
+
     assert battle.enemies.size == 0, battle.enemies.size.inspect
-    assert @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.size == 1
+    assert_equal 1, @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.count
     assert @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.first.quantity == 1, @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.first.quantity.inspect
     assert battle.victory
 
     battle, msg = Battle.new_creature_battle(@pc, @wild_foo, 3, 3, @pc.in_kingdom)
     battle.report={}
-    battle.mag_damage_enemies(@pc, @splash_spell, battle.groups.first.enemies)
+    battle.mag_damage_enemies(@pc, @splash_spell, battle.groups.first.enemies.to_a)
     assert battle.enemies.size == 0
     assert @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.size == 0
   end
@@ -579,44 +580,46 @@ class BattleTest < ActiveSupport::TestCase
     joined, msg = LogQuest.join_quest(@pc, @quest.id)
     battle, msg = Battle.new_pc_battle(@pc, @sickpc)
 
-    assert @pc.log_quests.find_by_quest_id(@quest.id).kill_pcs.size == 1
+    assert @pc.log_quests.find_by_quest_id(@quest.id).kill_pcs.count == 1
     assert_equal @sickpc.id, @pc.log_quests.find_by_quest_id(@quest.id).kill_pcs.first.detail.to_i
 
     battle.report = {}
-    assert_equal 1, battle.enemies.size
-    battle.phys_damage_enemies(@pc, battle.groups.first.enemies)
+    assert_equal 1, battle.enemies.count
+    battle.phys_damage_enemies(@pc, battle.groups.first.enemies.to_a)
     battle.reload
-    assert battle.enemies.size == 0,battle.report.inspect
-    assert @pc.log_quests.find_by_quest_id(@quest.id).kill_pcs.size == 0, @pc.log_quests.find_by_quest_id(@quest.id).kill_pcs.size.inspect
+    assert battle.enemies.count == 0,battle.report.inspect
+    assert @pc.log_quests.find_by_quest_id(@quest.id).kill_pcs.count == 0, @pc.log_quests.find_by_quest_id(@quest.id).kill_pcs.size.inspect
   end
 
   test "test quest log completion for kill specific npc" do
     joined, msg = LogQuest.join_quest(@pc, @quest.id)
     battle, msg = Battle.new_npc_battle(@pc, @sick_npc)
-
-    assert @pc.log_quests.find_by_quest_id(@quest.id).kill_s_npcs.size == 1
+    assert @pc.log_quests.find_by_quest_id(@quest.id).kill_s_npcs.count == 1
     assert @pc.log_quests.find_by_quest_id(@quest.id).kill_s_npcs.first.detail.to_i == @sick_npc.id
 
     battle.report = {}
-    assert battle.merchants.size == 1, battle.merchants.collect{|bm| bm.special}.inspect
-    battle.phys_damage_enemies(@pc, battle.merchants)
-    assert battle.merchants.size == 0
-    assert @pc.log_quests.find_by_quest_id(@quest.id).kill_s_npcs.size == 0, @pc.log_quests.find_by_quest_id(@quest.id).kill_s_npcs.size.inspect
+    assert battle.merchants.count == 1, battle.merchants.collect{|bm| bm.special}.inspect
+    battle.phys_damage_enemies(@pc, battle.merchants.to_a)
+    assert battle.merchants.count == 0
+    assert @pc.log_quests.find_by_quest_id(@quest.id).kill_s_npcs.count == 0, @pc.log_quests.find_by_quest_id(@quest.id).kill_s_npcs.count.inspect
   end
 
   test "test quest log completion for kill number of npcs" do
+    @quest.kill_n_npcs.first.update_attributes detail: "3:#{@pc.in_kingdom}"
     joined, msg = LogQuest.join_quest(@pc, @quest.id)
     battle, msg = Battle.new_creature_battle(@pc, @peasants, 16, 16, @pc.present_kingdom)
 
-    assert @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.size == 1
+    assert @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.count == 1
     assert @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.first.quantity == 20
+
+    @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.first.update_attributes detail: "3:#{@pc.in_kingdom}"
 
     @pc.c_class.update_attributes(:attack_spells => true)
     @pc.health.update_attributes(:MP => 100) #just so he can hit'em with the spells
     @pc.update_attributes(:level => 50)
 
     battle.report={}
-    assert battle.mag_damage_enemies(@pc, @splash_spell, battle.groups.first.enemies), battle.report.inspect
+    assert battle.mag_damage_enemies(@pc, @splash_spell, battle.groups.first.enemies.to_a), battle.report.inspect
     battle.enemies.reload
     assert battle.enemies.size == 0, battle.enemies.size.inspect
     assert @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.size == 1
@@ -625,7 +628,7 @@ class BattleTest < ActiveSupport::TestCase
 
     battle, msg = Battle.new_creature_battle(@pc, @peasants, 8, 8, @pc.present_kingdom)
     battle.report={}
-    battle.mag_damage_enemies(@pc, @splash_spell, battle.groups.first.enemies)
+    battle.mag_damage_enemies(@pc, @splash_spell, battle.groups.first.enemies.to_a)
     assert battle.enemies.size == 0
     assert @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.size == 0
   end
@@ -634,14 +637,14 @@ class BattleTest < ActiveSupport::TestCase
     #CREATURE
     battle1, msg = Battle.new_creature_battle(@pc, @wild_foo, 5, 5, nil)
     battle1.report={}
-    battle1.phys_damage_enemies(@pc, battle1.groups.first.enemies)
+    battle1.phys_damage_enemies(@pc, battle1.groups.first.enemies.to_a)
     assert @pc.creature_kills.where(['creature_id = ?', @wild_foo.id]).first.nil?
 
     battle2, msg = Battle.new_creature_battle(@pc, @wimp_c, 10, 10, nil)
     battle2.report={}
-    battle2.phys_damage_enemies(@pc, battle2.groups.first.enemies)
+    battle2.phys_damage_enemies(@pc, battle2.groups.first.enemies.to_a)
     assert @pc.creature_kills.where(['creature_id = ?', @wimp_c.id]).first.number == 1
-    battle2.phys_damage_enemies(@pc, battle2.groups.first.enemies)
+    battle2.phys_damage_enemies(@pc, battle2.groups.first.enemies.to_a)
     assert @pc.creature_kills.where(['creature_id = ?', @wimp_c.id]).first.number == 2
 
     #NPC
@@ -649,14 +652,14 @@ class BattleTest < ActiveSupport::TestCase
     battle.report = {}
 
     assert @pc.nonplayer_character_killers.count(:conditions => ['npc_id = ?', @sick_npc.id]) == 0
-    battle.phys_damage_enemies(@pc, battle.merchants)
+    battle.phys_damage_enemies(@pc, battle.merchants.to_a)
     assert @pc.nonplayer_character_killers.count(:conditions => ['npc_id = ?', @sick_npc.id]) == 1, battle.merchants.inspect
 
     #PC
     battle, msg = Battle.new_pc_battle(@pc, @sickpc)
     battle.report = {}
     assert @pc.player_character_killers.count(:conditions => ['killed_id = ?', @sickpc.id]) == 0
-    battle.phys_damage_enemies(@pc, battle.groups.first.enemies)
+    battle.phys_damage_enemies(@pc, battle.groups.first.enemies.to_a)
     assert @pc.player_character_killers.count(:conditions => ['killed_id = ?', @sickpc.id]) == 1
   end
 end

@@ -5,7 +5,7 @@ module ManagementHelper
     0.upto(where.maxy-1){|y|
       @ret += "<tr>\n"
       0.upto(where.maxx-1){|x|
-        level_map = where.level_maps.find(:last,:conditions => ['ypos = ? AND xpos = ?', y, x])
+        level_map = where.level_maps.where(ypos: y, xpos: x).last
         if level_map && feature = level_map.feature
           @ret += "<td>\n<span class=\"feature image\" title=\"#{ h(feature.name) }\">#{ h(feature.image.image_text) }</span>\n</td>\n"
         else
@@ -23,7 +23,7 @@ module ManagementHelper
       @ret += "<tr>\n"
       0.upto(where.maxx-1){ |x|
         @ret += "<td>\n"
-        square = where.level_maps.find(:all, :conditions => ['ypos = ? and xpos = ?', y, x]).last.feature
+        square = where.level_maps.where(ypos: y, xpos: x).last.feature
         if square.nil? || square.name == "\nEmpty"
           @ret += "<select name=\"map[#{ y }][#{ x }]\" style=\"width:9em\">\n" +
                   "  <option value = \"\"></option>\n  " +

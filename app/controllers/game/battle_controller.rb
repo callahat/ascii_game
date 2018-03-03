@@ -29,7 +29,7 @@ class Game::BattleController < ApplicationController
   end
 
   def battle
-    @battle = Battle.find(:first, :conditions => ['owner_id = ?', @pc.id])
+    @battle = @pc.battle
 
     if @battle.nil?
       redirect_to :controller => '/game', :action => 'main'
@@ -53,11 +53,11 @@ class Game::BattleController < ApplicationController
       @healing_spells = []
       @attack_spells = []
       if @pc.c_class.healing_spells
-        healing_list = HealingSpell.find(:all, :conditions => ['min_level < ?', @pc.level])
+        healing_list = HealingSpell.where(['min_level < ?', @pc.level])
         @healing_spells = healing_list.collect() {|s| [s.name + ' (MP:' + s.mp_cost.to_s + ')' , s.id ] }
       end
       if @pc.c_class.attack_spells
-        attack_list = AttackSpell.find(:all, :conditions => ['min_level < ?', @pc.level])
+        attack_list = AttackSpell.where(['min_level < ?', @pc.level])
         @attack_spells = attack_list.collect() {|s| splash = ( s.splash ? ' (splash)' : '' )
                                   [ s.name + ' (MP:' + s.mp_cost.to_s + ' HP:' + s.hp_cost.to_s + ')' + splash , s.id]}
       end
@@ -65,7 +65,7 @@ class Game::BattleController < ApplicationController
   end
 
   def fight
-    @battle = Battle.find(:first, :conditions => ['owner_id = ?', @pc.id])
+    @battle = @pc.battle
     
     @bg = @battle.groups.find_by_name(params[:commit]) if params[:commit] && params[:commit] != ""
     
@@ -86,7 +86,7 @@ class Game::BattleController < ApplicationController
   end
 
   def run_away
-    @battle = Battle.find(:first, :conditions => ['owner_id = ?', @pc.id])
+    @battle = @pc.battle
 
     if @battle.run_away(75)
       @pc.current_event.update_attribute(:completed, EVENT_FAILED) if @pc.current_event

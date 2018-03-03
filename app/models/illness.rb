@@ -5,8 +5,9 @@ class Illness < ActiveRecord::Base
   def self.spread(host, target, trans_method)
     caught=0
     #spread disease to target
-    @illnesses = host.illnesses.find(:all, :joins => "INNER JOIN diseases ON diseases.id = disease_id",
-                                     :conditions => ['diseases.trans_method = ?', trans_method])
+    # @illnesses = host.illnesses.find(:all, :joins => "INNER JOIN diseases ON diseases.id = disease_id",
+    #                                  :conditions => ['diseases.trans_method = ?', trans_method])
+    @illnesses = host.illnesses.joins(:disease).where(diseases: { trans_method: trans_method })
     for illness in @illnesses
       @disease = illness.disease
       caught +=1 if Illness.infect(target, @disease)
@@ -16,9 +17,10 @@ class Illness < ActiveRecord::Base
 
   def self.infect(who, disease)
     transaction do
-    @tl = TableLock.find(:first, :conditions => {:name => who.illnesses.sti_name}, :lock => true)
+    @tl = TableLock.where(name: who.illnesses.sti_name).lock(true).first
+    @tl.lock!
     who.lock!
-      @illness = who.illnesses.find(:first, :conditions => ['owner_id = ? and disease_id = ?', who.id, disease.id])
+      @illness = who.illnesses.where(disease_id: disease.id).first
       @ret = false
 
       if @illness.nil? && disease.virility > rand(100) && rand(who[:con].to_i) < 500
@@ -41,7 +43,7 @@ class Illness < ActiveRecord::Base
   end
 
   def self.cure(who, what)
-    if (@illness = who.illnesses.find(:first, :conditions => ['disease_id = ?', what.id])) &&
+    if (@illness = who.illnesses.where(disease_id: what.id).first) &&
         @illness.destroy
       if who.class == PlayerCharacter || who.class == Npc #only Npc and Pc have this attr
         who.health.update_attribute(:wellness, SpecialCode.get_code('wellness','alive') ) \

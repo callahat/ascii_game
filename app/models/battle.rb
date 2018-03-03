@@ -105,9 +105,9 @@ class Battle < ActiveRecord::Base
     self.report = {}
     if target
       if spell.nil?
-        self.phys_damage_enemies(pc, target.enemies)
+        self.phys_damage_enemies(pc, target.enemies.to_a)
       elsif spell.class == AttackSpell
-        return nil unless self.mag_damage_enemies(pc, spell, target.enemies)
+        return nil unless self.mag_damage_enemies(pc, spell, target.enemies.to_a)
       else #if attack.class == HealingSpell
         return nil unless self.cast_healing_spell(pc, spell, pc)
       end
@@ -123,7 +123,7 @@ class Battle < ActiveRecord::Base
     if self.enemies.size == 0
       self.groups.destroy_all
       if self.owner.present_kingdom && (@tax = (self.gold * self.owner.present_kingdom.tax_rate/100.0).to_i) > 0
-        Kingdom.pay_tax(@tax, self.owner.present_kingdom)
+        Kingdom.pay_tax(@tax, self.owner.in_kingdom)
         self.update_attribute(:gold, self.gold - @tax)
       end
       PlayerCharacter.transaction do
@@ -180,7 +180,7 @@ class Battle < ActiveRecord::Base
   def self.summon_guards(kingdom, ratio)
     return [] if kingdom.nil?
     max_help = kingdom.guards.size * ratio
-    kingdom.guards.find(:all, :order => "rand()", :limit => rand(max_help) + 1 )
+    kingdom.guards.order("rand()").limit( rand(max_help) + 1 )
   end
 
   def fighter_killed(who)
@@ -198,6 +198,7 @@ class Battle < ActiveRecord::Base
         when "NpcMerchant"  ; @code = SpecialCode.get_code('npc_division','merchant')
         when "NpcGuard"      ; @code = SpecialCode.get_code('npc_division','guard')
       end
+
       case who.class.name
         when "BattleCreature"
           LogQuestCreatureKill.complete_req(self.owner_id, who.enemy_id)

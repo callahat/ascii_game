@@ -81,7 +81,7 @@ class Admin::WorldMapsController < ApplicationController
 
     while @y <= @world.maxy
       while @x <= @world.maxx
-        @temp = @world.world_maps.find(:all, :conditions => ['bigypos = ? and bigxpos = ? and ypos = ? and xpos = ?', session[:bigypos], session[:bigxpos], @y, @x]).last
+        @temp = @world.world_maps.where(bigypos: session[:bigypos], bigxpos: session[:bigxpos], ypos: @y, xpos: @x).last
         #print "\n#{@temp.id}  #{@temp.nil?} #{@temp.feature_id} #{@temp.feature_id.to_i != params[:map][@y.to_s][@x.to_s].to_i} #{params[:map][@y.to_s][@x.to_s]}\n"
         
         #Destroy the level map if it has changed, and make a new one. 
@@ -152,7 +152,7 @@ protected
   
   def setup_features_array
     ##make the list of features, for the world, just going to sink the non prefs to end of the array
-    @allf = Feature.find(:all, :conditions => ['world_feature and armed'])
+    @allf = Feature.where(world_feature: true, armed: true)
     @lpref = Kingdom.find(-1).feature_pref_list
 
     @findex = []

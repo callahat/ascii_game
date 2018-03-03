@@ -239,7 +239,7 @@ class GameControllerTest < ActionController::TestCase
 	test "game controller spawn kingdom" do
 		session[:player_character].update_attribute(:in_kingdom, nil)
 		session[:player_character].update_attribute(:kingdom_level, nil)
-		@world_map = WorldMap.find(:last, :conditions => ['xpos = 1 and ypos = 1 and bigxpos = 0 and bigypos = -1'])
+		@world_map = WorldMap.where(xpos: 1, ypos: 1, bigxpos: 0, bigypos: -1).last
 		get 'spawn_kingdom', {}, session.to_hash
 		assert_response :success
 		assert_template 'spawn_kingdom'

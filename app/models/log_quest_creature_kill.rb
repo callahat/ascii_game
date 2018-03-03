@@ -3,7 +3,7 @@ class LogQuestCreatureKill < LogQuestReq
   belongs_to :creature, :foreign_key => 'detail'
   
   def self.complete_req(pcid,cid,kills=1)
-    @lq = LogQuestCreatureKill.find(:all, :conditions => ['owner_id = ? AND detail = ?', pcid, cid])
+    @lq = LogQuestCreatureKill.where(owner_id: pcid, detail: cid)
     
     #shouldn't need to wrap this in a transaction
     for lq in @lq

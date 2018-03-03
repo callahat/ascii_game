@@ -21,7 +21,7 @@ class ForumNodeThread < ForumNode
   
   def can_be_made_by(user)
     return false unless user
-    return false if user.player_characters.find(:first, :conditions => 'level > 9').nil?
+    return false if user.player_characters.find_by('level > 9').nil?
     user.forum_attribute.mod_level == 9 ||
       !(ForumRestriction.no_threding(user) ||
         parent_forum_node(:is_deleted) ||

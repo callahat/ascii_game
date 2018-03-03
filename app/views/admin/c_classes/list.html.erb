@@ -10,7 +10,7 @@
 
 <% for c_class in @c_classes %>
   <tr>
-    <td><%= CClassLevel.find(:all, :conditions => ['c_class_id = ?', c_class]).size %></p>
+    <td><%= CClassLevel.where(c_class_id: c_class).count %></td>
   <% for column in CClass.content_columns %>
     <td><%=h c_class.send(column.name) %></td>
   <% end %>

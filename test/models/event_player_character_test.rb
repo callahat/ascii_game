@@ -3,8 +3,8 @@ require 'test_helper'
 class EventPlayerCharacterTest < ActiveSupport::TestCase
 	def setup
 		@pc = PlayerCharacter.find_by_name("Test PC One")
-		@standard_new = {:kingdom_id => Kingdom.find(:first).id,
-											:player_id => Player.find(:first).id,
+		@standard_new = {:kingdom_id => Kingdom.first.id,
+											:player_id => Player.first.id,
 											:event_rep_type => SpecialCode.get_code('event_rep_type','unlimited'),
 											:name => 'Created event name',
 											:armed => 1,
@@ -33,7 +33,7 @@ class EventPlayerCharacterTest < ActiveSupport::TestCase
 		e = EventPlayerCharacter.new(@standard_new)
 		assert !e.valid?, e.errors.full_messages.inspect
 		assert_equal 1, e.errors.full_messages.size, e.errors.full_messages.inspect
-		e.player_character = PlayerCharacter.find(:first)
+		e.player_character = PlayerCharacter.first
 		assert e.valid?, e.errors.full_messages.inspect
 		assert_equal 0, e.errors.full_messages.size, e.errors.full_messages.inspect
 		assert e.save!

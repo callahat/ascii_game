@@ -3,8 +3,8 @@ require 'test_helper'
 class EventCreatureTest < ActiveSupport::TestCase
   def setup
     @pc = PlayerCharacter.find_by_name("Test PC One")
-    @standard_new = {:kingdom_id => Kingdom.find(:first).id,
-                      :player_id => Player.find(:first).id,
+    @standard_new = {:kingdom_id => Kingdom.first.id,
+                      :player_id => Player.first.id,
                       :event_rep_type => SpecialCode.get_code('event_rep_type','unlimited'),
                       :name => 'Created event name',
                       :armed => 1,
@@ -24,7 +24,7 @@ class EventCreatureTest < ActiveSupport::TestCase
     #test where there are no living creatures
     ec.creature.update_attribute(:number_alive, 0)
     assert_difference 'Battle.count', +0 do
-      @direct, @comp, @msg = ec.happens(PlayerCharacter.find(1))
+      @direct, @comp, @msg = ec.happens(player_characters(:pc_one))
     end
     ec.creature.update_attribute(:number_alive, 1000)
     assert @comp == EVENT_COMPLETED
@@ -40,7 +40,7 @@ class EventCreatureTest < ActiveSupport::TestCase
     e = EventCreature.new(@standard_new.merge(:flex => "0;0"))
     assert !e.valid?
     assert_equal 3, e.errors.full_messages.size
-    e.creature = Creature.find(:first)
+    e.creature = Creature.first
     assert !e.valid?
     assert_equal 2, e.errors.full_messages.size
     e.flex = "4;9"

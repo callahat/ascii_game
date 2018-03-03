@@ -49,7 +49,7 @@ test_pc_one:
   next_level_at: 500
   experience: 6
   kingdom_id: 0
-  in_kingdom: kingdom_one
+  present_kingdom: kingdom_one
   present_level: first_kingdom_level_one
   house_x: 1
   house_y: 1
