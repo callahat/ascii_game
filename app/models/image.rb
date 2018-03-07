@@ -8,6 +8,8 @@ class Image < ActiveRecord::Base
   has_many :player_characters
   
   validates_presence_of :image_type
+
+  attr_accessible :name, :image_text, :public, :image_type, :picture, :kingdom_id, :player_id
   
   def self.deep_copy(image)
     @copy_image = Image.new

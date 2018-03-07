@@ -2,9 +2,9 @@ require 'test_helper'
 
 class Management::EventsControllerTest < ActionController::TestCase
 	def setup
-		session[:player] = Player.find_by_handle("Test Player One")
-		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
-		session[:kingdom] = Kingdom.find_by_name("HealthyTestKingdom")
+		session[:player] = players(:test_player_one)
+		session[:player_character] = player_characters(:test_pc_one)
+		session[:kingdom] = kingdoms(:kingdom_one)
 		
 		@e_armed = Event.find_by_name("Weak Monster encounter")
 		@e = Event.find_by_name("Unarmed Text Event")
@@ -25,14 +25,13 @@ class Management::EventsControllerTest < ActionController::TestCase
 	end
 	
 	test "mgmt event controller new all event types" do
-		["EventCreature","EventDisease","EventItem",
-		 "EventMoveLocal","EventMoveRelative","EventQuest",
-		 "EventStat","EventText"].each{|k|
+		["EventCreature","EventItem","EventMoveLocal",
+		 "EventMoveRelative","EventQuest","EventText"].each{|k|
 			#p k
 			get 'new', {:event => {:kind => k}}, session.to_hash
 			assert_response :success
-			assert @response.body =~ Regexp.new(k), @response.body
-			assert @response.body !~ /First chose an event type/
+			assert_match Regexp.new(k), @response.body, Regexp.new(k)
+			assert_match /value="#{k}"/, @response.body
 		}
 	end
 	

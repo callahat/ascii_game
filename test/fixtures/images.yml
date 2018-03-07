@@ -35,7 +35,7 @@ guard_image_kingdom_one:
 feature_image: &feature_img_defs
   name: "Feature image"
   player: test_player_one
-  kingdom: kindgom_one
+  kingdom: kingdom_one
   public: 0
   image_text: "[_]"
   image_type: <%= SpecialCode.get_code('image_type','kingdom') %>

@@ -13,6 +13,7 @@ class Creature < ActiveRecord::Base
 
   validates_uniqueness_of :name
   validates_presence_of :name,:experience,:HP,:gold,:image_id,:player_id,:kingdom_id,:number_alive,:fecundity
+  attr_accessible :name,:description,:experience,:HP,:gold,:image_id,:player_id,:kingdom_id,:number_alive,:fecundity,:public
 
   def self.exp_worth(dam,dfn,hp,fec)
     if dam.nil? || dfn.nil? || hp.nil? || fec.nil?

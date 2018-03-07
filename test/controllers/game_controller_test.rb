@@ -7,11 +7,10 @@ class GameControllerTest < ActionController::TestCase
 		@response = ActionController::TestResponse.new
 	
 		@creature = Creature.find_by_name("Wimp Monster")
-		@level = Level.where(['kingdom_id = ? and level = 0', 1]).first
+		@level = kingdoms(:kingdom_one).levels.where(level: 0).first
 		@level_map = @level.level_maps.where(['feature_id is not null']).first
 		session[:player] = Player.find_by_handle("Test Player One")
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
-		session[:player_character][:in_kingdom] = 1
 		session[:player_character].present_level = @level
 	end
 

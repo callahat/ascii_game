@@ -6,9 +6,9 @@ class Management::ImagesControllerTest < ActionController::TestCase
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
 		session[:kingdom] = Kingdom.find_by_name("HealthyTestKingdom")
 		
-		@f_image = Image.find_by_name("Feature image")
-		@c_image = Image.find_by_name("creature image2")
-		@pc_image = Image.find_by_name("Test pc image")
+		@f_image = images(:feature_image)
+		@c_image = images(:creature_image2)
+		@pc_image = images(:pc_image)
 		@ci_hash = {:image_text => "###\n###\n#H#", :image_type => SpecialCode.get_code('image_type','creature'),
 							:player_id => session[:player][:id], :kingdom_id => session[:kingdom][:id], :name => 'NewCreatureImg'}
 		@fi_hash = {:image_text => "###\n###\n#H#", :image_type => SpecialCode.get_code('image_type','kingdom'),
@@ -94,8 +94,9 @@ class Management::ImagesControllerTest < ActionController::TestCase
 	test "mgmt image controller destroy" do
 		assert_no_difference 'Image.count' do
 			post 'destroy', {:id => @f_image.id}, session.to_hash
+
 			assert_redirected_to :controller => 'management/images', :action => 'index'
-			assert flash[:notice] =~ /in use/
+			assert_match /in use/, flash[:notice]
 		end
 		
 		assert_difference 'Image.count', -1 do

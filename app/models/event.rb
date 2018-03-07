@@ -10,6 +10,7 @@ class Event < ActiveRecord::Base
 
   validates_presence_of :player_id,:kingdom_id,:name,:event_rep_type
   #validates_uniqueness_of :name
+  attr_accessible :player_id,:kingdom_id,:cost,:name, :kind, :event_rep_type, :event_reps, :flex, :thing_id, :text
 
   class EventRepititionValidator < ActiveModel::EachValidator
     def validate_each(record, attribute, value)
@@ -89,10 +90,10 @@ class Event < ActiveRecord::Base
   end
 
   def self.new_of_kind(params)
-    return Event.new if params.class.to_s !~ /Hash/ && params.class.to_s !~ /Event/
+    return Event.new if params.class.to_s !~ /Hash|Event|Parameters/
     return Event.new(params) unless params
     params[:kind] =~ /^(Event(Creature|Disease|Item|MoveLocal|MoveRelative|Quest|Stat|Text)*$)/
-    return ($1 ? Rails.module_eval($1).new(params) : Event.new(params))
+    return ($1 ? Rails.module_eval($1).new(params) : Event.new(params.reject{:kind}))
   end
   
   #Pagination related stuff

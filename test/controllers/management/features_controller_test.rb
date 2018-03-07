@@ -106,7 +106,7 @@ class Management::FeaturesControllerTest < ActionController::TestCase
 		
 		post 'create_feature_event', {:id => @f.id, :feature_event => {:feature_id => @f.id, :event_id => @e.id} }, session.to_hash
 		assert_response :success
-		assert_template 'new'
+		assert_template 'new_feature_event'
 		
 		assert_difference '@f.feature_events.count', +1 do
 			post 'create_feature_event', {:id => @f.id, :feature_event => @fe_hash }, session.to_hash
@@ -123,7 +123,7 @@ class Management::FeaturesControllerTest < ActionController::TestCase
 		@fe_hash[:chance] = -33
 		post 'update_feature_event', {:id => @feid, :feature_event => @fe_hash }, session.to_hash
 		assert_response :success
-		assert_template 'edit'
+		assert_template 'edit_feature_event'
 		
 		@fe_hash[:chance] = 50
 		assert_difference '@f.feature_events.count', +0 do

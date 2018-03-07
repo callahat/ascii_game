@@ -112,7 +112,7 @@ relative_move_event:
   cost: 50
   flex: -1
 throne_event:
-  kingdom_id: 1
+  kingdom: kingdom_one
   player_id: -1
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
   name: "throne event"
@@ -146,7 +146,7 @@ text_event_done:
   cost: 50
   text: "Some text here that probably wont appear since the quest is done."
 unarmed_text_event:
-  kingdom_id: 1
+  kingdom: kingdom_one
   player: test_player_one
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
   name: "Unarmed Text Event"

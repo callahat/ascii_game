@@ -6,16 +6,15 @@ class Game::QuestsControllerTest < ActionController::TestCase
 		@request  = ActionController::TestRequest.new
 		@response = ActionController::TestResponse.new
 	
-		@level = Level.where(['kingdom_id = ? and level = 0', 1]).first
+		@level = kingdoms(:kingdom_one).levels.where(level: 0).first
 		@level_map = @level.level_maps.where(['feature_id is not null']).first
 		session[:player] = Player.find_by_handle("Test Player One")
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
-		session[:player_character][:in_kingdom] = 1
 		session[:player_character].present_level = @level
 		
 		@quest_one = Quest.find_by_name("Quest One")
-		@kl1 = @level.level_maps.where(['xpos = 1 and ypos = 0']).first
-		@kl2 = @level.level_maps.where(['xpos = 2 and ypos = 0']).first
+		@kl1 = @level.level_maps.where(xpos: 1, ypos: 0).first
+		@kl2 = @level.level_maps.where(xpos: 2, ypos: 0).first
 	end
 	
 	def setup_sub1

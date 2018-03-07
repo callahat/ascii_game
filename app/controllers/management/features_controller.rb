@@ -60,7 +60,7 @@ class Management::FeaturesController < ApplicationController
     @kingdom_id = session[:kingdom][:id]
     @player_id = session[:player][:id]
     @images = Image.where(image_type: SpecialCode.get_code('image_type', 'kingdom'))
-                   .where(:conditions => ['(public = true or player_id = ? or kingdom_id = ?)',
+                   .where(['(public = true or player_id = ? or kingdom_id = ?)',
                           @player_id,@kingdom_id,])
                    .order(:name)
     if !is_feature_owner || !is_feature_not_in_use

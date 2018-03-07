@@ -4,10 +4,9 @@ class Game::BattleControllerTest < ActionController::TestCase
 	def setup
 		session[:player] = Player.find_by_handle("Test Player One")
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
-		session[:player_character][:in_kingdom] = 1
 		@creature = Creature.find_by_name("Wimp Monster")
-		@level = Level.where(['kingdom_id = ? and level = 0', 1]).first
-		@kl = @level.level_maps.where(['xpos = 2 and ypos = 2']).first
+		@level = kingdoms(:kingdom_one).levels.where(level: 0).first
+		@kl = @level.level_maps.where(xpos: 2, ypos: 2).first
 	end
 
 	test "king battle" do

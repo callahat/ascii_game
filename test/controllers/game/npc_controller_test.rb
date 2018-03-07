@@ -4,11 +4,10 @@ class Game::NpcControllerTest < ActionController::TestCase
 	def setup
 		session[:player] = Player.find_by_handle("Test Player One")
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
-		session[:player_character][:in_kingdom] = 1
-		
-		@level = Level.where(['kingdom_id = ? and level = 0', 1]).first
-		@kl_healer = @level.level_maps.where(['xpos = 0 and ypos = 1']).first
-		@kl_multi = @level.level_maps.where(['xpos = 2 and ypos = 1']).first
+
+		@level = kingdoms(:kingdom_one).levels.where(level: 0).first
+		@kl_healer = @level.level_maps.where(xpos: 0, ypos: 1).first
+		@kl_multi = @level.level_maps.where(xpos: 2, ypos: 1).first
 		
 		@disease = Disease.find_by_name("airbourne disease")
 	end
@@ -115,7 +114,7 @@ class Game::NpcControllerTest < ActionController::TestCase
 		session[:player_character].update_attribute(:gold, 100000)
 		
 		assert_difference 'session[:player_character].gold', -0 do
-			assert_difference 'session[:player_character].items.where(:item_id => 1).first.quantity', +0 do
+			assert_difference "session[:player_character].items.where(item_id: #{items(:item_1).id}).first.quantity", +0 do
 				get 'do_buy_new', {}, session.to_hash
 				assert flash[:notice] =~ /cannot make that/, flash[:notice]
 				assert_redirected_to npc_smithy_url()
@@ -123,8 +122,8 @@ class Game::NpcControllerTest < ActionController::TestCase
 		end
 		flash[:notice] = ""
 		old_gold = session[:player_character].gold
-		assert_difference 'session[:player_character].items.where(:item_id => 1).first.quantity', +1 do
-			get 'do_buy_new', {:iid => 1}, session.to_hash
+		assert_difference "session[:player_character].items.where(item_id: #{items(:item_1).id}).first.quantity", +1 do
+			get 'do_buy_new', {:iid => items(:item_1).id}, session.to_hash
 			assert flash[:notice] =~ /Bought/
 			session[:player_character].items.reload
 			assert_redirected_to npc_smithy_url()
@@ -208,13 +207,15 @@ class Game::NpcControllerTest < ActionController::TestCase
 		flash[:notice] = ""
 		
 		assert_difference 'session[:player_character].gold', +@item1.resell_value do
-			get 'do_sell', {:id => 1}, session.to_hash
+			get 'do_sell', {id: @item1.id}, session.to_hash
 			assert_redirected_to npc_sell_url()
 			assert flash[:notice] =~ /Sold/
 		end
 	end
 	
 	test "multiclass npc pc buys used item" do
+		item_id = items(:item_4).id
+
 		setup_sub1(@kl_multi)
 		session[:player_character].update_attribute(:gold, 4000)
 		
@@ -223,10 +224,10 @@ class Game::NpcControllerTest < ActionController::TestCase
 		assert flash[:notice] =~ /does not have/, flash[:notice]
 		flash[:notice] = ""
 		
-		get 'do_buy', {:id => 4}, session.to_hash
+		get 'do_buy', {id: item_id}, session.to_hash
 		assert_redirected_to npc_buy_url()
 		assert flash[:notice] =~ /Bought a/, flash[:notice]
-		assert session[:player_character].items.where(["item_id = 4"]).first.quantity == 1
+		assert session[:player_character].items.where(item_id: item_id).first.quantity == 1
 	end
 	
 	# test "king battle" do
