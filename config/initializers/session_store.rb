@@ -6,4 +6,4 @@
 # which shouldn't be used to store highly confidential information
 # (create the session table with "rake db:sessions:create")
 
-Rails.application.config.session_store :active_record_store, key: '_ascii_tmp_rails_4_2_10_session'
+Rails.application.config.session_store :active_record_store, key: '_ascii_game_session'
