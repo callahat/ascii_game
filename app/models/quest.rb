@@ -20,9 +20,11 @@ class Quest < ActiveRecord::Base
   validates_presence_of :name,:kingdom_id,:player_id,:quest_status
   validates_uniqueness_of :name
   
-  validates :max_level, :numericality => { :greater_than => 0, :less_than => 500 }, :allow_nil => true
+  validates_inclusion_of :max_level, within: 1..500, allow_nil: true, message: "Must be between 1 and 500"
 
   validates :max_completeable, :numericality => { :greater_than => 0 }, :allow_nil => true
+
+  attr_accessible :name, :description, :kingdom_id, :player_id, :max_level, :max_completeable, :quest_status, :gold, :item_id, :quest_id
 
 #  def validate
 #    if !max_level.nil?

@@ -11,6 +11,8 @@ class CharacterController < ApplicationController
 #  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
 #  verify :method => :post, :only => [ :do_destroy, :do_retire, :do_unretire, :do_choose, :do_image_update, :updateimage, :create ],         :redirect_to => { :action => :menu }
 
+  # TODO: Clean this controller up, use nested models
+
   def index
     redirect_to :action => 'menu'
   end
@@ -95,9 +97,9 @@ class CharacterController < ApplicationController
       flash[:notice] = 'Character being created expired. Please try again'
       redirect_to :action => 'new'
     else
-      @race = Race.find(params[:race_id])
-      session[:nplayer_character][:race_id] = params[:race_id]
-      session[:nplayer_character][:c_class_id] = params[:c_class_id]
+      @race = session[:nplayer_character].race || Race.find(params[:race_id])
+      session[:nplayer_character][:race_id] ||= params[:race_id]
+      session[:nplayer_character][:c_class_id] ||= params[:c_class_id]
     
       #give the character a name, pick a kingdom, let the good tiems roll
       #mainly create the player's character stats
@@ -113,6 +115,7 @@ class CharacterController < ApplicationController
     if session[:nplayer_character].nil?
       flash[:notice] = 'Character being created expired. Please try again'
       redirect_to :action => 'new'
+      return
     end
   
     flash[:notice] = " "
@@ -207,7 +210,7 @@ class CharacterController < ApplicationController
     @distributed_freepts = StatPc.new(params[:distributed_freepts])
     
     if @pc[:freepts] == 0
-      redirect_to :action => 'gainlevel'
+      gainlevel
     end
   end
 

@@ -19,7 +19,7 @@ class GameControllerTest < ActionController::TestCase
 		session[:player_character] = nil
 		get 'main', {}, session.to_hash
 		assert_response :redirect
-		assert_redirected_to character_url()
+		assert_redirected_to choose_character_character_index_url()
 		
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
 		#p "WAAA"
@@ -107,7 +107,7 @@ class GameControllerTest < ActionController::TestCase
 		session[:player_character] = nil
 		session[:player] = Player.find_by_handle("Test Player One")
 		get 'feature', {:id => @level_map.id}, session.to_hash
-		assert_redirected_to character_url()
+		assert_redirected_to choose_character_character_index_url()
 		
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
 		get 'feature', {}, session.to_hash

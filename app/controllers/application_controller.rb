@@ -25,7 +25,17 @@ class ApplicationController < ActionController::Base
     if @pc = session[:player_character]
       true
     else
-      redirect_to character_url()
+      redirect_to choose_character_character_index_url()
+      false
+    end
+  end
+
+  def setup_king_pc_vars
+    return(false) unless authenticate
+    if @pc = session[:kingdom].player_character
+      true
+    else
+      redirect_to choose_character_character_index_url()
       false
     end
   end
@@ -82,28 +92,7 @@ class ApplicationController < ActionController::Base
       return true
     end
   end
-  
-  #check that the player character selected is the king of the selected kingdom
-  def char_is_king
-    if session[:player].nil?
-      redirect_to :controller => 'account', :action => 'verify'
-      return false
-    elsif session[:player_character].kingdoms.size == 0
-      print "NOT A KING\n"
-      redirect_to :controller => 'game', :action => 'main'
-      return false
-    elsif session[:player_character].nil? || session[:kingdom].nil?
-      redirect_to :controller => 'management'
-      return false
-    elsif session[:player_character].id != session[:kingdom][:player_character_id]
-      flash[:notice] = 'Must have the king of the kingdom selected at your current character to do that.'
-      redirect_to :controller => '/management' 
-      return false
-    else
-      return true
-    end
-  end
-    
+
   #Its ok to make all this stuff protected right?
 protected
   #def debuggery(crap)

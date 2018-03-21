@@ -1,11 +1,9 @@
 class Management::PrefListController < ApplicationController
   before_filter :authenticate
   before_filter :king_filter
+  before_filter :setup_king_pc_vars
 
   layout 'main'
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :drop_from_list, :add_to_list ], :redirect_to => { :action => :index }
 
   def index
     @stuff = session[:pref_list_type].eligible_list(session[:player][:id], session[:kingdom][:id])

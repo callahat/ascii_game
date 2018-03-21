@@ -12,8 +12,8 @@
     <td><%=h SpecialCode.get_text('shown_to', kingdom_notice.shown_to) %></td>
     <td><%=h kingdom_notice.created_at.strftime("%I:%M%p %m/%d/%Y") if kingdom_notice.created_at %></td>
     <td><%=h kingdom_notice.text.html_safe %><br/><i>Signed:<% if kingdom_notice.signed.nil? %>anonymous<% else %><%=h kingdom_notice.signed %><% end %></i></td>
-    <td><%= link_to 'Edit', :action => 'edit', :id => kingdom_notice  %></td>
-    <td><%= link_to 'Censor', { :action => 'destroy', :id => kingdom_notice, :page => params[:page] }, :confirm => 'Are you sure?', :method => :post %></td>
+    <td><%= link_to 'Edit', edit_management_kingdom_notice_path(kingdom_notice) %></td>
+    <td><%= link_to 'Censor', management_kingdom_notice_path(kingdom_notice, page: params[:page]), data: { confirm: 'Are you sure?' }, method: :delete %></td>
   </tr>
 <% end %>
 </table>

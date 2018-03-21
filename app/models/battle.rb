@@ -17,9 +17,9 @@ class Battle < ActiveRecord::Base
   #Methods for starting different kinds of new battles
   def self.storm_gates(owner, kingdom)
     @guards = self.summon_guards(kingdom, 0.5)   #upto %70 of guards will show
-    if @guards.size > 0
+    if @guards.count > 0
       b = Battle.create(:owner_id => owner.id)
-      gname = @guards.size.to_s + ( @guards.size > 1 ? " guards" : " guard")
+      gname = @guards.count.to_s + ( @guards.count > 1 ? " guards" : " guard")
       bg = BattleGroup.create(:battle_id => b.id, :name => gname)
       spec = "NpcGuard"
       @guards.each{ |g|
@@ -48,7 +48,7 @@ class Battle < ActiveRecord::Base
       b = Battle.create(:owner_id => owner.id)
       @guards = self.summon_guards(npc.kingdom, 0.3)   #upto %30 of guards will show
       gname = npc.name
-      gname += " and " + @guards.size.to_s + ( @guards.size > 1 ? " guards" : " guard")
+      gname += " and " + @guards.count.to_s + ( @guards.count > 1 ? " guards" : " guard")
       bg = BattleGroup.create(:battle_id => b.id, :name => gname)
       BattleNpc.create(:battle_id => b.id, :enemy_id => npc.id, :battle_group_id => bg.id, :special => npc.kind)
       @guards.each{ |g|
@@ -65,7 +65,7 @@ class Battle < ActiveRecord::Base
       b = Battle.create(:owner_id => owner.id)
       @guards = self.summon_guards(kingdom, 0.7)   #upto %70 of guards will show
       gname = @king.name
-      gname += " and " + @guards.size.to_s + ( @guards.size > 1 ? " guards" : " guard")
+      gname += " and " + @guards.count.to_s + ( @guards.count > 1 ? " guards" : " guard")
       bg = BattleGroup.create(:battle_id => b.id, :name => gname)
       BattlePc.create(:battle_id => b.id, :enemy_id => @king.id, :battle_group_id => bg.id)
       @guards.each{ |g|
@@ -113,14 +113,14 @@ class Battle < ActiveRecord::Base
       end
     end
     self.groups.each{|g|
-      0.upto( (g.enemies.size < 10 ? g.enemies.size : 10) - 1 ){|ind|
+      0.upto( (g.enemies.count < 10 ? g.enemies.count : 10) - 1 ){|ind|
         self.phys_damage_enemies(g.enemies[ind], [pc]) } }
   end
 
 
   #Methods for ending a battle
   def victory
-    if self.enemies.size == 0
+    if self.enemies.count == 0
       self.groups.destroy_all
       if self.owner.present_kingdom && (@tax = (self.gold * self.owner.present_kingdom.tax_rate/100.0).to_i) > 0
         Kingdom.pay_tax(@tax, self.owner.in_kingdom)
@@ -179,7 +179,7 @@ class Battle < ActiveRecord::Base
 #called via a controller directly.
   def self.summon_guards(kingdom, ratio)
     return [] if kingdom.nil?
-    max_help = kingdom.guards.size * ratio
+    max_help = kingdom.guards.count * ratio
     kingdom.guards.order("rand()").limit( rand(max_help) + 1 )
   end
 

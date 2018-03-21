@@ -1,13 +1,10 @@
 class Management::FeaturesController < ApplicationController
   before_filter :authenticate
   before_filter :king_filter
+  before_filter :setup_king_pc_vars
 
   layout 'main'
 
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update, :create_feature_event, :update_feature_event, :destroy_feature_event, :arm_feature ],         :redirect_to => { :action => :index }
-  
-  
   #**********************************************************************
   #FEATURE MANAGEMENT
   #**********************************************************************
@@ -41,6 +38,7 @@ class Management::FeaturesController < ApplicationController
     if @feature.valid?
       if params[:feature][:image_id].nil? || params[:feature][:image_id] == ""
         @image.resize_image(10,15)
+        @image.name ||= "Feature #{@feature.name}"
         @image.save! 
         @feature.image_id = @image.id
       end
@@ -71,8 +69,9 @@ class Management::FeaturesController < ApplicationController
   
   def update
     edit
-    
+
     @image.update_image(params[:image][:image_text],10,15) unless params[:image][:image_text] == ""
+    @image.name = "Feature #{@feature.name}" unless @image.name.present?
     
     if @feature.update_attributes(params[:feature]) & @image.save
       calc_feature_cost
@@ -163,7 +162,7 @@ class Management::FeaturesController < ApplicationController
     redirect_to :action => 'show', :id => @feature.id
   end
   
-  def arm_feature
+  def arm
     @feature = Feature.find(params[:id])
     if !is_feature_owner
       redirect_to :action => 'index'
@@ -224,9 +223,7 @@ class Management::FeaturesController < ApplicationController
     
     redirect_to :controller => '/management/pref_list'
   end
-  
-  
-  
+
 protected
   def good_event
     if Event.where(armed: true, id: params[:feature_event][:event_id]).find_by(['kingdom_id = ? or player_id  = ?', session[:kingdom][:id], session[:player][:id]])

@@ -2,7 +2,7 @@
 
 <% if @npc_kills %>
   <table>
-  <tr><td><b>Kills:</b> <%= @pc.nonplayer_character_killers.size %></td></td>
+  <tr><td><b>Kills:</b> <%= @pc.nonplayer_character_killers.size %></td></tr>
     <tr>
       <th>Name</th>
       <th>Home</th>
@@ -12,7 +12,7 @@
     <tr>
       <td><%= npc.npc.name %></td>
       <td><% if npc.npc.kingdom %><%= npc.npc.kingdom.name %><% else %>[none]<% end %></td>
-      <td><% if npc.when %><%= npc.when.to_date.to_s %><% end %></td>
+      <td><% if npc.created_at %><%= npc.created_at.to_date.to_s %><% end %></td>
     </tr>
   <% end %>
   </table>

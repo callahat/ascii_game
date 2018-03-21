@@ -33,8 +33,9 @@ class Game::BattleController < ApplicationController
 
     if @battle.nil?
       redirect_to :controller => '/game', :action => 'main'
-    elsif session[:regicide] && session[:keep_fighting].nil?
+    elsif @battle.regicide && session[:keep_fighting].nil?
       session[:keep_fighting] = true
+      session[:regicide] = true
       @pc.present_kingdom.change_king(nil)
       redirect_to :action => 'regicide'
     elsif @booty = @battle.victory

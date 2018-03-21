@@ -8,6 +8,6 @@ class QuestKillPc < QuestReq
   
   def to_sentence
     pc = self.player_character
-    "Kill " + pc.name + " of " + pc.kingdom.name + "."
+    "Kill #{pc.name} of #{pc.kingdom.try(:name) || "nowhere"}."
   end
 end

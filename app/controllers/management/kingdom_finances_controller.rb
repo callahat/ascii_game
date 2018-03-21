@@ -1,17 +1,8 @@
 class Management::KingdomFinancesController < ApplicationController
-  before_filter :setup_pc_vars
   before_filter :king_filter
+  before_filter :setup_king_pc_vars
 
   layout 'main'
-
-  def index
-    show
-    render :action => 'show'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :withdraw, :deposit, :adjust_tax ],
-#         :redirect_to => { :action => :show }
 
   def show
     @cash = session[:kingdom].gold

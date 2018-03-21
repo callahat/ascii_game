@@ -35,7 +35,7 @@
     <td><%= creature.number_alive %></td>
     <td><%= creature.fecundity %></td>
     <td><% if creature.disease.nil? %>None<% else %><%= creature.disease.name %><% end %></td>
-    <td><% if !creature.armed %><%= link_to 'ARM', :action => 'arm_creature', :id => creature, :page => params[:page] %><% else %>armed<% end %></td>
+    <td><% if !creature.armed %><%= link_to 'ARM', :action => 'arm', :id => creature, :page => params[:page] %><% else %>armed<% end %></td>
     <td><%= link_to 'Show', :action => 'show', :id => creature %></td>
    <% if !creature.armed? %>
     <td><%= link_to 'Edit', :action => 'edit', :id => creature %></td>

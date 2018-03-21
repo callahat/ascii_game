@@ -1,17 +1,13 @@
 class Management::QuestsController < ApplicationController
   before_filter :authenticate
   before_filter :king_filter
+  before_filter :setup_king_pc_vars
 
   layout 'main'
-  
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update, :create_req, :update_req, :destroy_req, :activate, :retire ],         :redirect_to => { :action => :index }
-
 
   #**********************************************************************
   #QUEST MANAGEMENT
   #**********************************************************************
-  public
   def index
     #design quest
     #@quests = session[:kingdom].quests
@@ -139,78 +135,78 @@ class Management::QuestsController < ApplicationController
   end
   
   #Quest requirments
-  def add_req
-    #this will need fixed
-    @reqs = SPEC_CODET['quest_req_type']
-  end
-  
-  def new_req
-    @quest = Quest.find(params[:id])
-    
-    new_quest_req_obj
-  end
-  
-  def create_req
-    @quest = Quest.find(params[:id])
-    if !verify_quest_owner(@quest) || !verify_quest_not_in_use(@quest)
-      redirect_to :action => 'index'
-      return
-    end
-    
-  new_quest_req_obj
-    
-    @quest_req.quest_id = params[:id]
-    
-    if @quest_req.save
-      flash[:notice] = 'Requirement saved sucessfully.'
-      redirect_to :action => 'show', :id => params[:id]
-    else
-      flash[:notice] = 'Requirement failed to save.'
-      render :action => 'new_req'
-    end
-  end
-  
-  def edit_req
-    @quest = Quest.find(params[:id])
-    
-    find_quest_req_obj
-  end
-    
-  
-  def update_req
-    @quest = Quest.find(params[:id])
-    if !verify_quest_owner(@quest) || !verify_quest_not_in_use(@quest)
-      redirect_to :action => 'index'
-      return
-    end
-    
-    find_quest_req_obj
-    
-    if @quest_req.update_attributes(params[:quest_req])
-      flash[:notice] = 'Requirement updated sucessfully.'
-      redirect_to :action => 'show', :id => params[:id]
-    else
-      flash[:notice] = 'Requirement failed to update.'
-      render :action => 'edit_req'
-    end
-  end
-  
-  def destroy_req
-    @quest = Quest.find(params[:id])
-    if !verify_quest_owner(@quest) || !verify_quest_not_in_use(@quest)
-      redirect_to :action => 'index'
-      return
-    end
-    
-    find_quest_req_obj
-    
-    if @quest_req.destroy
-      flash[:notice] = 'Destroyed the requirement.'
-    else
-      flash[:notice] = 'Failed to destroy the requirement.'
-    end
-    redirect_to :action => 'show', :id => params[:id]
-  end
+  # def add_req
+  #   #this will need fixed
+  #   @reqs = SPEC_CODET['quest_req_type']
+  # end
+  #
+  # def new_req
+  #   @quest = Quest.find(params[:id])
+  #
+  #   new_quest_req_obj
+  # end
+  #
+  # def create_req
+  #   @quest = Quest.find(params[:id])
+  #   if !verify_quest_owner(@quest) || !verify_quest_not_in_use(@quest)
+  #     redirect_to :action => 'index'
+  #     return
+  #   end
+  #
+  #   new_quest_req_obj
+  #
+  #   @quest_req.quest_id = params[:id]
+  #
+  #   if @quest_req.save
+  #     flash[:notice] = 'Requirement saved sucessfully.'
+  #     redirect_to :action => 'show', :id => params[:id]
+  #   else
+  #     flash[:notice] = 'Requirement failed to save.'
+  #     render :action => 'new_req'
+  #   end
+  # end
+  #
+  # def edit_req
+  #   @quest = Quest.find(params[:id])
+  #
+  #   find_quest_req_obj
+  # end
+  #
+  #
+  # def update_req
+  #   @quest = Quest.find(params[:id])
+  #   if !verify_quest_owner(@quest) || !verify_quest_not_in_use(@quest)
+  #     redirect_to :action => 'index'
+  #     return
+  #   end
+  #
+  #   find_quest_req_obj
+  #
+  #   if @quest_req.update_attributes(params[:quest_req])
+  #     flash[:notice] = 'Requirement updated sucessfully.'
+  #     redirect_to :action => 'show', :id => params[:id]
+  #   else
+  #     flash[:notice] = 'Requirement failed to update.'
+  #     render :action => 'edit_req'
+  #   end
+  # end
+  #
+  # def destroy_req
+  #   @quest = Quest.find(params[:id])
+  #   if !verify_quest_owner(@quest) || !verify_quest_not_in_use(@quest)
+  #     redirect_to :action => 'index'
+  #     return
+  #   end
+  #
+  #   find_quest_req_obj
+  #
+  #   if @quest_req.destroy
+  #     flash[:notice] = 'Destroyed the requirement.'
+  #   else
+  #     flash[:notice] = 'Failed to destroy the requirement.'
+  #   end
+  #   redirect_to :action => 'show', :id => params[:id]
+  # end
   
 protected
   def quest_status_change_update
@@ -230,56 +226,56 @@ protected
     end
   end
   
-  def new_quest_req_obj
-    if params[:type] == 'creature_kill'
-      @quest_req = QuestCreatureKill.new(params[:quest_req])
-      @creatures = session[:kingdom].creatures
-    elsif params[:type] == 'explore'
-      @quest_req = QuestExplore.new(params[:quest_req])
-      @events = session[:kingdom].event_texts.where(armed: true)
-    elsif params[:type] == 'item'
-      @quest_req = QuestItem.new(params[:quest_req])
-      @items = Item.all
-    elsif params[:type] == 'kill_any_npc'
-      @quest_req = QuestKillNNpc.new(params[:quest_req])
-      @npc_types = [ ['merchant', 'NpcMerchant'], ['guard', 'NpcGuard'] ]
-      @kingdoms = Kingdom.all.order(:name)
-    elsif params[:type] == 'kill_pc'
-      @quest_req = QuestKillPc.new(params[:quest_req])
-      @pcs = PlayerCharacter.all.order(:name) #might need to add a check for the hardcore to prevent targeting an already final dead char
-    elsif params[:type] == 'kill_specific_npc'
-      @quest_req = QuestKillSNpc.new(params[:quest_req])
-      @npcs = Npc.all.joins(:health).where(
-                        ['healths.wellness = ? or healths.wellness = ?',
-                        SpecialCode.get_code('wellness','alive'), SpecialCode.get_code('wellness','diseased')]).order(:name)
-    else
-      flash[:notice] = 'Invalid type!'
-      redirect_to :action => 'show',:id => params[:id]
-    end  
-  end
-  
-  def find_quest_req_obj
-    @quest_req = QuestReq.find(params[:req_id])
-    if @quest_req.kind == 'QuestCreatureKill'
-      @creatures = session[:kingdom].creatures
-    elsif @quest_req.kind == 'explore'
-      @events = session[:kingdom].events.where(event_type: SpecialCode.get_code('event_type','quest'))
-    elsif @quest_req.kind == 'QuestItem'
-      @items = Item.all
-    elsif @quest_req.kind == 'QuestKillNNpc'
-      @npc_types = [ ['merchant', 'NpcMerchant'], ['guard', 'NpcGuard'] ]
-      @kingdoms = Kingdom.all.order(:name)
-    elsif @quest_req.kind == 'QuestKillPc'
-      @pcs = PlayerCharacter.all.order(:name)
-    elsif @quest_req.kind == 'QuestKillSNpc'
-      @npcs = Npc.all.joins(:health).where(
-                        ['healths.wellness = ? or healths.wellness = ?',
-                        SpecialCode.get_code('wellness','alive'), SpecialCode.get_code('wellness','diseased')]).order(:name)
-    else
-      flash[:notice] = 'Invalid type!'
-      redirect_to :action => 'show',:id => params[:id]
-    end
-  end
+  # def new_quest_req_obj
+  #   if params[:type] == 'creature_kill'
+  #     @quest_req = QuestCreatureKill.new(params[:quest_req])
+  #     @creatures = session[:kingdom].creatures
+  #   elsif params[:type] == 'explore'
+  #     @quest_req = QuestExplore.new(params[:quest_req])
+  #     @events = session[:kingdom].event_texts.where(armed: true)
+  #   elsif params[:type] == 'item'
+  #     @quest_req = QuestItem.new(params[:quest_req])
+  #     @items = Item.all
+  #   elsif params[:type] == 'kill_any_npc'
+  #     @quest_req = QuestKillNNpc.new(params[:quest_req])
+  #     @npc_types = [ ['merchant', 'NpcMerchant'], ['guard', 'NpcGuard'] ]
+  #     @kingdoms = Kingdom.all.order(:name)
+  #   elsif params[:type] == 'kill_pc'
+  #     @quest_req = QuestKillPc.new(params[:quest_req])
+  #     @pcs = PlayerCharacter.all.order(:name) #might need to add a check for the hardcore to prevent targeting an already final dead char
+  #   elsif params[:type] == 'kill_specific_npc'
+  #     @quest_req = QuestKillSNpc.new(params[:quest_req])
+  #     @npcs = Npc.all.joins(:health).where(
+  #                       ['healths.wellness = ? or healths.wellness = ?',
+  #                       SpecialCode.get_code('wellness','alive'), SpecialCode.get_code('wellness','diseased')]).order(:name)
+  #   else
+  #     flash[:notice] = 'Invalid type!'
+  #     redirect_to :action => 'show',:id => params[:id]
+  #   end
+  # end
+  #
+  # def find_quest_req_obj
+  #   @quest_req = QuestReq.find(params[:req_id])
+  #   if @quest_req.kind == 'QuestCreatureKill'
+  #     @creatures = session[:kingdom].creatures
+  #   elsif @quest_req.kind == 'explore'
+  #     @events = session[:kingdom].events.where(event_type: SpecialCode.get_code('event_type','quest'))
+  #   elsif @quest_req.kind == 'QuestItem'
+  #     @items = Item.all
+  #   elsif @quest_req.kind == 'QuestKillNNpc'
+  #     @npc_types = [ ['merchant', 'NpcMerchant'], ['guard', 'NpcGuard'] ]
+  #     @kingdoms = Kingdom.all.order(:name)
+  #   elsif @quest_req.kind == 'QuestKillPc'
+  #     @pcs = PlayerCharacter.all.order(:name)
+  #   elsif @quest_req.kind == 'QuestKillSNpc'
+  #     @npcs = Npc.all.joins(:health).where(
+  #                       ['healths.wellness = ? or healths.wellness = ?',
+  #                       SpecialCode.get_code('wellness','alive'), SpecialCode.get_code('wellness','diseased')]).order(:name)
+  #   else
+  #     flash[:notice] = 'Invalid type!'
+  #     redirect_to :action => 'show',:id => params[:id]
+  #   end
+  # end
   
   def verify_quest_owner(quest)
     #if someone tries to edit a feature not belonging to them

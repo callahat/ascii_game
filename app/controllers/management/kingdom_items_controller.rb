@@ -1,20 +1,10 @@
 class Management::KingdomItemsController < ApplicationController
-  before_filter :setup_pc_vars
   before_filter :king_filter
-  before_filter :char_is_king
-  
+  before_filter :setup_king_pc_vars
+
   layout 'main'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :do_store, :do_take ],
-#         :redirect_to => { :action => :list }
-
-  def list
     @kingdom_items = KingdomItem.get_page(params[:page], session[:kingdom][:id] )
   end
 
@@ -57,7 +47,7 @@ class Management::KingdomItemsController < ApplicationController
     elsif KingdomItem.update_inventory(session[:kingdom].id,@item.id,-1 * quant.to_i) &&
           PlayerCharacterItem.update_inventory(@pc.id,@item.id,1 * quant)
       flash[:notice] = quant.to_s + ' ' + @item.name.pluralize + ' moved from the storerooms to your inventory.'
-      redirect_to :action => 'list'
+      redirect_to :action => 'index'
     else
       flash[:notice] = 'You cannot remove more items than exist in the kingdom.'
       redirect_to :action => 'remove', :id => params[:id]

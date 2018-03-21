@@ -1,6 +1,6 @@
 class ForumController < ApplicationController
   before_filter :store_location, :only => [ :boards, :threds, :view_thred, :update_thred ]
-  before_filter :authenticate, :except => ['index', 'forum_router', 'boards', 'view_thred', 'threds']
+  before_filter :authenticate, :except => ['index', 'boards', 'view_thred', 'threds']
 
   before_filter :filter_min_mod_level, :only => [ :banhammer, :hammer_strike, :promote_mod, :do_promote ]
   before_filter :filter_low_mod_level, :only => [ :toggle_lock ]
@@ -9,8 +9,8 @@ class ForumController < ApplicationController
   
   before_filter :filter_mod_level_for_promotion, :only => [ :banhammer, :hammer_strike, :promote_mod, :do_promote ]
   
-  before_filter :load_board, :only => [ :threds, :new_thred, :create_thred, :edit_thred, :update_thred]
-  before_filter :load_thread, :only => [ :view_thred, :create_post, :delete_post, :update_post ]
+  before_filter :load_board, :only => [ :threds, :new_thred, :create_thred, :edit_thred, :update_thred, :promote, :do_promote]
+  before_filter :load_thread, :only => [ :view_thred, :create_post, :edit_post, :delete_post, :update_post, :promote, :do_promote ]
 #  before_filter :load_parent_post, :only => [ :create_post ]
   
   layout 'forum'
@@ -145,6 +145,12 @@ class ForumController < ApplicationController
     end
   end
 
+  def edit_post
+    view_thred
+    @post = ForumNodePost.find(params[:forum_node_id])
+    render :action => 'view_thred', :bname => @board.name, :tname => @thred.name
+  end
+
   def update_post
     @post = ForumNodePost.find(params[:forum_node_id])
 
@@ -178,7 +184,10 @@ class ForumController < ApplicationController
     @restrictions = SPEC_CODET['restrictions'].to_a
     @forum_restriction.player_id = @player.id
     @forum_restriction.given_by = session[:player][:id]
-        
+    if params[:forum_restriction][:expires].present?
+      @forum_restriction.expires = Date.today + params[:forum_restriction][:expires].to_i
+    end
+
     if @forum_restriction.save
       flash[:notice] = "Restriction saved"
       redirect_back_or_default(forums_url())
@@ -205,10 +214,10 @@ class ForumController < ApplicationController
     @player = Player.find(params[:player_id])
     if session[:player].forum_attribute.mod_level > params[:player][:mod_level].to_i && params[:player][:mod_level].to_i > -1
       Player.transaction do
-        @player.lock!
+        @player.forum_attribute.lock!
         @player.forum_attribute.mod_level = params[:player][:mod_level].to_i
         flash[:notice] = "Updated player mod level"
-      @player.save!
+      @player.forum_attribute.save!
       end
       redirect_back_or_default(boards_url(:bname => @board.name))
     else

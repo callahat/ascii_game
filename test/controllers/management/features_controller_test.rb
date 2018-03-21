@@ -80,16 +80,16 @@ class Management::FeaturesControllerTest < ActionController::TestCase
 	end
 	
 	test "mgmt feature controller arm" do
-		post 'arm_feature', {:id => @f_armed.id}, session.to_hash
+		post 'arm', {:id => @f_armed.id}, session.to_hash
 		assert_redirected_to :controller => 'management/features', :action => 'index'
 		assert flash[:notice] =~ /not be added/, flash[:notice]
 
-		post 'arm_feature', {:id => @f.id}, session.to_hash
+		post 'arm', {:id => @f.id}, session.to_hash
 		assert_redirected_to :controller => 'management/features', :action => 'index'
 		assert flash[:notice] =~ /Added to preference/
 		assert flash[:notice] =~ /sucessfully armed/
 		
-		post 'arm_feature', {:id => @f.id}, session.to_hash
+		post 'arm', {:id => @f.id}, session.to_hash
 		assert_redirected_to :controller => 'management/features', :action => 'index'
 		assert flash[:notice] =~ /not be added/, flash[:notice]
 	end

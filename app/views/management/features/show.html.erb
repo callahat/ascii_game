@@ -33,7 +33,7 @@
     <td><%=h feature_event.chance %></td>
     <td><%=h feature_event.choice %></td>
     <td><%= link_to 'Edit',:action => 'edit_feature_event', :id => feature_event %></td>
-    <td><%= link_to 'Destroy', { :action => 'destroy_feature_event', :id => feature_event }, :confirm => 'Are you sure?', :method => :post %></td>
+    <td><%= link_to 'Destroy', { action: 'destroy_feature_event', id: feature_event }, data: { confirm: 'Are you sure?' }, method: :delete %></td>
   </tr>
   <%# end %>
 <% end %>
@@ -45,7 +45,7 @@ None
 <br/>
 
 <% if !@feature.armed %>
-<%= link_to 'ARM', { :action => 'arm_feature', :id => @feature }, :confirm => 'Are you sure?', :method => :post %> |
+<%= link_to 'ARM', arm_management_feature_path(@feature, page: params[:page]), data: { confirm: 'Are you sure?' }, method: :post %> |
 <%= link_to 'Edit Feature', :action => 'edit', :id => @feature %> |
 <%= link_to 'Add Feature Events', :action => 'new_feature_event', :id => @feature %> | 
 <% end %>

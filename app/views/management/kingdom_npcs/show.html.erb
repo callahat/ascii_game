@@ -8,9 +8,9 @@
 <p><b>hired?: </b><%= @npc.is_hired %></p>
 <%  if !@npc.is_hired %>
 <%= (@npc.kind == "NpcMerchant" ?
-                link_to('Give Store Front', :action => 'assign_store', :id => @npc):
-                link_to('Hire', {:action => 'hire_guard', :id => @npc}, :method => :post) ) %> |
+                link_to('Give Store Front', assign_store_management_kingdom_npc_path(id: @npc)):
+                link_to('Hire', hire_guard_management_kingdom_npc_path(id: @npc), :method => :post)) %> |
 <%      end %>
 
-<%= link_to 'Turn Away', { :action => 'turn_away', :id => @npc }, :method => :post %> |
-<%= link_to 'Kingdom NPCS', :action => 'list' %>
+<%= link_to 'Turn Away', turn_away_management_kingdom_npc_path(id: @npc), data: {confirm: 'Are you sure?'}, method: :post %> |
+<%= link_to 'Kingdom NPCS', management_kingdom_npcs_path %>

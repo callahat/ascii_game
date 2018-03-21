@@ -183,7 +183,7 @@ class NpcMerchant < Npc
       elsif PlayerCharacterItem.update_inventory(pc.id,@stock.item_id,1)
         Kingdom.pay_tax(@tax, self.kingdom_id)
         TxWrapper.give(self, :gold, @pretax)
-        [true, "Bought a " + @stock.item.name + " for " + @cost.to_s + " gold." ]
+        [true, "Bought a " + @stock.item.name + " for " + (@tax + @pretax).to_s + " gold." ]
       end
     else
       [false, self.name + " does not have " + (@stock ? "a " + @stock.item.name : "one of those" ) + " for sale."]

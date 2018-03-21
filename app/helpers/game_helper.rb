@@ -96,6 +96,6 @@ module GameHelper
   #overriding this method, its broken at least for unit tests. will undo once Rails3 is fixed. Bug listed at:
   #https://rails.lighthouseapp.com/projects/8994/tickets/6652-cannot-include-actionviewhelpers-and-railsapplicationroutesurl_helpers-at-the-same-time
   def helper_link_to(name, params)
-    '<a href="game/'+ params[:action] + (params[:id].nil? ? "" : '/' + params[:id]) + '" >' + name + '</a>'
+    '<a href="/game/'+ params[:action] + (params[:id].nil? ? "" : '/' + params[:id]) + '" >' + name + '</a>'
   end
 end

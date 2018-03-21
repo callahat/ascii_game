@@ -43,7 +43,7 @@ class AccountController < ApplicationController
       end
     else
       flash.delete(:recaptcha_error) # get rid of the recaptcha error being flashed by the gem.
-      flash.now[:error] = 'reCAPTCHA is incorrect. Please try again.'
+      flash[:error] = 'reCAPTCHA is incorrect. Please try again.'
       render :action => 'new'
     end
   end

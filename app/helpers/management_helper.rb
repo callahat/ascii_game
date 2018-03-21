@@ -49,8 +49,8 @@ module ManagementHelper
     <td>#{ npc.name }</td>
     <td>#{ npc.kind }</td>
     <td>#{ SpecialCode.get_text('wellness', npc.health.wellness) }</td>
-    <td>#{ link_to 'Show', :action => 'show', :id => npc }</td>
-    <td>#{ link_to 'Fire', { :action => 'turn_away', :id => npc }, :confirm => 'Are you sure?', :method => :post }</td>
+    <td>#{ link_to 'Show', management_kingdom_npc_path(id: npc.id) }</td>
+    <td>#{ link_to 'Fire', turn_away_management_kingdom_npc_path(id: npc), data: {confirm: 'Are you sure?'}, :method => :post }</td>
   </tr>\n"
     }.html_safe
   end
@@ -62,9 +62,9 @@ module ManagementHelper
               link_to('Hire', {:action => 'hire_guard', :id => npc },  :method => :post) )
       ret += "  <tr>
     <td>#{ npc.name } - #{ npc.kind }</td>
-    <td>#{ link_to 'Show', :action => 'show', :id => npc }</td>
+    <td>#{ link_to 'Show', management_kingdom_npc_path(id: npc) }</td>
     <td>#{ l }</td>
-    <td>#{ link_to 'Turn Away', {:action => 'turn_away', :id => npc },  :method => :post }</td>
+    <td>#{ link_to 'Turn Away', turn_away_management_kingdom_npc_path(id: npc), data: {confirm: 'Are you sure?'}, :method => :post }</td>
   </tr>\n"
     }.html_safe
   end

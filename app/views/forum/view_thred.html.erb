@@ -67,9 +67,9 @@ No Posts
       <tr class="edit_notices"><td colspan=3><%= raw post.edit_notices %></td></tr>
       <tr class="post_info"><td>posted <%= post.created_at.strftime("%m-%d-%Y %H:%M.%S %p") %></td>
       <td>
-        <%= link_to('-edit', :action => 'edit_thred', :bname => @board.name, :tname => @thred.name, :forum_node_id => post.id) if post.can_be_edited_by(session[:player]) %></td>
+        <%= link_to('-edit', :action => 'edit_post', :bname => @board.name, :tname => @thred.name, :forum_node_id => post.id) if post.can_be_edited_by(session[:player]) %></td>
       <td>
-        <%= link_to('-delete', :action => 'delete_thread', :bname => @board.name, :tname => @thred.name, :forum_node_id => post.id) if post.can_be_deleted_by(session[:player]) %></td>
+        <%= link_to('-delete', :action => 'delete_post', :bname => @board.name, :tname => @thred.name, :forum_node_id => post.id) if post.can_be_deleted_by(session[:player]) %></td>
       </tr>
     <% end %>
   </table>

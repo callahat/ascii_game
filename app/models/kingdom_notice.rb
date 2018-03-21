@@ -3,6 +3,8 @@ class KingdomNotice < ActiveRecord::Base
 
   validates_presence_of :text,:shown_to
 
+  attr_accessible :text, :shown_to, :signed, :kingdom_id
+
   default_scope { order("created_at DESC") }
 
   def self.create_storm_gate_notice(name, kid)

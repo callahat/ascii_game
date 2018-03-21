@@ -1,20 +1,4 @@
-<p><b>Castle has stairways to the following levels:</b></p>
+<h1>(<%= session[:kingdom].name %>) Castle Management</h1>
 
-<% if @moves.nil? %>
-<p>No stairways built.</p>
-<% else %>
-
-<table>
-<% for move in @moves do %>
-<tr>
-  <td>Stairway to level <%=h move.event.level.level %></td>
-  <td><%= link_to 'Destroy', {:action => 'destroy', :id => move } , :confirm => "There will be no refund.\nAre you sure?", :method => :post %></td>
-</tr>
-<% end %>
-</table>
-<% end %>
-
-<br/>
-
-<%= link_to 'Build Castle Stairway', :action => 'new' %><br/>
-<%= link_to 'Back', :action => 'index' %>
+<p><%= link_to 'Castle Stairs', :action => 'levels' %></p>
+<p><%= link_to 'Throne Room', :action => 'throne' %></p>

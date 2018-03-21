@@ -76,7 +76,7 @@ class PlayerCharacter < ActiveRecord::Base
       self.freepts += (self.freepts * 0.05).to_i
       self.freepts += c_class.freepts + race.freepts
       self.save!
-      
+
       health.lock!
       health.adjust_for_stats(base_stat, level)
       health.save!

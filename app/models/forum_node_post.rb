@@ -36,7 +36,7 @@ class ForumNodePost < ForumNode
         return "You may not edit delete a post; your mod level is insufficient"
       end
     else
-      is_deleted = true
+      self.is_deleted = true
       edit_notices = edit_notices.to_s + '<br/>Deleted by ' + user.handle + ' at ' + Time.now.strftime("%m-%d-%Y %I:%M.%S %p")
       save
       return "Post deleted"

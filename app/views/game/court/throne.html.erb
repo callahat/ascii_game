@@ -6,7 +6,7 @@
 <p>You stand before the throne of <%= @king_on_throne.name %>, king of <%= @king_on_throne.kingdoms.map{|k| k.name}.join(", ") %></p>
 
 <p><%= link_to 'Pledge Service', :action => 'join_king' %></p>
-<p><%= link_to 'Attack!', :controller => '/game/battle', :action => 'fight_king' %></p>
+<p><%= link_to 'Attack!', {:controller => '/game/battle', :action => 'fight_king'}, :method => :post %></p>
 <% end %>
 
 <% else %>

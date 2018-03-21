@@ -6,6 +6,8 @@ class Feature < ActiveRecord::Base
   has_many :feature_events, ->{ order('priority') }
   has_many :level_maps
   has_many :world_maps
+  has_many :events, through: :feature_events
+  has_many :local_move_events, ->{where(kind: 'EventMoveLocal')}, source: :event, through: :feature_events
 
   validates_presence_of :name,:action_cost,:image_id,:player_id,:kingdom_id,:cost,:num_occupants
   validates_uniqueness_of :name

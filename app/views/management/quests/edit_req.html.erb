@@ -1,8 +1,0 @@
-<h1>Edit quest requirement</h1>
-
-<%= form_tag :action => 'update_req', :id => params[:id], :type => params[:type], :req_id => params[:req_id] do %>
-  <%= render :partial => 'req_form' %>
-  <%= submit_tag 'Edit' %>
-<% end %>
-
-<%= link_to 'Back', :action => 'show', :id => params[:id] %>

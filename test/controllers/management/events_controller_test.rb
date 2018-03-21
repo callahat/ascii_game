@@ -81,16 +81,16 @@ class Management::EventsControllerTest < ActionController::TestCase
 	end
 	
 	test "mgmt event controller arm" do
-		post 'arm_event', {:id => @e_armed.id}, session.to_hash
+		post 'arm', {:id => @e_armed.id}, session.to_hash
 		assert_redirected_to :controller => 'management/events', :action => 'index'
 		assert flash[:notice] =~ /being used/
 
-		post 'arm_event', {:id => @e.id}, session.to_hash
+		post 'arm', {:id => @e.id}, session.to_hash
 		assert_redirected_to :controller => 'management/events', :action => 'index'
 		assert flash[:notice] =~ /Added to preference/
 		assert flash[:notice] =~ /sucessfully armed/
 		
-		post 'arm_event', {:id => @e.id}, session.to_hash
+		post 'arm', {:id => @e.id}, session.to_hash
 		assert_redirected_to :controller => 'management/events', :action => 'index'
 		assert flash[:notice] =~ /being used/, flash[:notice]
 	end

@@ -36,7 +36,7 @@ class Game::CourtController < ApplicationController
         else
           @kingdom.player_character_id = @pc[:id]
           @message = 'You have claimed the crown'
-          KingdomNotice.create_notice(@pc.name + " has found the throne vacant, and claimed it for their own.", @pc.present_kingdom)
+          KingdomNotice.create_notice(@pc.name + " has found the throne vacant, and claimed it for their own.", @pc.in_kingdom)
         end
         render 'game/complete'
       end

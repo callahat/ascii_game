@@ -1,6 +1,6 @@
 <h1>Edit feature</h1>
 
-<%= form_tag :action => 'update', :id => params[:id] do %>
+<%= form_tag management_feature_path(params[:id]), method: :patch do %>
   <%= render :partial => 'form' %>
   <%= submit_tag "Update" %>
 <% end %>

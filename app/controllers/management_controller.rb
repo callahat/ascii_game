@@ -1,16 +1,15 @@
 class ManagementController < ApplicationController
   before_filter :authenticate
   before_filter :king_filter
-  before_filter :setup_kingdom_vars, :except => ['main_index', 'choose_kingdom', 'select_kingdom']
+  before_filter :setup_kingdom_vars, :except => ['choose_kingdom', 'select_kingdom']
+  before_filter :setup_king_pc_vars, :except => ['choose_kingdom', 'select_kingdom']
 
   layout 'main'
 
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :do_retire ],         :redirect_to => { :action => :main_index }
-
   def choose_kingdom
     session[:kingdom] = nil
-    redirect_to :action => 'main_index'
+    main_index
+    render :action => 'main_index'
   end
 
   def main_index
@@ -43,7 +42,7 @@ class ManagementController < ApplicationController
   end
 
   def retire
-    print "tits"
+    print "titles"
    # params[:s][:s]
     if session[:kingdom].nil?
       redirect_to :action => 'retire'

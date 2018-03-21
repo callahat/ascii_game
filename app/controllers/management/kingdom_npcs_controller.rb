@@ -1,13 +1,5 @@
 class Management::KingdomNpcsController < ManagementController
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :hire_merchant, :hire_guard, :turn_away ],         :redirect_to => { :action => :list }
-
-  def list
     @merchs = @kingdom.merchants.joins(:health).order('healths.wellness')
     @guards = @kingdom.guards.joins(:health).order('healths.wellness')
     @npcs_for_hire = @kingdom.npcs.joins(:health) \
@@ -23,10 +15,10 @@ class Management::KingdomNpcsController < ManagementController
     @npc = @kingdom.hireable_merchants.find(params[:id])
     if @kingdom.kingdom_empty_shops.size == 0
       flash[:notice] = 'No available storefronts for the merchants.'
-      redirect_to :action => 'list'
+      redirect_to :action => 'index'
     elsif @npc.is_hired
       flash[:notice] = 'This merchant already has a shop!'
-      redirect_to :action => 'list'
+      redirect_to :action => 'index'
     else
       @shops = @kingdom.kingdom_empty_shops
     end
@@ -36,7 +28,7 @@ class Management::KingdomNpcsController < ManagementController
   def hire_guard
     @npc = @kingdom.hireable_guards.find(params[:id])
     @npc.update_attribute(:is_hired, true)
-    redirect_to :action => 'list'
+    redirect_to :action => 'index'
   end
   
   #revisit this when storefront is set.
@@ -48,7 +40,7 @@ class Management::KingdomNpcsController < ManagementController
       @empty = @kingdom.kingdom_empty_shops.find(params[:level_map][:id])
     else
       flash[:notice] = 'No store found for the NPC to set up shop.'
-      redirect_to :action => 'list'
+      redirect_to :action => 'index'
 
       return false
     end
@@ -63,7 +55,7 @@ class Management::KingdomNpcsController < ManagementController
     #THAT KINGDOM STORE IS NO LONGER EMPTY
     @npc.update_attribute(:is_hired, true)
     @kingdom.reload
-    redirect_to :action => 'list'
+    redirect_to :action => 'index'
   end
 
   def turn_away
@@ -82,6 +74,6 @@ class Management::KingdomNpcsController < ManagementController
     
     @npc.update_attributes(:kingdom_id => nil, :is_hired => false)
     
-    redirect_to :action => 'list'
+    redirect_to :action => 'index'
   end
 end

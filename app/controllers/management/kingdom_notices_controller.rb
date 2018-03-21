@@ -1,34 +1,26 @@
 class Management::KingdomNoticesController < ApplicationController
   before_filter :authenticate
   before_filter :king_filter
+  before_filter :setup_king_pc_vars
 
   layout 'main'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],         :redirect_to => { :action => :list }
-
-  def list
-    @kingdom_notices = KingdomNotice.get_page(params[:page], session[:kingdom].id )
+    @kingdom_notices = KingdomNotice.get_page(params[:page], nil, session[:kingdom] )
   end
 
   def new
     @shows = SpecialCode.get_codes_and_text('shown_to')
-    @kingdom_notice = KingdomNotice.new
+    @kingdom_notice = KingdomNotice.new signed: "Your King, #{session[:kingdom].player_character.name}"
   end
 
   def create
     @shows = SpecialCode.get_codes_and_text('shown_to')
     @kingdom_notice = KingdomNotice.new(params[:kingdom_notice])
-    @kingdom_notice.datetime = Time.now.strftime("%I:%M%p %m/%d/%Y")
     @kingdom_notice.kingdom_id = session[:kingdom][:id]
     if @kingdom_notice.save
       flash[:notice] = 'KingdomNotice was successfully created.'
-      redirect_to :action => 'list'
+      redirect_to :action => 'index'
     else
       render :action => 'new'
     end
@@ -42,12 +34,10 @@ class Management::KingdomNoticesController < ApplicationController
   def update
     @shows = SpecialCode.get_codes_and_text('shown_to')
     @kingdom_notice = KingdomNotice.find_by(id: params[:id])
-    
-    verify_notice_owner
-    
-    if @kingdom_notice.update_attributes(params[:kingdom_notice])
+
+    if verify_notice_owner and @kingdom_notice.update_attributes(params[:kingdom_notice])
       flash[:notice] = 'KingdomNotice was successfully updated.'
-      redirect_to :action => 'list'
+      redirect_to :action => 'index'
     else
       render :action => 'edit'
     end
@@ -55,16 +45,17 @@ class Management::KingdomNoticesController < ApplicationController
 
   def destroy
     @kingdom_notice = KingdomNotice.find_by(id: params[:id])
-    verify_notice_owner
-  
-    @kingdom_notice.destroy
-    redirect_to :action => 'list', :page => params[:page]
+
+    flash[:notice] = "Censored!"
+
+    verify_notice_owner and @kingdom_notice.destroy
+    redirect_to :action => 'index', :page => params[:page]
   end
   
 protected
   def verify_notice_owner
     if session[:kingdom][:id] != @kingdom_notice.kingdom_id
-      redirect_to :action => 'list'
+      flash[:notice] = "Invalid notice"
       return false
     else
       return true

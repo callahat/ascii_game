@@ -1,13 +1,9 @@
 class Management::CreaturesController < ApplicationController
   before_filter :authenticate
   before_filter :king_filter
+  before_filter :setup_king_pc_vars
 
   layout 'main'
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],
-#         :redirect_to => { :action => :index }
-
 
   #**********************************************************************
   #CREATURE MANAGEMENT
@@ -114,7 +110,7 @@ class Management::CreaturesController < ApplicationController
     redirect_to :action => 'index', :page => params[:page]
   end
 
-  def arm_creature
+  def arm
     @creature = Creature.find(params[:id])
     if !verify_creature_owner
       redirect_to :action => 'index'

@@ -1,18 +1,20 @@
 class Management::ImagesController < ApplicationController
   before_filter :authenticate
   before_filter :king_filter
+  before_filter :accessible_images
+  before_filter :setup_king_pc_vars
 
   layout 'main'
 
   def index
-    @images = Image.get_page(params[:page], session[:kingdom][:id] )
+    @images = accessible_images.get_page(params[:page])
   end
 
 #  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
 #  verify :method => :post, :only => [ :destroy, :create, :update ],         :redirect_to => { :action => :index }
 
   def show
-    @image = Image.find(params[:id])
+    @image = accessible_images.find(params[:id])
     if @image.image_type == SpecialCode.get_code('image_type','kingdom')
       @type = "feature"
     elsif @image.image_type == SpecialCode.get_code('image_type','creature') ||
@@ -26,7 +28,7 @@ class Management::ImagesController < ApplicationController
   end
 
   def new
-    @image = Image.new(params[:image])
+    @image = accessible_images.new(params[:image])
     @image.player_id = session[:player][:id]
     @image.kingdom_id = session[:kingdom][:id]
     @types = SPEC_CODET['image_type']
@@ -55,7 +57,7 @@ class Management::ImagesController < ApplicationController
   end
 
   def edit
-    @image = Image.find(params[:id])
+    @image = accessible_images.find(params[:id])
     set_image_box_size
     @types = SPEC_CODET['image_type']
     unless session[:player][:admin]
@@ -125,6 +127,18 @@ protected
       false
     else
       true
+    end
+  end
+
+  def accessible_images
+    if session[:player][:admin]
+      @accessible_images ||= session[:kingdom].images
+    else
+      @accessible_images ||= session[:kingdom].images.where.not(
+          image_type: [
+                          SpecialCode.get_code('image_type','character'),
+                          SpecialCode.get_code('image_type','world')
+                      ])
     end
   end
 end

@@ -23,10 +23,10 @@
     <td><%= feature.num_occupants %></td>
     <td><%= feature.store_front_size %></td>
   <% if !feature.armed %>
-    <td><%= link_to 'ARM', { :action => 'arm_feature', :id => feature, :page => params[:page] }, :confirm => 'Are you sure?', :method => :post %></td>
-    <td><%= link_to 'Show', :action => 'show', :id => feature %></td>
-    <td><%= link_to 'Edit', :action => 'edit', :id => feature %></td>
-    <td><%= link_to 'Destroy', { :action => 'destroy', :id => feature, :page => params[:page] }, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to 'ARM', arm_management_feature_path(feature, page: params[:page]), data: { confirm: 'Are you sure?' }, method: :post %></td>
+    <td><%= link_to 'Show', management_feature_path(feature.id) %></td>
+    <td><%= link_to 'Edit', edit_management_feature_path(feature) %></td>
+    <td><%= link_to 'Destroy', management_feature_path(feature, page: params[:page]), data: { confirm: 'Are you sure?' }, method: :delete %></td>
   <% else %>
     <td>armed</td>
     <td><%= link_to 'Show', :action => 'show', :id => feature %></td>

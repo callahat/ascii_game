@@ -1,6 +1,6 @@
 <h1>Editing image</h1>
 
-<%= form_tag :action => 'update', :id => @image do %>
+<%= form_tag management_image_path(params[:id]), method: :patch  do %>
   <%= render :partial => 'form' %>
   <%= submit_tag 'Edit' %>
 <% end %>

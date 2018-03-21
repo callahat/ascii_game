@@ -77,16 +77,16 @@ class Management::CreaturesControllerTest < ActionController::TestCase
 	end
 	
 	test "mgmt creature controller arm" do
-		get 'arm_creature', {:id => @c_armed.id}, session.to_hash
+		get 'arm', {:id => @c_armed.id}, session.to_hash
 		assert_redirected_to :controller => 'management/creatures', :action => 'index'
 		assert flash[:notice] =~ /Could not be/
 
-		get 'arm_creature', {:id => @c.id}, session.to_hash
+		get 'arm', {:id => @c.id}, session.to_hash
 		assert_redirected_to :controller => 'management/creatures', :action => 'index'
 		assert flash[:notice] =~ /Added to preference/
 		assert flash[:notice] =~ /sucessfully armed/
 		
-		get 'arm_creature', {:id => @c.id}, session.to_hash
+		get 'arm', {:id => @c.id}, session.to_hash
 		assert_redirected_to :controller => 'management/creatures', :action => 'index'
 		assert flash[:notice] =~ /Could not be/
 	end

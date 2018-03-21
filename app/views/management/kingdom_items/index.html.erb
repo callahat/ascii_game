@@ -10,7 +10,7 @@
   <tr>
     <td><%=h kingdom_item.item.name %></td>
     <td><%=h kingdom_item.quantity %></td>
-    <td><%= link_to 'Remove', :action => 'remove', :id => kingdom_item %></td>
+    <td><%= link_to 'Remove', remove_management_kingdom_items_path(id: kingdom_item.id) %></td>
   </tr>
 <% end %>
 </table>
@@ -19,4 +19,4 @@
 
 <br />
 
-<%= link_to 'Store Items', :action => 'list_inventory' %>
+<%= link_to 'Store Items', list_inventory_management_kingdom_items_path %>

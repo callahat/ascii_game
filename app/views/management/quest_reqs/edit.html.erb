@@ -1,0 +1,8 @@
+<h1>Edit quest requirement</h1>
+
+<%= form_tag management_quest_req_path(@quest, id: params[:id]), method: :patch do %>
+  <%= render :partial => 'form' %>
+  <%= submit_tag 'Edit' %>
+<% end %>
+
+<%= link_to 'Back', management_quest_path(@quest) %>

@@ -12,30 +12,67 @@ Rails.application.routes.draw do
 
   get       'login'             =>  'account#login'
   get       'logout'            =>  'account#logout'
+  post      'account/verify'    =>  'account#verify'
   get       'register'          =>  'account#new'
-  get       'character'         =>  'character#menu'
-  get       'choose_character'  =>  'character#choose_character'
+  post      'register'          =>  'account#new'
 
-  get       'characterse'       =>  'characterse#menu'
+  resources :account, except: [:destroy] do
+    collection do
+      get 'list'
+    end
+  end
 
-  get       'game_feature'      =>  'game#feature'
-  get       'game_main'         =>  'game#main'
+  resources :character, only: [] do
+    collection do
+      get  'new'
+      post 'namenew'
+      post 'create', action: :create
+      get  'choose_character'
+      post 'do_chose/:id', action: :do_choose
+      get  'menu'
+      get  'retire'
+      post 'do_retire/:id', action: :do_retire
+      get  'unretire'
+      post 'do_unretire/:id', action: :do_unretire
+      get  'edit_character'
+      get  'destroy'
+      post 'do_destroy/:id', action: :do_destroy
+      post 'do_image_update/:id', action: :do_image_update
+      post 'updateimage/:id', action: :updateimage
+      get  'raise_level', action: :raise_level
+      post 'gainlevel'
+    end
+  end
+
+  resources :characterse, only: [] do
+    collection do
+      get  '', action: :menu
+      get 'inventory'
+      post 'equip/:id', action: :equip
+      post 'do_equip/:id', action: :do_equip
+      post 'unequip/:id', action: :unequip
+      get 'infections'
+    end
+  end
+
+  get       'game/feature'      =>  'game#feature'
+  get       'game/main'         =>  'game#main'
   get       'complete'          =>  'game#complete'
 
   #Game::* controllers
   get       'game/battle'           =>  'game/battle', :action => :battle
-  get       'game/battle/:action'   =>  'game/battle'
+  post      'game/battle/:action'   =>  'game/battle'
   get       'game/court/:action'    =>  'game/court'
 
-  get       'game/do_heal'        =>  'game#do_heal',    :via => :post
-  get       'game/do_choose'      =>  'game#do_choose',  :via => :post
-  get       'game/do_train'       =>  'game#do_train',   :via => :post
-  get       'game/do_spawn'       =>  'game#do_spawn',   :via => :post
+  post      'game/do_heal'        =>  'game#do_heal'
+  post      'game/do_choose'      =>  'game#do_choose'
+  post      'game/do_train'       =>  'game#do_train'
+  post      'game/do_spawn'       =>  'game#do_spawn'
 
-  get       'game/do_heal'        =>  'game#feature',    :via => :get
-  get       'game/do_choose'      =>  'game#feature',    :via => :get
-  get       'game/do_train'       =>  'game#feature',    :via => :get
-  get       'game/do_spawn'       =>  'game#feature',    :via => :get
+  get       'game/do_heal'        =>  'game#feature'
+  get       'game/do_choose'      =>  'game#feature'
+  get       'game/do_train'       =>  'game#feature'
+  get       'game/do_spawn'       =>  'game#feature'
 
   get       'game/leave_kingdom'  =>  'game#leave_kingdom'
   get       'game/spawn_kingdom'  =>  'game#spawn_kingdom'
@@ -56,82 +93,106 @@ Rails.application.routes.draw do
   get       'npc_heal'          =>  'game/npc#heal'
   get       'npc_do_heal'       =>  'game/npc#do_heal'
   get       'npc_train'         =>  'game/npc#train'
-  get       'npc_do_train'      =>  'game/npc#do_train'
+  post      'npc_do_train'      =>  'game/npc#do_train'
   get       'npc_buy'           =>  'game/npc#buy'
-  get       'npc_do_buy'        =>  'game/npc#do_buy'
+  post      'npc_do_buy'        =>  'game/npc#do_buy'
   get       'npc_sell'          =>  'game/npc#sell'
-  get       'npc_do_sell'       =>  'game/npc#do_sell'
+  post      'npc_do_sell'       =>  'game/npc#do_sell'
 
-  get       'management'        =>  'management#main_index'
+  # get       'management/helptext' => 'management#helptext'
+  # get       'management/choose_kingdom' => 'management#choose_kingdom'
 
-  #ManagementController
-  get       'mgmt_levels'       =>  'management/levels#index'
-  get       'mgmt_levels_show'  =>  'management/levels#show'
-  get       'mgmt_levels_new'   =>  'management/levels#new'
-  post      'mgmt_levels_create'=>  'management/levels#create'
-  get       'mgmt_levels_edit'  =>  'management/levels#edit'
-  post      'mgmt_levels_update'=>  'management/levels#update'
-
-  #PrefListController
-  get       'management/pref_list'                =>  'management/pref_list#index'
-  post      'management/pref_list/drop_from_list' =>  'management/pref_list#drop_from_list'
-  post      'management/pref_list/add_to_list'    =>  'management/pref_list#add_to_list'
-  # TODO: probably don't need these routes
-  get       'management/pref_list/drop_from_list' =>  'management/pref_list#index', as: 'management_pref_list_from_drop_from_list'
-  get       'management/pref_list/add_to_list'    =>  'management/pref_list#index', as: 'management_pref_list_from_add_to_list'
-
-  # TODO: is this needed?
-  get       'management/main_index'  => 'management#main_index', :as => "management_main_index"
-
-  get       'management/events/new' => 'management/events#new'
+  # get       'management'        =>  'management#main_index'
+  # post      'management/select_kingdom'    =>  'management#select_kingdom'
+  get       'management/retire'    =>  'management#retire'
+  post      'management/retire'    =>  'management#retire'
+  post      'management/do_retire' =>  'management#do_retire'
 
   namespace :management do
-    resources :castles do
+    root action: :main_index
+    get  :helptext
+    get  :choose_kingdom
+    post :select_kingdom
+    resource :castles do
       collection do
+        get 'levels'
         get 'throne'
         get 'throne_level'
         post 'throne_square'
         post 'set_throne'
       end
     end
-    resources :creatures, :features do
+    resources :creatures do
       get 'pref_lists', :on => :collection
+      post :arm, on: :member
     end
     resources :events do
       get 'pref_lists', :on => :collection
+      post :new, on: :member
+      post :arm, on: :member
     end
-    resources :images
-    resources :kingdom_bans
-    resources :kingdom_entries do
+    resources :features do
+      get 'pref_lists', :on => :collection
+      post   :arm, on: :member
       collection do
-        get 'show'
-        get 'index'
-        get 'edit'
-        post 'update'
+      get    :new_feature_event
+      post   :create_feature_event
+      get    :edit_feature_event
+      patch  :update_feature_event
+      delete :destroy_feature_event
       end
     end
-    resources :kingdom_finances do
+    resources :images
+    resources :kingdom_bans, except: [:edit, :update]
+    resource  :kingdom_entries, only: [:show, :edit, :update]
+    resource  :kingdom_finances, only: [:show, :edit] do
       collection do
-        get 'show'
-        get 'index'
-        get 'edit'
         post 'withdraw'
         post 'deposit'
         post 'adjust_tax'
       end
     end
-    resources :kingdom_items
-    resources :kingdom_notices
-    resources :kingdom_npcs, :except => [:show] do
+    resources :kingdom_items, only: [:index] do
       collection do
-        get :list
-        get ':action/:id', :only => [ :edit, :assign_store ]
-        post ':action/:id', :only => [ :hire_merchant, :hire_guard, :turn_away ]
+        get  :list_inventory
+        get  :store
+        post :do_store
+        get  :remove
+        post :do_take
       end
     end
-    resources :kingdom_npcs, :only => [:show]
+    resources :kingdom_notices
+    resources :kingdom_npcs, only: [:index, :show] do
+      member do
+        get  :edit
+        get  :assign_store
+        post :hire_merchant
+        post :hire_guard
+        post :turn_away
+      end
+    end
     resources :levels
-    resources :quests
+    get       'pref_list'                =>  'pref_list#index'
+    post      'pref_list/drop_from_list' =>  'pref_list#drop_from_list'
+    post      'pref_list/add_to_list'    =>  'pref_list#add_to_list'
+    resources :quests do
+      member do
+        post :activate
+        post :retire
+        # TODO: these should be in their own controller
+        # post :add_req
+        # post :new_req
+        # post :create_req
+        # post :edit_req
+        # post :update_req
+        # post :delete_req
+      end
+      resources :quest_reqs, as: :reqs, only: [:new, :create, :edit, :update, :destroy] do
+        collection do
+          get :type
+        end
+      end
+    end
   end
 
   namespace :admin do
@@ -156,57 +217,25 @@ Rails.application.routes.draw do
   end
 
   #ForumsController
+  get       'forums/new_board'                              => 'forum#new_board'
+  get       'forums/:bname/new_thred'                       => 'forum#new_thred'
+  post      'forums/:bname/create_thred'                    => 'forum#create_thred'
+  post      'forums/create_board'                           => 'forum#create_board'
+
   get       'forums'                                        =>  'forum#boards',     :as => "forums"
   get       'forums/:bname'                                 =>  'forum#threds',     :as => "boards"
   get       'forums/:bname/:tname'                          =>  'forum#view_thred', :as => "threds"
+  get       'forums/:bname/:tname/:action', controller: 'forum'
+  post      'forums/:bname/:tname/:action', controller: 'forum'
 
   get       'forum_action/:bname/:tname/:forum_node_id/:action' =>  'forum',            :as => "thred_action"
+  post      'forum_action/:bname/:tname/:forum_node_id/:action' =>  'forum'
   get       'forum_action/:bname/:forum_node_id/:action'        =>  'forum',            :as => "board_action"
+  post      'forum_action/:bname/:forum_node_id/:action'        =>  'forum'
   get       'forum_action/:forum_node_id/:action'               =>  'forum',            :as => "forum_action"
+  post      'forum_action/:forum_node_id/:action'               =>  'forum'
 
-
-
-  #resource  :forum
-
-  # Sample of named route:
-  #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
-  # This route can be invoked with purchase_url(:id => product.id)
-
-  # Sample resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
-
-  # Sample resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
-
-  # Sample resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
-
-  # Sample resource route with more complex sub-resources
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', :on => :collection
-  #     end
-  #   end
-
-  # Sample resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
+  post      'forums/do_promote/:player_id'  => 'forums#do_promote'
 
   # See how all your routes lay out with "rake routes"
 
@@ -214,5 +243,5 @@ Rails.application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
 
   # TODO: Take this away
-  get     ':controller(/:action(/:id(.:format)))'
+  # get     ':controller(/:action(/:id(.:format)))'
 end

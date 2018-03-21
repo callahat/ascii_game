@@ -23,15 +23,15 @@
     <td><% if !quest.item_id.nil? %><%= quest.item.name %><% else %>none<% end %></td>
     <td><% if quest.quest_status.nil? %>no staus<% else %><%= SpecialCode.get_text('quest_status',quest.quest_status) %><% end %></td>
    <% if quest.quest_status == SpecialCode.get_code('quest_status','design') %>
-    <td><%= link_to 'Arm', { :action => 'activate', :id => quest, :page => params[:page] }, :confirm => 'Are you sure?', :method => :post %></td>
-    <td><%= link_to 'Show', :action => 'show', :id => quest %></td>
-    <td><%= link_to 'Edit', :action => 'edit', :id => quest %></td>
-    <td><%= link_to 'Dstry', { :action => 'destroy', :id => quest, :page => params[:page] }, :confirm => 'Are you sure?', :method => :post %></td>
+    <td><%= link_to 'Arm', activate_management_quest_path(quest, page: params[:page]), data: {confirm: 'Are you sure?'}, method: :post %></td>
+    <td><%= link_to 'Show', management_quest_path(quest) %></td>
+    <td><%= link_to 'Edit', edit_management_quest_path(quest) %></td>
+    <td><%= link_to 'Destroy', management_quest_path(quest, page: params[:page]), data:{confirm: 'Are you sure?'}, method: :delete %></td>
    <% elsif quest.quest_status == SpecialCode.get_code('quest_status','active') %>
-    <td><%= link_to 'Retire', { :action => 'retire', :id => quest }, :confirm => 'Are you sure?', :method => :post %></td>
-    <td><%= link_to 'Show', :action => 'show', :id => quest %></td>
+    <td><%= link_to 'Retire', retire_management_quest_path(quest), data:{confirm: 'Are you sure?'}, method: :post %></td>
+    <td><%= link_to 'Show', management_quest_path(quest) %></td>
    <% else %>
-    <td><%= link_to 'Show', :action => 'show', :id => quest %></td>
+    <td><%= link_to 'Show', management_quest_path(quest) %></td>
    <% end %>
   </tr>
 <% end %>

@@ -1,4 +1,4 @@
 <p><b>Who can enter the kingdom:</b><br/>
 <%= SpecialCode.get_text('entry_limitations', @kingdom_entry.allowed_entry) %></p>
 
-<%= link_to 'Edit', :action => 'edit', :id => @kingdom_entry %>
+<%= link_to 'Edit', edit_management_kingdom_entries_path %>

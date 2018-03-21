@@ -1,0 +1,43 @@
+<%= error_messages_for 'quest_req' %>
+
+<%= hidden_field_tag 'type', params[:type] %>
+
+<!--[form:quest_req]-->
+<% if params[:type] == 'creature_kill' %>
+  <p><label for="quest_req_creature_id">Creature</label><br/>
+  <%= collection_select 'quest_req', 'detail', @creatures, 'id', 'name'  %></p>
+  <p><label for="quest_req_kill_num_kills">Number to kill:</label><br/>
+  <%= text_field 'quest_req', 'quantity' %></p>
+
+<% elsif params[:type] == 'explore' %>
+  <p><label for="quest_req_event_id">Event</label><br/>
+  <%= collection_select 'quest_req', 'detail', @events, 'id', 'name'  %></p>
+
+<% elsif params[:type] == 'item' %>
+  <p><label for="quest_req_item_id">Item</label><br/>
+  <%= collection_select 'quest_req', 'detail', @items, 'id', 'name'  %></p>
+  <p><label for="quest_req_num">Number to accumulate</label><br/>
+  <%= text_field 'quest_req', 'quantity' %></p>
+
+<% elsif params[:type] == 'kill_any_npc' %>
+  <p><label for="quest_req_npc_division">NPC Type</label><br/>
+  <%= collection_select 'quest_req', 'npc_division', @npc_types, 'first', 'second', {include_blank: true} %></p>
+  <p><label for="quest_req_kingdom_id">From Kingdom</label><br/>
+  <%= collection_select 'quest_req', 'kingdom_id', @kingdoms, 'id', 'name', {include_blank: true} %></p>
+  <p><label for="quest_req_quantity">Number to kill</label><br/>
+  <%= text_field 'quest_req', 'quantity' %></p>
+
+<% elsif params[:type] == 'kill_pc' %>
+  <p><label for="quest_req_player_character_id">Player Character</label><br/>
+  <%= collection_select 'quest_req', 'detail', @pcs, 'id', 'name' %></p>
+
+<% elsif params[:type] == 'kill_specific_npc' %>
+  <p><label for="quest_req_npc_id">NPC</label><br/>
+  <%= collection_select 'quest_req', 'detail', @npcs, 'id', 'name' %></p>
+
+<% else %>
+      <h1>Invalid type!</h1>
+<% end   %>
+
+
+<!--[eoform:quest_req]-->

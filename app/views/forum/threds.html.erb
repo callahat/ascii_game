@@ -3,7 +3,7 @@
 
 <p>
 <% unless session[:player].nil? || session[:player].forum_restrictions.exists?(:restriction => [SpecialCode.get_code('restrictions','no_threading'), SpecialCode.get_code('restrictions','no_threding')]) %>
-<%= link_to 'New thred', :action => 'new_thred', :bname => @board.name %> | 
+<%= link_to 'New thred', :action => 'new_thred', :bname => @board.name %> |
 <% end %>
 <%= link_to 'Back', :action => 'boards' %>
 </p>

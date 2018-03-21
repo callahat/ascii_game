@@ -11,8 +11,8 @@
   <tr>
     <td><%=h kingdom_ban.name %></td>
 
-    <td><%= link_to 'Show', :action => 'show', :id => kingdom_ban %></td>
-    <td><%= link_to 'UnBan', { :action => 'destroy', :id => kingdom_ban, :page => params[:page] }, :confirm => 'Are you sure?', :method => :post %></td>
+    <td><%= link_to 'Show', management_kingdom_ban_path(kingdom_ban, page: params[:page]) %></td>
+    <td><%= link_to 'UnBan', management_kingdom_ban_path(kingdom_ban, page: params[:page]), data: {confirm: 'Are you sure?'}, method: :delete %></td>
   </tr>
 <% end %>
 </table>
@@ -21,4 +21,4 @@
 
 <br />
 
-<%= link_to 'New Ban', :action => 'new' %>
+<%= link_to 'New Ban', new_management_kingdom_ban_path %>

@@ -7,6 +7,6 @@ class QuestKillSNpc < QuestReq
   validates_presence_of :quest_id,:detail
   
   def to_sentence
-    "Kill " + self.npc.name + (self.npc.kingdom ? " of " + self.npc.kingdom.name : "" ) + "."
+    "Kill #{npc.name}#{npc.kingdom ? " of #{npc.kingdom.name}" : "" }."
   end
 end

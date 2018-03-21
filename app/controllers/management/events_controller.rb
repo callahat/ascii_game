@@ -1,12 +1,9 @@
 class Management::EventsController < ApplicationController
   before_filter :authenticate
   before_filter :king_filter
+  before_filter :setup_king_pc_vars
 
   layout 'main'
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update, :arm_event ], :redirect_to => { :action => :index }
-
 
   #**********************************************************************
   #EVENT MANAGEMENT
@@ -33,7 +30,7 @@ class Management::EventsController < ApplicationController
     @event.player_id = session[:player][:id]
     @event.kingdom_id = session[:kingdom][:id]
     if @event.kind == "EventCreature" || @event.kind == "EventStat"
-      @event.flex = params[:flex][0].to_s + ";" + params[:flex][0].to_s
+      @event.flex = params[:flex]["0"].to_s + ";" + params[:flex]["1"].to_s
     end
 
     @event.cost = 500
@@ -52,7 +49,7 @@ class Management::EventsController < ApplicationController
       redirect_to :action => 'index'
       return
     else
-      flash[:notice] = "Err, something wrong?" + @event.errors.to_s
+      flash[:notice] = "Err, something wrong?" + @event.errors.full_messages.join("; ")
     end
     render :action => 'new'
   end
@@ -60,6 +57,7 @@ class Management::EventsController < ApplicationController
   def edit
     @event = Event.find(params[:id])
     @event_rep_types = SPEC_CODET['event_rep_type'].to_a
+    @flex0, @flex1 = @event.flex.try(:split, ";")
     pop_sub_event
   end
 
@@ -67,7 +65,7 @@ class Management::EventsController < ApplicationController
     edit
 
     if @event.kind == "EventCreature" || @event.kind == "EventStat"
-      @flex = params[:flex][0].to_s + ";" + params[:flex][0].to_s
+      @flex = params[:flex]['0'].to_s + ";" + params[:flex]['1'].to_s
     end
 
     if is_event_not_in_use & is_event_owner & good_event_params &
@@ -107,7 +105,7 @@ class Management::EventsController < ApplicationController
     redirect_to :action => 'index'#, :page => params[:page]
   end
 
-  def arm_event
+  def arm
     @event = Event.find(params[:id])
 
     if !is_event_not_in_use || !is_event_owner
