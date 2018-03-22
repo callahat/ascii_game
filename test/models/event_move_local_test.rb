@@ -41,7 +41,9 @@ class EventMoveLocalTest < ActiveSupport::TestCase
 	
 	test "local move event when in world and pc banned" do
 		e = EventMoveLocal.find_by_name("local move event")
-		KingdomBan.create(:kingdom_id => e.level.kingdom.id, :player_character_id => @pc.id, :name => @pc.name)
+		ban = KingdomBan.new(:kingdom_id => e.level.kingdom.id, :name => @pc.name)
+		ban.player_character_id = @pc.id
+		ban.save!
 		
 		direct, comp, msg = e.happens(@pc)
 
@@ -52,7 +54,9 @@ class EventMoveLocalTest < ActiveSupport::TestCase
 	
 	test "local move event when in world pc banned and dead" do
 		e = EventMoveLocal.find_by_name("local move event")
-		KingdomBan.create(:kingdom_id => e.level.kingdom.id, :player_character_id => @pc.id, :name => @pc.name)
+		ban = KingdomBan.new(:kingdom_id => e.level.kingdom.id, :name => @pc.name)
+		ban.player_character_id = @pc.id
+		ban.save!
 		
 		direct, comp, msg = e.happens(@pc)
 		assert msg !~ /you are dead/

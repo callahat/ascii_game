@@ -189,7 +189,7 @@ class GameControllerTest < ActionController::TestCase
 		end
 		assert_response :success
 		assert_template 'choose'
-		assert session[:ev_choices]
+		assert session[:ev_choice_ids]
 		
 		get 'do_choose', {:id => 1}, session.to_hash
 		assert_response :success
@@ -203,9 +203,9 @@ class GameControllerTest < ActionController::TestCase
 		assert flash[:notice] =~ /Invalid/
 		assert session[:player_character].current_event.event_id.nil?
 		
-		post 'do_choose', {:id => session[:ev_choices][0].id}, session.to_hash
+		post 'do_choose', {:id => session[:ev_choice_ids][0]}, session.to_hash
 		assert_response :redirect
-		assert session[:ev_choices].nil?
+		assert session[:ev_choice_ids].nil?
 		assert session[:player_character].current_event.event_id
 	end
 	
@@ -217,12 +217,12 @@ class GameControllerTest < ActionController::TestCase
 		end
 		assert_response :success
 		assert_template 'choose'
-		assert session[:ev_choices]
+		assert session[:ev_choice_ids]
 		
 		post 'do_choose', {}, session.to_hash
 		session[:player_character].reload
 		assert_redirected_to :controller => 'game', :action => 'complete'
-		assert session[:ev_choices].nil?
+		assert session[:ev_choice_ids].nil?
 		
 		get 'complete', {}, session.to_hash
 		assert_redirected_to :controller => 'game', :action => 'feature'

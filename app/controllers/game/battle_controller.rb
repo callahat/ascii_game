@@ -32,7 +32,7 @@ class Game::BattleController < ApplicationController
     @battle = @pc.battle
 
     if @battle.nil?
-      redirect_to :controller => '/game', :action => 'main'
+      redirect_to game_main_path
     elsif @battle.regicide && session[:keep_fighting].nil?
       session[:keep_fighting] = true
       session[:regicide] = true
@@ -107,7 +107,7 @@ class Game::BattleController < ApplicationController
       session[:completed] = true
       @kingdom = @pc.present_kingdom
     else
-      redirect_to :controller => 'game', :action => 'feature'
+      redirect_to game_feature_path
     end
   end
 protected

@@ -5,7 +5,9 @@ class LevelMap < ActiveRecord::Base
   has_many :event_npcs
   has_many :done_events, :foreign_key => 'location_id', :class_name => 'DoneLocalEvent'
   has_many :kingdom_empty_shops
-  
+
+  attr_accessible :feature_id, :xpos, :ypos
+
   def self.gen_level_map_squares(level, feature)
     #now, create the level map squares
     @x, @y, @savecount = 0, 0, 0

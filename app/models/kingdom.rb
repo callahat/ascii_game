@@ -135,12 +135,11 @@ class Kingdom < ActiveRecord::Base
                                         :event_id => @ec.id )
     @throne_fe = FeatureEvent.spawn_gen(:feature_id => @castle_feature.id,
                                         :event_id => @et.id )
-    @level = Level.create(:kingdom_id => self.id,
-                          :level => 0,
+    @level = self.levels.create(:level => 0,
                           :maxy => 3,
                           :maxx => 5)
     LevelMap.gen_level_map_squares(@level, @emtpy_feature)
-    @castle_location = LevelMap.create(  :level_id => @level.id,
+    @castle_location = @level.level_maps.create(
                                         :xpos => 2,
                                         :ypos => 1,
                                         :feature_id => @castle_feature.id)

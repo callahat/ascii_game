@@ -59,8 +59,10 @@ Rails.application.routes.draw do
   get       'game/main'         =>  'game#main'
   get       'complete'          =>  'game#complete'
 
+  # TODO: Clean up these controllers
   #Game::* controllers
   get       'game/battle'           =>  'game/battle', :action => :battle
+  get       'game/battle/:action'   =>  'game/battle'
   post      'game/battle/:action'   =>  'game/battle'
   get       'game/court/:action'    =>  'game/court'
 
