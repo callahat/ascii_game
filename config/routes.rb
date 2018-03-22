@@ -99,20 +99,15 @@ Rails.application.routes.draw do
   get       'npc_sell'          =>  'game/npc#sell'
   post      'npc_do_sell'       =>  'game/npc#do_sell'
 
-  # get       'management/helptext' => 'management#helptext'
-  # get       'management/choose_kingdom' => 'management#choose_kingdom'
-
-  # get       'management'        =>  'management#main_index'
-  # post      'management/select_kingdom'    =>  'management#select_kingdom'
-  get       'management/retire'    =>  'management#retire'
-  post      'management/retire'    =>  'management#retire'
-  post      'management/do_retire' =>  'management#do_retire'
-
   namespace :management do
     root action: :main_index
     get  :helptext
     get  :choose_kingdom
     post :select_kingdom
+    get  :retire
+    post :retire
+    post :do_retire
+
     resource :castles do
       collection do
         get 'levels'
@@ -179,13 +174,6 @@ Rails.application.routes.draw do
       member do
         post :activate
         post :retire
-        # TODO: these should be in their own controller
-        # post :add_req
-        # post :new_req
-        # post :create_req
-        # post :edit_req
-        # post :update_req
-        # post :delete_req
       end
       resources :quest_reqs, as: :reqs, only: [:new, :create, :edit, :update, :destroy] do
         collection do

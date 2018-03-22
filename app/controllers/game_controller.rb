@@ -4,10 +4,6 @@ class GameController < ApplicationController
 
   layout 'main'
 
-#    # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post,:only => [ :do_heal, :do_choose, :do_train, :do_spawn ],
-#                          :redirect_to => { :action => :feature }
-
   def main
     flash[:notice] = flash[:notice]
     
@@ -68,7 +64,7 @@ class GameController < ApplicationController
     if @pc.reload && @pc.battle
       redirect_to :controller => 'game/battle', :action => 'battle'
     else #check for current event
-      if (@events = session[:ev_choices])
+      if session[:ev_choice_ids] && (@events = Event.find(session[:ev_choice_ids]))
         render :file => 'game/choose', :layout => true
       elsif @current_event = @pc.current_event
         if @current_event.completed == EVENT_INPROGRESS #already have an event in progress
@@ -100,22 +96,27 @@ class GameController < ApplicationController
   def do_choose
     Rails.logger.info "In do_choose"
     @current_event = @pc.current_event
-    if Event.exists?(:id => params[:id]) && session[:ev_choices].index(Event.find(params[:id]))
+    if Event.exists?(:id => params[:id]) && session[:ev_choice_ids].index(params[:id].to_i)
 
-    Rails.logger.info "exisst, going to execute"
+      Rails.logger.info "exisst, going to execute"
       @current_event.update_attribute(:event_id, params[:id])
-      session[:ev_choices] = nil
+      session[:ev_choice_ids] = nil
       exec_event(@current_event)
     elsif params[:id]
-    Rails.logger.info "invalid"
+      Rails.logger.info "invalid"
       flash[:notice] = "Invalid choice"
-      @events = session[:ev_choices]
+      @events = Event.find(session[:ev_choice_ids])
       render :file => 'game/choose', :layout => true
-    else#id is null, player didnt choose any event, or they attempted a hack
-    Rails.logger.info "player didnt choose as id is null"
+    elsif @current_event #id is null, player didnt choose any event, or they attempted a hack
+      Rails.logger.info "player didnt choose as id is null"
       @current_event.update_attribute(:completed, EVENT_SKIPPED)
-      session[:ev_choices] = nil
+      session[:ev_choice_ids] = nil
       flash[:notice] = 'You slink on by without anything interesting happening.'
+      redirect_to :controller => 'game', :action => 'complete'
+    else
+      Rails.logger.warn "!!! current event expected but not found for pc:#{@pc.id} chose event id:#{params[:id]}"
+      session[:ev_choice_ids] = nil
+      flash[:notice] = 'You feel like something should have happened.'
       redirect_to :controller => 'game', :action => 'complete'
     end
   end
@@ -197,10 +198,16 @@ class GameController < ApplicationController
 protected
   #should these live in the event class?
   def exec_event(ce)
-    @direction, @completed, @message = ce.event.happens(@pc)
-    ce.update_attribute(:completed, @completed)
-    @pc.reload
-    
+    if ce.event
+      @direction, @completed, @message = ce.event.happens(@pc)
+      ce.update_attribute(:completed, @completed)
+      @pc.reload
+    else
+      Rails.logger.warn "!!! No event found for current event; #{ce.inspect}"
+      ce.update_attribute(:completed, @completed)
+      @pc.reload
+    end
+
     if @direction
       flash[:notice] = @message
       redirect_to @direction
@@ -219,7 +226,7 @@ protected
     elsif @it.class == Array
       ce.update_attributes(:priority => @next)
       @events = @it
-      session[:ev_choices] = @events.dup #simplify whats a valid choice or not
+      session[:ev_choice_ids] = @events.map(&:id) #simplify whats a valid choice or not
       render :file => 'game/choose', :layout => true
     else #must be an event
       ce.update_attributes(:event_id => @it.id, :priority => @next)

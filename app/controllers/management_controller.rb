@@ -42,8 +42,6 @@ class ManagementController < ApplicationController
   end
 
   def retire
-    print "titles"
-   # params[:s][:s]
     if session[:kingdom].nil?
       redirect_to :action => 'retire'
       return
@@ -65,7 +63,6 @@ class ManagementController < ApplicationController
   end
 
   def do_retire
-    print "Made it to do_retire"
     if params[:commit] == "Cancel"
       session[:new_king] = nil
       redirect_to :action => 'retire'

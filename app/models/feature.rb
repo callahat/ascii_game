@@ -50,10 +50,10 @@ class Feature < ActiveRecord::Base
             when SpecialCode.get_code('event_rep_type','unlimited')
               a << e
             when SpecialCode.get_code('event_rep_type','limited')
-              ( loc.done_events.count(:conditions => {:event_id => e.id}) < e.event_reps ?
+              ( loc.done_events.where(event_id: e.id).count < e.event_reps ?
                   a << e : a )
             when SpecialCode.get_code('event_rep_type','limited_per_char')
-              ( loc.done_events.count(:conditions => {:player_character_id => pid, :event_id => e.id}) < e.event_reps ?
+              ( loc.done_events.where(player_character_id: pid, event_id: e.id).count < e.event_reps ?
                   a << e : a )
           end
         end
