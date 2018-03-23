@@ -651,15 +651,15 @@ class BattleTest < ActiveSupport::TestCase
     battle, msg = Battle.new_npc_battle(@pc, @sick_npc)
     battle.report = {}
 
-    assert @pc.nonplayer_character_killers.count(:conditions => ['npc_id = ?', @sick_npc.id]) == 0
+    assert @pc.nonplayer_character_killers.where(npc: @sick_npc).count == 0
     battle.phys_damage_enemies(@pc, battle.merchants.to_a)
-    assert @pc.nonplayer_character_killers.count(:conditions => ['npc_id = ?', @sick_npc.id]) == 1, battle.merchants.inspect
+    assert @pc.nonplayer_character_killers.where(npc: @sick_npc).count == 1, battle.merchants.inspect
 
     #PC
     battle, msg = Battle.new_pc_battle(@pc, @sickpc)
     battle.report = {}
-    assert @pc.player_character_killers.count(:conditions => ['killed_id = ?', @sickpc.id]) == 0
+    assert @pc.player_character_killers.where(killed_character: @sickpc).count == 0
     battle.phys_damage_enemies(@pc, battle.groups.first.enemies.to_a)
-    assert @pc.player_character_killers.count(:conditions => ['killed_id = ?', @sickpc.id]) == 1
+    assert @pc.player_character_killers.where(killed_character: @sickpc).count == 1
   end
 end

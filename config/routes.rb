@@ -44,14 +44,19 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :characterse, only: [] do
+  resource :characterse, controller: :characterse, only: [:show] do
     collection do
-      get  '', action: :menu
-      get 'inventory'
+      get  'attack_spells'
+      get  'healing_spells'
+      get  'infections'
+      get  'pc_kills'
+      get  'npc_kills'
+      get  'genocides'
+      get  'done_quests'
+      get  'inventory'
       post 'equip/:id', action: :equip
       post 'do_equip/:id', action: :do_equip
       post 'unequip/:id', action: :unequip
-      get 'infections'
     end
   end
 

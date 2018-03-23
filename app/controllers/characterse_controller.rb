@@ -8,16 +8,9 @@ class CharacterseController < ApplicationController
 
   layout 'main'
 
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :do_equip, :unequip ],         :redirect_to => { :action => :inventory }
-
-  def index
-    redirect_to :action => 'menu'
+  def show
   end
 
-  def menu
-  end
-  
   def attack_spells
     @attack_spells = AttackSpell.get_page(params[:page], @pc.level)
   end

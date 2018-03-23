@@ -1,8 +1,8 @@
 <p>Stats and Equipment</p>
 <table>
 <tr><td>Name: </td><td><%= @pc.name %></td></tr>
-<tr><td><span title="<%= @pc.race.description %>">Race: </td><td><%= @pc.race.name %></span></td></tr>
-<tr><td><span title="<%= @pc.c_class.description %>">Class: </td><td><%= @pc.c_class.name %></span></td></tr>
+<tr><td>Race: </td><td><span title="<%= @pc.race.description %>"><%= @pc.race.name %></span></td></tr>
+<tr><td>Class: </td><td><span title="<%= @pc.c_class.description %>"><%= @pc.c_class.name %></span></td></tr>
 <tr><td>Body Type: </td><td><%= SpecialCode.get_text('race_body_type',@pc.race.race_body_type) %></td></tr>
 <tr><td>Level: </td><td><%= @pc.level %></td></tr>
 <tr><td>XP: </td><td><%= @pc.experience %></td></tr>
@@ -16,7 +16,7 @@
 <tr>
   <td><b>Attribute</b></td>
   <td><b>Current</b></td>
-  <td><b>Base</p></td>
+  <td><b>Base</b></td>
   <td><b>Training</b></td>
 </tr>
 <tr>
