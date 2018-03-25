@@ -140,8 +140,9 @@ class CharacterController < ApplicationController
           session[:nplayer_character][:image_id] = @image.id
           #redirect_to :action => 'create'
         else
+          namenew
           flash[:notice] += 'Image was not sucessfully created.<br/>'
-          redirect_to :action => 'namenew'
+          render :action => 'namenew'
           return
         end
       else
@@ -152,8 +153,9 @@ class CharacterController < ApplicationController
           session[:nplayer_character][:image_id] = @image.id
           #redirect_to :action => 'create'
         else
+          namenew
           flash[:notice] += 'Image was not sucessfully updated.<br/>'
-          redirect_to :action => 'namenew'
+          render :action => 'namenew'
           return
         end
       end
@@ -176,8 +178,9 @@ class CharacterController < ApplicationController
     if (pc = PlayerCharacter.create(session[:nplayer_character].attributes)).errors.size == 0
       flash[:notice] += 'Player character created sucessfully<br/>'
     else
+      namenew
       session[:nplayer_character] = pc
-      redirect_to :action => 'namenew'
+      render :action => 'namenew'
       return
     end
 
@@ -201,7 +204,7 @@ class CharacterController < ApplicationController
     end
     #Clear the unneeded temporary variable
     session[:nplayer_character] = nil
-    redirect_to :controller => 'character', :action => 'menu'
+    redirect_to menu_character_index_path
   end
 
 
@@ -339,6 +342,7 @@ protected
     session[:fe_chain] = nil
     session[:current_event] = nil
     session[:fe_curpri] = nil
+    session[:ev_choice_ids] = nil
   end
 
   def killdata

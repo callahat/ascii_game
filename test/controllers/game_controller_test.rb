@@ -111,7 +111,7 @@ class GameControllerTest < ActionController::TestCase
 		
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
 		get 'feature', {}, session.to_hash
-		assert_redirected_to game_main_url()
+		assert_redirected_to main_game_url
 	end
 	
 	test "game controller feature action when battle exists" do
@@ -255,7 +255,7 @@ class GameControllerTest < ActionController::TestCase
 		assert flash[:notice] =~ /not yet powerful/
 		
 		get 'complete', {}, session.to_hash
-		assert_redirected_to game_main_url()
+		assert_redirected_to main_game_url
 		
 		#try feature with high enough level
 		session[:player_character].update_attribute(:level, 50)

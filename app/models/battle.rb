@@ -112,8 +112,11 @@ class Battle < ActiveRecord::Base
         return nil unless self.cast_healing_spell(pc, spell, pc)
       end
     end
-    self.groups.each{|g|
-      0.upto( (g.enemies.count < 10 ? g.enemies.count : 10) - 1 ){|ind|
+    Rails.logger.info "Groups size: #{self.groups.count}"
+    self.groups.reload.each{|g|
+      Rails.logger.info "Initial Enemy count: #{g.enemies.count}"
+      0.upto( (g.enemies.reload.count < 10 ? g.enemies.count : 10) - 1 ){|ind|
+        Rails.logger.info "Enemy count: #{g.enemies.count}"
         self.phys_damage_enemies(g.enemies[ind], [pc]) } }
   end
 
@@ -270,7 +273,7 @@ class Battle < ActiveRecord::Base
     if defender.health.HP <= 0
       Battle.award_exp_from_kill(attacker, defender)
       self.report_kill(Battle.get_name(attacker), Battle.get_name(defender), damage)
-      if defender.class == BattlePc && defender.pc.kingdom
+      if defender.class == BattlePc && defender.pc.kingdom_id
         self.regicide = defender.pc.kingdom_id if defender.pc.kingdom.player_character_id == defender.pc.id
       end
       self.fighter_killed(defender) unless defender.class == PlayerCharacter

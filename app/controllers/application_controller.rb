@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
     if @pc = session[:player_character]
       true
     else
-      redirect_to choose_character_character_index_url()
+      redirect_to choose_character_character_index_url
       false
     end
   end
@@ -35,14 +35,14 @@ class ApplicationController < ActionController::Base
     if @pc = session[:kingdom].player_character
       true
     else
-      redirect_to choose_character_character_index_url()
+      redirect_to choose_character_character_index_url
       false
     end
   end
   
   def authenticate
     unless @player = session[:player]
-      redirect_to login_url()
+      redirect_to login_url
       false
     else
       is_king
@@ -53,12 +53,12 @@ class ApplicationController < ActionController::Base
   #the admin filter
   def is_admin
     if session[:player].nil?
-      redirect_to :controller => '/account', :action => 'verify'
+      redirect_to login_path
     else
       if session[:player].admin
         return true
       else
-        redirect_to :controller => '/home'
+        redirect_to root_path
         return false
       end
     end
@@ -66,14 +66,6 @@ class ApplicationController < ActionController::Base
   
   #Checks that the player is a king
   def is_king
-    # pcs = PlayerCharacter.where(player_id: session[:player][:id], char_stat: SpecialCode.get_code('char_stat','active'))
-    # for pc in pcs
-    #   if Kingdom.find_by(player_character_id: pc.id)
-    #     session[:kingbit] = true
-    #     return true
-    #   end
-    #  end
-    # return false
     player = Player.find(session[:player][:id])
     if player.player_characters.where(char_stat: SpecialCode.get_code('char_stat','active')).joins(:kingdoms).any?
       session[:kingbit] = true
@@ -86,7 +78,7 @@ class ApplicationController < ActionController::Base
   
   def king_filter
     if !is_king
-      redirect_to :controller => 'game', :action => 'main'
+      redirect_to game_main_path
       return false
     else
       return true

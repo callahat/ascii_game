@@ -1,16 +1,10 @@
 class AccountController < ApplicationController
+  before_filter :authenticate, only: [:index,:show,:edit,:update]
+  before_filter :is_admin, only: [:index]
+
   layout 'main'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],
-#         :redirect_to => { :action => :list }
-
-  def list
     @players = Player.get_page(params[:page])
   end
 
@@ -42,21 +36,25 @@ class AccountController < ApplicationController
         render :action => 'new'
       end
     else
-      flash.delete(:recaptcha_error) # get rid of the recaptcha error being flashed by the gem.
-      flash[:error] = 'reCAPTCHA is incorrect. Please try again.'
+      # flash.delete(:recaptcha_error) # get rid of the recaptcha error being flashed by the gem.
+      # flash[:error] = 'reCAPTCHA is incorrect. Please try again.'
       render :action => 'new'
     end
   end
 
   def edit
     @player = Player.find(params[:id])
+    unless session[:player].admin or verify_player_is_player
+      redirect_to menu_character_index_path
+      return
+    end
     @player.passwd = ""
   end
 
   def update
     @player = Player.find(params[:id])
-    if !verify_player_is_player
-      redirect_to :controller => 'character', :acton => 'menu'
+    unless session[:player].admin or verify_player_is_player
+      redirect_to menu_character_index_path
       return
     end
 
@@ -71,13 +69,13 @@ class AccountController < ApplicationController
   #Accounts won't be able to be destroyed, but deleted. Keep the data, restrict the access.
   #def destroy
   #  Player.find(params[:id]).destroy
-  #  redirect_to :action => 'list'
+  #  redirect_to :action => 'index'
   #end
 
   #validate the player
   def verify
     if params.nil? || params[:player].nil? || params[:player][:passwd].nil? || params[:player][:handle].nil? then
-      redirect_to :action => 'login'
+      redirect_to login_path
       return false
     end
 
@@ -85,10 +83,10 @@ class AccountController < ApplicationController
     if @player.nil? ||
         !Player.authenticate?(params[:player][:handle],params[:player][:passwd])
       flash[:notice] = "Invalid handle/password."
-      redirect_to :action => 'login'
+      redirect_to login_path
     else
       session[:player] = @player
-      redirect_to :controller => 'character', :action => 'menu'
+      redirect_to menu_character_index_path
     end
   end
 

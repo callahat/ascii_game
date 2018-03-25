@@ -10,4 +10,4 @@
 <% if session[:player] && session[:player][:id] == params[:id].to_i %>
 <%= link_to 'Edit', :action => 'edit', :id => @player.id %> |
 <% end %>
-<%= link_to 'Back', :action => 'list' %>
+<%= link_to 'Back', :action => 'index' %>

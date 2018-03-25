@@ -1,7 +1,7 @@
 class EventSpawnKingdom < Event
   def make_happen(who)
     if @msg = Kingdom.cannot_spawn(who)
-      return {:controller => 'game', :action => 'complete'}, EVENT_COMPLETED, @msg
+      return {:controller => 'game', :action => 'complete'}, EVENT_FAILED, @msg
     else
       return {:controller => 'game', :action => 'spawn_kingdom'}, EVENT_COMPLETED, ""
     end

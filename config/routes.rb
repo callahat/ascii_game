@@ -16,11 +16,7 @@ Rails.application.routes.draw do
   get       'register'          =>  'account#new'
   post      'register'          =>  'account#new'
 
-  resources :account, except: [:destroy] do
-    collection do
-      get 'list'
-    end
-  end
+  resources :account, except: [:destroy]
 
   resources :character, only: [] do
     collection do
@@ -60,31 +56,44 @@ Rails.application.routes.draw do
     end
   end
 
-  get       'game/feature'      =>  'game#feature'
-  get       'game/main'         =>  'game#main'
-  get       'complete'          =>  'game#complete'
+  resource :game, only: [], controller: :game do
+    get  :main
+    get  :leave_kingdom
+    get  'world_move/:id', action: :world_move, as: :world_move
+    get  :feature
+    post :do_choose
+    get  :wave_at_pc
+    get  :make_camp
+    get  :complete
+    get  :spawn_kingdom
+    post :do_spawn
+  end
+
+  namespace :game do
+    resource :battle, controller: :battle, only: [] do
+      post :fight_pc
+      post :fight_npc
+      post :fight_king
+      get  :battle
+      post :fight
+      post :run_away
+      get  :regicide
+      post :fate_of_throne
+    end
+  end
 
   # TODO: Clean up these controllers
   #Game::* controllers
-  get       'game/battle'           =>  'game/battle', :action => :battle
-  get       'game/battle/:action'   =>  'game/battle'
-  post      'game/battle/:action'   =>  'game/battle'
   get       'game/court/:action'    =>  'game/court'
 
   post      'game/do_heal'        =>  'game#do_heal'
-  post      'game/do_choose'      =>  'game#do_choose'
   post      'game/do_train'       =>  'game#do_train'
-  post      'game/do_spawn'       =>  'game#do_spawn'
 
+  # TODO: not sure if these are legit paths
   get       'game/do_heal'        =>  'game#feature'
   get       'game/do_choose'      =>  'game#feature'
   get       'game/do_train'       =>  'game#feature'
   get       'game/do_spawn'       =>  'game#feature'
-
-  get       'game/leave_kingdom'  =>  'game#leave_kingdom'
-  get       'game/spawn_kingdom'  =>  'game#spawn_kingdom'
-  get       'game/make_camp'      =>  'game#make_camp'
-  get       'game/world_move/:id' =>  'game#world_move'
 
   #Game::QuestController
   get       'quest_index'       =>  'game/quests#index'

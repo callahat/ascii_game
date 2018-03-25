@@ -1,5 +1,4 @@
 class GameController < ApplicationController
-  #before_filter :authenticate
   before_filter :setup_pc_vars
 
   layout 'main'
@@ -30,7 +29,7 @@ class GameController < ApplicationController
       @message = "Left the kingdom"
     end
     
-    redirect_to :controller => 'game', :action => 'main'
+    redirect_to main_game_path
   end
 
   #moving in the world, by just walking. no need for an event
@@ -54,7 +53,7 @@ class GameController < ApplicationController
       end
       @pc.save!
     end
-    redirect_to :controller => 'game', :action => 'main'
+    redirect_to main_game_path
   end
 
   #deal with the feature, set up the session feature_event chain
@@ -71,7 +70,7 @@ class GameController < ApplicationController
           exec_event(@current_event)
         elsif @current_event.completed == EVENT_FAILED
           @current_event.destroy
-          redirect_to :controller => 'game', :action => 'main'
+          redirect_to main_game_path
         else #skipped or completed, get the next event for the feature
           #p "Skipping: event completed code:" + @current_event.completed.to_s
           next_event_helper(@current_event)
@@ -85,10 +84,10 @@ class GameController < ApplicationController
         else
           @current_event.destroy
           flash[:notice] = 'Too tired for that, out of turns.'
-          redirect_to :controller => 'game', :action => 'main'
+          redirect_to main_game_path
         end
       else #no current event and no feature id
-        redirect_to :controller => 'game', :action => 'main'
+        redirect_to main_game_path
       end
     end
   end
@@ -112,12 +111,12 @@ class GameController < ApplicationController
       @current_event.update_attribute(:completed, EVENT_SKIPPED)
       session[:ev_choice_ids] = nil
       flash[:notice] = 'You slink on by without anything interesting happening.'
-      redirect_to :controller => 'game', :action => 'complete'
+      redirect_to complete_game_path
     else
       Rails.logger.warn "!!! current event expected but not found for pc:#{@pc.id} chose event id:#{params[:id]}"
       session[:ev_choice_ids] = nil
       flash[:notice] = 'You feel like something should have happened.'
-      redirect_to :controller => 'game', :action => 'complete'
+      redirect_to complete_game_path
     end
   end
 
@@ -155,7 +154,7 @@ class GameController < ApplicationController
       flash[:notice] = "Too tired to make camp"
     end
     @pc.reload
-    redirect_to :controller => 'game', :action => 'main'
+    redirect_to main_game_path
   end
   
   def complete
@@ -170,9 +169,9 @@ class GameController < ApplicationController
     
     if @next.nil?
       @current_event.destroy if @current_event
-      redirect_to :controller => 'game', :action => 'main'
+      redirect_to main_game_path
     else
-      redirect_to :controller => 'game', :action => 'feature'
+      redirect_to feature_game_path
     end
   end
   
@@ -191,7 +190,7 @@ class GameController < ApplicationController
     else
       flash[:notice] = @msg
       session[:completed] = true
-      redirect_to :controller => 'game', :action => 'complete'
+      redirect_to complete_game_path
     end
   end
   
@@ -222,7 +221,7 @@ protected
     if @next.nil?
       flash[:notice] = "Nothing happens"
       @current_event.destroy
-      redirect_to :controller => 'game', :action => 'main'
+      redirect_to main_game_path
     elsif @it.class == Array
       ce.update_attributes(:priority => @next)
       @events = @it

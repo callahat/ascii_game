@@ -19,11 +19,13 @@
 
     <ul class="nav_tabs">
         <li><span class="user_tab"><%= ( session[:player] ? "Player:#{session[:player][:handle]}" : "Welcome, guest" ) %></span></li>
-        <li><%= link_to 'Home', :controller => '/home' %></li>
+        <li><%= link_to 'Home', root_path %></li>
         <li><%= link_to 'Forums', :controller => '/forum', :action => 'boards' %></li>
         <li><%= link_to 'Characters', :controller => '/character', :action => (session[:player] ? 'menu' : 'new') %></li>
         <li><%= link_to('Game', :controller => '/game', :action => 'feature') if session[:player] %></li>
-        <li><%= link_to('Kingdom Management', management_root_path ) if session[:kingbit] %></li>
+      <% if session[:kingbit] -%>
+        <li><%= link_to('Kingdom Management', management_root_path ) %></li>
+      <% end -%>
         <li><%= session[:player] ? link_to('Logout', logout_url()) :
                                                              link_to('Login', login_url()) + ' or ' + link_to('Register', register_url()) %></li>
     </ul>

@@ -5,12 +5,12 @@
 <% elsif !@log_quest.reqs_met %>
 <p><%= @event.req_text %></p>
 <p><%= render :file => "game/log_quest_reqs" %></p>
-<p><%= link_to 'Ok', complete_url() %></p>
+<p><%= link_to 'Ok', complete_game_url() %></p>
 <% else %>
 <p><%= @event.reward_text %></p>
 <% if !@log_quest.rewarded %>
 <p><%= flash[:notice] %></p>
 <% end %>
-<p><%= link_to 'Ok', complete_url() %></p>
+<p><%= link_to 'Ok', complete_game_url() %></p>
 <% end %>
 <% flash[:notice] = "" %>

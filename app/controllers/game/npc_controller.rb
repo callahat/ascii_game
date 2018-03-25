@@ -15,7 +15,7 @@ class Game::NpcController < ApplicationController
   end
   
   def smithy
-    redirect_to npc_index_url() and return() unless (@can_make = @npc.npc_blacksmith_items).size > 0
+    redirect_to npc_index_url and return() unless (@can_make = @npc.npc_blacksmith_items).size > 0
   end
   
   def do_buy_new
@@ -24,7 +24,7 @@ class Game::NpcController < ApplicationController
     res, msg = @npc.manufacture(@pc, params[:iid])
     flash[:notice] = msg + ( flash[:notice] ? "<br/>" + flash[:notice] : "" )
     
-    redirect_to npc_smithy_url()
+    redirect_to npc_smithy_url
   end
 
   def heal
