@@ -5,7 +5,7 @@
   <%= hidden_field_tag 'c_class_id', params[:c_class_id] %>
   <%= render :partial => 'form' %>
   <p>
-    <%#= recaptcha_tags %>
+    <%= recaptcha_tags %>
   </p>
   <ul class="form">
     <li><%= submit_tag "Create" %></li>

@@ -87,11 +87,16 @@ Rails.application.routes.draw do
       get  :castle
       get  :bulletin
     end
+    resource :quests, only: [:show] do
+      post :do_decline
+      post :do_join
+      get  :do_complete
+      get  :do_reward
+    end
   end
 
   # TODO: Clean up these controllers
   #Game::* controllers
-  # get       'game/court/:action'    =>  'game/court'
 
   post      'game/do_heal'        =>  'game#do_heal'
   post      'game/do_train'       =>  'game#do_train'
@@ -101,13 +106,6 @@ Rails.application.routes.draw do
   get       'game/do_choose'      =>  'game#feature'
   get       'game/do_train'       =>  'game#feature'
   get       'game/do_spawn'       =>  'game#feature'
-
-  #Game::QuestController
-  get       'quest_index'       =>  'game/quests#index'
-  get       'do_decline'        =>  'game/quests#do_decline'
-  get       'do_join_quest'     =>  'game/quests#do_join'
-  get       'do_complete_quest' =>  'game/quests#do_complete'
-  get       'do_reward_quest'   =>  'game/quests#do_reward'
 
   #Game::NpcController
   get       'npc_index'         =>  'game/npc#npc'

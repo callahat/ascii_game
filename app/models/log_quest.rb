@@ -37,7 +37,7 @@ class LogQuest < ActiveRecord::Base
   
     #create the requirement logs
     for req in @quest.reqs
-      print "Failed to create requirement!" unless\
+      Rails.logger.error "Failed to create requirement!" unless\
       Rails.module_eval("Log"+req.class.to_s).create(
                                                 :log_quest_id => new_log.id,
                                                 :owner_id => pc[:id],
@@ -45,7 +45,7 @@ class LogQuest < ActiveRecord::Base
                                                 :quantity => req[:quantity],
                                                 :detail => req.detail )
     end
-    true
+    return true, "You take an oath to pursue the Quest"
   end
   
   def self.abandon(pc, qid)

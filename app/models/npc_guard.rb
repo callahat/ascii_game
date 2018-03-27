@@ -4,7 +4,7 @@ class NpcGuard < Npc
     @image = Image.find_by(name: @kingdom_name + " Guard Image", kingdom_id: kingdom_id)
 
     @new_stock_guard = self.create(
-        :name => "Guard " + Name.gen_name,
+        :name => ("Guard " + Name.gen_name)[0...32],
         :kingdom_id => kingdom_id,
         :gold => rand(50),
         :experience => 100,

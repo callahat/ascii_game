@@ -34,31 +34,31 @@ class Game::QuestsControllerTest < ActionController::TestCase
 		assert @log_quest.reqs.size == 6
 	end
 
-	test "quest controller index decline" do
+	test "quest controller show decline" do
 		setup_sub1
 		
-		get 'index', {}, session.to_hash
+		get 'show', {}, session.to_hash
 		assert_response :success
 		assert session[:player_character].current_event.completed == EVENT_FAILED
 		
 		assert_difference 'session[:player_character].log_quests.size', +0 do
-			get 'do_decline', {}, session.to_hash
+			post 'do_decline', {}, session.to_hash
 			assert_response :success
 			assert_template 'complete'
 			session[:player_character].log_quests.reload
 		end
 	end
 	
-	test "quest controller index join" do
+	test "quest controller show join" do
 		setup_sub1
 		
-		get 'index', {}, session.to_hash
+		get 'show', {}, session.to_hash
 		assert_response :success
 		assert session[:player_character].current_event.completed == EVENT_FAILED
 		
 		assert session[:player_character].log_quests.find_by_quest_id(@quest_one.id).nil?
 		assert_difference 'session[:player_character].log_quests.size', +1 do
-			get 'do_join', {}, session.to_hash
+			post 'do_join', {}, session.to_hash
 			assert_response :success
 			assert_template 'complete'
 			session[:player_character].log_quests.reload
@@ -71,13 +71,13 @@ class Game::QuestsControllerTest < ActionController::TestCase
 		setup_sub2
 		
 		get 'do_complete', {}, session.to_hash
-		assert_redirected_to quest_index_url()
+		assert_redirected_to game_quests_path
 
 		assert_difference '@log_quest.quest.kingdom.gold', +0 do
 			assert_difference 'session[:player_character].gold', +0 do
 				assert_difference 'session[:player_character].current_event.completed', +0 do
 					get 'do_reward', {}, session.to_hash
-					assert_redirected_to quest_index_url()
+					assert_redirected_to game_quests_path
 				end
 			end
 		end
@@ -87,11 +87,11 @@ class Game::QuestsControllerTest < ActionController::TestCase
 		@log_quest.quest.kingdom.update_attribute(:gold, 0)
 		
 		get 'do_complete', {}, session.to_hash
-		assert_redirected_to do_reward_quest_url()
+		assert_redirected_to do_reward_game_quests_path
 		
 		assert_difference 'session[:player_character].current_event.completed', +0 do
 			get 'do_reward', {}, session.to_hash
-			assert_redirected_to quest_index_url()
+			assert_redirected_to game_quests_path
 		end
 		
 		@log_quest.quest.kingdom.update_attribute(:gold, 100000)
@@ -99,7 +99,7 @@ class Game::QuestsControllerTest < ActionController::TestCase
 		assert_difference '@log_quest.quest.kingdom.gold', -@quest_one.gold do
 			assert_difference 'session[:player_character].gold', +@quest_one.gold do
 				get 'do_reward', {}, session.to_hash
-				assert_redirected_to quest_index_url()
+				assert_redirected_to game_quests_path
 				assert session[:player_character].current_event.completed == EVENT_COMPLETED
 				@log_quest.quest.kingdom.reload
 				session[:player_character].reload

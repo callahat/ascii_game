@@ -279,13 +279,13 @@ class GameControllerTest < ActionController::TestCase
 		
 		get 'feature', {:id => @kl1.id}, session.to_hash
 		assert_response :redirect
-		assert_redirected_to quest_index_url()
+		assert_redirected_to game_quests_path
 		
 		session[:player_character].current_event.destroy
 		
 		get 'feature', {:id => @kl2.id}, session.to_hash
 		assert_response :redirect
-		assert_redirected_to  :controller => 'game/quests', :action => 'index'
+		assert_redirected_to game_quests_path
 		#Will be nil when it hits the filter in the quests controller
 		#assert session[:player_character].current_event.nil?
 		
@@ -304,7 +304,7 @@ class GameControllerTest < ActionController::TestCase
 		
 		get 'feature', {:id => @kl1.id}, session.to_hash
 		assert_response :redirect
-		assert_redirected_to do_complete_quest_url()
+		assert_redirected_to do_complete_game_quests_path
 		assert session[:player_character].current_event.completed == EVENT_COMPLETED
 		
 		@lq.quest.kingdom.update_attribute(:gold, 10000000)

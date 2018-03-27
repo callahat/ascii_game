@@ -1,6 +1,8 @@
 class Event < ActiveRecord::Base
   self.inheritance_column = 'kind'
 
+  delegate :url_helpers, to: 'Rails.application.routes'
+
   belongs_to :player
   belongs_to :kingdom
 

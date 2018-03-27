@@ -5,20 +5,14 @@ class Game::QuestsController < ApplicationController
 
   layout 'main'
 
-  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-  #really aren't forms being posted, just links followed, and verified against the session that
-  #the links are valid to be followed at that time
-  #verify :method => :post, :only => [ :do_join ], :redirect_to => { :action => :index }
-
-  def index
+  def show
     ( @log_quest && @log_quest.completed && @log_quest.rewarded ?
       @pc.current_event.update_attribute(:completed, EVENT_COMPLETED) :
       @pc.current_event.update_attribute(:completed, EVENT_FAILED)     )
   end
   
   def do_join
-    res, @message = LogQuest.join_quest(@pc, @quest.id) unless @log_quest
-    @message = "You take an oath to pursue the Quest"
+    _res, @message = LogQuest.join_quest(@pc, @quest.id)
     render :file => 'game/complete', :layout => true
   end
   
@@ -29,9 +23,9 @@ class Game::QuestsController < ApplicationController
   
   def do_complete
     if @log_quest.complete_quest
-      redirect_to do_reward_quest_url()
+      redirect_to do_reward_game_quests_path
     else
-      redirect_to :action => 'index'
+      redirect_to game_quests_path
     end
   end
   
@@ -41,24 +35,24 @@ class Game::QuestsController < ApplicationController
     if res
       @pc.current_event.update_attribute(:completed, EVENT_COMPLETED)
     end
-    redirect_to :action => 'index'
+    redirect_to game_quests_path
   end
 protected
   def setup_quest
-    redirect_to game_feature_url() unless @pc.current_event && @pc.current_event.event.class == EventQuest
+    redirect_to game_feature_path unless @pc.current_event && @pc.current_event.event.class == EventQuest
     @event = @pc.current_event.event
     @quest = @event.quest
     if @quest.quest_id && 
         DoneQuest.find_by(quest_id: @quest.quest_id, player_character_id: @pc.id ).nil?
       flash[:notice] = "Nothing happens"
        @pc.current_event.destroy
-      redirect_to :controller => '/game', :action => 'main'
+      redirect_to main_game_path
     else
       @log_quest = @pc.log_quests.find_by(quest_id: @quest.id)
     end
   end
   
   def verify_quest_log
-    redirect_to :action => 'index' unless @log_quest
+    redirect_to game_quests_path unless @log_quest
   end
 end
