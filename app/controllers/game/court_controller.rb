@@ -1,11 +1,7 @@
 class Game::CourtController < ApplicationController
-  #before_filter :authenticate
   before_filter :setup_pc_vars
 
   layout 'main'
-
-#    # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :do_heal, :do_choose, :do_train ],         :redirect_to => { :action => :feature }
 
   def throne
     @king_on_throne = @pc.present_kingdom.player_character
@@ -50,27 +46,5 @@ class Game::CourtController < ApplicationController
 
   def bulletin
     @notices = KingdomNotice.get_page(params[:page], @pc, @pc.present_kingdom)
-  end
-
-  def use_stairs
-    #move the player
-    PlayerCharacter.transaction do
-      @pc.lock!
-
-      # could break if the feature is not found
-      @event = Feature.find_by(name: "\nCastle #{@pc.present_kingdom.name}").feature_events.find_by(event_id: params[:id])
-
-      if @event
-        @event_move = @event.event
-        @pc.kingdom_level = @event_move.thing_id
-        @message = "You moved to level " + @event_move.level.level.to_s
-        session[:completed] = true
-      else
-        @message = "You cannot move there"
-      end
-      @pc.save!
-    end
-
-    render 'game/complete'
   end
 end

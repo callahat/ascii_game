@@ -80,11 +80,18 @@ Rails.application.routes.draw do
       get  :regicide
       post :fate_of_throne
     end
+    resource :court, controller: :court, only: [] do
+      get  :throne
+      post :join_king
+      post :king_me
+      get  :castle
+      get  :bulletin
+    end
   end
 
   # TODO: Clean up these controllers
   #Game::* controllers
-  get       'game/court/:action'    =>  'game/court'
+  # get       'game/court/:action'    =>  'game/court'
 
   post      'game/do_heal'        =>  'game#do_heal'
   post      'game/do_train'       =>  'game#do_train'

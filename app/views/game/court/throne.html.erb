@@ -5,13 +5,13 @@
 
 <p>You stand before the throne of <%= @king_on_throne.name %>, king of <%= @king_on_throne.kingdoms.map{|k| k.name}.join(", ") %></p>
 
-<p><%= link_to 'Pledge Service', :action => 'join_king' %></p>
-<p><%= link_to 'Attack!', fight_king_game_battle_path, :method => :post %></p>
+<p><%= link_to 'Pledge Service', join_king_game_court_path, method: :post %></p>
+<p><%= link_to 'Attack!', fight_king_game_battle_path, method: :post %></p>
 <% end %>
 
 <% else %>
 <p>You stand before an empty throne. The steward is the only force preventing the kingdom from ruin.</p>
-<p><%= link_to 'Claim the throne', :action => 'king_me' %></p>
+<p><%= link_to 'Claim the throne', king_me_game_court_path, method: :post %></p>
 <% end %>
 
-<p><%= link_to 'Leave', :controller => '/game', :action => 'complete' %></p>
+<p><%= link_to 'Leave', complete_game_path %></p>
