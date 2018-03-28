@@ -9,7 +9,7 @@ class EventPlayerCharacter < EventLifeNeutral
     if pc.health.HP > 0 && pc.health.wellness != SpecialCode.get_code('wellness','dead')
       return nil, EVENT_COMPLETED, ""
     else
-      return {:action => 'complete'}, EVENT_COMPLETED, pc.name + " has shuffled from this mortal coil"
+      return url_helpers.complete_game_path, EVENT_COMPLETED, pc.name + " has shuffled from this mortal coil"
     end
   end
   

@@ -108,18 +108,6 @@ Rails.application.routes.draw do
     end
   end
 
-  # TODO: Clean up these controllers
-  #Game::* controllers
-
-  post      'game/do_heal'        =>  'game#do_heal'
-  post      'game/do_train'       =>  'game#do_train'
-
-  # TODO: not sure if these are legit paths
-  get       'game/do_heal'        =>  'game#feature'
-  get       'game/do_choose'      =>  'game#feature'
-  get       'game/do_train'       =>  'game#feature'
-  get       'game/do_spawn'       =>  'game#feature'
-
   namespace :management do
     root action: :main_index
     get  :helptext
@@ -251,6 +239,5 @@ Rails.application.routes.draw do
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
 
-  # TODO: Take this away
   # get     ':controller(/:action(/:id(.:format)))'
 end

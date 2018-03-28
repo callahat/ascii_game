@@ -6,7 +6,7 @@ class EventNpc < EventLifeNeutral
   validates_presence_of :thing_id,:flex
   
   def make_happen(who)
-    return {:controller => 'game/npc', :action => 'npc'},EVENT_COMPLETED, ""
+    return url_helpers.npc_game_npc_path, EVENT_COMPLETED, ""
   end
   
   def as_option_text(pc=nil)

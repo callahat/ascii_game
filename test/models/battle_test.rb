@@ -541,8 +541,8 @@ class BattleTest < ActiveSupport::TestCase
     joined, msg = LogQuest.join_quest(@pc, @quest.id)
 
     battle, msg = Battle.new_creature_battle(@pc, @wild_foo, 9, 9, @pc.in_kingdom)
-    assert @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.size == 1
-    assert @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.first.quantity == 10
+    assert_equal  1, @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.size
+    assert_equal 10, @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.first.quantity
 
     assert battle.fighter_killed(battle.enemies.first)
     assert @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.size == 1
@@ -553,8 +553,8 @@ class BattleTest < ActiveSupport::TestCase
     joined, msg = LogQuest.join_quest(@pc, @quest.id)
     battle, msg = Battle.new_creature_battle(@pc, @wild_foo, 9, 9, @pc.in_kingdom)
 
-    assert @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.size == 1
-    assert @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.first.quantity == 10
+    assert_equal  1, @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.size
+    assert_equal 10, @pc.log_quests.find_by_quest_id(@quest.id).creature_kills.first.quantity
 
     @pc.c_class.update_attributes(:attack_spells => true)
     @pc.health.update_attributes(:MP => 100) #just so he can hit'em with the spells
@@ -580,7 +580,7 @@ class BattleTest < ActiveSupport::TestCase
     joined, msg = LogQuest.join_quest(@pc, @quest.id)
     battle, msg = Battle.new_pc_battle(@pc, @sickpc)
 
-    assert @pc.log_quests.find_by_quest_id(@quest.id).kill_pcs.count == 1
+    assert_equal 1, @pc.log_quests.find_by_quest_id(@quest.id).kill_pcs.count
     assert_equal @sickpc.id, @pc.log_quests.find_by_quest_id(@quest.id).kill_pcs.first.detail.to_i
 
     battle.report = {}
@@ -594,8 +594,8 @@ class BattleTest < ActiveSupport::TestCase
   test "test quest log completion for kill specific npc" do
     joined, msg = LogQuest.join_quest(@pc, @quest.id)
     battle, msg = Battle.new_npc_battle(@pc, @sick_npc)
-    assert @pc.log_quests.find_by_quest_id(@quest.id).kill_s_npcs.count == 1
-    assert @pc.log_quests.find_by_quest_id(@quest.id).kill_s_npcs.first.detail.to_i == @sick_npc.id
+    assert_equal 1, @pc.log_quests.find_by_quest_id(@quest.id).kill_s_npcs.count
+    assert_equal @sick_npc.id, @pc.log_quests.find_by_quest_id(@quest.id).kill_s_npcs.first.detail.to_i
 
     battle.report = {}
     assert battle.merchants.count == 1, battle.merchants.collect{|bm| bm.special}.inspect
@@ -609,8 +609,8 @@ class BattleTest < ActiveSupport::TestCase
     joined, msg = LogQuest.join_quest(@pc, @quest.id)
     battle, msg = Battle.new_creature_battle(@pc, @peasants, 16, 16, @pc.present_kingdom)
 
-    assert @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.count == 1
-    assert @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.first.quantity == 20
+    assert_equal  1, @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.count
+    assert_equal 20, @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.first.quantity
 
     @pc.log_quests.find_by_quest_id(@quest.id).kill_n_npcs.first.update_attributes detail: "3:#{@pc.in_kingdom}"
 

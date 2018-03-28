@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class EventNpcTest < ActiveSupport::TestCase
+	include Rails.application.routes.url_helpers
+
 	def setup
 		@pc = PlayerCharacter.find_by_name("Test PC One")
 		@standard_new = {:kingdom_id => Kingdom.first.id,
@@ -15,14 +17,14 @@ class EventNpcTest < ActiveSupport::TestCase
 		e = EventNpc.find_by_name("Healthy Npc encounter")
 		direct, comp, msg = e.happens(@pc)
 		
-		assert direct.class == Hash
-		assert EVENT_COMPLETED
+		assert_equal npc_game_npc_path, direct
+		assert_equal EVENT_COMPLETED, comp
 		
 		#assert does not fail if pc dead
 		@pc.health.update_attribute(:wellness, SpecialCode.get_code('wellness','dead'))
 		direct, comp, msg = e.happens(@pc)
-		assert msg !~ /you are dead/
-		assert EVENT_COMPLETED
+		assert_no_match /you are dead/, msg
+		assert_equal EVENT_COMPLETED, comp
 	end
 	
 	test "create npc event" do

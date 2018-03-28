@@ -85,7 +85,7 @@ class CurrentEventTest < ActiveSupport::TestCase
 		DoneEvent.destroy_all
 		q = Quest.find_by_name("Quest One")
 		joined, msg = LogQuest.join_quest(@pc, q.id)    
-		assert joined
+		assert joined, msg
 
 		@kl = @level.level_maps.find_by(xpos: 0, ypos: 0)
 		@current_loc_event = CurrentEvent.make_new(@pc, @kl.id)

@@ -49,7 +49,7 @@ class EventMoveLocal < EventLifeNeutral
       end
     end
     
-    return {:action => 'complete'}, EVENT_COMPLETED, @message
+    return url_helpers.complete_game_path, EVENT_COMPLETED, @message
   end
   
   def as_option_text(pc=nil)

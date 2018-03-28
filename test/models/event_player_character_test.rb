@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class EventPlayerCharacterTest < ActiveSupport::TestCase
+	include Rails.application.routes.url_helpers
+
 	def setup
 		@pc = PlayerCharacter.find_by_name("Test PC One")
 		@standard_new = {:kingdom_id => Kingdom.first.id,
@@ -15,18 +17,18 @@ class EventPlayerCharacterTest < ActiveSupport::TestCase
 		ep = EventPlayerCharacter.find_by_name("Sick PC encounter")
 		assert ep.player_character.name == "sick pc"
 		direct, comp, msg = ep.happens(@pc)
-		assert comp == EVENT_COMPLETED
+		assert_equal EVENT_COMPLETED, comp
 		
 		ep.player_character.health.update_attribute(:HP, 0)
 		direct, comp, msg = ep.happens(@pc)
-		assert direct.class == Hash
-		assert msg =~ /mortal/
+		assert_equal complete_game_path, direct
+		assert_match /mortal/, msg
 		ep.player_character.health.update_attribute(:HP, 70)
 		
 		#assert not fails if pc dead
 		@pc.health.update_attribute(:wellness, SpecialCode.get_code('wellness','dead'))
 		direct, comp, msg = ep.happens(@pc)
-		assert comp == EVENT_COMPLETED
+		assert_equal EVENT_COMPLETED, comp
 	end
 	
 	test "create pc event" do

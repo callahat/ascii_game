@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class EventStormGateTest < ActiveSupport::TestCase
+	include Rails.application.routes.url_helpers
+
 	def setup
 		@pc = PlayerCharacter.find_by_name("Test PC One")
 		@pc.update_attribute(:in_kingdom, nil)
@@ -19,23 +21,22 @@ class EventStormGateTest < ActiveSupport::TestCase
 		assert_difference 'Battle.count', +1 do
 			@direct, @comp, @msg = es.happens(@pc)
 		end
-		assert @direct.class == Hash
-		assert @direct[:controller] == 'game/battle'
-		assert @comp == EVENT_INPROGRESS
+		assert_match battle_game_battle_path, @direct
+		assert_equal EVENT_INPROGRESS, @comp
 		
 		#test where there are no guards
 		es.level.kingdom.npcs.destroy_all
 		assert_difference 'Battle.count', +0 do
 			@direct, @comp, @msg = es.happens(player_characters(:pc_one))
 		end
-		assert @comp == EVENT_COMPLETED
-		assert @msg =~ /no resistance/
+		assert_equal EVENT_COMPLETED, @comp
+		assert_match /no resistance/, @msg
 		
 		#assert fails if pc dead
 		@pc.health.update_attribute(:wellness, SpecialCode.get_code('wellness','dead'))
 		direct, comp, msg = es.happens(@pc)
-		assert msg =~ /you are dead/
-		assert comp == EVENT_FAILED
+		assert_match /you are dead/, msg
+		assert_equal EVENT_FAILED, comp
 	end
 	
 	test "storm gate completes" do

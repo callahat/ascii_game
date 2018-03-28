@@ -4,8 +4,7 @@ class EventDisease < Event
   validates_presence_of :thing_id
   
   def price
-    return Disease.abs_cost(disease) if flex
-    0
+    flex ? Disease.abs_cost(disease) : 0
   end
   
   def make_happen(who)
