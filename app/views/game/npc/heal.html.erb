@@ -1,7 +1,7 @@
 <p>Clinic</p>
 <% if (@dcr = disease_cures(@pc, @diseases_cured, @npc.kingdom.tax_rate / 100.0)) != "" || (@max_HP_heal + @max_MP_heal > 0) %>
 <table>
-<%=  %>
+<%= @dcr %>
 
 <% if @max_HP_heal > 0 %>
 <tr><td><%= link_to 'Heal ' + @max_HP_heal.to_s + ' HP', { :action => 'do_heal', :HP => true } , :method => :post %></td><td> for <%= @max_HP_heal_cost %> gold</td></tr>

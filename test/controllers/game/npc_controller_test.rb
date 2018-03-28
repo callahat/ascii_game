@@ -33,16 +33,16 @@ class Game::NpcControllerTest < ActionController::TestCase
 	test "healer npc menu options" do
 		setup_sub1(@kl_healer)
 		get 'smithy', {}, session.to_hash
-		assert_redirected_to npc_index_url()
+		assert_redirected_to npc_game_npc_path
 		
 		get 'train', {}, session.to_hash
-		assert_redirected_to npc_index_url()
+		assert_redirected_to npc_game_npc_path
 		
 		get 'buy', {}, session.to_hash
-		assert_redirected_to npc_index_url()
+		assert_redirected_to npc_game_npc_path
 		
 		get 'sell', {}, session.to_hash
-		assert_redirected_to npc_index_url()
+		assert_redirected_to npc_game_npc_path
 		
 		get 'heal', {}, session.to_hash
 		assert_response :success
@@ -58,25 +58,25 @@ class Game::NpcControllerTest < ActionController::TestCase
 		session[:player_character].update_attribute(:gold, 100000)
 		
 		get 'do_heal', {}, session.to_hash
-		assert_redirected_to npc_heal_url()
+		assert_redirected_to heal_game_npc_path
 		assert flash[:notice] =~ /Do what now/
 		flash[:notice] = ""
 		
 		assert_difference 'session[:player_character].health.HP', +2 do
 			get 'do_heal', {:HP => "true"}, session.to_hash
-			assert_redirected_to npc_heal_url()
+			assert_redirected_to heal_game_npc_path
 			assert flash[:notice] !~ /Do what now/
 		end
 		flash[:notice] = ""
 		assert_difference 'session[:player_character].health.MP', +7 do
 			get 'do_heal', {:MP => "true"}, session.to_hash
-			assert_redirected_to npc_heal_url()
+			assert_redirected_to heal_game_npc_path
 			assert flash[:notice] !~ /Do what now/
 		end
 		flash[:notice] = ""
 		assert_difference 'session[:player_character].illnesses.size', -1 do
 			get 'do_heal', {:did => @disease.id}, session.to_hash
-			assert_redirected_to npc_heal_url()
+			assert_redirected_to heal_game_npc_path
 			assert flash[:notice] !~ /Do what now/
 		end
 	end
@@ -117,7 +117,7 @@ class Game::NpcControllerTest < ActionController::TestCase
 			assert_difference "session[:player_character].items.where(item_id: #{items(:item_1).id}).first.quantity", +0 do
 				get 'do_buy_new', {}, session.to_hash
 				assert flash[:notice] =~ /cannot make that/, flash[:notice]
-				assert_redirected_to npc_smithy_url()
+				assert_redirected_to smithy_game_npc_path
 			end
 		end
 		flash[:notice] = ""
@@ -126,7 +126,7 @@ class Game::NpcControllerTest < ActionController::TestCase
 			get 'do_buy_new', {:iid => items(:item_1).id}, session.to_hash
 			assert flash[:notice] =~ /Bought/
 			session[:player_character].items.reload
-			assert_redirected_to npc_smithy_url()
+			assert_redirected_to smithy_game_npc_path
 		end
 		assert old_gold > session[:player_character].gold
 	end
@@ -140,25 +140,25 @@ class Game::NpcControllerTest < ActionController::TestCase
 		session[:player_character].update_attribute(:gold, 100000)
 		
 		get 'do_heal', {}, session.to_hash
-		assert_redirected_to npc_heal_url()
+		assert_redirected_to heal_game_npc_path
 		assert flash[:notice] =~ /Do what now/
 		flash[:notice] = ""
 		
 		assert_difference 'session[:player_character].illnesses.size', +0 do
 			get 'do_heal', {:did => @disease.id}, session.to_hash
-			assert_redirected_to npc_heal_url()
+			assert_redirected_to heal_game_npc_path
 			assert flash[:notice] =~ /cannot cure/, flash[:notice]
 		end
 		flash[:notice] = ""
 		assert_difference 'session[:player_character].health.HP', +2 do
 			get 'do_heal', {:HP => "true"}, session.to_hash
-			assert_redirected_to npc_heal_url()
+			assert_redirected_to heal_game_npc_path
 			assert flash[:notice] !~ /Do what now/
 		end
 		flash[:notice] = ""
 		assert_difference 'session[:player_character].health.MP', +7 do
 			get 'do_heal', {:MP => "true"}, session.to_hash
-			assert_redirected_to npc_heal_url()
+			assert_redirected_to heal_game_npc_path
 			assert flash[:notice] !~ /Do what now/
 		end
 	end
@@ -168,10 +168,10 @@ class Game::NpcControllerTest < ActionController::TestCase
 		max_train = session[:player_character].current_event.event.npc.npc_merchant_detail.max_skill_taught
 		
 		get 'do_train', {}, session.to_hash
-		assert_redirected_to npc_train_url()
+		assert_redirected_to train_game_npc_path
 		
 		get 'do_train', {:atrib => {:str => 0, :dex => 0, :dam => 0, :dfn => 0, :con => 0, :mag => 0, :int => 0}}, session.to_hash
-		assert_redirected_to npc_train_url()
+		assert_redirected_to train_game_npc_path
 		
 		session[:player_character].update_attribute(:gold, 10000)
 		base_str = session[:player_character].base_stat[:str]
@@ -189,7 +189,7 @@ class Game::NpcControllerTest < ActionController::TestCase
 				assert_difference 'session[:player_character].trn_stat[:dex]', +(base_dex * max_train / 200.0).to_i do
 					assert_difference 'session[:player_character].stat[:dex]', +(base_dex * max_train / 200.0).to_i do
 						post 'do_train', {:atrib => {:str => @str, :dex => @dex, :dam => 0, :dfn => 0, :con => 0, :mag => 0, :int => 0}}, session.to_hash
-						assert_redirected_to npc_train_url()
+						assert_redirected_to train_game_npc_path
 						assert flash[:notice] =~ /successful/
 					end
 				end
@@ -202,13 +202,13 @@ class Game::NpcControllerTest < ActionController::TestCase
 		@item1 = items(:item_1)
 		
 		get 'do_sell', {}, session.to_hash
-		assert_redirected_to npc_sell_url()
+		assert_redirected_to sell_game_npc_path
 		assert flash[:notice] =~ /not have one/,  flash[:notice]
 		flash[:notice] = ""
 		
 		assert_difference 'session[:player_character].gold', +@item1.resell_value do
 			get 'do_sell', {id: @item1.id}, session.to_hash
-			assert_redirected_to npc_sell_url()
+			assert_redirected_to sell_game_npc_path
 			assert flash[:notice] =~ /Sold/
 		end
 	end
@@ -220,12 +220,12 @@ class Game::NpcControllerTest < ActionController::TestCase
 		session[:player_character].update_attribute(:gold, 4000)
 		
 		get 'do_buy', {}, session.to_hash
-		assert_redirected_to npc_buy_url()
+		assert_redirected_to buy_game_npc_path
 		assert flash[:notice] =~ /does not have/, flash[:notice]
 		flash[:notice] = ""
 		
 		get 'do_buy', {id: item_id}, session.to_hash
-		assert_redirected_to npc_buy_url()
+		assert_redirected_to buy_game_npc_path
 		assert flash[:notice] =~ /Bought a/, flash[:notice]
 		assert session[:player_character].items.where(item_id: item_id).first.quantity == 1
 	end

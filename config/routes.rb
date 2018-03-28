@@ -93,6 +93,19 @@ Rails.application.routes.draw do
       get  :do_complete
       get  :do_reward
     end
+    resource :npc, controller: :npc, only: [] do
+      get  :npc
+      get  :smithy
+      get  :do_buy_new
+      get  :heal
+      post :do_heal
+      get  :train
+      post :do_train
+      get  :buy
+      post :do_buy
+      get  :sell
+      post :do_sell
+    end
   end
 
   # TODO: Clean up these controllers
@@ -106,19 +119,6 @@ Rails.application.routes.draw do
   get       'game/do_choose'      =>  'game#feature'
   get       'game/do_train'       =>  'game#feature'
   get       'game/do_spawn'       =>  'game#feature'
-
-  #Game::NpcController
-  get       'npc_index'         =>  'game/npc#npc'
-  get       'npc_smithy'        =>  'game/npc#smithy'
-  get       'npc_do_buy_new'    =>  'game/npc#do_buy_new'
-  get       'npc_heal'          =>  'game/npc#heal'
-  get       'npc_do_heal'       =>  'game/npc#do_heal'
-  get       'npc_train'         =>  'game/npc#train'
-  post      'npc_do_train'      =>  'game/npc#do_train'
-  get       'npc_buy'           =>  'game/npc#buy'
-  post      'npc_do_buy'        =>  'game/npc#do_buy'
-  get       'npc_sell'          =>  'game/npc#sell'
-  post      'npc_do_sell'       =>  'game/npc#do_sell'
 
   namespace :management do
     root action: :main_index
