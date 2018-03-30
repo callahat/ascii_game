@@ -1,9 +1,8 @@
 <h1>Editing attack_spell</h1>
 
-<%= form_tag :action => 'update', :id => @attack_spell do %>
-  <%= render :partial => 'form' %>
-  <%= submit_tag 'Edit' %>
+<%= form_for [:admin, @attack_spell] do |f| %>
+  <%= render :partial => 'form', locals: {f: f} %>
 <% end %>
 
 <%= link_to 'Show', :action => 'show', :id => @attack_spell %> |
-<%= link_to 'Back', :action => 'list' %>
+<%= link_to 'Back', admin_attack_spells_path %>

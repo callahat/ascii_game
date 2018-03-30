@@ -193,24 +193,25 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
-    resource :attack_spells
-    resource :base_items
-    resource :blacksmith_skills
-    resource :c_classes
-    resource :creatures
-    resource :diseases
-    resource :healer_skills
-    resource :healing_spells
-    resource :items
-    resource :maintenance
-    resource :name_surfixes
-    resource :name_titles
-    resource :names
-    resource :npcs
-    resource :races
-    resource :trainer_skills
-    resource :world_maps
-    resource :worlds
+    root action: :show
+
+    resources :attack_spells
+    resources :base_items
+    resources :blacksmith_skills
+    resources :c_classes
+    resources :creatures
+    resources :diseases
+    resources :healer_skills
+    resources :healing_spells
+    resources :items
+    resources :name_surfixes
+    resources :name_titles
+    resources :names
+    resources :npcs
+    resources :races
+    resources :trainer_skills
+    resources :world_maps
+    resources :worlds
   end
 
   #ForumsController

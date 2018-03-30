@@ -5,15 +5,6 @@ class Admin::AttackSpellsController < ApplicationController
   layout 'admin'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],
-#         :redirect_to => { :action => :list }
-
-  def list
     @attack_spells = AttackSpell.get_page(params[:page])
   end
 
@@ -29,7 +20,7 @@ class Admin::AttackSpellsController < ApplicationController
     @attack_spell = AttackSpell.new(params[:attack_spell])
     if @attack_spell.save
       flash[:notice] = 'AttackSpell was successfully created.'
-      redirect_to :action => 'list'
+      redirect_to admin_attack_spells_path
     else
       render :action => 'new'
     end
@@ -42,8 +33,8 @@ class Admin::AttackSpellsController < ApplicationController
   def update
     @attack_spell = AttackSpell.find(params[:id])
     if @attack_spell.update_attributes(params[:attack_spell])
-      flash[:notice] = 'AttackSpell was successfully updated.'
-      redirect_to :action => 'show', :id => @attack_spell
+      flash[:notice] = "#{@attack_spell.name} was successfully updated."
+      redirect_to admin_attack_spell_path(@attack_spell)
     else
       render :action => 'edit'
     end
@@ -51,6 +42,6 @@ class Admin::AttackSpellsController < ApplicationController
 
   def destroy
     AttackSpell.find(params[:id]).destroy
-    redirect_to :action => 'list'
+    redirect_to admin_attack_spells_path
   end
 end
