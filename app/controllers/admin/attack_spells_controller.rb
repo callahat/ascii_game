@@ -20,7 +20,7 @@ class Admin::AttackSpellsController < ApplicationController
     @attack_spell = AttackSpell.new(params[:attack_spell])
     if @attack_spell.save
       flash[:notice] = 'AttackSpell was successfully created.'
-      redirect_to admin_attack_spells_path
+      redirect_to admin_attack_spell_path(@attack_spell)
     else
       render :action => 'new'
     end

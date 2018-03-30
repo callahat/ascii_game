@@ -20,7 +20,7 @@ class Admin::BaseItemsController < ApplicationController
     @base_item = BaseItem.new(params[:base_item])
     if @base_item.save
       flash[:notice] = 'BaseItem was successfully created.'
-      redirect_to admin_base_items_path
+      redirect_to admin_base_item_path(@base_item)
     else
       render :action => 'new'
     end
@@ -34,7 +34,7 @@ class Admin::BaseItemsController < ApplicationController
     @base_item = BaseItem.find(params[:id])
     if @base_item.update_attributes(params[:base_item])
       flash[:notice] = "#{@base_item.name} was successfully updated."
-      redirect_to admin_base_items_path
+      redirect_to admin_base_item_path(@base_item)
     else
       render :action => 'edit'
     end
