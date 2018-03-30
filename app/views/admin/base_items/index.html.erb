@@ -4,8 +4,6 @@
   <tr>
     <th>Name</th>
     <th>Equip Location</th>
-    <th>Dfn</th>
-    <th>Dam</th>
     <th>Price</th>
     <th>Race Bdy Type</th>
   </tr>
@@ -20,8 +18,6 @@
     (<%= base_item.equip_loc %>) - <%= SpecialCode.get_text('equip_loc',base_item.equip_loc) %>
     <% end %>
     </td>
-    <td><%= base_item.dfn_mod %></td>
-    <td><%= base_item.dam_mod %></td>
     <td><%= base_item.price %></td>
     <td>
     <% if base_item.race_body_type.nil? %>
@@ -30,9 +26,9 @@
     (<%= base_item.race_body_type %>) - <%= SpecialCode.get_text('race_body_type',base_item.race_body_type) %>
     <% end %>
     </td>
-    <td><%= link_to 'Show', :action => 'show', :id => base_item %></td>
-    <td><%= link_to 'Edit', :action => 'edit', :id => base_item %></td>
-    <td><%= link_to 'Destroy', { :action => 'destroy', :id => base_item }, :confirm => 'Are you sure?', :method => :post %></td>
+    <td><%= link_to 'Show', admin_base_item_path(base_item) %></td>
+    <td><%= link_to 'Edit', edit_admin_base_item_path(base_item) %></td>
+    <td><%= link_to 'Destroy', admin_base_item_path(base_item), data: {confirm: 'Are you sure?'}, method: :delete %></td>
   </tr>
 <% end %>
 </table>
@@ -41,4 +37,4 @@
 
 <br />
 
-<%= link_to 'New base_item', :action => 'new' %>
+<%= link_to 'New base_item', new_admin_base_item_path %>

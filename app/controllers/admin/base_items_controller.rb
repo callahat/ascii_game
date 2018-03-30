@@ -5,15 +5,6 @@ class Admin::BaseItemsController < ApplicationController
   layout 'admin'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],
-#         :redirect_to => { :action => :list }
-
-  def list
     @base_items = BaseItem.get_page(params[:page])
   end
 
@@ -29,7 +20,7 @@ class Admin::BaseItemsController < ApplicationController
     @base_item = BaseItem.new(params[:base_item])
     if @base_item.save
       flash[:notice] = 'BaseItem was successfully created.'
-      redirect_to :action => 'list'
+      redirect_to admin_base_items_path
     else
       render :action => 'new'
     end
@@ -42,8 +33,8 @@ class Admin::BaseItemsController < ApplicationController
   def update
     @base_item = BaseItem.find(params[:id])
     if @base_item.update_attributes(params[:base_item])
-      flash[:notice] = 'BaseItem was successfully updated.'
-      redirect_to :action => 'list'
+      flash[:notice] = "#{@base_item.name} was successfully updated."
+      redirect_to admin_base_items_path
     else
       render :action => 'edit'
     end
@@ -51,6 +42,6 @@ class Admin::BaseItemsController < ApplicationController
 
   def destroy
     BaseItem.find(params[:id]).destroy
-    redirect_to :action => 'list'
+    redirect_to admin_base_items_path
   end
 end

@@ -1,35 +1,60 @@
-<%= error_messages_for :attack_spell %>
+<%= form_for([:admin, @attack_spell]) do |f| %>
+  <%= error_messages_for :attack_spell %>
 
-<!--[form:attack_spell]-->
-<p><%= f.label :name %><br/>
-  <%= f.text_field :name  %></p>
+  <!--[form:attack_spell]-->
 
-<p><%= f.label :description %><br/>
-  <%= f.text_field :description  %></p>
+  <div class="field">
+    <%= f.label :name %><br/>
+    <%= f.text_field :name %>
+  </div>
 
-<p><%= f.label :min_level %><br/>
-  <%= f.text_field :min_level  %></p>
+  <div class="field">
+    <%= f.label :description %><br/>
+    <%= f.text_field :description %>
+  </div>
 
-<p><%= f.label :min_dam %><br/>
-  <%= f.text_field :min_dam  %></p>
+  <div class="field">
+    <%= f.label :min_level %><br/>
+    <%= f.text_field :min_level %>
+  </div>
 
-<p><%= f.label :max_dam %><br/>
-  <%= f.text_field :max_dam  %></p>
+  <div class="field">
+    <%= f.label :min_dam %><br/>
+    <%= f.text_field :min_dam %>
+  </div>
 
-<p><%= f.label :dam_from_mag %><br/>
-  <%= f.text_field :dam_from_mag  %></p>
+  <div class="field">
+    <%= f.label :max_dam %><br/>
+    <%= f.text_field :max_dam %>
+  </div>
 
-<p><%= f.label :dam_from_int %><br/>
-  <%= f.text_field :dam_from_int  %></p>
+  <div class="field">
+    <%= f.label :dam_from_mag %><br/>
+    <%= f.text_field :dam_from_mag %>
+  </div>
 
-<p><%= f.label :mp_cost %><br/>
-  <%= f.text_field :mp_cost  %></p>
+  <div class="field">
+    <%= f.label :dam_from_int %><br/>
+    <%= f.text_field :dam_from_int %>
+  </div>
 
-<p><%= f.label :hp_cost %><br/>
-  <%= f.text_field :hp_cost  %></p>
+  <div class="field">
+    <%= f.label :mp_cost %><br/>
+    <%= f.text_field :mp_cost %>
+  </div>
 
-<p><%= f.label :splash %><br/>
-  <%= f.check_box :splash  %></p>
-<!--[eoform:attack_spell]-->
+  <div class="field">
+    <%= f.label :hp_cost %><br/>
+    <%= f.text_field :hp_cost %>
+  </div>
 
-<%= submit_tag  %>
+  <div class="field">
+    <%= f.label :splash %><br/>
+    <%= f.check_box :splash %>
+  </div>
+  <!--[eoform:attack_spell]-->
+
+  <div class="actions">
+    <%= submit_tag %>
+  </div>
+<% end %>
