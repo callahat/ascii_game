@@ -9,16 +9,16 @@
     <th>min_sales</th>	 
   </tr>
   
-<% for healer_skill in @healer_skills %>
+<% @healer_skills.each do |healer_skill| %>
   <tr>
     <td><%= healer_skill.max_HP_restore %></td>
     <td><%= healer_skill.max_MP_restore %></td>
     <td><% if healer_skill.disease.nil? %>N/A<% else %><%= healer_skill.disease.name %><% end %></td>
     <td><%= healer_skill.max_stat_restore %></td>	   
     <td><%= healer_skill.min_sales %></td>	 
-    <td><%= link_to 'Show', :action => 'show', :id => healer_skill %></td>
-    <td><%= link_to 'Edit', :action => 'edit', :id => healer_skill %></td>
-    <td><%= link_to 'Destroy', { :action => 'destroy', :id => healer_skill }, :confirm => 'Are you sure?', :method => :post %></td>
+    <td><%= link_to 'Show', [:admin,healer_skill] %></td>
+    <td><%= link_to 'Edit', edit_admin_healer_skill_path(healer_skill) %></td>
+    <td><%= link_to 'Destroy', [:admin,healer_skill], data:{confirm: 'Are you sure?'}, method: :delete %></td>
   </tr>
 <% end %>
 </table>
@@ -27,4 +27,4 @@
 
 <br />
 
-<%= link_to 'New healer_skill', :action => 'new' %>
+<%= link_to 'New healer_skill', new_admin_healer_skill_path %>
