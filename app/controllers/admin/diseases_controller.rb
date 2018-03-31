@@ -5,15 +5,6 @@ class Admin::DiseasesController < ApplicationController
   layout 'admin'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],
-#         :redirect_to => { :action => :list }
-
-  def list
     @diseases = Disease.get_page(params[:page])
   end
 
@@ -23,13 +14,14 @@ class Admin::DiseasesController < ApplicationController
 
   def new
     @disease = Disease.new
+    @disease.build_stat
   end
 
   def create
     @disease = Disease.new(params[:disease])
     if @disease.save
       flash[:notice] = 'Disease was successfully created.'
-      redirect_to :action => 'list'
+      redirect_to admin_disease_path(@disease)
     else
       render :action => 'new'
     end
@@ -43,7 +35,7 @@ class Admin::DiseasesController < ApplicationController
     @disease = Disease.find(params[:id])
     if @disease.update_attributes(params[:disease])
       flash[:notice] = 'Disease was successfully updated.'
-      redirect_to :action => 'show', :id => @disease
+      redirect_to admin_disease_path(@disease)
     else
       render :action => 'edit'
     end
@@ -51,6 +43,6 @@ class Admin::DiseasesController < ApplicationController
 
   def destroy
     Disease.find(params[:id]).destroy
-    redirect_to :action => 'list'
+    redirect_to admin_diseases_path
   end
 end

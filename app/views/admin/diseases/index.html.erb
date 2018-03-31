@@ -24,21 +24,21 @@
     <td><%= disease.name %></td>
     <td><%= disease.virility %></td>
     <td><%= SpecialCode.get_text('trans_method',disease.trans_method) %></td>
-    <td><%= disease.dam %></td>
-    <td><%= disease.dfn %></td>
-    <td><%= disease.str %></td>
-    <td><%= disease.dex %></td>
-    <td><%= disease.mag %></td>
-    <td><%= disease.int %></td>
-    <td><%= disease.con %></td>
+    <td><%= disease.stat.dam %></td>
+    <td><%= disease.stat.dfn %></td>
+    <td><%= disease.stat.str %></td>
+    <td><%= disease.stat.dex %></td>
+    <td><%= disease.stat.mag %></td>
+    <td><%= disease.stat.int %></td>
+    <td><%= disease.stat.con %></td>
     <td><%= disease.HP_per_turn %></td>
     <td><%= disease.MP_per_turn %></td>
     <td><%= disease.NPC_fatal %></td>
     <td><%= disease.peasant_fatality %></td>
     <td><%= disease.min_peasants %></td>
-    <td><%= link_to 'Show', :action => 'show', :id => disease %></td>
-    <td><%= link_to 'Edit', :action => 'edit', :id => disease %></td>
-    <td><%= link_to 'Destroy', { :action => 'destroy', :id => disease }, :confirm => 'Are you sure?', :method => :post %></td>
+    <td><%= link_to 'Show', [:admin,disease] %></td>
+    <td><%= link_to 'Edit', edit_admin_disease_path(disease) %></td>
+    <td><%= link_to 'Destroy', [:admin,disease], data:{confirm: "Really delete #{disease.name}?"}, method: :delete %></td>
   </tr>
 <% end %>
 </table>
@@ -47,4 +47,4 @@
 
 <br />
 
-<%= link_to 'New disease', :action => 'new' %>
+<%= link_to 'New disease', new_admin_disease_path %>

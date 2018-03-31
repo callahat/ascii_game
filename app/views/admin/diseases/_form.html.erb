@@ -1,53 +1,66 @@
-<%= error_messages_for 'disease' %>
+<%= form_for([:admin,@disease]) do |f| %>
+  <%= error_messages_for 'disease' %>
 
-<!--[form:disease]-->
-<p><label for="disease_name">Name</label><br/>
-<%= text_field 'disease', 'name'  %></p>
+  <div class="field">
+    <%= f.label :name %><br/>
+    <%= f.text_field :name %>
+  </div>
 
-<p><label for="disease_description">Description</label><br/>
-<%= text_field 'disease', 'description'  %></p>
+  <div class="field">
+    <%= f.label :description %><br/>
+    <%= f.text_field :description %>
+  </div>
 
-<p><label for="disease_trans_method">Trans method</label><br/>
-<%       @trans_method = SpecialCode.get_codes_and_text('trans_method') %>
-<%= collection_select('disease','trans_method', @trans_method, 'col_num', 'text' ) %></p>
+  <div class="field">
+    <%= f.label :trans_method %><br/>
+    <%= f.collection_select(:trans_method, SpecialCode.get_codes_and_text('trans_method'), :second, :first ) %>
+  </div>
 
-<p><label for="disease_NPC_fatal">Npc fatal</label><br/>
-<%= check_box 'disease','NPC_fatal' %></p>
+  <div class="field">
+    <%= f.label :NPC_fatal %><br/>
+    <%= f.check_box :NPC_fatal %>
+  </div>
 
-<p><label for="disease_virility">Virility</label><br/>
-<%= text_field 'disease', 'virility'  %></p>
+  <div class="field">
+    <%= f.label :virility %> (% change of it spreading when encountered)<br/>
+    <%= f.text_field :virility %>
+  </div>
 
-<p><label for="disease_dam">Dam</label><br/>
-<%= text_field 'disease', 'dam'  %></p>
+  <div class="field">
+    <%= f.label :HP_per_turn %><br/>
+    <%= f.text_field :HP_per_turn %>
+  </div>
 
-<p><label for="disease_def">Dfn</label><br/>
-<%= text_field 'disease', 'dfn'  %></p>
+  <div class="field">
+    <%= f.label :MP_per_turn %><br/>
+    <%= f.text_field :MP_per_turn %>
+  </div>
 
-<p><label for="disease_str">Str</label><br/>
-<%= text_field 'disease', 'str'  %></p>
+  <div class="field">
+    <%= f.label :peasant_fatality %> (% peasants die daily)<br/>
+    <%= f.text_field :peasant_fatality %>
+  </div>
 
-<p><label for="disease_dex">Dex</label><br/>
-<%= text_field 'disease', 'dex'  %></p>
+  <div class="field">
+    <%= f.label :min_peasants %>  (for a epidemic set in at a kingdom)<br/>
+    <%= f.text_field :min_peasants %>
+  </div>
 
-<p><label for="disease_mag">Mag</label><br/>
-<%= text_field 'disease', 'mag'  %></p>
+  <div class="field">
+    Impact to stats<br/>
+    <%= f.fields_for(:stat) do |stat_form| %>
+      <table>
+        <% Stat.symbols.each{|stat_attr| %>
+          <tr>
+            <td><%= stat_form.label stat_attr %></td>
+            <td><%= stat_form.text_field stat_attr, size: 5 %></td>
+          </tr>
+        <% } %>
+      </table>
+    <% end %>
+  </div>
 
-<p><label for="disease_int">Int</label><br/>
-<%= text_field 'disease', 'int'  %></p>
-
-<p><label for="disease_con">Con</label><br/>
-<%= text_field 'disease', 'con'  %></p>
-
-<p><label for="disease_HP_per_turn">Hp per turn</label><br/>
-<%= text_field 'disease', 'HP_per_turn'  %></p>
-
-<p><label for="disease_MP_per_turn">Mp per turn</label><br/>
-<%= text_field 'disease', 'MP_per_turn'  %></p>
-
-<p><label for="disease_peasant_fatality">Peasant fatality</label><br/>
-<%= text_field 'disease', 'peasant_fatality'  %></p>
-
-<p><label for="disease_min_peasants">Min peasants</label><br/>
-<%= text_field 'disease', 'min_peasants'  %></p>
-<!--[eoform:disease]-->
-
+  <div class="actions">
+    <%= submit_tag %>
+  </div>
+<% end %>

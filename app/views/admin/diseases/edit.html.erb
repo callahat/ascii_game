@@ -1,9 +1,6 @@
 <h1>Editing disease</h1>
 
-<%= form_tag :action => 'update', :id => @disease do %>
-  <%= render :partial => 'form' %>
-  <%= submit_tag 'Edit' %>
-<% end %>
+<%= render 'form' %>
 
-<%= link_to 'Show', :action => 'show', :id => @disease %> |
-<%= link_to 'Back', :action => 'list' %>
+<%= link_to 'Show', [:admin, @disease] %> |
+<%= link_to 'Back', admin_diseases_path %>

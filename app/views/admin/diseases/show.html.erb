@@ -1,21 +1,23 @@
-<p><b>id: </b><%= @disease.id %></p>
 <p><b>name: </b><%= @disease.name %></p>
 <p><b>description: </b><%= @disease.description %></p>
 <p><b>virility: </b><%= @disease.virility %></p>
 <p><b>trans_method: </b><%= SpecialCode.get_text('trans_method',@disease.trans_method) %></p>
-<p><b>dam: </b><%= @disease.dam %></p>
-<p><b>dfn: </b><%= @disease.dfn %></p>
-<p><b>str: </b><%= @disease.str %></p>
-<p><b>dex: </b><%= @disease.dex %></p>
-<p><b>mag: </b><%= @disease.mag %></p>
-<p><b>int: </b><%= @disease.int %></p>
-<p><b>con: </b><%= @disease.con %></p>
 <p><b>HP_per_turn: </b><%= @disease.HP_per_turn %></p>
 <p><b>MP_per_turn: </b><%= @disease.MP_per_turn %></p>
 <p><b>NPC_fatal: </b><%= @disease.NPC_fatal %></p>
 <p><b>peasant_fatality: </b><%= @disease.peasant_fatality %></p>
 <p><b>min_peasants: </b><%= @disease.min_peasants %></p>
 
+<p><b>Impact to Character Stats:</b></p>
+<table>
+  <tr><th>Stat</th><th>Points</th></tr>
+  <% Stat.symbols.each do |stat_attr| %>
+    <tr>
+      <td><%= stat_attr %></td>
+      <td><%= @disease.stat.send stat_attr %></td>
+    </tr>
+  <% end %>
+</table>
 
-<%= link_to 'Edit', :action => 'edit', :id => @disease %> |
-<%= link_to 'Back', :action => 'list' %>
+<%= link_to 'Edit', edit_admin_disease_path(@disease) %> |
+<%= link_to 'Back', admin_diseases_path %>
