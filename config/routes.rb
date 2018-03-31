@@ -209,7 +209,7 @@ Rails.application.routes.draw do
     resources :names, except: [:show]
     resources :npcs
     resources :races
-    resources :trainer_skills
+    resources :trainer_skills, except: [:show]
     resources :world_maps
     resources :worlds
   end

@@ -5,20 +5,7 @@ class Admin::TrainerSkillsController < ApplicationController
   layout 'admin'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],
-#         :redirect_to => { :action => :list }
-
-  def list
     @trainer_skills = TrainerSkill.get_page(params[:page])
-  end
-
-  def show
-    @trainer_skill = TrainerSkill.find(params[:id])
   end
 
   def new
@@ -29,7 +16,7 @@ class Admin::TrainerSkillsController < ApplicationController
     @trainer_skill = TrainerSkill.new(params[:trainer_skill])
     if @trainer_skill.save
       flash[:notice] = 'TrainerSkill was successfully created.'
-      redirect_to :action => 'list'
+      redirect_to admin_trainer_skills_path
     else
       render :action => 'new'
     end
@@ -43,7 +30,7 @@ class Admin::TrainerSkillsController < ApplicationController
     @trainer_skill = TrainerSkill.find(params[:id])
     if @trainer_skill.update_attributes(params[:trainer_skill])
       flash[:notice] = 'TrainerSkill was successfully updated.'
-      redirect_to :action => 'show', :id => @trainer_skill
+      redirect_to admin_trainer_skills_path
     else
       render :action => 'edit'
     end
@@ -51,6 +38,6 @@ class Admin::TrainerSkillsController < ApplicationController
 
   def destroy
     TrainerSkill.find(params[:id]).destroy
-    redirect_to :action => 'list'
+    redirect_to admin_trainer_skills_path
   end
 end

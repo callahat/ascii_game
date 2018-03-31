@@ -12,9 +12,8 @@
   <% for column in TrainerSkill.content_columns %>
     <td><%=h trainer_skill.send(column.name) %></td>
   <% end %>
-    <td><%= link_to 'Show', :action => 'show', :id => trainer_skill %></td>
-    <td><%= link_to 'Edit', :action => 'edit', :id => trainer_skill %></td>
-    <td><%= link_to 'Destroy', { :action => 'destroy', :id => trainer_skill }, :confirm => 'Are you sure?', :method => :post %></td>
+    <td><%= link_to 'Edit', edit_admin_trainer_skill_path(trainer_skill) %></td>
+    <td><%= link_to 'Destroy', [:admin,trainer_skill], data:{confirm: 'Are you sure?'}, method: :delete %></td>
   </tr>
 <% end %>
 </table>
@@ -23,4 +22,4 @@
 
 <br />
 
-<%= link_to 'New trainer_skill', :action => 'new' %>
+<%= link_to 'New trainer_skill', new_admin_trainer_skill_path %>
