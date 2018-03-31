@@ -14,9 +14,9 @@
     <td><%= blacksmith_skill.min_mod %></td>
     <td><%= blacksmith_skill.max_mod %></td>
     <td><%= blacksmith_skill.base_item.name %></td>
-    <td><%= link_to 'Show', :action => 'show', :id => blacksmith_skill %></td>
-    <td><%= link_to 'Edit', :action => 'edit', :id => blacksmith_skill %></td>
-    <td><%= link_to 'Destroy', { :action => 'destroy', :id => blacksmith_skill }, :confirm => 'Are you sure?', :method => :post %></td>
+    <td><%= link_to 'Show', [:admin,blacksmith_skill] %></td>
+    <td><%= link_to 'Edit', edit_admin_blacksmith_skill_path(blacksmith_skill) %></td>
+    <td><%= link_to 'Destroy', [:admin,blacksmith_skill], data: {confirm: 'Are you sure?'}, method: :delete %></td>
   </tr>
 <% end %>
 </table>

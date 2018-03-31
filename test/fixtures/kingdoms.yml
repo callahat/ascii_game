@@ -12,3 +12,9 @@ sick_kingdom:
   num_peasants: 50000
   bigx: 0
   bigy: 0
+sys_gen:
+  world: world_one
+  name: SystemGeneratd
+  num_peasants: 0
+  bigx: 0
+  bigy: 0

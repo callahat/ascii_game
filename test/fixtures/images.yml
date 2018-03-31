@@ -31,6 +31,10 @@ guard_image_kingdom_one:
   name: "HealthyTestKingdom Guard Image"
   image_text: "v_v"
   kingdom: kingdom_one
+race_two_image:
+  <<: *char_img_defs
+  name: 'DEFAULT race_two IMAGE'
+  image_text: ':/'
 
 feature_image: &feature_img_defs
   name: "Feature image"

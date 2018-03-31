@@ -1,0 +1,30 @@
+<table><tr><td><span class="<%=h @type %> image"><%=h @race.image.image_text %></span></td></tr></table>
+
+<p><b>Name: </b><%= @race.name %></p>
+<p><b>Description: </b><%= @race.description %></p>
+<p><b>Home Kingdom: </b><%= @race.kingdom.try(:name) || "No home kingdom" %></p>
+<p><b>Body Type: </b><%= SpecialCode.get_text('race_body_type', @race.race_body_type) %></p>
+<p><b>Free Points: </b><%= @race.freepts %></p>
+<p><b>XP For Level 1: </b><%= @race.level_zero.total_exp_for_level(1) + @race.equip_loc_xp(1) %></p>
+
+<p><b>Level Zero Stats:</b></p>
+<table>
+  <tr><th>Stat</th><th>Points</th></tr>
+  <% Stat.symbols.each do |stat_attr| %>
+    <tr>
+      <td><%= stat_attr %></td>
+      <td><%= @race.level_zero.send stat_attr %></td>
+    </tr>
+  <% end %>
+</table>
+
+<p><b>Equipment Slots</b></p>
+<ul>
+  <% @race.race_equip_locs.map(&:equip_loc).each do |loc| %>
+  <li><%= SpecialCode.get_text('equip_loc', loc)  %></li>
+  <% end %>
+</ul>
+
+
+<%= link_to 'Edit', edit_admin_race_path(@race) %> |
+<%= link_to 'Back', admin_races_path %>

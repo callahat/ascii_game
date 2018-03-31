@@ -34,4 +34,5 @@ AsciiGame3::Application.configure do
   config.active_support.deprecation = :stderr
 
   config.active_support.test_order = :sorted
+  config.eager_load = true
 end

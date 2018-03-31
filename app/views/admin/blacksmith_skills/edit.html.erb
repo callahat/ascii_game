@@ -1,9 +1,6 @@
 <h1>Editing blacksmith_skill</h1>
 
-<%= form_tag :action => 'update', :id => @blacksmith_skill do %>
-  <%= render :partial => 'form' %>
-  <%= submit_tag 'Edit' %>
-<% end %>
+<%= render 'form' %>
 
-<%= link_to 'Show', :action => 'show', :id => @blacksmith_skill %> |
-<%= link_to 'Back', :action => 'list' %>
+<%= link_to 'Show', admin_blacksmith_skill_path(@blacksmith_skill) %> |
+<%= link_to 'Back', admin_blacksmith_skills_path %>

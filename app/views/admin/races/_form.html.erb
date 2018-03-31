@@ -1,15 +1,73 @@
-<%= error_messages_for 'race' %>
-
 <!--[form:race]-->
-<p><label for="race_name">Name</label><br/>
-<%= text_field 'race', 'name'  %></p>
+<%= form_for [:admin,@race] do |f| %>
+  <%= error_messages_for 'race' %>
 
-<p><label for="race_description">Description</label><br/>
-<%= text_field 'race', 'description'  %></p>
+  <%= f.fields_for(:image) do |image_form| %>
+    <div class="field">
+      <%= image_form.label :image_text %><br/>
+      <%= image_form.text_area :image_text %>
+      <%= image_form.hidden_field :image_type, {value: SpecialCode.get_code('image_type','character')}%>
+    </div>
+  <% end %>
 
-<p><label for="race_race_body_type">Race body type</label><br/>
-<%       @body_types = SPEC_CODEC['race_body_type'].collect{|c,t| ColnumText.new(c, t) } %>
-<%= collection_select('race','race_body_type', @body_types, :col_num, :text ) %></p>
+  <div class="field">
+    <%= f.label :name %><br/>
+    <%= f.text_field :name %>
+  </div>
 
+  <div class="field">
+    <%= f.label :description %><br/>
+    <%= f.text_field :description %>
+  </div>
+
+    <%# todo: remove this class ColnumText } %>
+
+  <div class="field">
+    <%= f.label :race_body_type %><br/>
+    <%= f.collection_select(:race_body_type, SpecialCode.get_codes_and_text('race_body_type'), :second, :first ) %>
+  </div>
+
+  <div class="field">
+    <%= f.label :kingdom_id %><br/>
+    <%= f.select :kingdom_id, Kingdom.all.collect{|k| [k.name, k.id]} %>
+  </div>
+
+  <div class="field">
+    <%= f.label :freepts %><br/>
+    <%= f.text_field :freepts %>
+  </div>
+
+  <p>Distribute 30-80 points among the attributes. More points, more XP needed
+    for the next level.</p>
+
+  <%= f.fields_for(:level_zero) do |stat_form| %>
+    <table>
+      <% Stat.symbols.each{|stat_attr| %>
+        <tr>
+          <td><%= stat_form.label stat_attr %></td>
+          <td><%= stat_form.text_field stat_attr, size: 5 %></td>
+        </tr>
+      <% } %>
+    </table>
+  <% end %>
+
+  <p>Rate of penalty is 10*3^number greater than the free ten. Ie, 13 locations has penalty of 90</p>
+  <p>Leaving a slot blank will not create a new equipment location.</p>
+
+  <div>
+    <div>
+      <%= f.fields_for(:race_equip_locs) do |rel_form| %>
+        <span>
+          <%= rel_form.collection_select(:equip_loc, @equip_locs, :second, :first, {include_blank: true } ) %>
+        </span>
+        <%= (rel_form.index % 5 == 4 ? "</div><div>".html_safe : "") %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="actions">
+    <%= submit_tag %>
+  </div>
+
+<% end %>
 <!--[eoform:race]-->
-

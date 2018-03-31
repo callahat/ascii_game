@@ -1,0 +1,22 @@
+<p><b>Name: </b><%= @c_class.name %></p>
+<p><b>Description: </b><%= @c_class.description %></p>
+<p><b>Attack Spells? </b><%= @c_class.attack_spells ? 'Yes' : 'No' %></p>
+<p><b>Healing Spells? </b><%= @c_class.healing_spells ? 'Yes' : 'No' %></p>
+<p><b>Free Points: </b><%= @c_class.freepts %></p>
+<p><b>XP For Level 1: </b><%= @c_class.level_zero.total_exp_for_level(1) %></p>
+
+<p><b>Level Zero Stats:</b></p>
+<table>
+  <tr><th>Stat</th><th>Points</th></tr>
+<% Stat.symbols.each do |stat_attr| %>
+    <tr>
+      <td><%= stat_attr %></td>
+      <td><%= @c_class.level_zero.send stat_attr %></td>
+    </tr>
+<% end %>
+</table>
+
+
+
+<%= link_to 'Edit', edit_admin_c_class_path(@c_class) %> |
+<%= link_to 'Back', admin_c_classes_path %>

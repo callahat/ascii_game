@@ -5,15 +5,6 @@ class Admin::BlacksmithSkillsController < ApplicationController
   layout 'admin'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],
-#         :redirect_to => { :action => :list }
-
-  def list
     @blacksmith_skills = BlacksmithSkill.get_page(params[:page])
   end
 
@@ -28,10 +19,10 @@ class Admin::BlacksmithSkillsController < ApplicationController
   def create
     @blacksmith_skill = BlacksmithSkill.new(params[:blacksmith_skill])
     if @blacksmith_skill.save
-      flash[:notice] = 'BlacksmithSkill was successfully created.'
-      redirect_to :action => 'list'
+      flash[:notice] = 'Blacksmith Skill was successfully created.'
+      redirect_to admin_blacksmith_skill_path(@blacksmith_skill)
     else
-      render :action => 'new'
+      render new_admin_blacksmith_skill_path
     end
   end
 
@@ -42,8 +33,8 @@ class Admin::BlacksmithSkillsController < ApplicationController
   def update
     @blacksmith_skill = BlacksmithSkill.find(params[:id])
     if @blacksmith_skill.update_attributes(params[:blacksmith_skill])
-      flash[:notice] = 'BlacksmithSkill was successfully updated.'
-      redirect_to :action => 'show', :id => @blacksmith_skill
+      flash[:notice] = 'Blacksmith Skill was successfully updated.'
+      redirect_to admin_blacksmith_skill_path(@blacksmith_skill)
     else
       render :action => 'edit'
     end
@@ -51,6 +42,6 @@ class Admin::BlacksmithSkillsController < ApplicationController
 
   def destroy
     BlacksmithSkill.find(params[:id]).destroy
-    redirect_to :action => 'list'
+    redirect_to admin_blacksmith_skills_path
   end
 end
