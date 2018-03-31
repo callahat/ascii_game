@@ -1,0 +1,23 @@
+<h1>Listing surfix</h1>
+
+<table>
+  <tr>
+    <th>Name Surfix</th>
+    <td></td>
+    <td></td>
+  </tr>
+  
+<% @name_surfixes.each do |name_surfix| %>
+  <tr>
+    <td><%= name_surfix.surfix %></td>
+    <td><%= link_to 'Edit', edit_admin_name_surfix_path(name_surfix) %></td>
+    <td><%= link_to 'Destroy', [:admin,name_surfix], data:{confirm: "Really delete #{name_surfix.surfix}?"}, method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @name_surfixes %>
+
+<br />
+
+<%= link_to 'New name_surfix', new_admin_name_surfix_path %>

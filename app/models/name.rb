@@ -1,4 +1,6 @@
 class Name < ActiveRecord::Base
+  attr_accessible :name
+
   def self.gen_name
     @parts = rand(6) + 2
     
@@ -23,7 +25,7 @@ class Name < ActiveRecord::Base
       @last = Name.offset(rand(Name.count)).first.name
       
       if rand > 0.25 #then name gets a surfix
-        @surfix = NameSurfix.offset(rand(NameSurfix.count)).first.name_surfixes
+        @surfix = NameSurfix.offset(rand(NameSurfix.count)).first.surfix
         if @surfix[-1..-1] == "-"
           @last = @surfix[0..-2] + @last
         elsif @surfix[0..0] == "-"

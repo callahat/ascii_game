@@ -1,4 +1,6 @@
 class NameTitle < ActiveRecord::Base
+  attr_accessible :title,:stat,:points
+
   def self.get_title(con, dam, dex, dfn, int, mag, str)
     #get the average
     @stat_hash = Hash.new

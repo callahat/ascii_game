@@ -1,0 +1,23 @@
+<h1>Listing names</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th></th>
+    <th></th>
+  </tr>
+  
+<% @names.each do |name| %>
+  <tr>
+    <td><%= name.name %></td>
+    <td><%= link_to 'Edit', edit_admin_name_path(name) %></td>
+    <td><%= link_to 'Destroy', [:admin,name], data:{confirm: "Really delete #{name.name}?"}, method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @names %> 
+
+<br />
+
+<%= link_to 'New name', :action => 'new' %>

@@ -1,13 +1,22 @@
-<%= error_messages_for 'name_title' %>
+<%= form_for [:admin,@name_title] do |f| %>
+  <%= error_messages_for 'name_title' %>
 
-<!--[form:name_title]-->
-<p><label for="name_titles_title">Title</label><br/>
-<%= text_field 'name_title', 'title'  %></p>
+  <div class="field">
+    <%= f.label :title %><br/>
+    <%= f.text_field :title %>
+  </div>
 
-<p><label for="name_title_stat">Stat</label><br/>
-<%= select 'name_title','stat', @stats %>
+  <div class="field">
+    <%= f.label :stat %><br/>
+    <%= f.select :stat, @stats %>
+  </div>
 
-<p><label for="name_title_points">Points</label><br/>
-<%= text_field 'name_title', 'points'  %></p>
-<!--[eoform:name_title]-->
+  <div class="field">
+    <%= f.label :points %><br/>
+    <%= f.text_field :points %>
+  </div>
 
+  <div class="actions">
+    <%= submit_tag  %>
+  </div>
+<% end %>

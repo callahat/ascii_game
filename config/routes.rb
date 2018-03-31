@@ -204,9 +204,9 @@ Rails.application.routes.draw do
     resources :healer_skills
     resources :healing_spells
     resources :items
-    resources :name_surfixes
-    resources :name_titles
-    resources :names
+    resources :name_surfixes, except: [:show]
+    resources :name_titles, except: [:show]
+    resources :names, except: [:show]
     resources :npcs
     resources :races
     resources :trainer_skills

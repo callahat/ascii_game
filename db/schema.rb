@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180305061255) do
+ActiveRecord::Schema.define(version: 20180331175007) do
 
   create_table "attack_spells", force: :cascade do |t|
     t.string  "name",         limit: 32,  default: "", null: false
@@ -537,7 +537,7 @@ ActiveRecord::Schema.define(version: 20180305061255) do
   add_index "log_quests", ["quest_id"], name: "quest_id", using: :btree
 
   create_table "name_surfixes", force: :cascade do |t|
-    t.string "name_surfixes", limit: 32
+    t.string "surfix", limit: 32
   end
 
   create_table "name_titles", force: :cascade do |t|

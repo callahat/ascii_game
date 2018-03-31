@@ -5,52 +5,39 @@ class Admin::NameSurfixesController < ApplicationController
   layout 'admin'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],
-#         :redirect_to => { :action => :list }
-
-  def list
     @name_surfixes = NameSurfix.get_page(params[:page])
   end
 
-  def show
-    @name_surfixes = NameSurfixes.find(params[:id])
-  end
-
   def new
-    @name_surfixes = NameSurfixes.new
+    @name_surfix = NameSurfix.new
   end
 
   def create
-    @name_surfixes = NameSurfixes.new(params[:name_surfixes])
-    if @name_surfixes.save
+    @name_surfix = NameSurfix.new(params[:name_surfix])
+    if @name_surfix.save
       flash[:notice] = 'NameSurfixes was successfully created.'
-      redirect_to :action => 'new'
+      redirect_to admin_name_surfixes_path
     else
       render :action => 'new'
     end
   end
 
   def edit
-    @name_surfixes = NameSurfixes.find(params[:id])
+    @name_surfix = NameSurfix.find(params[:id])
   end
 
   def update
-    @name_surfixes = NameSurfixes.find(params[:id])
-    if @name_surfixes.update_attributes(params[:name_surfixes])
+    @name_surfix = NameSurfix.find(params[:id])
+    if @name_surfix.update_attributes(params[:name_surfix])
       flash[:notice] = 'NameSurfixes was successfully updated.'
-      redirect_to :action => 'show', :id => @name_surfixes
+      redirect_to admin_name_surfixes_path
     else
       render :action => 'edit'
     end
   end
 
   def destroy
-    NameSurfixes.find(params[:id]).destroy
-    redirect_to :action => 'list'
+    NameSurfix.find(params[:id]).destroy
+    redirect_to admin_name_surfixes_path
   end
 end

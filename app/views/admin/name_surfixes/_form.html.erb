@@ -1,7 +1,13 @@
-<%= error_messages_for 'name_surfixes' %>
+<%= form_for [:admin,@name_surfix] do |f| %>
+  <%= error_messages_for 'name_surfix' %>
 
-<!--[form:name_surfixes]-->
-<p><label for="name_surfixes_name_surfixes">Name surfixes</label><br/>
-<%= text_field 'name_surfixes', 'name_surfixes'  %></p>
-<!--[eoform:name_surfixes]-->
+  <div class="field">
+    <%= f.label :surfix %><br/>
+    <%= f.text_field :surfix %>
+  </div>
+
+  <div class="actions">
+    <%= submit_tag  %>
+  </div>
+<% end %>
 

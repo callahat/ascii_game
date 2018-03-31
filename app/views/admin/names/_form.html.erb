@@ -1,7 +1,12 @@
-<%= error_messages_for 'name' %>
+<%= form_for [:admin,@name] do |f| %>
+  <%= error_messages_for 'name' %>
 
-<!--[form:name]-->
-<p><label for="name_name">Name</label><br/>
-<%= text_field 'name', 'name'  %></p>
-<!--[eoform:name]-->
+  <div class="field">
+    <%= f.label :name %><br/>
+    <%= f.text_field :name %>
+  </div>
 
+  <div class="actions">
+    <%= submit_tag  %>
+  </div>
+<% end %>
