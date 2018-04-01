@@ -5,14 +5,6 @@ class Admin::HealingSpellsController < ApplicationController
   layout 'admin'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],         :redirect_to => { :action => :list }
-
-  def list
     @healing_spells = HealingSpell.get_page(params[:page])
   end
 
@@ -22,15 +14,13 @@ class Admin::HealingSpellsController < ApplicationController
 
   def new
     @healing_spell = HealingSpell.new
-    @diseases = Disease.all
   end
 
   def create
     @healing_spell = HealingSpell.new(params[:healing_spell])
-    @diseases = Disease.all
     if @healing_spell.save
-      flash[:notice] = 'HealingSpell was successfully created.'
-      redirect_to :action => 'list'
+      flash[:notice] = 'Healing Spell was successfully created.'
+      redirect_to admin_healing_spell_path(@healing_spell)
     else
       render :action => 'new'
     end
@@ -38,22 +28,20 @@ class Admin::HealingSpellsController < ApplicationController
 
   def edit
     @healing_spell = HealingSpell.find(params[:id])
-    @diseases = Disease.all
   end
 
   def update
     @healing_spell = HealingSpell.find(params[:id])
-    @diseases = Disease.all
     if @healing_spell.update_attributes(params[:healing_spell])
-      flash[:notice] = 'HealingSpell was successfully updated.'
-      redirect_to :action => 'show', :id => @healing_spell
+      flash[:notice] = 'Healing Spell was successfully updated.'
+      redirect_to admin_healing_spell_path(@healing_spell)
     else
-      render :action => 'edit'
+      render admin_healing_spells_path
     end
   end
 
   def destroy
     HealingSpell.find(params[:id]).destroy
-    redirect_to :action => 'list'
+    redirect_to admin_healing_spells_path
   end
 end

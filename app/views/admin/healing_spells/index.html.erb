@@ -19,12 +19,12 @@
 <td><%= healing_spell.min_level %></td>	   
 <td><%= healing_spell.min_heal %></td>	   
 <td><%= healing_spell.max_heal %></td>	   
-<td><% if healing_spell.disease.nil? %>N/A<% else %><%= healing_spell.disease.name %><% end %></td>	   
+<td><%= healing_spell.disease.try(:name) || "N/A" %></td>
 <td><%= healing_spell.mp_cost %></td>	   
-<td><%= healing_spell.cast_on_others? %></td>	 
-    <td><%= link_to 'Show', :action => 'show', :id => healing_spell %></td>
-    <td><%= link_to 'Edit', :action => 'edit', :id => healing_spell %></td>
-    <td><%= link_to 'Destroy', { :action => 'destroy', :id => healing_spell }, :confirm => 'Are you sure?', :method => :post %></td>
+<td><%= healing_spell.cast_on_others %></td>
+    <td><%= link_to 'Show', [:admin,healing_spell] %></td>
+    <td><%= link_to 'Edit', edit_admin_healing_spell_path(healing_spell) %></td>
+    <td><%= link_to 'Destroy', admin_healing_spell_path(healing_spell, page: params[:page]), data:{confirm: "Really delete #{healing_spell.name}?"}, method: :delete %></td>
   </tr>
 <% end %>
 </table>
@@ -33,4 +33,4 @@
 
 <br />
 
-<%= link_to 'New healing_spell', :action => 'new' %>
+<%= link_to 'New healing_spell', new_admin_healing_spell_path %>

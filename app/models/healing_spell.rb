@@ -3,6 +3,8 @@ class HealingSpell < ActiveRecord::Base
 
   validates_uniqueness_of :name
   validates_presence_of :name, :min_level, :min_heal, :max_heal, :mp_cost
+
+  attr_accessible :name,:description,:min_level,:min_heal,:max_heal,:disease_id,:mp_cost,:cast_on_others
   
   def self.find_spells(level)
     find_by_sql("select * from healing_spells where min_level <= #{level} order by min_level")
