@@ -1,20 +1,23 @@
-<p><b>name: </b><%= @item.name %></p>
-<p><b>equip_loc: </b><%= SpecialCode.get_text('equip_loc',@item.equip_loc) %></p>
-<p><b>description: </b><%= @item.description %></p>
-<p><b>base_item_id: </b><%= @item.base_item.name %></p>
-<p><b>min_level: </b><%= @item.min_level %></p>
-<p><b>c_class_id: </b><%= @item.c_class.name %></p>
-<p><b>race_id: </b><%= @item.race.name %></p>
-<p><b>str_mod: </b><%= @item.str %></p>
-<p><b>dex_mod: </b><%= @item.dex %></p>
-<p><b>mag_mod: </b><%= @item.mag %></p>
-<p><b>int_mod: </b><%= @item.int %></p>
-<p><b>con_mod: </b><%= @item.con %></p>
-<p><b>dfn_mod: </b><%= @item.dfn %></p>
-<p><b>dam_mod: </b><%= @item.dam %></p>
-<p><b>race_body_type: </b><% if @item.race_body_type.nil? %>N/A<% else %><%= SpecialCode.get_text('race_body_type',@item.race_body_type) %><% end %></p>
-<p><b>price: </b><%= @item.price %></p>
+<table>
+  <tr><td><b>Name: </b></td><td><%= @item.name %></td></tr>
+  <tr><td><b>Description: </b></td><td><%= @item.description %></td></tr>
+  <tr><td><b>Equippable Location: </b></td><td><%= SpecialCode.get_text('equip_loc',@item.equip_loc) %></td></tr>
+  <tr><td><b>Base Item: </b></td><td><%= @item.base_item.name %></td></tr>
+  <tr><td><b>Min Level: </b></td><td><%= @item.min_level %></td></tr>
+  <tr><td><b>Favored Class: </b></td><td><%= @item.c_class.try(:name) || "None" %></td></tr>
+  <tr><td><b>Favored Race: </b></td><td><%= @item.race.try(:name) || "None" %></td></tr>
+  <tr><td><b>Str: </b></td><td><%= @item.stat.str %></td></tr>
+  <tr><td><b>Dex: </b></td><td><%= @item.stat.dex %></td></tr>
+  <tr><td><b>Con: </b></td><td><%= @item.stat.con %></td></tr>
+  <tr><td><b>Dam: </b></td><td><%= @item.stat.dam %></td></tr>
+  <tr><td><b>Dfn: </b></td><td><%= @item.stat.dfn %></td></tr>
+  <tr><td><b>Int: </b></td><td><%= @item.stat.int %></td></tr>
+  <tr><td><b>Mag: </b></td><td><%= @item.stat.mag %></td></tr>
+  <tr><td><b>Body Type Rescriction: </b></td><td><% if @item.race_body_type.nil? %>N/A<% else %><%= SpecialCode.get_text('race_body_type',@item.race_body_type) %><% end %></td></tr>
+  <tr><td><b>Price: </b></td><td><%= @item.price %></td></tr>
+</table>
 
+<br/>
 
-<%= link_to 'Edit', :action => 'edit', :id => @item %> |
-<%= link_to 'Back', :action => 'list' %>
+<%= link_to 'Edit', edit_admin_item_path(@item) %> |
+<%= link_to 'Back', admin_items_path %>

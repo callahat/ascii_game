@@ -1,18 +1,10 @@
 class Admin::ItemsController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
-  
+
   layout 'admin'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],         :redirect_to => { :action => :list }
-
-  def list
     @items = Item.get_page(params[:page])
   end
 
@@ -22,23 +14,15 @@ class Admin::ItemsController < ApplicationController
 
   def new
     @item = Item.new
-    @rbts = SpecialCode.get_codes_and_text('race_body_type')
-    @base_items = BaseItem.all
-    @eqs = SpecialCode.get_codes_and_text('equip_loc')
-    @c_classes = CClass.all
-    @races = Race.all
+    @item.build_stat
   end
 
   def create
     @item = Item.new(params[:item])
-    @rbts = SpecialCode.get_codes_and_text('race_body_type')
-    @base_items = BaseItem.all
-    @eqs = SpecialCode.get_codes_and_text('equip_loc')
-    @c_classes = CClass.all
-    @races = Race.all
+
     if @item.save
       flash[:notice] = 'Item was successfully created.'
-      redirect_to :action => 'list'
+      redirect_to [:admin,@item]
     else
       render :action => 'new'
     end
@@ -46,32 +30,27 @@ class Admin::ItemsController < ApplicationController
 
   def edit
     @item = Item.find(params[:id])
-    @rbts = SpecialCode.get_codes_and_text('race_body_type')
-    @base_items = BaseItem.all
-    @eqs = SpecialCode.get_codes_and_text('equip_loc')
-    @c_classes = CClass.all
-    @races = Race.all
   end
 
   def update
     @item = Item.find(params[:id])
-    @rbts = SpecialCode.get_codes_and_text('race_body_type')
-    @base_items = BaseItem.all
-    @eqs = SpecialCode.get_codes_and_text('equip_loc')
-    @c_classes = CClass.all
-    @races = Race.all
+
     if @item.update_attributes(params[:item])
       flash[:notice] = 'Item was successfully updated.'
-      redirect_to :action => 'show', :id => @item
+      redirect_to [:admin,@item]
     else
       render :action => 'edit'
     end
   end
 
   def destroy
-    #Add a check to make sure this item is not referenced anywhere before
-    #it is destroyed.
-    Item.find(params[:id]).destroy
-    redirect_to :action => 'list'
+    @item = Item.find(params[:id])
+    if !@item.in_use? && @item.destroy
+      flash[:notice] = "Destroyed #{@item.name}"
+    else
+      flash[:notice] = "Could not destroy #{@item.name}"
+    end
+
+    redirect_to admin_items_path
   end
 end

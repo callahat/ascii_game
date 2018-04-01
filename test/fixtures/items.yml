@@ -22,3 +22,12 @@ cool_item:
   min_level: 1
   equip_loc: req_1
   base_item: base_item_three
+
+newish_item:
+  name: "Newish item"
+  price: 1125
+  min_level: 1
+  equip_loc: req_1
+  base_item: base_item_three
+  c_class:
+  race:

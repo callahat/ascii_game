@@ -25,20 +25,20 @@
     <td><%= SpecialCode.get_text('equip_loc',item.equip_loc) %></td>
     <td><%= item.base_item.name %></td>
     <td><%= item.min_level %></td>
-    <td><%= item.c_class.name %></td>
-    <td><%= item.race.name %></td>
-    <td><%= item.str %></td>
-    <td><%= item.dex %></td>
-    <td><%= item.mag %></td>
-    <td><%= item.int %></td>
-    <td><%= item.con %></td>
-    <td><%= item.dfn %></td>
-    <td><%= item.dam %></td>
+    <td><%= item.c_class.try(:name) || "None" %></td>
+    <td><%= item.race.try(:name) || "None" %></td>
+    <td><%= item.stat.str %></td>
+    <td><%= item.stat.dex %></td>
+    <td><%= item.stat.mag %></td>
+    <td><%= item.stat.int %></td>
+    <td><%= item.stat.con %></td>
+    <td><%= item.stat.dfn %></td>
+    <td><%= item.stat.dam %></td>
     <td><% if item.race_body_type.nil? %>N/A<% else %><%= SpecialCode.get_text('race_body_type',item.race_body_type) %><% end %></td>
-        <td><%= item.price %></td>
-    <td><%= link_to 'Show', :action => 'show', :id => item %></td>
-    <td><%= link_to 'Edit', :action => 'edit', :id => item %></td>
-    <td><%= link_to 'Destroy', { :action => 'destroy', :id => item }, :confirm => 'Are you sure?', :method => :post %></td>
+    <td><%= item.price %></td>
+    <td><%= link_to 'Show', [:admin,item] %></td>
+    <td><%= link_to 'Edit', edit_admin_item_path(item) %></td>
+    <td><%= link_to 'Destroy', [:admin,item], data:{confirm: "Really delete #{item.name}?"}, method: :delete %></td>
   </tr>
 <% end %>
 </table>
@@ -47,4 +47,4 @@
 
 <br />
 
-<%= link_to 'New item', :action => 'new' %>
+<%= link_to 'New item', new_admin_item_path %>
