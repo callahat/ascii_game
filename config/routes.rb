@@ -199,7 +199,9 @@ Rails.application.routes.draw do
     resources :base_items
     resources :blacksmith_skills
     resources :c_classes
-    resources :creatures
+    resources :creatures do
+      post :arm, on: :member
+    end
     resources :diseases
     resources :healer_skills
     resources :healing_spells

@@ -1,78 +1,63 @@
-<%= error_messages_for 'creature' %>
+<%= form_for([:admin, @creature]) do |f| %>
+  <%= error_messages_for 'creature' %>
 
-<!--[form:creature]-->
-<table>
-  <tr>
-    <td><label for="creature_name">Name</label></td>
-    <td><%= text_field 'creature', 'name'  %></td>
-  </tr>
-  <tr>
-    <td><label for="creature_description">Description</label></td>
-    <td><%= text_field 'creature', 'description'  %></td>
-  </tr>
-  <tr>
-    <td><label for="creature_HP">Hp</label></td>
-    <td><%= text_field 'creature', 'HP'  %></td>
-  </tr>
-    <tr><td><label for="stat_str">Str</label></td>
-    <td><%= text_field 'stat', 'str'  %></td>
-  </tr>
-    <tr><td><label for="stat_dex">Dex</label></td>
-    <td><%= text_field 'stat', 'dex'  %></td>
-  </tr>
-  <tr>
-    <td><label for="stat_dam">Dam</label></td>
-    <td><%= text_field 'stat', 'dam'  %></td>
-  </tr>
-  <tr>
-    <td><label for="stat_def">Dfn</label></td>
-    <td><%= text_field 'stat', 'dfn'  %></td>
-  </tr>
-  <tr>
-    <td><label for="stat_int">Int</label></td>
-    <td><%= text_field 'stat', 'int'  %></td>
-  </tr>
-  <tr>
-    <td><label for="stat_mag">Mag</label></td>
-    <td><%= text_field 'stat', 'mag'  %></td>
-  </tr>
-  <tr>
-    <td><label for="creature_gold">Gold</label></td>
-    <td><%= text_field 'creature', 'gold'  %></td>
-  </tr>
-  <tr>
-    <td><label for="creature_number_alive">Number alive</label></td>
-    <td><%= text_field 'creature', 'number_alive'  %></td>
-  </tr>
-  <tr>
-    <td><label for="creature_fecundity">Fecundity</label></td>
-    <td><%= text_field 'creature', 'fecundity'  %></td>
-  </tr>
-  <tr>
-    <td><label for="creature_disease_id">Disease carried</label></td>
-    <td><%= collection_select 'creature', 'disease_id', @diseases, 'id', 'name', {:include_blank => ''} %></td>
-  </tr>
-  <tr>
-    <td><label for="creature_image_id">Choose Image</label></td>
-    <td><%= collection_select 'creature', 'image_id', @images, 'id', 'name', {:include_blank => ''}  %></td>
-  </tr>
-</table>
+  <table>
+    <tr>
+      <td><%= f.label :name %></td>
+      <td><%= f.text_field :name %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :description %></td>
+      <td><%= f.text_field :description %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :HP %></td>
+      <td><%= f.text_field :HP %></td>
+    </tr>
+  <%= f.fields_for(:stat) do |stat_form| %>
+    <% Stat.symbols.each{|stat_attr| %>
+    <tr>
+      <td><%= stat_form.label stat_attr %></td>
+      <td><%= stat_form.text_field stat_attr, size: 5 %></td>
+    </tr>
+    <% } %>
+  <% end %>
+    <tr>
+      <td><%= f.label :gold %></td>
+      <td><%= f.text_field :gold %></td>
+    </tr>
 
-<p><label for="image_image_text">Make New Image</label><br/>
-<%= text_area 'image','image_text' %>
-</p>
+  <%= f.fields_for(:image) do |image_form| %>
+    <tr><td colspan="2">
+      <%= image_form.label :image_text %>
+    </td></tr>
+    <tr><td colspan="2">
+      <%= image_form.text_area :image_text %>
+      <%= image_form.hidden_field :image_type, {value: SpecialCode.get_code('image_type','creature')}%>
+    </td></tr>
+    </div>
+  <% end %>
 
+    <tr>
+      <td><%= f.label :number_alive %></td>
+      <td><%= f.text_field :number_alive %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :fecundity %></td>
+      <td><%= f.text_field :fecundity %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :disease_id %></td>
+      <td><%= f.collection_select :disease_id, @diseases, :id, :name, {include_blank: ''} %></td>
+    </tr>
+  </table>
 
-<p><label for="creature_public">Public</label><br/>
-<%= check_box 'creature','public' %></p>
+  <div class="field">
+    <%= f.label :public %><br/>
+    <%= f.check_box :public %>
+  </div>
 
-<%= hidden_field 'creature','player_id', :value => @player_id %>
-<%= hidden_field 'creature','kingdom_id', :value => @kingdom_id %>
-
-<%= hidden_field 'image','player_id', :value => @player_id %>
-<%= hidden_field 'image','kingdom_id', :value => @kingdom_id %>
-<%= hidden_field 'image','public', :value => false %>
-<%= hidden_field 'image','image_type', :value => SpecialCode.get_code('image_type','creature') %>
-
-<!--[eoform:creature]-->
-
+  <div class="actions">
+    <%= submit_tag %>
+  </div>
+<% end %>

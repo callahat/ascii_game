@@ -5,15 +5,20 @@ class Creature < ActiveRecord::Base
   belongs_to :kingdom
 
   has_one :genocide
-  has_one :stat, :foreign_key => 'owner_id', :class_name => 'StatCreature'
+  has_one :stat, :foreign_key => 'owner_id', :class_name => 'StatCreature', dependent: :destroy
 
   has_many :creature_kills
   has_many :event_creatures, :foreign_key => 'thing_id'
   has_many :quest_creature_kills
 
+  accepts_nested_attributes_for :image
+  accepts_nested_attributes_for :stat
+
   validates_uniqueness_of :name
-  validates_presence_of :name,:experience,:HP,:gold,:image_id,:player_id,:kingdom_id,:number_alive,:fecundity
-  attr_accessible :name,:description,:experience,:HP,:gold,:image_id,:player_id,:kingdom_id,:number_alive,:fecundity,:public
+  validates_presence_of :name,:experience,:HP,:gold,:image,:stat,:player_id,:kingdom_id,:number_alive,:fecundity
+  attr_accessible :name,:description,:experience,:HP,:gold,:player_id,:kingdom_id,:number_alive,:fecundity,:public,:image_attributes,:stat_attributes
+
+  before_validation :update_exp_value
 
   def self.exp_worth(dam,dfn,hp,fec)
     if dam.nil? || dfn.nil? || hp.nil? || fec.nil?
@@ -75,7 +80,18 @@ class Creature < ActiveRecord::Base
   def award_exp(exp)
     #do nothing
   end
-  
+
+  def update_exp_value
+    self.experience = self.class.exp_worth(stat.try(:dam),stat.try(:dfn),self.HP,self.fecundity)
+  end
+
+  def attributes_with_nesteds
+    attributes.merge(
+      stat_attributes: stat.attributes.slice(*Stat.symbols.map(&:to_s)),
+      image_attributes: image.attributes.slice('image_text','image_type','picture','name')
+    )
+  end
+
   #Pagination related stuff
   def self.get_page(page, pid = nil, kid = nil)
     where((pid || kid)? ['player_id = ? or kingdom_id = ?', pid, kid] : [] ) \
