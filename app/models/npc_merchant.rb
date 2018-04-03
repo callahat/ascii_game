@@ -2,11 +2,16 @@ class NpcMerchant < Npc
 #  include TxWrapper
 #  include MiscMath
   
-  has_many :npc_blacksmith_items, :foreign_key => 'npc_id'
-  has_many :npc_blacksmith_items_by_min_sales, ->{ order('min_sales') }, :foreign_key => 'npc_id', :class_name => 'NpcBlacksmithItem'
-  has_many :npc_stocks, :foreign_key => 'owner_id', :class_name => 'NpcStock'
+  has_many :npc_blacksmith_items, foreign_key: :npc_id, dependent: :destroy
+  # has_many :npc_blacksmith_items_by_min_sales, ->{ order('min_sales') }, :foreign_key => 'npc_id', :class_name => 'NpcBlacksmithItem'
+  has_many :npc_blacksmith_items_by_min_sales, ->{ order('min_sales') }, through: :npc_blacksmith_items
+  has_many :npc_stocks, foreign_key: :owner_id, class_name: 'NpcStock', dependent: :destroy
   
-  has_one :npc_merchant_detail, :foreign_key => 'npc_id'
+  has_one :npc_merchant_detail, :foreign_key => 'npc_id', dependent: :destroy
+
+  accepts_nested_attributes_for :npc_merchant_detail
+
+  attr_accessible :npc_merchant_detail_attributes
 
   def self.generate(kingdom_id)
     @new_image = Image.deep_copy(Image.find_by(name: 'DEFAULT NPC'))
@@ -45,6 +50,7 @@ class NpcMerchant < Npc
 
   def self.gen_merch_attribs(npc)
     @rbt = npc.kingdom.player_character.race.race_body_type if npc.kingdom && npc.kingdom.player_character_id
+    @rbt ||= SpecialCode.get_codes_and_text('race_body_type').map(&:second).sample
     @kinds = 10
     @types = [0,0,0]
     
@@ -57,8 +63,8 @@ class NpcMerchant < Npc
     while @types.sum < @kinds
       @types[rand(3)] = 10
     end
-    
-    NpcMerchantDetail.new(:npc_id => npc.id,
+
+    npc.build_npc_merchant_detail(
           :consignor => rand(2),
           :race_body_type => @rbt,
           :healing_sales => @types[0],

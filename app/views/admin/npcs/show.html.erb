@@ -1,8 +1,36 @@
-<% for column in Npc.content_columns %>
-<p>
-  <b><%= column.human_name %>:</b> <%=h @npc.send(column.name) %>
-</p>
-<% end %>
+<table><tr><td><span class="npc image"><%=h @npc.image.image_text %></span></td></tr></table>
 
-<%= link_to 'Edit', :action => 'edit', :id => @npc %> |
-<%= link_to 'Back', :action => 'list' %>
+<table>
+  <tr><td><b>Name: </b></td><td><%= @npc.name %></td></tr>
+  <tr><td><b>Division: </b></td><td><%= @npc.kind.try(:[], 3..-1) || 'N/A' %></td></tr>
+  <tr><td><b>Kingdom: </b></td><td><%= @npc.kingdom.try(:name) || 'None' %></td></tr>
+  <tr><td><b>Gold: </b></td><td><%= @npc.gold %></td></tr>
+  <tr><td><b>Experience: </b></td><td><%= @npc.experience %></td></tr>
+  <tr><td><b>Hired?: </b></td><td><%= @npc.is_hired %></td></tr>
+
+  <tr><td colspan="2"><b><u>Stats</u></b></td></tr>
+  <tr><td><b>HP: </b></td><td><%= @npc.health.HP %></td></tr>
+  <tr><td><b>Base HP: </b></td><td><%= @npc.health.base_HP %></td></tr>
+
+  <tr><td><b>Str: </b></td><td><%= @npc.stat.str %></td></tr>
+  <tr><td><b>Dex: </b></td><td><%= @npc.stat.dex %></td></tr>
+  <tr><td><b>Con: </b></td><td><%= @npc.stat.con %></td></tr>
+  <tr><td><b>Dam: </b></td><td><%= @npc.stat.dam %></td></tr>
+  <tr><td><b>Dfn: </b></td><td><%= @npc.stat.dfn %></td></tr>
+  <tr><td><b>Int: </b></td><td><%= @npc.stat.int %></td></tr>
+  <tr><td><b>Mag: </b></td><td><%= @npc.stat.mag %></td></tr>
+
+  <% if @npc.kind == 'NpcMerchant' && @npc.npc_merchant_detail -%>
+    <tr><td colspan="2"><b><u>Merchant Details</u></b></td></tr>
+    <tr><td><b>Healing Sales:</b></td><td><%= @npc.npc_merchant_detail.healing_sales %></td></tr>
+    <tr><td><b>Blacksmith Sales:</b></td><td><%= @npc.npc_merchant_detail.blacksmith_sales %></td></tr>
+    <tr><td><b>Trainer Sales:</b></td><td><%= @npc.npc_merchant_detail.trainer_sales %></td></tr>
+    <tr><td><b>Consignor:</b></td><td><%= @npc.npc_merchant_detail.consignor %></td></tr>
+    <tr><td><b>Body Type:</b></td><td><%= SpecialCode.get_text('race_body_type', @npc.npc_merchant_detail.race_body_type) %></td></tr>
+  <% end -%>
+</table>
+
+<br/>
+
+<%= link_to 'Edit', edit_admin_npc_path(@npc) %> |
+<%= link_to 'Back', admin_npcs_path %>

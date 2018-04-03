@@ -1,0 +1,35 @@
+<h1>Listing npcs</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Division</th>
+    <th>Kingdom</th>
+    <th>Gold</th>
+    <th>Experience</th>
+    <th>Hired?</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  
+<% for npc in @npcs %>
+  <tr>
+    <td><%= npc.name %></td>
+    <td><%= npc.kind.try(:[], 3..-1) %></td>
+    <td><%= npc.kingdom.try(:name) || 'None' %></td>
+    <td><%= npc.gold %></td>
+    <td><%= npc.experience %></td>
+    <td><%= npc.is_hired %></td>
+    <td><%= link_to 'Show', admin_npc_path(npc) %></td>
+    <td><%= link_to 'Edit', edit_admin_npc_path(npc) %></td>
+    <td><%= link_to 'Destroy', admin_npc_path(npc), data:{confirm: "Really delete #{npc.name}?"}, method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @npcs %> 
+
+<br />
+
+<%= link_to 'New npc', new_admin_npc_path %>

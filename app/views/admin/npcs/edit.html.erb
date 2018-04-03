@@ -1,11 +1,6 @@
 <h1>Editing npc</h1>
 
-<%= form_tag :action => 'update', :id => @npc do %>
-	<%= render :partial => 'form' %>
-	<ul class="form">
-		<li><%= submit_tag 'Edit' %></li>
-	</ul>
-<% end %>
+<%= render 'form' %>
 
-<%= link_to 'Show', :action => 'show', :id => @npc %> |
-<%= link_to 'Back', :action => 'list' %>
+<%= link_to 'Show', admin_npc_path(@npc) %> |
+<%= link_to 'Back', admin_npcs_path %>

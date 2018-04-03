@@ -1,53 +1,110 @@
-<%= error_messages_for 'npc','health','stat' %>
-
 <!--[form:npc]-->
-<ul class="form">
-<li><label for="npc_name">Name</label>
-<%= text_field 'npc', 'name' %></li>
+<%= form_for [:admin,@npc.becomes(Npc)] do |f| %>
+  <% f.object = @npc %>
+  <%= error_messages_for 'npc' %>
 
-<li><label for="health_wellness">Wellness</label>
-<%= select 'health', 'wellness', SPEC_CODET['wellness'] %></li>
+  <%= f.fields_for(:image) do |image_form| %>
+    <div class="field">
+      <%= image_form.label :image_text %><br/>
+      <%= image_form.text_area :image_text %>
+      <%= image_form.hidden_field :image_type, {value: SpecialCode.get_code('image_type','character')}%>
+    </div>
+  <% end if @npc.image_id.nil? || @npc.image.npcs.count == 1 %>
 
-<li><label for="npc_kind">Npc division</label>
-<% if !@npc.new_record? %>
-<%= @npc.kind[3..-1] %>
-<% else %>
-<%= select 'npc', 'kind', @divisions %>
-<% end %></li>
+  <div class="field">
+    <%= f.label :name %><br/>
+    <%= f.text_field :name %>
+  </div>
 
-<li><label for="health_base_HP">Base hp</label>
-<%= text_field 'health', 'base_HP' %></li>
+  <div class="field">
+    <%= f.label :kingdom_id %><br/>
+    <%= f.select :kingdom_id, Kingdom.all.collect{|k| [k.name, k.id]} %>
+  </div>
 
-<li><label for="health_HP">Hp</label>
-<%= text_field 'health', 'HP' %></li>
+  <div class="field">
+    <%= f.label :kind, "Npc Division" %><br/>
+    <% if !@npc.new_record? %>
+      <%= @npc.kind[3..-1] %>
+    <% else %>
+      <%= f.select :kind, @divisions %>
+    <% end %>
+  </div>
 
-<li><label for="stat_str">Str</label>
-<%= text_field 'stat', 'str' %></li>
+  <%= f.fields_for(:health) do |health_form| %>
+    <table>
+      <tr>
+        <td><%= health_form.label :wellness %></td>
+        <td><%= health_form.select :wellness, SPEC_CODET['wellness'] %></td>
+      </tr>
+      <tr>
+        <td><%= health_form.label :HP, "HP" %></td>
+        <td><%= health_form.text_field :HP, size: 5 %></td>
+      </tr>
+      <tr>
+        <td><%= health_form.label :base_HP, "Base HP" %></td>
+        <td><%= health_form.text_field :base_HP, size: 5 %></td>
+      </tr>
+    </table>
+  <% end %>
 
-<li><label for="stat_dex">Dex</label>
-<%= text_field 'stat', 'dex' %></li>
+  <%= f.fields_for(:stat) do |stat_form| %>
+    <table>
+      <% Stat.symbols.each{|stat_attr| %>
+        <tr>
+          <td><%= stat_form.label stat_attr %></td>
+          <td><%= stat_form.text_field stat_attr, size: 5 %></td>
+        </tr>
+      <% } %>
+    </table>
+  <% end %>
 
-<li><label for="stat_con">Con</label>
-<%= text_field 'stat', 'con' %></li>
+  <!-- TODO: Add merchant stuff here -->
+  <% if @npc.kind == 'NpcMerchant' && !@npc.new_record? -%>
+    <%= f.fields_for(:npc_merchant_detail_attributes) do |merch_form| %>
+      <table>
+        <tr>
+          <td><%= merch_form.label :healing_sales %></td>
+          <td><%= merch_form.text_field :healing_sales %></td>
+        </tr>
+        <tr>
+          <td><%= merch_form.label :blacksmith_sales %></td>
+          <td><%= merch_form.text_field :blacksmith_sales %></td>
+        </tr>
+        <tr>
+          <td><%= merch_form.label :trainer_sales %></td>
+          <td><%= merch_form.text_field :trainer_sales %></td>
+        </tr>
+        <tr>
+          <td><%= merch_form.label :cosignor %></td>
+          <td><%= merch_form.check_box :cosignor %></td>
+        </tr>
+        <tr>
+          <td><%= merch_form.label :race_body_type %></td>
+          <td><%= merch_form.collection_select(:race_body_type, SpecialCode.get_codes_and_text('race_body_type'), :second, :first ) %></td>
+        </tr>
+      </table>
+    <% end %>
+  <% end -%>
+  <div><%= @npc.new_record? %></div>
+  <div><%= @npc.kind %></div>
 
-<li><label for="stat_int">Int</label>
-<%= text_field 'stat', 'int' %></li>
+  <div class="field">
+    <%= f.label :gold %><br/>
+    <%= f.text_field :gold %>
+  </div>
 
-<li><label for="stat_mag">Mag</label>
-<%= text_field 'stat', 'mag' %></li>
+  <div class="field">
+    <%= f.label :experience %><br/>
+    <%= f.text_field :experience %>
+  </div>
 
-<li><label for="stat_dam">Dam</label>
-<%= text_field 'stat', 'dam' %></li>
+  <div class="field">
+    <%= f.label :is_hired %><br/>
+    <%= f.check_box :is_hired %>
+  </div>
 
-<li><label for="stat_def">Dfn</label>
-<%= text_field 'stat', 'dfn' %></li>
-
-<li><label for="npc_gold">Gold</label>
-<%= text_field 'npc', 'gold' %></li>
-
-<li><label for="npc_experience">Experience</label>
-<%= text_field 'npc', 'experience' %></li>
-
-<li><label for="npc_is_hired?">Hired?</label>
-<%= check_box 'npc','is_hired' %></li>
+  <div class="actions">
+    <%= submit_tag %>
+  </div>
+<% end %>
 <!--[eoform:npc]-->

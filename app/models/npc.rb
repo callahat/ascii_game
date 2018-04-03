@@ -6,13 +6,20 @@ class Npc < ActiveRecord::Base
 
   #has_one :event_npc
   has_one :nonplayer_character_killer
-  has_one :npc_merchant_detail
-  has_one :health,    :foreign_key => 'owner_id', :class_name => 'HealthNpc'
-  has_one :stat,      :foreign_key => 'owner_id', :class_name => 'StatNpc'
+  has_one :health,    :foreign_key => 'owner_id', :class_name => 'HealthNpc', dependent: :destroy
+  has_one :stat,      :foreign_key => 'owner_id', :class_name => 'StatNpc', dependent: :destroy
 
-  has_many :event_npcs, :foreign_key => 'thing_id'
+  has_many :event_npcs, :foreign_key => 'thing_id', dependent: :destroy
   has_many :items
-  has_many :illnesses,  :foreign_key => 'owner_id', :class_name => 'NpcDisease'
+  has_many :illnesses,  :foreign_key => 'owner_id', :class_name => 'NpcDisease', dependent: :destroy
+
+  accepts_nested_attributes_for :health
+  accepts_nested_attributes_for :stat
+  accepts_nested_attributes_for :image
+
+  attr_accessible :name,:kingdom_id,:gold,:experience,:is_hired,:kind,:health_attributes,:stat_attributes,:image_attributes
+
+  validates_presence_of :name
 
   def self.set_npc_stats(npc,iHP,istr,idex,icon,iint,idam,idfn,imag,idelta)
     basehp = rand(idelta*4) + iHP
@@ -46,14 +53,22 @@ class Npc < ActiveRecord::Base
 
   #Primarily and admin tool. revisit later.
   def self.new_of_kind(params)
-    return Npc.new if params.class.to_s !~ /Hash/ && params.class.to_s !~ /Npc/
-    return Npc.new(params) unless params
-    params[:kind] =~ /^(Npc(Guard|Merchant)*$)/
+    return Npc.new unless params.class.to_s =~ /Hash|Npc|Parameters/
+    # return Npc.new(params) unless params
+    params[:kind] =~ /\A(Npc(Guard|Merchant){0,1})\z/
     return ($1 ? Rails.module_eval($1).new(params) : Npc.new(params))
+  end
+
+  def attributes_with_nesteds
+    attributes.merge(
+        stat_attributes: stat.attributes.slice(*Stat.symbols.map(&:to_s)),
+        health_attributes: health.attributes.slice(*Health.symbols.map(&:to_s)),
+        image_attributes: image.attributes.slice('image_text','image_type','picture','name')
+    )
   end
 
   #Pagination related stuff
   def self.get_page(page)
-    order('name').paginate(:per_page => 10, :page => page)
+    order('name').paginate(:per_page => 20, :page => page)
   end
 end

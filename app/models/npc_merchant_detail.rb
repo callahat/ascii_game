@@ -1,6 +1,8 @@
 class NpcMerchantDetail < ActiveRecord::Base
   belongs_to :npc_merchant, foreign_key: 'npc_id'
-  
+
+  attr_accessible :healing_sales,:blacksmith_sales,:trainer_sales,:consignor,:race_body_type
+
   def healer_skills
     HealerSkill.where(['min_sales <= ?', healing_sales]).order("min_sales DESC")
   end

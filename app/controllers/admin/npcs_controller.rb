@@ -1,20 +1,12 @@
 class Admin::NpcsController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
-  
+
+  before_filter :load_divisions, only: [:new,:create,:edit,:update]
+
   layout 'admin'
 
   def index
-    session[:kingdom][:id] = -1
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],
-#         :redirect_to => { :action => :list }
-
-  def list
     @npcs = Npc.get_page(params[:page])
   end
 
@@ -24,46 +16,43 @@ class Admin::NpcsController < ApplicationController
 
   def new
     @npc = Npc.new_of_kind(params[:npc])
-    @stat = StatNpc.new(params[:stat])
-    @health = HealthNpc.new(params[:health])
-    @divisions = [ ['merchant', 'NpcMerchant'],
-                   ['guard', 'NpcGuard'] ]
+    @npc.image_id = nil
+    @npc.build_stat
+    @npc.build_health
+    @npc.build_image(image_text: Image.first.image_text)
   end
 
   def create
-    new
+    @npc = Npc.new_of_kind(params[:npc])
+    @npc.image_id = nil
+    @npc.image.name = @npc.name + ' Image'
+    @npc.image.player_id = session[:player].id
+    @npc.image.kingdom_id = Kingdom.find_by(name: 'SystemGeneratd').id
     
-    if @stat.valid? & @health.valid? & @npc.save
-      @stat.owner_id = @npc.id
-      @health.owner_id = @npc.id
-      @stat.save
-      @health.save
+    if @npc.save
+      NpcMerchant.gen_merch_attribs(@npc).save! if @npc.kind == 'NpcMerchant'
+
       flash[:notice] = 'Npc was successfully created.'
-      redirect_to :action => 'list'
+      redirect_to admin_npc_path(@npc)
     else
+      @npc.build_stat
+      @npc.build_health
       render :action => 'new'
     end
   end
 
   def edit
     @npc = Npc.find(params[:id])
-    @stat = @npc.stat
-    @health = @npc.health
-    @divisions = [ ['merchant', 'NpcMerchant'],
-                   ['guard', 'NpcGuard'] ]
   end
 
   def update
     @npc = Npc.find(params[:id])
-    @stat = @npc.stat
-    @health = @npc.health
-    @divisions = [ ['merchant', 'NpcMerchant'],
-                   ['guard', 'NpcGuard'] ]
-    if @stat.update_attributes(params[:stat]) &
-          @health.update_attributes(params[:health]) &
-          @npc.update_attributes(params[:npc])
+
+    params[:npc].delete(:image_attributes) unless @npc.image.npcs.count == 1
+
+    if @npc.update_attributes(params[:npc])
       flash[:notice] = 'Npc was successfully updated.'
-      redirect_to :action => 'show', :id => @npc
+      redirect_to admin_npc_path(@npc)
     else
       render :action => 'edit'
     end
@@ -71,6 +60,13 @@ class Admin::NpcsController < ApplicationController
 
   def destroy
     Npc.find(params[:id]).destroy
-    redirect_to :action => 'list'
+    redirect_to admin_npcs_path
+  end
+
+  protected
+
+  def load_divisions
+    @divisions = [ ['merchant', 'NpcMerchant'],
+                   ['guard', 'NpcGuard'] ]
   end
 end
