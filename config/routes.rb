@@ -212,8 +212,10 @@ Rails.application.routes.draw do
     resources :npcs
     resources :races
     resources :trainer_skills, except: [:show]
-    resources :world_maps
-    resources :worlds
+
+    resources :worlds, except: [:destroy] do
+      resources :world_maps, except: [:destroy], as: :maps
+    end
   end
 
   #ForumsController

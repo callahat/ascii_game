@@ -1,28 +1,47 @@
-<%= error_messages_for 'world' %>
+<%= form_for [:admin,@world] do |f| %>
+  <%= error_messages_for 'world' %>
 
-<!--[form:world]-->
-<p><label for="world_name">Name</label><br/>
-<%= text_field 'world', 'name'  %></p>
+  <div class="field">
+    <%= f.label :name %><br/>
+    <%= f.text_field :name %>
+  </div>
 
-<p><label for="world_maxbigx">Minbigx</label><br/>
-<%= text_field 'world', 'minbigx'  %></p>
+  <div class="field">
+    <%= f.label :minbigx %><br/>
+    <%= f.text_field :minbigx %>
+  </div>
 
-<p><label for="world_minbigy">Minbigy</label><br/>
-<%= text_field 'world', 'minbigy'  %></p>
+  <div class="field">
+    <%= f.label :minbigy %><br/>
+    <%= f.text_field :minbigy %>
+  </div>
 
-<p><label for="world_maxbigx">Maxbigx</label><br/>
-<%= text_field 'world', 'maxbigx'  %></p>
+  <div class="field">
+    <%= f.label :maxbigx %><br/>
+    <%= f.text_field :maxbigx %>
+  </div>
 
-<p><label for="world_maxbigy">Maxbigy</label><br/>
-<%= text_field 'world', 'maxbigy'  %></p>
+  <div class="field">
+    <%= f.label :maxbigy %><br/>
+    <%= f.text_field :maxbigy %>
+  </div>
 
-<p><label for="world_maxx">Maxx</label><br/>
-<%= text_field 'world', 'maxx'  %></p>
+  <div class="field">
+    <%= f.label :maxx %><br/>
+    <%= f.text_field :maxx %>
+  </div>
 
-<p><label for="world_maxy">Maxy</label><br/>
-<%= text_field 'world', 'maxy'  %></p>
+  <div class="field">
+    <%= f.label :maxy %><br/>
+    <%= f.text_field :maxy %>
+  </div>
 
-<p><label for="world_text">Text</label><br/>
-<%= text_field 'world', 'text'  %></p>
-<!--[eoform:world]-->
+  <div class="field">
+    <%= f.label :text %><br/>
+    <%= f.text_field :text %>
+  </div>
 
+  <div class="actions">
+    <%= submit_tag %>
+  </div>
+<% end %>

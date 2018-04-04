@@ -1,38 +1,34 @@
 <h1>Editing world_map</h1>
 
-<%= form_tag :action => 'update', :id => @world_map do %>
+<%#= form_tag :action => 'update', :id => @world_map do %>
+<%= form_tag admin_world_map_path(@world, id: "#{@bigxpos}x#{@bigypos}"), method: :patch do %>
 <table>
-<% @x = 1
-   @y = 1
-   while @y <= @world.maxy %>
+<% 1.upto(@world.maxy) do |y| %>
    <tr>
-<%   while @x <= @world.maxx 
-     #  square = session[:level_map][@y][@x] 
-        square = @world.world_maps.where(bigypos: session[:bigypos], bigxpos: session[:bigxpos], ypos: @y, xpos: @x).last.feature %>
+<%   1.upto(@world.maxx) do |x|
+        square = @world.world_maps.where(bigypos: @bigypos, bigxpos: @bigxpos, ypos: y, xpos: x).last.feature %>
     <td>
       <% if square.nil? %>
-         <select name="<%= 'map[' + @y.to_s + '][' + @x.to_s + ']' %>">
+         <select name="<%= 'map[' + y.to_s + '][' + x.to_s + ']' %>">
          <option value = ""/>
          <%= options_from_collection_for_select(@features, 'id','name') %>
+           </select>
       <% elsif square.name[0..0] != "\n" %>
-         <select name="<%= 'map[' + @y.to_s + '][' + @x.to_s + ']' %>">
+         <select name="<%= 'map[' + y.to_s + '][' + x.to_s + ']' %>">
          <option value = ""/>
          <%= options_from_collection_for_select(@features,'id','name',square.id ) %>
+           </select>
       <% else %>
          <%= square.name[0..14] %>...
       <% end %>
 
     </td>
-<%   @x += 1
-     end
-     @x = 1
-     @y += 1 %>
+<%   end %>
    </tr>
    <% end %>
 </table>
 
-  <%= submit_tag 'Edit' %>
+  <%= submit_tag %>
 <% end %>
 
-<%= link_to 'Back', :action => 'show_map' %> |
-<%= link_to 'Back to World', :action => 'show' %>
+<%= link_to 'Back', admin_world_maps_path(@world) %>

@@ -5,15 +5,6 @@ class Admin::WorldsController < ApplicationController
   layout 'admin'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],
-#         :redirect_to => { :action => :list }
-
-  def list
     @worlds = World.get_page(params[:page])
   end
 
@@ -29,7 +20,7 @@ class Admin::WorldsController < ApplicationController
     @world = World.new(params[:world])
     if @world.save
       flash[:notice] = 'World was successfully created.'
-      redirect_to :action => 'list'
+      redirect_to [:admin,@world]
     else
       render :action => 'new'
     end
@@ -43,14 +34,14 @@ class Admin::WorldsController < ApplicationController
     @world = World.find(params[:id])
     if @world.update_attributes(params[:world])
       flash[:notice] = 'World was successfully updated.'
-      redirect_to :action => 'show', :id => @world
+      redirect_to [:admin,@world]
     else
       render :action => 'edit'
     end
   end
 
-  #def destroy
+  # def destroy
   #  World.find(params[:id]).destroy
   #  redirect_to :action => 'list'
-  #end
+  # end
 end

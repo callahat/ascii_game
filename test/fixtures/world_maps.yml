@@ -1,11 +1,14 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-test_world_map_1_1_0_0:
+<% 1.upto(6) do |x|
+    1.upto(6) do |y| %>
+test_world_map_0_0_<%= x %>_<%= y %>:
   world: world_one
-  xpos: 1
-  ypos: 1
+  xpos: <%= x %>
+  ypos: <%= y %>
   bigxpos: 0
   bigypos: 0
-  feature: feature_creature_one
+<%  end
+  end %>
 
 test_world_map_0_0_0_1:
   world: world_one
@@ -13,6 +16,7 @@ test_world_map_0_0_0_1:
   ypos: 1
   bigxpos: 0
   bigypos: 1
+  feature: feature_creature_one
 test_world_map_0_0_1_0:
   world: world_one
   xpos: 1

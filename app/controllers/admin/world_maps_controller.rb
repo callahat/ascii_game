@@ -1,114 +1,67 @@
 class Admin::WorldMapsController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
-  
+
+  before_filter :load_world
+  before_filter :load_bigxpos_bigypos, only: [:show,:edit,:update] #,:destroy]
+
   layout 'admin'
 
   def index
-    session[:wid] = nil  #reset the selected world
-    @worlds = WorldMap.get_page(params[:page])
   end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],         :redirect_to => { :action => :index }
 
   def show
-    if session[:wid].nil?
-      session[:wid] = params[:wid] #save it, forget it later
-    end
-  
-    #clear out the map that's being looked at
-    session[:bigxpos] = nil
-    session[:bigypos] = nil
-    
-    @world = World.find(session[:wid])
-    @x,@y = @world.minbigx,@world.minbigy
-  end
-
-  def show_map
-    if !params[:bigxpos].nil? || !params[:bigypos].nil?
-      session[:bigxpos] = params[:bigxpos]
-      session[:bigypos] = params[:bigypos]
-    end
-    
-    @world = World.find(session[:wid])
-    @x,@y = 1,1
   end
 
   def new
-    #clear out the map that's being looked at
-    session[:bigxpos] = nil
-    session[:bigypos] = nil
-    
-    @world = World.find(session[:wid])
-    @x,@y = @world.minbigx, @world.minbigy
   end
 
   def create
-    @coords = params[:map][:loc]
-    @bigx = @coords[0..@coords.index(',')]
-    @bigy = @coords[(@coords.index(',')+1)..-1]
-    
-    print "\n"
-    print @bigx
-    print "\n"
-    print @bigy
-    print "\n"
-    print "." + @coords + "."
-    print "\n"
-    
+    @bigx,@bigy = params[:map][:loc].split(',')
+
+    Rails.logger.info "Creating world map at: #{@bigx} by #{@bigy}"
+
     #generate the empty squares for the submap
-    gen_world_map_squares
+    gen_world_map_squares(@bigx, @bigy)
     flash[:notice] = 'Generated squares for ' + @bigx + ' by ' + @bigy
-    redirect_to :action => 'show'
+    redirect_to admin_world_maps_path(@world)
   end
   
   
   def edit
-    #here goes code to edit the level map.
     setup_features_array
-    
-    @world = World.find(session[:wid])
   end
   
   
   def update
-    @world = World.find(session[:wid])
-        
     setup_features_array
       
-    @x,@y = 1,1
-
-    while @y <= @world.maxy
-      while @x <= @world.maxx
-        @temp = @world.world_maps.where(bigypos: session[:bigypos], bigxpos: session[:bigxpos], ypos: @y, xpos: @x).last
+    1.upto(@world.maxy) do |y|
+      1.upto(@world.maxx) do |x|
+        @temp = @world.world_maps.where(bigypos: @bigypos, bigxpos: @bigxpos, ypos: y, xpos: x).last
         #print "\n#{@temp.id}  #{@temp.nil?} #{@temp.feature_id} #{@temp.feature_id.to_i != params[:map][@y.to_s][@x.to_s].to_i} #{params[:map][@y.to_s][@x.to_s]}\n"
         
         #Destroy the level map if it has changed, and make a new one. 
         #Might want to timestamp this later.
         #but for now, just return the array of those level_maps, and get the last,
         #which should be the latest edit to the contents of that square.
-        if @temp.feature_id.to_i != params[:map][@y.to_s][@x.to_s].to_i &&
+        if @temp.feature_id.to_i != params[:map][y.to_s][x.to_s].to_i &&
            (@temp.feature.nil? || @temp.feature.name[0..0] != "\n")
           @temp = WorldMap.new
           @temp.world_id = @world.id
-          @temp.xpos = @x
-          @temp.ypos = @y
-          @temp.bigxpos = session[:bigxpos]
-          @temp.bigypos = session[:bigypos]
+          @temp.xpos = x
+          @temp.ypos = y
+          @temp.bigxpos = @bigxpos
+          @temp.bigypos = @bigypos
           
-          @temp.feature_id = params[:map][@y.to_s][@x.to_s]
+          @temp.feature_id = params[:map][y.to_s][x.to_s]
           @temp.save
-
         end
-        @x += 1
       end
-      @x = 1
-      @y += 1
     end
       
     flash[:notice] = 'Section of the world was successfully updated.'
-    redirect_to :action => 'show_map'
+    redirect_to admin_world_map_path(@world, id: "#{@bigxpos}x#{@bigypos}")
   end
 
   #Not only is this not good, the way the code is right now, it would leave all those
@@ -126,34 +79,28 @@ class Admin::WorldMapsController < ApplicationController
   #end
   
 protected
-  def gen_world_map_squares
+  def gen_world_map_squares(bigx,bigy)
     #now, create the level map squares
-    @world = World.find(session[:wid])
-    @x, @y, @savecount = 1, 1, 0
-    
-    while @y <= @world.maxy
-      while @x <= @world.maxx
-        @temp = WorldMap.new
-        @temp.world_id = @world.id
-        @temp.xpos = @x
-        @temp.ypos = @y
-        @temp.bigxpos = @bigx
-        @temp.bigypos = @bigy
-        @temp.feature_id = nil
-        
-        @temp.save
 
-        @x += 1
+    1.upto(@world.maxy) do |y|
+      1.upto(@world.maxx) do |x|
+        temp = WorldMap.new
+        temp.world_id = @world.id
+        temp.xpos = x
+        temp.ypos = y
+        temp.bigxpos = bigx
+        temp.bigypos = bigy
+        temp.feature_id = nil
+        
+        temp.save
       end
-      @x = 1
-      @y += 1
     end
   end
   
   def setup_features_array
     ##make the list of features, for the world, just going to sink the non prefs to end of the array
     @allf = Feature.where(world_feature: true, armed: true)
-    @lpref = Kingdom.find(-1).feature_pref_list
+    @lpref = Kingdom.find(-1).pref_list_features
 
     @findex = []
     @features = []
@@ -178,5 +125,13 @@ protected
       end
     end
     
+  end
+
+  def load_world
+    @world = World.find(params[:world_id])
+  end
+
+  def load_bigxpos_bigypos
+    @bigxpos, @bigypos = params[:id].split('x')
   end
 end

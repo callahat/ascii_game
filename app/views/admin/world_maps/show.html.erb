@@ -1,34 +1,25 @@
 <table>
 <tr>
 <td></td>
-<% while @x <= @world.maxbigx %>
-<td><%=h @x %></td>
-<% @x += 1 %>
+<% 1.upto(@world.maxx) do |x| %>
+<td><%= x %></td>
 <% end %>
 </tr>
 
-<% @x = @world.minbigx
-   while @y <= @world.maxbigy %>
+<% 1.upto(@world.maxy) do |y| %>
    <tr>
-     <td><%=h @y %></td>
-<%   while @x <= @world.maxbigx 
-        square = WorldMap.where(world_id: session[:wid], bigypos: @y, bigxpos: @x).last %>
+     <td><%= y %></td>
+<%   1.upto(@world.maxx) do |x|
+        @f = @world.world_maps.where(bigypos: @bigypos, bigxpos: @bigxpos, ypos: y, xpos: x).last.feature %>
     <td>
-      <% if !square.nil? %>
-        <%= link_to "#{square.bigxpos}, #{square.bigypos}", :action => 'show_map', :bigxpos => square.bigxpos, :bigypos => square.bigypos %>
-      <% else %>
-        _____
-      <% end %>
+      <% if !@f.nil? %><pre class="world_feature"><%=h @f.image.image_text %></pre><% else %>*EMPTY*<% end %>
     </td>
-<%   @x += 1
-     end
-     @x = @world.minbigx
-     @y += 1 %>
+<%   end %>
    </tr>
    <% end %>
 </table>
 
 <br/>
 
-<%= link_to 'New map', :action => 'new' %> |
-<%= link_to 'Back', :action => 'index' %>
+<%= link_to 'Edit', edit_admin_world_map_path(@world, id: "#{@bigxpos}x#{@bigypos}") %> |
+<%= link_to 'Back', admin_world_maps_path(@world) %>
