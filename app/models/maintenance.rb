@@ -69,8 +69,10 @@ class Maintenance < ActiveRecord::Base
         if @terminal_diseases.size > 0
           if npc.health.HP <= 0
             npc.health.wellness = SpecialCode.get_code('wellness','dead')
-            KingdomNotice.create(  npc.name + " died from " + @terminal_diseases.rand.disease.name + ".",
-                                  kingdom.id, "Minister of Health and Sanitation")
+            KingdomNotice.create_notice(
+                npc.name + " died from " + @terminal_diseases.rand.disease.name + ".",
+                kingdom.id,
+                "Minister of Health and Sanitation")
           end
         else
           npc.health.HP = [npc.health.HP,1].max
@@ -84,7 +86,7 @@ class Maintenance < ActiveRecord::Base
       if npc.health.wellness == SpecialCode.get_code('wellness','dead')
         @@report << "This is a dead NPC :'("
       else
-        if npc.npc_merchant_detail
+        if npc.kind_of?(NpcMerchant) and npc.npc_merchant_detail
           if npc.npc_merchant_detail.healing_sales.to_i > 0
             #can any pandemics be cured?
             for pandemic in kingdom.pandemics

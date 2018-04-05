@@ -10,7 +10,7 @@ class NpcTest < ActiveSupport::TestCase
 	end
 
 	test "set npc stats" do
-		@new_npc = Npc.create
+		@new_npc = Npc.create @npc.attributes.merge(name: 'NewNpcBobJoe')
 		assert @new_npc.stat.nil?
 		assert @new_npc.health.nil?
 		Npc.set_npc_stats(@new_npc,50,10,10,10,10,10,10,10,5)

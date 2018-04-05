@@ -35,11 +35,11 @@
     <td><%= creature.number_alive %></td>
     <td><%= creature.fecundity %></td>
     <td><% if creature.disease.nil? %>None<% else %><%= creature.disease.name %><% end %></td>
-    <td><% if !creature.armed %><%= link_to 'ARM', {:action => 'arm', :id => creature, :page => params[:page]}, data: {confirm: 'Are you sure?'}, :method => :post %><% else %>armed<% end %></td>
-    <td><%= link_to 'Show', :action => 'show', :id => creature %></td>
+    <td><% if !creature.armed %><%= link_to 'ARM', arm_management_creature_path(creature, page: params[:page]), data: {confirm: 'Are you sure?'}, method: :post %><% else %>armed<% end %></td>
+    <td><%= link_to 'Show', [:management,creature] %></td>
    <% if !creature.armed? %>
-    <td><%= link_to 'Edit', :action => 'edit', :id => creature %></td>
-    <td><%= link_to 'Destroy', { :action => 'destroy', :id => creature, :page => params[:page] }, data: {confirm: 'Are you sure?'}, :method => :delete %></td>
+    <td><%= link_to 'Edit', edit_management_creature_path(creature) %></td>
+    <td><%= link_to 'Destroy', management_creature_path(creature, page: params[:page]), data: {confirm: 'Are you sure?'}, method: :delete %></td>
    <% else %>
      <td></td>
      <td></td>
@@ -52,6 +52,6 @@
 
 <%= will_paginate @creatures %>
 
-<br />
+<br/>
 
-<%= link_to 'New creature', :action => 'new' %>
+<%= link_to 'New creature', new_management_creature_path %>

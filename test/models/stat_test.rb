@@ -4,7 +4,7 @@ class HealthTest < ActiveSupport::TestCase
   # Replace this with your real tests.
   # Replace this with your real tests.
   test "verify stat fixtures loaded" do
-    assert_equal 50, Stat.count
+    assert_equal 87, Stat.count
     assert_equal 6, StatPc.count
     assert_equal 6, StatPcBase.count
     assert_equal 6, StatPcTrn.count

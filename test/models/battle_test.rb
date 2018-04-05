@@ -264,7 +264,7 @@ class BattleTest < ActiveSupport::TestCase
     #the player gets killed
     npc_orig_exp = @npc.experience
     Battle.award_exp_from_kill(@npc, @pc)
-    assert @npc.experience == npc_orig_exp + @pc.experience / 50
+    assert_equal npc_orig_exp, @npc.experience
   end
 
   test "physical damage sub" do

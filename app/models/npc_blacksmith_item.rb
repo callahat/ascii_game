@@ -1,9 +1,11 @@
 class NpcBlacksmithItem < ActiveRecord::Base
   belongs_to :npc_merchant, foreign_key: 'npc_id'
   belongs_to :item
+
+  scope :by_min_sales, -> { order('min_sales') }
   
   def self.gen_blacksmith_items(npc, sales, new)
-    @last_min_sales = npc.npc_blacksmith_items_by_min_sales.last
+    @last_min_sales = npc.npc_blacksmith_items.by_min_sales.last
     @last_min_sales = ( @last_min_sales ? @last_min_sales.min_sales : -1 )
     
     @skill_base_items = BlacksmithSkill.find_base_items(sales, @last_min_sales, npc.npc_merchant_detail.race_body_type)
@@ -57,7 +59,7 @@ class NpcBlacksmithItem < ActiveRecord::Base
       @new_item.name = npc.name + "'s " + @new_item_title + " " + base_item.name
       @new_item.min_level = @new_item_stat.sum_points**1.1983 / 7
       
-      return(nil) && print("Failed to save new blacksmith item") unless @new_item.save!
+      return(nil) && Rails.logger.warn("Failed to save new blacksmith item") unless @new_item.save!
       return self.new(:npc_id => npc.id, 
                       :item_id => @new_item.id,
                       :min_sales => sales)

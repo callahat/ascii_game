@@ -30,19 +30,31 @@ class Management::CreaturesControllerTest < ActionController::TestCase
 	test "mgmt creature controller new and create" do
 		get 'new', {}, session.to_hash
 		assert_response :success
-		
+
 		post 'create', {:creature => {}, :image => {}, :stat => {}}, session.to_hash
 		assert_response :success
 		assert_template 'new'
 		
 		assert_difference 'Creature.count', +1 do
-			post 'create', { :creature => @c_hash, :image => @i_hash, :stat => @s_hash }, session.to_hash
+			post 'create', { :creature => @c_hash.merge(image_attributes: @i_hash, stat_attributes: @s_hash)}, session.to_hash
 			assert_response :redirect
-			assert_redirected_to :controller => 'management/creatures', :action => 'index'
+			assert_redirected_to management_creature_path(assigns(:creature))
 		end
 		@new_c_image = Creature.find_by_name("New creature Name").image
 		assert @new_c_image.image_text == @i_hash[:image_text]
 	end
+
+  test "mgmt creature controller new and create using a prebaked image" do
+    assert_difference 'Creature.count', +1 do
+      post 'create', { :creature => @c_hash.merge(image_id: Image.first.id, image_attributes: @i_hash, stat_attributes: @s_hash)}, session.to_hash
+      assert_response :redirect
+      assert_response :redirect
+      assert_redirected_to management_creature_path(assigns(:creature))
+    end
+    @new_c_image = Creature.find_by_name("New creature Name").image
+    assert_equal Image.first.image_text, @new_c_image.image_text
+    assert_not_equal @i_hash[:image_text], @new_c_image.image_text
+  end
 	
 	test "mgmt creature controller edit and update" do
 		get 'edit', {:id => @c.id}, session.to_hash
@@ -50,13 +62,13 @@ class Management::CreaturesControllerTest < ActionController::TestCase
 		
 		orig_c_image = @c.image.image_text
 		
-		post 'update', {:id => @c.id, :creature => {:gold => nil}, :image => @c.image.attributes, :stat => {}}, session.to_hash
+		put 'update', {:id => @c.id, :creature => {:gold => nil}, :image => @c.image.attributes, :stat => {}}, session.to_hash
 		assert_response :success
 		assert_template 'edit'
 		
-		post 'update', {:id => @c.id, :creature => @c.attributes, :image => @c.image.attributes, :stat => {}}, session.to_hash
+		put 'update', {:id => @c.id, :creature => @c.attributes, :image => @c.image.attributes, :stat => {}}, session.to_hash
 		assert_response :redirect
-		assert_redirected_to :controller => 'management/creatures', :action => 'index'
+		assert_redirected_to management_creatures_path
 		assert flash[:notice] =~ /updated/
 		@new_c_image = Creature.find(@c.id).image
 		assert @new_c_image.image_text == orig_c_image
@@ -64,30 +76,30 @@ class Management::CreaturesControllerTest < ActionController::TestCase
 	
 	test "mgmt creature controller destroy" do
 		assert_no_difference 'Creature.count' do
-			post 'destroy', {:id => @c_armed.id}, session.to_hash
-			assert_redirected_to :controller => 'management/creatures', :action => 'index'
+			delete 'destroy', {:id => @c_armed.id}, session.to_hash
+			assert_redirected_to management_creatures_path
 			assert flash[:notice] =~ /being used/
 		end
 		
 		assert_difference 'Creature.count', -1 do
 			post 'destroy', {:id => @c.id}, session.to_hash
-			assert_redirected_to :controller => 'management/creatures', :action => 'index'
+			assert_redirected_to management_creatures_path
 			assert flash[:notice] =~ /Creature destroyed/
 		end
 	end
 	
 	test "mgmt creature controller arm" do
 		get 'arm', {:id => @c_armed.id}, session.to_hash
-		assert_redirected_to :controller => 'management/creatures', :action => 'index'
+		assert_redirected_to management_creatures_path
 		assert flash[:notice] =~ /Could not be/
 
 		get 'arm', {:id => @c.id}, session.to_hash
-		assert_redirected_to :controller => 'management/creatures', :action => 'index'
+		assert_redirected_to management_creatures_path
 		assert flash[:notice] =~ /Added to preference/
 		assert flash[:notice] =~ /sucessfully armed/
 		
 		get 'arm', {:id => @c.id}, session.to_hash
-		assert_redirected_to :controller => 'management/creatures', :action => 'index'
+		assert_redirected_to management_creatures_path
 		assert flash[:notice] =~ /Could not be/
 	end
 	
