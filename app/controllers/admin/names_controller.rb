@@ -1,6 +1,7 @@
 class Admin::NamesController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
+  before_filter :set_name, only: [:edit,:update,:destroy]
   
   layout 'admin'
 
@@ -13,7 +14,7 @@ class Admin::NamesController < ApplicationController
   end
 
   def create
-    @name = Name.new(params[:name])
+    @name = Name.new(name_params)
     if @name.save
       flash[:notice] = 'Name was successfully created.'
       redirect_to admin_names_path
@@ -23,12 +24,10 @@ class Admin::NamesController < ApplicationController
   end
 
   def edit
-    @name = Name.find(params[:id])
   end
 
   def update
-    @name = Name.find(params[:id])
-    if @name.update_attributes(params[:name])
+    if @name.update_attributes(name_params)
       flash[:notice] = 'Name was successfully updated.'
       redirect_to admin_names_path
     else
@@ -37,7 +36,17 @@ class Admin::NamesController < ApplicationController
   end
 
   def destroy
-    Name.find(params[:id]).destroy
+    @name.destroy
     redirect_to admin_names_path
+  end
+
+  protected
+
+  def name_params
+    params.require(:name).permit(:name)
+  end
+
+  def set_name
+    @name = Name.find(params[:id])
   end
 end

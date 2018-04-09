@@ -5,9 +5,6 @@ class Management::EventsController < ApplicationController
 
   layout 'main'
 
-  #**********************************************************************
-  #EVENT MANAGEMENT
-  #**********************************************************************
   def index
     @events = Event.get_page(params[:page], session[:player][:id], session[:kingdom][:id])
   end
@@ -17,7 +14,7 @@ class Management::EventsController < ApplicationController
   end
 
   def new
-    @event = Event.new_of_kind(params[:event])
+    @event = params[:event].blank? ? Event.new : Event.new_of_kind(event_params)
     @event_types = Event.get_event_types(session[:player].admin )
     @event_rep_types = SPEC_CODET['event_rep_type'].to_a
 
@@ -38,8 +35,8 @@ class Management::EventsController < ApplicationController
     if good_event_params & @event.save
       @extras=true
       if @stat || @health
-        @stat.update_attributes(params[:stat].merge(:owner_id => @event.id)) &
-          @health.update_attributes(params[:health].merge(:owner_id => @event.id)) || @extras = false
+        @stat.update_attributes(stat_params.merge(:owner_id => @event.id)) &
+          @health.update_attributes(health_params.merge(:owner_id => @event.id)) || @extras = false
       end
       @event.reload #to refrsh the .stat and .health stuff
       if @extras
@@ -66,14 +63,16 @@ class Management::EventsController < ApplicationController
 
     if @event.kind == "EventCreature" || @event.kind == "EventStat"
       @flex = params[:flex]['0'].to_s + ";" + params[:flex]['1'].to_s
+    else
+      @flex = params[:event][:flex]
     end
 
     if is_event_not_in_use & is_event_owner & good_event_params &
-        @event.update_attributes(params[:event].merge(:flex => @flex))
+        @event.update_attributes(event_params.merge(:flex => @flex))
       @extras=true
       if @stat || @health
-        @stat.update_attributes(params[:stat].merge(:owner_id => @event.id)) &
-          @health.update_attributes(params[:health].merge(:owner_id => @event.id)) || @extras = false
+        @stat.update_attributes(stat_params.merge(:owner_id => @event.id)) &
+          @health.update_attributes(health_params.merge(:owner_id => @event.id)) || @extras = false
       end
 
       if @extras
@@ -188,10 +187,35 @@ protected
       when "EventPlayerCharacter"
         @pcs = @kingdom.player_characters
       when "EventStat"
-        @stat = @event.stat || StatEventStat.new(params[:stat])
-        @health = @event.health || HealthEventStat.new(params[:health])
+        @stat = @event.stat || StatEventStat.new(stat_params)
+        @health = @event.health || HealthEventStat.new(health_params)
       when "EventQuest"
         @quests = @kingdom.active_quests.reload
     end
+  end
+
+  def event_params
+    params.require(:event).permit(
+        :cost,
+        :name,
+        :kind,
+        :event_rep_type,
+        :event_reps,
+        :flex,
+        :thing_id,
+        :text,
+    )
+  end
+
+  def stat_params
+    params.permit(:stat).permit(
+        :str, :dex, :con, :int, :mag, :dfn, :dam,
+    )
+  end
+
+  def health_params
+    params.permit(:health).permit(
+        :HP, :MP, :base_HP, :base_MP, :wellness,
+    )
   end
 end

@@ -1,6 +1,7 @@
 class Admin::BaseItemsController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
+  before_filter :set_base_item, only: [:show,:edit,:update,:destroy]
   
   layout 'admin'
 
@@ -9,7 +10,6 @@ class Admin::BaseItemsController < ApplicationController
   end
 
   def show
-    @base_item = BaseItem.find(params[:id])
   end
 
   def new
@@ -17,7 +17,7 @@ class Admin::BaseItemsController < ApplicationController
   end
 
   def create
-    @base_item = BaseItem.new(params[:base_item])
+    @base_item = BaseItem.new(base_item_params)
     if @base_item.save
       flash[:notice] = 'BaseItem was successfully created.'
       redirect_to admin_base_item_path(@base_item)
@@ -27,12 +27,10 @@ class Admin::BaseItemsController < ApplicationController
   end
 
   def edit
-    @base_item = BaseItem.find(params[:id])
   end
 
   def update
-    @base_item = BaseItem.find(params[:id])
-    if @base_item.update_attributes(params[:base_item])
+    if @base_item.update_attributes(base_item_params)
       flash[:notice] = "#{@base_item.name} was successfully updated."
       redirect_to admin_base_item_path(@base_item)
     else
@@ -43,5 +41,15 @@ class Admin::BaseItemsController < ApplicationController
   def destroy
     BaseItem.find(params[:id]).destroy
     redirect_to admin_base_items_path
+  end
+
+  protected
+
+  def base_item_params
+    params.require(:base_item).permit(:name, :description, :equip_loc, :price, :race_body_type)
+  end
+
+  def set_base_item
+    @base_item = BaseItem.find(params[:id])
   end
 end

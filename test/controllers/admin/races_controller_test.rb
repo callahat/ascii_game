@@ -40,7 +40,7 @@ class Admin::RacesControllerTest < ActionController::TestCase
   end
 
   test "should update race" do
-    patch :update, id: @race, race: {name: :updated_name}
+    patch :update, id: @race, race: @race.attributes_with_nesteds.merge(name: 'updated_name')
     assert_redirected_to admin_race_path(assigns(:race)), assigns(:race).errors.full_messages
   end
 

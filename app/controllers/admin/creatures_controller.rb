@@ -1,6 +1,7 @@
 class Admin::CreaturesController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
+  before_filter :set_images, only: [:new, :create, :edit, :update]
 
   layout 'admin'
 
@@ -16,9 +17,15 @@ class Admin::CreaturesController < ApplicationController
   end
 
   def create
-    @creature = Creature.new(params[:creature])
+    if params[:creature][:image_id].present?
+      params[:creature][:image_attributes].merge!(
+          Image.find(params[:creature][:image_id]).attributes.slice('image_text','picture'))
+    end
+
+    @creature = Creature.new(creature_params)
     @diseases = Disease.all
 
+    @creature.build_image unless @creature.image
     @creature.image.name = @creature.name + ' image'
     @creature.image.player_id = session[:player].id
     @creature.image.kingdom_id = Kingdom.find_by(name: 'SystemGeneratd').id
@@ -46,7 +53,18 @@ class Admin::CreaturesController < ApplicationController
   def update
     edit
 
-    if @creature.update_attributes(params[:creature])
+    if params[:creature][:image_id].present?
+      params[:creature][:image_attributes].merge!(
+          Image.find(params[:creature][:image_id]).attributes.slice('image_text','picture'))
+    end
+
+    if @creature.update_attributes(creature_params.tap{ |cp|
+                                     cp[:image_attributes].merge!(
+                                         id: @creature.image_id,
+                                         name: "#{@creature.name} image",
+                                         player_id: -1,
+                                         kingdom_id: -1
+                                     )})
       flash[:notice] = @creature.name + ' was successfully updated.'
       redirect_to admin_creature_path(@creature)
     else
@@ -93,4 +111,28 @@ class Admin::CreaturesController < ApplicationController
   #
   #   redirect_to :controller => '/admin/pref_list'
   # end
+
+  protected
+
+  def creature_params
+    params.require(:creature).permit(
+        :name,
+        :description,
+        :experience,
+        :HP,
+        :gold,
+        :number_alive,
+        :fecundity,
+        :public,
+        :disease_id,
+        image_attributes: [:image_text, :public, :picture, :image_type],
+        stat_attributes: [:str, :dex, :con, :int, :mag, :dfn, :dam]
+    )
+  end
+
+  def set_images
+    @images = Image.where(
+        ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
+         session[:player].id, -1, SpecialCode.get_code('image_type', 'creature')])
+  end
 end

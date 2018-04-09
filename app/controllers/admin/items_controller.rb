@@ -1,6 +1,7 @@
 class Admin::ItemsController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
+  before_filter :set_item, only: [:show,:edit,:update,:destroy]
 
   layout 'admin'
 
@@ -9,7 +10,6 @@ class Admin::ItemsController < ApplicationController
   end
 
   def show
-    @item = Item.find(params[:id])
   end
 
   def new
@@ -18,7 +18,7 @@ class Admin::ItemsController < ApplicationController
   end
 
   def create
-    @item = Item.new(params[:item])
+    @item = Item.new(item_params)
 
     if @item.save
       flash[:notice] = 'Item was successfully created.'
@@ -29,13 +29,10 @@ class Admin::ItemsController < ApplicationController
   end
 
   def edit
-    @item = Item.find(params[:id])
   end
 
   def update
-    @item = Item.find(params[:id])
-
-    if @item.update_attributes(params[:item])
+    if @item.update_attributes(item_params)
       flash[:notice] = 'Item was successfully updated.'
       redirect_to [:admin,@item]
     else
@@ -44,7 +41,6 @@ class Admin::ItemsController < ApplicationController
   end
 
   def destroy
-    @item = Item.find(params[:id])
     if !@item.in_use? && @item.destroy
       flash[:notice] = "Destroyed #{@item.name}"
     else
@@ -52,5 +48,26 @@ class Admin::ItemsController < ApplicationController
     end
 
     redirect_to admin_items_path
+  end
+
+  protected
+
+  def item_params
+    params.require(:item).permit(
+        :name,
+        :equip_loc,
+        :description,
+        :base_item_id,
+        :min_level,
+        :c_class_id,
+        :race_id,
+        :race_body_type,
+        :price,
+        # :npc_id,
+        stat_attributes: [:str, :dex, :con, :int, :mag, :dfn, :dam])
+  end
+
+  def set_item
+    @item = Item.find(params[:id])
   end
 end

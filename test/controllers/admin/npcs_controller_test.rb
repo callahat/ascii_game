@@ -46,7 +46,7 @@ class Admin::NpcsControllerTest < ActionController::TestCase
   end
 
   test "should update npc" do
-    patch :update, id: @npc, npc: { name: 'Updated NPC' }
+    patch :update, id: @npc, npc: @npc.attributes_with_nesteds.merge( name: 'Updated NPC' )
     assert_redirected_to admin_npc_path(assigns(:npc))
   end
 

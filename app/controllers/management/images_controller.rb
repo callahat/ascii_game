@@ -10,9 +10,6 @@ class Management::ImagesController < ApplicationController
     @images = accessible_images.get_page(params[:page])
   end
 
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],         :redirect_to => { :action => :index }
-
   def show
     @image = accessible_images.find(params[:id])
     if @image.image_type == SpecialCode.get_code('image_type','kingdom')
@@ -28,9 +25,13 @@ class Management::ImagesController < ApplicationController
   end
 
   def new
-    @image = accessible_images.new(params[:image])
-    @image.player_id = session[:player][:id]
-    @image.kingdom_id = session[:kingdom][:id]
+    if params[:image]
+      @image = accessible_images.new(image_params.merge(
+                                       player_id: session[:player][:id]))
+    else
+      @image = accessible_images.new
+    end
+
     @types = SPEC_CODET['image_type']
     unless session[:player][:admin]
       @types.delete('world')
@@ -73,7 +74,7 @@ class Management::ImagesController < ApplicationController
   def update
     edit
     
-    if @image.update_attributes(params[:image])
+    if @image.update_attributes(image_params)
       if @image.image_type == SpecialCode.get_code('image_type','kingdom') || 
          @image.image_type == SpecialCode.get_code('image_type','world')
         @image.resize_image(10,15)
@@ -140,5 +141,13 @@ protected
                           SpecialCode.get_code('image_type','world')
                       ])
     end
+  end
+
+  protected
+
+  def image_params
+    params.require(:image).permit(
+        :name, :image_text, :public, :image_type, :picture
+    )
   end
 end

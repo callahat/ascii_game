@@ -16,7 +16,7 @@ class Creature < ActiveRecord::Base
 
   validates_uniqueness_of :name
   validates_presence_of :name,:experience,:HP,:gold,:image,:stat,:player_id,:kingdom_id,:number_alive,:fecundity
-  attr_accessible :name,:description,:experience,:HP,:gold,:player_id,:kingdom_id,:number_alive,:fecundity,:public,:image_attributes,:stat_attributes
+  # #attr_accessible :name,:description,:experience,:HP,:gold,:player_id,:kingdom_id,:number_alive,:fecundity,:public,:image_attributes,:stat_attributes
 
   before_validation :update_exp_value
 

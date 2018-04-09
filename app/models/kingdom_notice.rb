@@ -3,7 +3,7 @@ class KingdomNotice < ActiveRecord::Base
 
   validates_presence_of :text,:shown_to
 
-  attr_accessible :text, :shown_to, :signed, :kingdom_id
+  #attr_accessible :text, :shown_to, :signed, :kingdom_id
 
   default_scope { order("created_at DESC") }
 
@@ -50,7 +50,6 @@ class KingdomNotice < ActiveRecord::Base
                 SpecialCode.get_code('shown_to','everyone')]
     end
     where(conds) \
-      .order('"datetime DESC"') \
       .paginate(:per_page => 20, :page => page)
   end
 end

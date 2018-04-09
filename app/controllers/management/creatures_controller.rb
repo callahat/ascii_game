@@ -2,6 +2,7 @@ class Management::CreaturesController < ApplicationController
   before_filter :authenticate
   before_filter :king_filter
   before_filter :setup_king_pc_vars
+  before_filter :set_images, only: [:new, :create, :edit, :update]
 
   layout 'main'
 
@@ -10,24 +11,18 @@ class Management::CreaturesController < ApplicationController
   end
 
   def new
-    @creature = Creature.new(params[:creature])
+    @creature = Creature.new
     @creature.build_stat
-    # @kingdom_id = session[:kingdom][:id]
-    # @player_id = session[:player][:id]
     @image = @creature.image || @creature.build_image
-    @images = Image.where(
-                ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
-                @player_id, @kingdom_id, SpecialCode.get_code('image_type', 'creature')]).order(:name)
   end
 
   def create
     if params[:creature][:image_id].present?
       params[:creature][:image_attributes].merge!(
           Image.find(params[:creature][:image_id]).attributes.slice('image_text','picture'))
-      params[:creature].delete(:image_id)
     end
 
-    @creature = Creature.new(params[:creature])
+    @creature = Creature.new(creature_params)
 
     @creature.build_image unless @creature.image
     @creature.image.name = @creature.name.to_s + ' image'
@@ -43,9 +38,6 @@ class Management::CreaturesController < ApplicationController
     else
       @creature.build_stat
       @image = @creature.image || @creature.build_image
-      @images = Image.where(
-          ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
-           @player_id, @kingdom_id, SpecialCode.get_code('image_type', 'creature')]).order(:name)
       render :action => 'new'
     end
   end
@@ -61,15 +53,25 @@ class Management::CreaturesController < ApplicationController
       redirect_to :action => 'index'
       return
     end
-    @images = Image.where(
-                ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
-                @player_id,@kingdom_id,SpecialCode.get_code('image_type', 'creature')]).order(:name)
   end
 
   def update
     edit
 
-    if @creature.update_attributes(params[:creature])
+    if params[:creature][:image_id].present?
+      params[:creature][:image_attributes].merge!(
+          Image.find(params[:creature][:image_id]).attributes.slice('image_text','picture'))
+    end
+
+    # Cause Image should really belong to things for nested_attributes_for to work better
+    # gotta just tap that hash for now :/
+    if @creature.update_attributes(creature_params.tap{ |cp|
+                                     cp[:image_attributes].merge!(
+                                                              id: @creature.image_id,
+                                                              name: "#{@creature.name} image",
+                                                              player_id: session[:player].id,
+                                                              kingdom_id: session[:kingdom].id
+                                     )})
       flash[:notice] = @creature.name + ' was successfully updated.'
       redirect_to :action => 'index'
     else
@@ -144,5 +146,27 @@ protected
     else
       true
     end
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def creature_params
+    params.require(:creature).permit(
+        :name,
+        :description,
+        :experience,
+        :HP,
+        :gold,
+        :number_alive,
+        :fecundity,
+        :public,
+        image_attributes: [:image_text, :public, :picture, :image_type],
+        stat_attributes: [:str, :dex, :con, :int, :mag, :dfn, :dam]
+    )
+  end
+
+  def set_images
+    @images = Image.where(
+        ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
+         @player_id, @kingdom_id, SpecialCode.get_code('image_type', 'creature')])
   end
 end

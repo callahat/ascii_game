@@ -2,6 +2,7 @@ class Management::QuestsController < ApplicationController
   before_filter :authenticate
   before_filter :king_filter
   before_filter :setup_king_pc_vars
+  before_filter :set_kingdom
 
   layout 'main'
 
@@ -15,7 +16,7 @@ class Management::QuestsController < ApplicationController
   end
   
   def show
-    @quest = Quest.find(params[:id])
+    @quest = @kingdom.quests.find(params[:id])
 
     #Get the requirements for completion of the quest
     @quest_creature_kills = @quest.creature_kills
@@ -27,23 +28,17 @@ class Management::QuestsController < ApplicationController
   end
 
   def new
-    @quest = Quest.new
-    @prereqs = session[:kingdom].quests.where(quest_status: SpecialCode.get_code('quest_status','active'))
+    @quest = @kingdom.quests.new
+    @prereqs = @kingdom.quests.where(quest_status: SpecialCode.get_code('quest_status','active'))
     setup_reward_items
   end
 
   def create
-    @quest = Quest.new(params[:quest])
-    @prereqs = session[:kingdom].quests.where(quest_status: SpecialCode.get_code('quest_status','active'))
+    @quest = @kingdom.quests.new(quest_params)
+    @prereqs = @kingdom.quests.where(quest_status: SpecialCode.get_code('quest_status','active'))
     setup_reward_items
     
-    if @quest.quest && !verify_quest_owner(@quest.quest)
-      redirect_to :action => 'index'
-      return
-    end
-    
     @quest.player_id = session[:player][:id]
-    @quest.kingdom_id = session[:kingdom][:id]
     @quest.quest_status = SpecialCode.get_code('quest_status','design')
     
     if @quest.save
@@ -56,24 +51,23 @@ class Management::QuestsController < ApplicationController
   end
 
   def edit
-    @quest = Quest.find(params[:id])
-    @prereqs = session[:kingdom].quests.where(quest_status: SpecialCode.get_code('quest_status','active'))
+    @quest = @kingdom.quests.find(params[:id])
+    @prereqs = @kingdom.quests.where(quest_status: SpecialCode.get_code('quest_status','active'))
     setup_reward_items
   end
 
   def update
-    @quest = Quest.find(params[:id])
-    @prereq = Quest.find_by(quest_id: params[:quest][:quest_id])
-    @prereqs = session[:kingdom].quests.where(quest_status: SpecialCode.get_code('quest_status','active'))
-    if !verify_quest_owner(@quest) || !verify_quest_not_in_use(@quest) || 
-       (@prereq && !verify_quest_owner(@prereq))
+    @quest = @kingdom.quests.find(params[:id])
+    @prereq = @kingdom.quests.find_by(quest_id: params[:quest][:quest_id])
+    @prereqs = @kingdom.quests.where(quest_status: SpecialCode.get_code('quest_status','active'))
+    unless verify_quest_not_in_use(@quest)
       redirect_to :action => 'index'
       return
     end
 
     setup_reward_items
     
-    if @quest.update_attributes(params[:quest])
+    if @quest.update_attributes(quest_params)
       flash[:notice] = @quest.name + ' was updated successfully.'
       redirect_to :action => 'show', :id => params[:id]
     else
@@ -84,13 +78,9 @@ class Management::QuestsController < ApplicationController
 
   #Make the quest available to players
   def activate
-    @quest = Quest.find(params[:id])
-    if !verify_quest_owner(@quest)
-      redirect_to :action => 'index'
-      return
-    end
+    @quest = @kingdom.quests.find(params[:id])
     
-    if session[:kingdom].quests.where(quest_status: '1').size > 16
+    if @kingdom.quests.where(quest_status: '1').size > 16
       flash[:notice] = 'A kingdom can have only 16 active quests at a time.'
     elsif @quest.reqs.size == 0
       flash[:notice] = "Quest must have at least one requirement in order to be activated"
@@ -103,11 +93,7 @@ class Management::QuestsController < ApplicationController
 
   #retire a quest/remove it from play entirely
   def retire
-    @quest = Quest.find(params[:id])
-    if !verify_quest_owner(@quest)
-      redirect_to :action => 'index', :page => params[:page]
-      return
-    end
+    @quest = @kingdom.quests.find(params[:id])
     
     @quest.quest_status = SpecialCode.get_code('quest_status','retired')
     quest_status_change_update
@@ -116,8 +102,8 @@ class Management::QuestsController < ApplicationController
 
   #destroy quest. This can only be done if it has never been activated.
   def destroy
-    @quest = Quest.find(params[:id])
-    if !verify_quest_owner(@quest) || !verify_quest_not_in_use(@quest)
+    @quest = @kingdom.quests.find(params[:id])
+    unless verify_quest_not_in_use(@quest)
       redirect_to :action => 'index', :page => params[:page]
       return
     end
@@ -133,81 +119,7 @@ class Management::QuestsController < ApplicationController
       redirect_to :action => 'show', :id => params[:id]
     end
   end
-  
-  #Quest requirments
-  # def add_req
-  #   #this will need fixed
-  #   @reqs = SPEC_CODET['quest_req_type']
-  # end
-  #
-  # def new_req
-  #   @quest = Quest.find(params[:id])
-  #
-  #   new_quest_req_obj
-  # end
-  #
-  # def create_req
-  #   @quest = Quest.find(params[:id])
-  #   if !verify_quest_owner(@quest) || !verify_quest_not_in_use(@quest)
-  #     redirect_to :action => 'index'
-  #     return
-  #   end
-  #
-  #   new_quest_req_obj
-  #
-  #   @quest_req.quest_id = params[:id]
-  #
-  #   if @quest_req.save
-  #     flash[:notice] = 'Requirement saved sucessfully.'
-  #     redirect_to :action => 'show', :id => params[:id]
-  #   else
-  #     flash[:notice] = 'Requirement failed to save.'
-  #     render :action => 'new_req'
-  #   end
-  # end
-  #
-  # def edit_req
-  #   @quest = Quest.find(params[:id])
-  #
-  #   find_quest_req_obj
-  # end
-  #
-  #
-  # def update_req
-  #   @quest = Quest.find(params[:id])
-  #   if !verify_quest_owner(@quest) || !verify_quest_not_in_use(@quest)
-  #     redirect_to :action => 'index'
-  #     return
-  #   end
-  #
-  #   find_quest_req_obj
-  #
-  #   if @quest_req.update_attributes(params[:quest_req])
-  #     flash[:notice] = 'Requirement updated sucessfully.'
-  #     redirect_to :action => 'show', :id => params[:id]
-  #   else
-  #     flash[:notice] = 'Requirement failed to update.'
-  #     render :action => 'edit_req'
-  #   end
-  # end
-  #
-  # def destroy_req
-  #   @quest = Quest.find(params[:id])
-  #   if !verify_quest_owner(@quest) || !verify_quest_not_in_use(@quest)
-  #     redirect_to :action => 'index'
-  #     return
-  #   end
-  #
-  #   find_quest_req_obj
-  #
-  #   if @quest_req.destroy
-  #     flash[:notice] = 'Destroyed the requirement.'
-  #   else
-  #     flash[:notice] = 'Failed to destroy the requirement.'
-  #   end
-  #   redirect_to :action => 'show', :id => params[:id]
-  # end
-  
+
 protected
   def quest_status_change_update
     if @quest.save
@@ -226,67 +138,6 @@ protected
     end
   end
   
-  # def new_quest_req_obj
-  #   if params[:type] == 'creature_kill'
-  #     @quest_req = QuestCreatureKill.new(params[:quest_req])
-  #     @creatures = session[:kingdom].creatures
-  #   elsif params[:type] == 'explore'
-  #     @quest_req = QuestExplore.new(params[:quest_req])
-  #     @events = session[:kingdom].event_texts.where(armed: true)
-  #   elsif params[:type] == 'item'
-  #     @quest_req = QuestItem.new(params[:quest_req])
-  #     @items = Item.all
-  #   elsif params[:type] == 'kill_any_npc'
-  #     @quest_req = QuestKillNNpc.new(params[:quest_req])
-  #     @npc_types = [ ['merchant', 'NpcMerchant'], ['guard', 'NpcGuard'] ]
-  #     @kingdoms = Kingdom.all.order(:name)
-  #   elsif params[:type] == 'kill_pc'
-  #     @quest_req = QuestKillPc.new(params[:quest_req])
-  #     @pcs = PlayerCharacter.all.order(:name) #might need to add a check for the hardcore to prevent targeting an already final dead char
-  #   elsif params[:type] == 'kill_specific_npc'
-  #     @quest_req = QuestKillSNpc.new(params[:quest_req])
-  #     @npcs = Npc.all.joins(:health).where(
-  #                       ['healths.wellness = ? or healths.wellness = ?',
-  #                       SpecialCode.get_code('wellness','alive'), SpecialCode.get_code('wellness','diseased')]).order(:name)
-  #   else
-  #     flash[:notice] = 'Invalid type!'
-  #     redirect_to :action => 'show',:id => params[:id]
-  #   end
-  # end
-  #
-  # def find_quest_req_obj
-  #   @quest_req = QuestReq.find(params[:req_id])
-  #   if @quest_req.kind == 'QuestCreatureKill'
-  #     @creatures = session[:kingdom].creatures
-  #   elsif @quest_req.kind == 'explore'
-  #     @events = session[:kingdom].events.where(event_type: SpecialCode.get_code('event_type','quest'))
-  #   elsif @quest_req.kind == 'QuestItem'
-  #     @items = Item.all
-  #   elsif @quest_req.kind == 'QuestKillNNpc'
-  #     @npc_types = [ ['merchant', 'NpcMerchant'], ['guard', 'NpcGuard'] ]
-  #     @kingdoms = Kingdom.all.order(:name)
-  #   elsif @quest_req.kind == 'QuestKillPc'
-  #     @pcs = PlayerCharacter.all.order(:name)
-  #   elsif @quest_req.kind == 'QuestKillSNpc'
-  #     @npcs = Npc.all.joins(:health).where(
-  #                       ['healths.wellness = ? or healths.wellness = ?',
-  #                       SpecialCode.get_code('wellness','alive'), SpecialCode.get_code('wellness','diseased')]).order(:name)
-  #   else
-  #     flash[:notice] = 'Invalid type!'
-  #     redirect_to :action => 'show',:id => params[:id]
-  #   end
-  # end
-  
-  def verify_quest_owner(quest)
-    #if someone tries to edit a feature not belonging to them
-    if quest.kingdom_id != session[:kingdom][:id]
-      flash[:notice] = 'An error occured while retrieving ' + quest.name
-      false
-    else
-      true
-    end
-  end
-
   def verify_quest_not_in_use(quest)
     if @quest.quest_status != SpecialCode.get_code('quest_status','design')
       flash[:notice] = @quest.name + ' cannot be edited; it is already being used.'
@@ -294,5 +145,13 @@ protected
     else
       true
     end
+  end
+
+  def quest_params
+    params.require(:quest).permit(:name, :description, :player_id, :max_level, :max_completeable, :quest_status, :gold, :item_id, :quest_id)
+  end
+
+  def set_kingdom
+    @kingdom = session[:kingdom]
   end
 end

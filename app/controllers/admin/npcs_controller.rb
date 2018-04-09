@@ -1,6 +1,7 @@
 class Admin::NpcsController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
+  before_filter :set_npc, only: [:show,:edit,:update,:destroy]
 
   before_filter :load_divisions, only: [:new,:create,:edit,:update]
 
@@ -11,11 +12,10 @@ class Admin::NpcsController < ApplicationController
   end
 
   def show
-    @npc = Npc.find(params[:id])
   end
 
   def new
-    @npc = Npc.new_of_kind(params[:npc])
+    @npc = Npc.new_of_kind(npc_params)
     @npc.image_id = nil
     @npc.build_stat
     @npc.build_health
@@ -23,7 +23,7 @@ class Admin::NpcsController < ApplicationController
   end
 
   def create
-    @npc = Npc.new_of_kind(params[:npc])
+    @npc = Npc.new_of_kind(npc_params)
     @npc.image_id = nil
     @npc.image.name = @npc.name + ' Image'
     @npc.image.player_id = session[:player].id
@@ -42,15 +42,18 @@ class Admin::NpcsController < ApplicationController
   end
 
   def edit
-    @npc = Npc.find(params[:id])
   end
 
   def update
-    @npc = Npc.find(params[:id])
-
     params[:npc].delete(:image_attributes) unless @npc.image.npcs.count == 1
 
-    if @npc.update_attributes(params[:npc])
+    if @npc.update_attributes(npc_params.tap{ |cp|
+                                cp[:image_attributes].merge!(
+                                    id: @npc.image_id,
+                                    name: @npc.image.name,
+                                    player_id: @npc.image.player_id,
+                                    kingdom_id: @npc.image.kingdom_id
+                                ) if cp[:image_attributes]})
       flash[:notice] = 'Npc was successfully updated.'
       redirect_to admin_npc_path(@npc)
     else
@@ -59,7 +62,7 @@ class Admin::NpcsController < ApplicationController
   end
 
   def destroy
-    Npc.find(params[:id]).destroy
+    @npc.destroy
     redirect_to admin_npcs_path
   end
 
@@ -68,5 +71,28 @@ class Admin::NpcsController < ApplicationController
   def load_divisions
     @divisions = [ ['merchant', 'NpcMerchant'],
                    ['guard', 'NpcGuard'] ]
+  end
+
+  def npc_params
+    if params[:npc]
+      params.require(:npc).permit(
+          :name,
+          :kingdom_id,
+          :gold,
+          :experience,
+          :is_hired,
+          :kind,
+          health_attributes: [:wellness, :HP, :MP, :base_HP, :base_MP],
+          image_attributes: [:image_text, :public, :picture, :image_type],
+          stat_attributes: [:str, :dex, :con, :int, :mag, :dfn, :dam],
+          npc_merchant_detail_attributes: [:healing_sales,:blacksmith_sales,:trainer_sales,:consignor,:race_body_type]
+      )
+    else
+      {}
+    end
+  end
+
+  def set_npc
+    @npc = Npc.find(params[:id])
   end
 end

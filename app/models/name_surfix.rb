@@ -1,5 +1,5 @@
 class NameSurfix < ActiveRecord::Base
-  attr_accessible :surfix
+  #attr_accessible :surfix
 
   #Pagination related stuff
   def self.get_page(page)

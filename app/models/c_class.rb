@@ -6,7 +6,7 @@ class CClass < ActiveRecord::Base
 
   accepts_nested_attributes_for :level_zero
 
-  attr_accessible :name, :description, :attack_spells, :healing_spells, :freepts, :level_zero_attributes
+  #attr_accessible :name, :description, :attack_spells, :healing_spells, :freepts, :level_zero_attributes
 
   validates_uniqueness_of :name
   validates_presence_of :name, :freepts, :level_zero

@@ -13,7 +13,7 @@ class Disease < ActiveRecord::Base
 
   accepts_nested_attributes_for :stat
 
-  attr_accessible :name,:description,:virility,:trans_method,:HP_per_turn,:MP_per_turn,:peasant_fatality,:min_peasants,:stat_attributes
+  #attr_accessible :name,:description,:virility,:trans_method,:HP_per_turn,:MP_per_turn,:peasant_fatality,:min_peasants,:stat_attributes
 
   validates_uniqueness_of :name
   validates_presence_of :name,:virility,:trans_method,:HP_per_turn,:MP_per_turn, :peasant_fatality,:min_peasants

@@ -17,7 +17,7 @@ class Management::LevelsController < ManagementController
   end
 
   def create
-    @level = @kingdom.levels.build(params[:level])
+    @level = @kingdom.levels.build(level_params)
 
     #make sure king can afford
     @cost = (@level.level.abs ** 3) * @level.maxx.to_i * @level.maxy.to_i
@@ -122,5 +122,9 @@ protected
 
   def setup_level_variable
     redirect_to management_level_url() and return() unless @level = @kingdom.levels.where( ['id = ?', params[:id] ] ).last
+  end
+
+  def level_params
+    params.require(:level).permit(:maxx, :maxy, :level)
   end
 end

@@ -9,7 +9,7 @@ class NpcMerchant < Npc
 
   accepts_nested_attributes_for :npc_merchant_detail
 
-  attr_accessible :npc_merchant_detail_attributes
+  #attr_accessible :npc_merchant_detail_attributes
 
   def self.generate(kingdom_id)
     @new_image = Image.deep_copy(Image.find_by(name: 'DEFAULT NPC'))

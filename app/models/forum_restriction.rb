@@ -2,7 +2,7 @@ class ForumRestriction < ActiveRecord::Base
   belongs_to :player
   belongs_to :giver, :foreign_key => 'given_by', :class_name => 'Player'
 
-  attr_accessible :restriction, :expires
+  #attr_accessible :restriction, :expires
 
   def self.no_posting(who)
     return self.no_whating('no_posting', who)

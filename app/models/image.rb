@@ -9,7 +9,7 @@ class Image < ActiveRecord::Base
   
   validates_presence_of :image_type
 
-  attr_accessible :name, :image_text, :public, :image_type, :picture, :kingdom_id, :player_id
+  #attr_accessible :name, :image_text, :public, :image_type, :picture, :kingdom_id, :player_id
   
   def self.deep_copy(image)
     @copy_image = Image.new
@@ -39,7 +39,7 @@ class Image < ActiveRecord::Base
   
   def resize_image(rowcap,colcap)
     return self.image_text if rowcap < 1 || colcap < 1
-    it = self.image_text
+    it = self.image_text.to_s
     it.gsub!(/\r/,"") #ie adds this character, it must go
     it = it.split("\n")
     (rowcap < it.size ? rowcap : it.size).times{|r|

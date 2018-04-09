@@ -12,7 +12,7 @@ class Event < ActiveRecord::Base
 
   validates_presence_of :player_id,:kingdom_id,:name,:event_rep_type
   #validates_uniqueness_of :name
-  attr_accessible :player_id,:kingdom_id,:cost,:name, :kind, :event_rep_type, :event_reps, :flex, :thing_id, :text
+  #attr_accessible :player_id,:kingdom_id,:cost,:name, :kind, :event_rep_type, :event_reps, :flex, :thing_id, :text
 
   class EventRepititionValidator < ActiveModel::EachValidator
     def validate_each(record, attribute, value)

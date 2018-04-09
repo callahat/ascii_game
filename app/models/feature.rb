@@ -16,8 +16,8 @@ class Feature < ActiveRecord::Base
   validates_inclusion_of :num_occupants , :in => 0..100000, :message => ' must be between 0 and 100,000.'
   validates_inclusion_of :store_front_size , :in => 0..9, :message => ' must be between 0 and 9.'
 
-  attr_accessible :name,:action_cost,:image_id,:player_id,:kingdom_id,:cost,:num_occupants,:world_feature,:armed,
-                  :description, :store_front_size, :image_text,:public
+  # attr_accessible :name,:action_cost,:image_id,:player_id,:kingdom_id,:cost,:num_occupants,:world_feature,:armed,
+  #                 :description, :store_front_size, :image_text,:public
   
   def self.sys_gen(name, image_id)
     @sys_gen_feature = Feature.new

@@ -4,6 +4,8 @@ class Admin::CreaturesControllerTest < ActionController::TestCase
   setup do
     @creature = creatures(:unarmed_monster)
     session[:player] = players(:test_system_player)
+    @s_hash = {:dam => 10, :dex => 5, :dfn => 5, :con => 5, :int => 5, :mag => 10, :str => 30}
+    @i_hash = {:image_text => "   -_o     ", :image_type => SpecialCode.get_code('image_type','creature') }
   end
 
   test "should get index" do
@@ -19,7 +21,7 @@ class Admin::CreaturesControllerTest < ActionController::TestCase
 
   test "should create creature" do
     assert_difference('Creature.count') do
-      post :create, creature: @creature.attributes_with_nesteds.merge(name: 'New monster')
+      post :create, creature: @creature.attributes_with_nesteds.merge(name: 'New monster', image_id: nil, image_attributes: @i_hash, stat_attributes: @s_hash )
     end
 
     assert_redirected_to admin_creature_path(assigns(:creature))
@@ -36,7 +38,7 @@ class Admin::CreaturesControllerTest < ActionController::TestCase
   end
 
   test "should update creature" do
-    patch :update, id: @creature, creature: { name: 'New Name' }
+    patch :update, id: @creature, creature: @creature.attributes.merge(name: 'New Name', image_id: nil, image_attributes: @i_hash, stat_attributes: @s_hash )
     assert_redirected_to admin_creature_path(assigns(:creature))
   end
 

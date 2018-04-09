@@ -1,6 +1,7 @@
 class Admin::NameSurfixesController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
+  before_filter :set_name_surfix, only: [:edit,:update,:destroy]
   
   layout 'admin'
 
@@ -13,7 +14,7 @@ class Admin::NameSurfixesController < ApplicationController
   end
 
   def create
-    @name_surfix = NameSurfix.new(params[:name_surfix])
+    @name_surfix = NameSurfix.new(name_surfix_params)
     if @name_surfix.save
       flash[:notice] = 'NameSurfixes was successfully created.'
       redirect_to admin_name_surfixes_path
@@ -23,12 +24,10 @@ class Admin::NameSurfixesController < ApplicationController
   end
 
   def edit
-    @name_surfix = NameSurfix.find(params[:id])
   end
 
   def update
-    @name_surfix = NameSurfix.find(params[:id])
-    if @name_surfix.update_attributes(params[:name_surfix])
+    if @name_surfix.update_attributes(name_surfix_params)
       flash[:notice] = 'NameSurfixes was successfully updated.'
       redirect_to admin_name_surfixes_path
     else
@@ -37,7 +36,17 @@ class Admin::NameSurfixesController < ApplicationController
   end
 
   def destroy
-    NameSurfix.find(params[:id]).destroy
+    @name_surfix.destroy
     redirect_to admin_name_surfixes_path
+  end
+
+  protected
+
+  def name_surfix_params
+    params.require(:name_surfix).permit(:surfix)
+  end
+
+  def set_name_surfix
+    @name_surfix = NameSurfix.find(params[:id])
   end
 end

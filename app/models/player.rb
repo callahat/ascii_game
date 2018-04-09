@@ -15,7 +15,7 @@ class Player < ActiveRecord::Base
   has_one :forum_user_attribute, :foreign_key => 'user_id'
   alias :forum_attribute :forum_user_attribute
 
-  attr_accessible :handle,:passwd,:city,:state,:country,:email,:AIM,:yahoo_sn,:bio
+  #attr_accessible :handle,:passwd,:city,:state,:country,:email,:AIM,:yahoo_sn,:bio
 
   # Authenticate a player. 
   # /borrrowed code

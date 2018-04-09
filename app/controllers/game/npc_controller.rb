@@ -53,8 +53,8 @@ class Game::NpcController < ApplicationController
  
   def train
     redirect_to npc_game_npc_path and return unless (@max_skill = @npc.npc_merchant_detail.max_skill_taught) > 0
-    @atrib = Stat.new(params[:atrib])
-    
+    @atrib = Stat.new(train_atrib_params)
+
     @cost_per_pt = (@pc.level * 10 * (1 + @npc.kingdom.tax_rate / 100.0)).to_i
   end
   
@@ -108,5 +108,13 @@ protected
   def spread_contact_disease
     Illness.spread(@pc, @npc, SpecialCode.get_code('trans_method','contact'))
     Illness.spread(@npc, @pc, SpecialCode.get_code('trans_method','contact'))
+  end
+
+  def train_atrib_params
+    if params[:atrib]
+      params.require(:atrib).permit(:str, :dex, :con, :int, :mag, :dfn, :dam)
+    else
+      {}
+    end
   end
 end

@@ -27,6 +27,11 @@
       <td><%= f.text_field :gold %></td>
     </tr>
 
+    <tr>
+      <td><%= f.label :image_id, "Choose Image, or create a new one" %></td>
+      <td><%= f.collection_select :image_id, @images, :id, :name, {include_blank: ''}  %></td>
+    </tr>
+
   <%= f.fields_for(:image) do |image_form| %>
     <tr><td colspan="2">
       <%= image_form.label :image_text %>

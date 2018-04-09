@@ -60,7 +60,7 @@
 
   <!-- TODO: Add merchant stuff here -->
   <% if @npc.kind == 'NpcMerchant' && !@npc.new_record? -%>
-    <%= f.fields_for(:npc_merchant_detail_attributes) do |merch_form| %>
+    <%= f.fields_for(:npc_merchant_detail) do |merch_form| %>
       <table>
         <tr>
           <td><%= merch_form.label :healing_sales %></td>
@@ -75,8 +75,8 @@
           <td><%= merch_form.text_field :trainer_sales %></td>
         </tr>
         <tr>
-          <td><%= merch_form.label :cosignor %></td>
-          <td><%= merch_form.check_box :cosignor %></td>
+          <td><%= merch_form.label :consignor %></td>
+          <td><%= merch_form.check_box :consignor %></td>
         </tr>
         <tr>
           <td><%= merch_form.label :race_body_type %></td>

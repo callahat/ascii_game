@@ -3,5 +3,5 @@ class QuestReq < ActiveRecord::Base
 
   belongs_to :quest
 
-  attr_accessible :quantity, :detail
+  #attr_accessible :quantity, :detail
 end

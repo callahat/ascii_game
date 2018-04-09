@@ -37,7 +37,7 @@ class Kingdom < ActiveRecord::Base
   has_many :active_quests, ->{ where(quest_status: SpecialCode.get_code('quest_status','active')).order(:quest_status, :name) }, :class_name => 'Quest'
   has_many :quest_kill_n_npcs
   has_many :kingdom_empty_shops
-  has_many :kingdom_notices, ->{ order("datetime DESC") }
+  has_many :kingdom_notices
   
   has_many :pref_list_creatures, ->{ joins(:creature).order('creatures.public,creatures.name') }
   has_many :pref_list_events, ->{ joins(:event).order('events.name') }

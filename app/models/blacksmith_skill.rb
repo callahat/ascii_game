@@ -3,7 +3,7 @@ class BlacksmithSkill < ActiveRecord::Base
 
   validates_presence_of :min_sales,:min_mod,:max_mod,:base_item_id
 
-  attr_accessible :base_item_id, :min_sales, :min_mod, :max_mod
+  #attr_accessible :base_item_id, :min_sales, :min_mod, :max_mod
 
   def self.find_base_items(sales, last_min_sales, rbt=nil)
     @cond_array = ['min_sales <= ? and min_sales > ?', sales, last_min_sales]

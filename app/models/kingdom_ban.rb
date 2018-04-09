@@ -4,7 +4,7 @@ class KingdomBan < ActiveRecord::Base
   
   validates_presence_of :kingdom_id,:name
 
-  attr_accessible :kingdom_id, :name
+  #attr_accessible :kingdom_id, :name
   
   class PlayerExistsValidator < ActiveModel::EachValidator
     def validate_each(record, attribute, value)

@@ -18,7 +18,7 @@
 
   <div class="field">
     <%= f.label :disease_id %><br/>
-    <%= f.collection_select(:disease_id, @diseases, 'id', 'name', {:include_blank => 'true'} ) %>
+    <%= f.collection_select(:disease_id, @diseases, 'id', 'name', {include_blank: true} ) %>
   </div>
 
   <div class="field">

@@ -1,6 +1,7 @@
 class Admin::BlacksmithSkillsController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
+  before_filter :set_blacksmith_skill, only: [:show,:edit,:update,:destroy]
   
   layout 'admin'
 
@@ -9,7 +10,6 @@ class Admin::BlacksmithSkillsController < ApplicationController
   end
 
   def show
-    @blacksmith_skill = BlacksmithSkill.find(params[:id])
   end
 
   def new
@@ -17,7 +17,7 @@ class Admin::BlacksmithSkillsController < ApplicationController
   end
 
   def create
-    @blacksmith_skill = BlacksmithSkill.new(params[:blacksmith_skill])
+    @blacksmith_skill = BlacksmithSkill.new(blacksmith_skill_params)
     if @blacksmith_skill.save
       flash[:notice] = 'Blacksmith Skill was successfully created.'
       redirect_to admin_blacksmith_skill_path(@blacksmith_skill)
@@ -27,12 +27,10 @@ class Admin::BlacksmithSkillsController < ApplicationController
   end
 
   def edit
-    @blacksmith_skill = BlacksmithSkill.find(params[:id])
   end
 
   def update
-    @blacksmith_skill = BlacksmithSkill.find(params[:id])
-    if @blacksmith_skill.update_attributes(params[:blacksmith_skill])
+    if @blacksmith_skill.update_attributes(blacksmith_skill_params)
       flash[:notice] = 'Blacksmith Skill was successfully updated.'
       redirect_to admin_blacksmith_skill_path(@blacksmith_skill)
     else
@@ -43,5 +41,15 @@ class Admin::BlacksmithSkillsController < ApplicationController
   def destroy
     BlacksmithSkill.find(params[:id]).destroy
     redirect_to admin_blacksmith_skills_path
+  end
+
+  protected
+
+  def blacksmith_skill_params
+    params.require(:blacksmith_skill).permit(:base_item_id, :min_sales, :min_mod, :max_mod)
+  end
+
+  def set_blacksmith_skill
+    @blacksmith_skill = BlacksmithSkill.find(params[:id])
   end
 end

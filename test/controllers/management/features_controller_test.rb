@@ -33,7 +33,7 @@ class Management::FeaturesControllerTest < ActionController::TestCase
 		get 'new', {}, session.to_hash
 		assert_response :success
 		
-		post 'create', {:feature => {}, :image => {:image_text => ""}}, session.to_hash
+		post 'create', {:feature => {name: 'feature name'}, :image => {:image_text => ""}}, session.to_hash
 		assert_response :success
 		assert_template 'new'
 		

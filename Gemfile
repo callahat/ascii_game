@@ -4,7 +4,7 @@ gem 'rake'
 
 gem 'rails', '4.2.10'
 gem 'activerecord-session_store'
-gem 'protected_attributes'
+# gem 'protected_attributes'
 
 gem 'mysql2'
 

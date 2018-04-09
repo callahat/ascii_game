@@ -1,5 +1,5 @@
 class Name < ActiveRecord::Base
-  attr_accessible :name
+  #attr_accessible :name
 
   def self.gen_name
     @parts = rand(6) + 2

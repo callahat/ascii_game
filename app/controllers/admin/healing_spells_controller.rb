@@ -1,6 +1,7 @@
 class Admin::HealingSpellsController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
+  before_filter :set_healing_spell, only: [:show,:edit,:update,:destroy]
 
   layout 'admin'
 
@@ -9,7 +10,6 @@ class Admin::HealingSpellsController < ApplicationController
   end
 
   def show
-    @healing_spell = HealingSpell.find(params[:id])
   end
 
   def new
@@ -17,7 +17,7 @@ class Admin::HealingSpellsController < ApplicationController
   end
 
   def create
-    @healing_spell = HealingSpell.new(params[:healing_spell])
+    @healing_spell = HealingSpell.new(healing_spell_params)
     if @healing_spell.save
       flash[:notice] = 'Healing Spell was successfully created.'
       redirect_to admin_healing_spell_path(@healing_spell)
@@ -27,12 +27,10 @@ class Admin::HealingSpellsController < ApplicationController
   end
 
   def edit
-    @healing_spell = HealingSpell.find(params[:id])
   end
 
   def update
-    @healing_spell = HealingSpell.find(params[:id])
-    if @healing_spell.update_attributes(params[:healing_spell])
+    if @healing_spell.update_attributes(healing_spell_params)
       flash[:notice] = 'Healing Spell was successfully updated.'
       redirect_to admin_healing_spell_path(@healing_spell)
     else
@@ -41,7 +39,18 @@ class Admin::HealingSpellsController < ApplicationController
   end
 
   def destroy
-    HealingSpell.find(params[:id]).destroy
+    @healing_spell.destroy
     redirect_to admin_healing_spells_path
+  end
+
+  protected
+
+  def healing_spell_params
+    params.require(:healing_spell).permit(
+        :name,:description,:min_level,:min_heal,:max_heal,:disease_id,:mp_cost,:cast_on_others)
+  end
+
+  def set_healing_spell
+    @healing_spell = HealingSpell.find(params[:id])
   end
 end

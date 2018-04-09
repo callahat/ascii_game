@@ -71,8 +71,6 @@ GEM
     mysql2 (0.4.10)
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
-    protected_attributes (1.1.3)
-      activemodel (>= 4.0.1, < 5.0)
     rack (1.6.9)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -135,7 +133,6 @@ DEPENDENCIES
   dynamic_form
   figaro
   mysql2
-  protected_attributes
   rails (= 4.2.10)
   rake
   recaptcha

@@ -1,6 +1,7 @@
 class Admin::WorldsController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
+  before_filter :set_world, only: [:show,:edit,:update]
   
   layout 'admin'
 
@@ -9,7 +10,6 @@ class Admin::WorldsController < ApplicationController
   end
 
   def show
-    @world = World.find(params[:id])
   end
 
   def new
@@ -17,7 +17,7 @@ class Admin::WorldsController < ApplicationController
   end
 
   def create
-    @world = World.new(params[:world])
+    @world = World.new(world_params)
     if @world.save
       flash[:notice] = 'World was successfully created.'
       redirect_to [:admin,@world]
@@ -27,12 +27,10 @@ class Admin::WorldsController < ApplicationController
   end
 
   def edit
-    @world = World.find(params[:id])
   end
 
   def update
-    @world = World.find(params[:id])
-    if @world.update_attributes(params[:world])
+    if @world.update_attributes(world_params)
       flash[:notice] = 'World was successfully updated.'
       redirect_to [:admin,@world]
     else
@@ -44,4 +42,14 @@ class Admin::WorldsController < ApplicationController
   #  World.find(params[:id]).destroy
   #  redirect_to :action => 'list'
   # end
+
+  protected
+
+  def world_params
+    params.require(:world).permit(:name,:minbigx,:minbigy,:maxbigx,:maxbigy,:maxx,:maxy,:text)
+  end
+
+  def set_world
+    @world = World.find(params[:id])
+  end
 end

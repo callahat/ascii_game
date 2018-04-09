@@ -1,6 +1,7 @@
 class Admin::DiseasesController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
+  before_filter :set_disease, only: [:show,:edit,:update,:destroy]
   
   layout 'admin'
 
@@ -9,7 +10,6 @@ class Admin::DiseasesController < ApplicationController
   end
 
   def show
-    @disease = Disease.find(params[:id])
   end
 
   def new
@@ -18,7 +18,7 @@ class Admin::DiseasesController < ApplicationController
   end
 
   def create
-    @disease = Disease.new(params[:disease])
+    @disease = Disease.new(disease_params)
     if @disease.save
       flash[:notice] = 'Disease was successfully created.'
       redirect_to admin_disease_path(@disease)
@@ -28,12 +28,10 @@ class Admin::DiseasesController < ApplicationController
   end
 
   def edit
-    @disease = Disease.find(params[:id])
   end
 
   def update
-    @disease = Disease.find(params[:id])
-    if @disease.update_attributes(params[:disease])
+    if @disease.update_attributes(disease_params)
       flash[:notice] = 'Disease was successfully updated.'
       redirect_to admin_disease_path(@disease)
     else
@@ -42,7 +40,26 @@ class Admin::DiseasesController < ApplicationController
   end
 
   def destroy
-    Disease.find(params[:id]).destroy
+    @disease.destroy
     redirect_to admin_diseases_path
+  end
+
+  protected
+
+  def disease_params
+    params.require(:disease).permit(
+        :name,
+        :description,
+        :virility,
+        :trans_method,
+        :HP_per_turn,
+        :MP_per_turn,
+        :peasant_fatality,
+        :min_peasants,
+        stat_attributes: [:str, :dex, :con, :int, :mag, :dfn, :dam])
+  end
+
+  def set_disease
+    @disease = Disease.find(params[:id])
   end
 end
