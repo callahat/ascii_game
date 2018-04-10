@@ -1,15 +1,10 @@
 class NpcMerchant < Npc
-#  include TxWrapper
-#  include MiscMath
-  
   has_many :npc_blacksmith_items, foreign_key: :npc_id, dependent: :destroy
   has_many :npc_stocks, foreign_key: :owner_id, class_name: 'NpcStock', dependent: :destroy
   
   has_one :npc_merchant_detail, :foreign_key => 'npc_id', dependent: :destroy
 
   accepts_nested_attributes_for :npc_merchant_detail
-
-  #attr_accessible :npc_merchant_detail_attributes
 
   def self.generate(kingdom_id)
     @new_image = Image.deep_copy(Image.find_by(name: 'DEFAULT NPC'))

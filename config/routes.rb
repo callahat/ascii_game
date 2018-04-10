@@ -22,7 +22,7 @@ Rails.application.routes.draw do
     collection do
       get  'new'
       post 'namenew'
-      post 'create', action: :create
+      post 'create', action: :create, as: :create
       get  'choose_character'
       post 'do_chose/:id', action: :do_choose
       get  'menu'
@@ -193,7 +193,7 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
-    root action: :show
+    root controller: :attack_spells, action: :index
 
     resources :attack_spells
     resources :base_items

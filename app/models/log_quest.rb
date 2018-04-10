@@ -1,6 +1,4 @@
 class LogQuest < ActiveRecord::Base
-#  include TxWrapper
-
   belongs_to :player_character
   belongs_to :quest
   

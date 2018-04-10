@@ -39,7 +39,7 @@ class PlayerCharacter < ActiveRecord::Base
   has_one :current_event
   has_one :battle, :foreign_key => 'owner_id'
   
-  validates_presence_of :name, :race, :c_class, :player_id, :c_class_id, :race_id, :char_stat
+  validates_presence_of :name, :race_id, :c_class_id, :player_id, :char_stat
   validates_length_of :name, :in => 1..32
   validates_uniqueness_of :name
 
@@ -48,6 +48,8 @@ class PlayerCharacter < ActiveRecord::Base
   scope :dead,        ->{ where(char_stat: SpecialCode.get_code("char_stat","final death")) }
   scope :deleted,     ->{ where(char_stat: SpecialCode.get_code("char_stat","deleted")) }
   scope :not_deleted, ->{ where.not(char_stat: SpecialCode.get_code("char_stat","deleted")) }
+
+  accepts_nested_attributes_for :image
 
   def gain_level(freedist)
     return -1, "Not enough experience to gain level." if self.experience < self.next_level_at
@@ -108,6 +110,7 @@ class PlayerCharacter < ActiveRecord::Base
   
 protected
   after_create :setup_stats_and_health
+  after_create :setup_equip_locs
   
   def setup_stats_and_health
     @composite = self.c_class.level_zero
@@ -128,6 +131,13 @@ protected
     c = self.c_class.dup
     
     self.next_level_at = self.exp_for_level(1)
-    self.save
+    self.save!
+  end
+
+  def setup_equip_locs
+    self.player_character_equip_locs = race.race_equip_locs.map do |loc|
+      PlayerCharacterEquipLoc.new( {equip_loc: loc.equip_loc})
+    end
+    self.save!
   end
 end

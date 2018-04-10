@@ -8,9 +8,6 @@ class CharacterController < ApplicationController
 
   layout 'main'
 
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :do_destroy, :do_retire, :do_unretire, :do_choose, :do_image_update, :updateimage, :create ],         :redirect_to => { :action => :menu }
-
   # TODO: Clean this controller up, use nested models
 
   def index
@@ -53,35 +50,23 @@ class CharacterController < ApplicationController
   end
 
   def do_image_update
-    @image = Image.find(@player.player_characters.find(params[:id]).image_id)
+    @image = @player.player_characters.find(params[:id]).image
   end
 
   def updateimage
-    @player_character = @player.player_characters.find(params[:id])
-    @image = Image.find(@player_character.image_id.to_i)
+    @image = @player.player_characters.find(params[:id]).image
+
     if @image.id == 0
-      @image = Image.new
-      @image.player_id = @player.id
-      @image.image_text = params[:image][:image_text]
-      @image.public = 'false'
-      @image.image_type = SpecialCode.get_code('image_type','character')
-      @image.name = @player_character.name + ' character image'
-      if @image.save
-        flash[:notice] = 'Created character image.'
-        redirect_to :action => 'menu'
-      else
-        flash[:notice] = 'Failed to create character image.'
-        redirect_to :action => 'edit_character'  
-      end
+      raise 'Should not have gotten here! PlayerCharacter image has ID zero!'
+    end
+
+    @image.image_text = params[:image][:image_text]
+    if @image.save
+      flash[:notice] = 'Updated character image.'
+      redirect_to :action => 'menu'
     else
-      @image.image_text = params[:image][:image_text]
-      if @image.save
-        flash[:notice] = 'Updated character image.'
-        redirect_to :action => 'menu'
-      else
-        flash[:notice] = 'Failed to update character image.'
-        redirect_to :action => 'edit_character'
-      end
+      flash[:notice] = 'Failed to update character image.'
+      redirect_to :action => 'edit_character'
     end
   end
 
@@ -108,6 +93,7 @@ class CharacterController < ApplicationController
 
       @ori_image = @race.image
       @image = Image.deep_copy(@ori_image)
+      @player_character.image = @image
     end
   end
 
@@ -119,92 +105,42 @@ class CharacterController < ApplicationController
     end
   
     flash[:notice] = " "
-    #code to save off the new character image
-    #if no image, then player gets default, otherwise if player has default and there
-    #is an image in the param, then make the image. Otherwise, the player already has
-    #this image.
-    if params[:image][:image_text].nil? && session[:nplayer_character][:image_id].nil?
-      session[:nplayer_character][:image_id] = 0
-    elsif params[:image][:image_text] != ""
-      if session[:nplayer_character][:image_id].to_i == 0
-        @image = Image.new
-        @image.player_id = @player.id
-        @image.public = 'false'
-        @image.kingdom_id = params[:kingdom][:id].to_i
-        @image.image_type = SpecialCode.get_code('image_type','character')
-        @image.image_text = params[:image][:image_text]
-        @image.name = @player.handle + '\'s character image'
-      
-        if @image.save
-          flash[:notice] += @image.name + ' was successfully created.<br/>'
-          session[:nplayer_character][:image_id] = @image.id
-          #redirect_to :action => 'create'
-        else
-          namenew
-          flash[:notice] += 'Image was not sucessfully created.<br/>'
-          render :action => 'namenew'
-          return
-        end
-      else
-        @image = Image.find(session[:nplayer_character][:image_id])
-        @image.image_text = params[:image][:image_text]
-        if @image.save
-          flash[:notice] += @image.name + ' was successfully updated.<br/>'
-          session[:nplayer_character][:image_id] = @image.id
-          #redirect_to :action => 'create'
-        else
-          namenew
-          flash[:notice] += 'Image was not sucessfully updated.<br/>'
-          render :action => 'namenew'
-          return
-        end
-      end
+
+    if params[:player_character][:image_id].present?
+      params[:player_character][:image_attributes].merge!(
+          Image.find(params[:player_character][:image_id]).attributes.slice('image_text','picture'))
     end
-    #end of image handling
 
-    session[:nplayer_character][:name] = params[:player_character][:name]
-    session[:nplayer_character][:player_id] = @player.id
+    @player_character = PlayerCharacter.new(player_character_params)
+    @player_character.player_id = @player.id
 
-    @kingdom = Kingdom.find(params[:kingdom][:id])
-    session[:nplayer_character][:bigx] = @kingdom.bigx
-    session[:nplayer_character][:bigy] = @kingdom.bigy
-    session[:nplayer_character][:in_world] = @kingdom.world_id
-    session[:nplayer_character][:kingdom_id] = @kingdom.id
-    session[:nplayer_character][:turns] = 50
-    session[:nplayer_character][:gold] = 250
-    session[:nplayer_character][:next_level_at] = -1 #this should be overridden, but needed to save record
-    
+    @player_character.build_image unless @player_character.image
+    @player_character.image.name = "#{@player.handle}'s character image"
+    @player_character.image.player_id = @player.id
+    @player_character.image.kingdom_id = params[:player_character][:kingdom_id]
+    @player_character.image.image_type = SpecialCode.get_code('image_type','character')
+    @player_character.race_id = session[:nplayer_character][:race_id]
+    @player_character.c_class_id = session[:nplayer_character][:c_class_id]
+
+    @kingdom = @player_character.kingdom
+    @player_character.bigx = @kingdom.bigx
+    @player_character.bigy = @kingdom.bigy
+    @player_character.in_world = @kingdom.world_id
+    @player_character.kingdom_id = @kingdom.id
+    @player_character.turns = 50
+    @player_character.gold = 250
+    @player_character.next_level_at = -1 #this should be overridden, but needed to save record
+
     p session[:nplayer_character]
-    if (pc = PlayerCharacter.create(session[:nplayer_character].attributes)).errors.size == 0
+    if @player_character.save
       flash[:notice] += 'Player character created sucessfully<br/>'
+      #Clear the unneeded temporary variable
+      session[:nplayer_character] = nil
+      redirect_to menu_character_index_path
     else
-      namenew
-      session[:nplayer_character] = pc
+      @kingdoms = Kingdom.where(['id > -1'])
       render :action => 'namenew'
-      return
     end
-
-    #make the player character equip loc rows!
-    @equip_locs = RaceEquipLoc.where(race_id: pc[:race_id])
-    #but make sure they haven't already been populate!
-    @pc_equip_locs = PlayerCharacterEquipLoc.where(player_character_id: pc[:id])
-
-    if @pc_equip_locs.size >= @equip_locs.size
-      flash[:notice] += 'Equiplocs already created!<br/>'
-    else
-      for equip_loc in @equip_locs
-        loc = PlayerCharacterEquipLoc.new
-        loc[:player_character_id] = pc[:id]
-        loc[:equip_loc] = equip_loc[:equip_loc]
-        loc[:item_id] = nil
-        if !loc.save
-          flash[:notice] += loc[:equip_loc] + 'Failed in creation; <br/>'
-        end
-      end
-    end
-    #Clear the unneeded temporary variable
-    session[:nplayer_character] = nil
-    redirect_to menu_character_index_path
   end
 
 
@@ -356,5 +292,12 @@ protected
     end
     @c.log_quests.destroy_all
     @c.illnesses.destroy_all
+  end
+
+  def player_character_params
+    params.require(:player_character).permit(
+        :name,
+        :kingdom_id,
+        image_attributes: [:image_text,:picture])
   end
 end

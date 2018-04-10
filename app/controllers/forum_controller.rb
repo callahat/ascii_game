@@ -16,13 +16,9 @@ class ForumController < ApplicationController
   layout 'forum'
   
   def index
-  p "HIT INDEX"
     boards
     render :action => 'boards'
   end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],         :redirect_to => { :action => :index }
 
   def boards
     @more_conds = node_flags(session[:player])
@@ -34,7 +30,7 @@ class ForumController < ApplicationController
   end
 
   def create_board
-    @board = ForumNodeBoard.new(params[:board])
+    @board = ForumNodeBoard.new(board_params)
     @board.player_id = session[:player][:id]
     
     if @board.save
@@ -53,11 +49,7 @@ class ForumController < ApplicationController
   def update_board
     edit_board
   
-    #no editing the board name if mod_level too low, this also allows duplicate names
-    @board.name = params[:board][:name] if session[:player].forum_attribute.mod_level == 9
-    @board.text = params[:board][:text]
-    
-    if @board.save
+    if @board.update_attributes(update_board_params)
       flash[:notice] = "Description updated"
       redirect_back_or_default(forums_url())
     else
@@ -93,7 +85,7 @@ class ForumController < ApplicationController
   end
   
   def create_thred
-    @thred = @board.threads.new(params[:thred])
+    @thred = @board.threads.new(thred_params)
     @thred.player_id = session[:player][:id]
     
     if !@thred.save
@@ -111,11 +103,8 @@ class ForumController < ApplicationController
   def update_thred
     #no editing the thread name if mod_level too low
     edit_thred
-    
-    @thred.name = params[:thred][:name] if session[:player].forum_attribute.mod_level > 9
-    @thred.text = params[:thred][:text]
-    
-    if @thred.update_attributes(params[:thred])
+
+    if @thred.update_attributes(update_thred_params)
       flash[:notice] = "Description updated"
       redirect_back_or_default(boards_url())
     else
@@ -132,7 +121,7 @@ class ForumController < ApplicationController
   end
 
   def create_post
-    @post = @thred.posts.new(params[:post])
+    @post = @thred.posts.new(post_params)
     @post.player_id = session[:player][:id]
 
     if !@post.save
@@ -155,8 +144,8 @@ class ForumController < ApplicationController
     @post = ForumNodePost.find(params[:forum_node_id])
 
     if @post.update_post(session[:player][:handle],
-                         params[:post][:text],
-                         session[:player].forum_attribute.mod_level > 0 && params[:mods_only]  == "1")
+                         post_params[:text],
+                         session[:player].forum_attribute.mod_level > 0 && params[:post][:is_mods_only]  == "1")
        flash[:notice] = "Updated post!"
       redirect_back_or_default(boards_url(:bname => @board.name))
     else
@@ -179,7 +168,7 @@ class ForumController < ApplicationController
   end
   
   def hammer_strike
-    @forum_restriction = ForumRestriction.new(params[:forum_restriction])
+    @forum_restriction = ForumRestriction.new(restriction: params[:forum_restriction][:restriction])
     @player = Player.find(params[:player_id])
     @restrictions = SPEC_CODET['restrictions'].to_a
     @forum_restriction.player_id = @player.id
@@ -336,6 +325,54 @@ protected
       flash[:notice] = "You cannot do that; " + @player.handle + " has a higher mod level"
       redirect_to :action => 'view_thred'
       return false
+    end
+  end
+
+  def board_params
+    params.require(:board).permit(
+        *create_node_attributes(session[:player].forum_attribute.mod_level)
+    )
+  end
+
+  def update_board_params
+    params.require(:board).permit(
+        *update_node_attributes(session[:player].forum_attribute.mod_level)
+    )
+  end
+
+  def thred_params
+    params.require(:thred).permit(
+        *create_node_attributes(session[:player].forum_attribute.mod_level)
+    )
+  end
+
+  def update_thred_params
+    params.require(:thred).permit(
+        *update_node_attributes(session[:player].forum_attribute.mod_level)
+    )
+  end
+
+  def post_params
+    params.require(:post).permit(
+        *create_node_attributes(session[:player].forum_attribute.mod_level)
+    )
+  end
+
+  def create_node_attributes(mod_level)
+    if mod_level > 0
+      [:name, :text, :is_locked, :is_hidden, :is_deleted, :is_mods_only]
+    else
+      [:name, :text]
+    end
+  end
+
+  def update_node_attributes(mod_level)
+    if mod_level >= 9
+      [:name, :text, :is_locked, :is_hidden, :is_deleted, :is_mods_only]
+    elsif mod_level > 0
+      [:text, :is_locked, :is_hidden, :is_deleted, :is_mods_only]
+    else
+      [:name, :text]
     end
   end
 end

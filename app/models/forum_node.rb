@@ -10,8 +10,6 @@ class ForumNode < ActiveRecord::Base
 
   validates_uniqueness_of :name, :scope => [ :forum_node_id ], :allow_blank => true
   
-  #attr_accessible :name, :text
-  
   def time_of_last_posted_child
     if (@thred = last_posted_child) && @thred.childs.size > 0
       return @thred.childs.last.created_at.strftime("%m-%d-%Y %I:%M.%S %p")

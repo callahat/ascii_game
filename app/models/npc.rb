@@ -17,8 +17,6 @@ class Npc < ActiveRecord::Base
   accepts_nested_attributes_for :stat
   accepts_nested_attributes_for :image
 
-  #attr_accessible :name,:kingdom_id,:gold,:experience,:is_hired,:kind,:health_attributes,:stat_attributes,:image_attributes
-
   validates_presence_of :name
 
   def self.set_npc_stats(npc,iHP,istr,idex,icon,iint,idam,idfn,imag,idelta)

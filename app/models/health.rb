@@ -1,8 +1,6 @@
 class Health < ActiveRecord::Base
   self.inheritance_column = 'kind'
 
-  #attr_accessible :owner_id, :HP,:MP,:base_HP,:base_MP,:wellness
-  
   def self.symbols
     [:wellness, :HP, :MP, :base_HP, :base_MP]
   end

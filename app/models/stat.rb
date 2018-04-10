@@ -2,7 +2,6 @@ class Stat < ActiveRecord::Base
   self.inheritance_column = 'kind'
 
   validates_presence_of :str, :dex, :con, :int, :mag, :dfn, :dam
-  # #attr_accessible :owner_id, :str, :dex, :con, :int, :mag, :dfn, :dam
 
   @@humanize = {
     :str => "strength",

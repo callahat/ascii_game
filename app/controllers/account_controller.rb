@@ -1,15 +1,17 @@
 class AccountController < ApplicationController
   before_filter :authenticate, only: [:index,:show,:edit,:update]
   before_filter :is_admin, only: [:index]
+  before_filter :set_player, only: [:show,:edit,:update]
 
   layout 'main'
+
+  # TODO: split some of this stuff off into admin/accounts controller. This controller should really only show/edit the account of the individual signed in
 
   def index
     @players = Player.get_page(params[:page])
   end
 
   def show
-    @player = Player.find(params[:id])
   end
 
   def new
@@ -17,13 +19,13 @@ class AccountController < ApplicationController
   end
 
   def create
-    @player = Player.new(params[:player])
+    @player = Player.new(player_params)
 
     @player.account_status = SpecialCode.get_code('account_status','active')
-    @player.admin = false
+    # TODO: mod table and rename joined to created_at
     @player.joined = Time.now
 
-    if verify_recaptcha
+    if true || verify_recaptcha
       if @player.save
         flash[:notice] = 'Player was successfully created.'
         session[:player] = @player
@@ -37,28 +39,17 @@ class AccountController < ApplicationController
       end
     else
       # flash.delete(:recaptcha_error) # get rid of the recaptcha error being flashed by the gem.
-      # flash[:error] = 'reCAPTCHA is incorrect. Please try again.'
+      flash[:error] = 'reCAPTCHA is incorrect. Please try again.'
       render :action => 'new'
     end
   end
 
   def edit
-    @player = Player.find(params[:id])
-    unless session[:player].admin or verify_player_is_player
-      redirect_to menu_character_index_path
-      return
-    end
     @player.passwd = ""
   end
 
   def update
-    @player = Player.find(params[:id])
-    unless session[:player].admin or verify_player_is_player
-      redirect_to menu_character_index_path
-      return
-    end
-
-    if @player.update_attributes(params[:player])
+    if @player.update_attributes(player_params)
       flash[:notice] = 'Player was successfully updated.'
       redirect_to :action => 'show', :id => @player
     else
@@ -111,6 +102,18 @@ protected
       false
     else
       true
+    end
+  end
+
+  def player_params
+    params.require(:player).permit(:handle,:passwd,:city,:state,:country,:email,:bio)
+  end
+
+  def set_player
+    @player = Player.find(params[:id])
+    unless session[:player].admin or verify_player_is_player
+      redirect_to menu_character_index_path
+      return
     end
   end
 end

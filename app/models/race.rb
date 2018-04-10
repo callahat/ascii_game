@@ -12,8 +12,6 @@ class Race < ActiveRecord::Base
   accepts_nested_attributes_for :image
   accepts_nested_attributes_for :race_equip_locs, reject_if: lambda {|attrs| attrs[:equip_loc].blank? }
 
-  #attr_accessible :name, :description, :kingdom_id, :race_body_type, :freepts, :level_zero_attributes, :image_attributes, :race_equip_locs_attributes
-
   validates_uniqueness_of :name
   validates_presence_of :name,:race_body_type,:freepts,:level_zero,:image,:race_equip_locs
 

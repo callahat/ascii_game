@@ -8,8 +8,6 @@ class Level < ActiveRecord::Base
   validates_inclusion_of :maxx,:in => 1..5, :message => ' must be between 1 and 5.'
   validates_inclusion_of :maxy,:in => 1..5, :message => ' must be between 1 and 5.'
 
-  #attr_accessible :maxx, :maxy, :level
-
   #Pagination related stuff
   def self.get_page(page, kid = nil)
     where(kid ? ['kingdom_id = ?', kid] : []) \

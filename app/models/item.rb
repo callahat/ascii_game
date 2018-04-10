@@ -20,8 +20,6 @@ class Item < ActiveRecord::Base
 
   validates_presence_of :name,:min_level,:base_item_id,:equip_loc
 
-  #attr_accessible :name, :equip_loc, :description, :base_item_id, :min_level, :c_class_id, :race_id, :race_body_type, :price, :npc_id, :stat_attributes
-
   def used_price
     price / 2
   end

@@ -24,8 +24,6 @@ class Quest < ActiveRecord::Base
 
   validates :max_completeable, :numericality => { :greater_than => 0 }, :allow_nil => true
 
-  #attr_accessible :name, :description, :kingdom_id, :player_id, :max_level, :max_completeable, :quest_status, :gold, :item_id, :quest_id
-
  def validate
    if quest_id && quest.kingdom_id != kingdom_id
      errors.add("quest_id","invalid prerequisite quest.")
