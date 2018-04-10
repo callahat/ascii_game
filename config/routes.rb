@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   get       'register'          =>  'account#new'
   post      'register'          =>  'account#new'
 
-  resources :account, except: [:destroy]
+  resource  :account, controller: :account, except: [:new,:destroy]
 
   resources :character, only: [] do
     collection do
@@ -210,6 +210,7 @@ Rails.application.routes.draw do
     resources :name_titles, except: [:show]
     resources :names, except: [:show]
     resources :npcs
+    resources :players, except: [:destroy]
     resources :races
     resources :trainer_skills, except: [:show]
 

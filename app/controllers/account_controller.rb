@@ -5,12 +5,6 @@ class AccountController < ApplicationController
 
   layout 'main'
 
-  # TODO: split some of this stuff off into admin/accounts controller. This controller should really only show/edit the account of the individual signed in
-
-  def index
-    @players = Player.get_page(params[:page])
-  end
-
   def show
   end
 
@@ -110,10 +104,6 @@ protected
   end
 
   def set_player
-    @player = Player.find(params[:id])
-    unless session[:player].admin or verify_player_is_player
-      redirect_to menu_character_index_path
-      return
-    end
+    @player = Player.find(session[:player][:id])
   end
 end

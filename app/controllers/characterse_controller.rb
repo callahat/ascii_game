@@ -81,7 +81,7 @@ class CharacterseController < ApplicationController
       if update_equip_loc(@pc, @loc, @item, 1)
         flash[:notice] = @item.name + " equipped on " + SpecialCode.get_text('equip_loc',@loc.equip_loc)
       else
-        print "\nOH NOES FAILED TO UPDATE PLAYER EQUIP LOC/ PLAYER CHAR STATS!"
+        Rails.logger.warn "\nOH NOES FAILED TO UPDATE PLAYER EQUIP LOC/ PLAYER CHAR STATS!"
       end
     else
       flash[:notice] = "Something went wrong when trying to unequip"
@@ -108,7 +108,7 @@ protected
           flash[:notice] = @item.name + " unequipped from " + SpecialCode.get_text('equip_loc',@loc.equip_loc)
           return true
         else
-          print "\nOH NOES FAILED TO UPDATE PLAYER EQUIP LOC/ PLAYER CHAR STATS!"
+          Rails.logger.warn "\nOH NOES FAILED TO UPDATE PLAYER EQUIP LOC/ PLAYER CHAR STATS!"
         end
       else
         flash[:notice] = "Something went wrong when trying to unequip"

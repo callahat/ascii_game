@@ -36,7 +36,7 @@ class Player < ActiveRecord::Base
   #Pagination related stuff
   def self.get_page(page)
     order('handle') \
-      .paginate(:per_page => 10, :page => page)
+      .paginate(:per_page => 25, :page => page)
   end
   
 protected
