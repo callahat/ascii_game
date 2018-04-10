@@ -4,7 +4,7 @@
 <p><b>country: </b><%= @player.country %></p>
 <p><b>email: </b><%= @player.email %></p>
 <p><b>bio: </b><%= @player.bio %></p>
-<p><b>joined: </b><%= @player.joined %></p>
+<p><b>joined: </b><%= @player.created_at %></p>
 
 
 <%= link_to 'Edit', edit_admin_player_path(@player) %> |

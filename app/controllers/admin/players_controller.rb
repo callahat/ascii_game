@@ -20,8 +20,6 @@ class Admin::PlayersController < ApplicationController
     @player = Player.new(player_params)
 
     @player.account_status = SpecialCode.get_code('account_status','active')
-    # TODO: mod table and rename joined to created_at
-    @player.joined = Time.now
 
     if @player.save
       flash[:notice] = 'Player was successfully created.'

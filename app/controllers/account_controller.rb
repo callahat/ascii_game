@@ -16,10 +16,8 @@ class AccountController < ApplicationController
     @player = Player.new(player_params)
 
     @player.account_status = SpecialCode.get_code('account_status','active')
-    # TODO: mod table and rename joined to created_at
-    @player.joined = Time.now
 
-    if true || verify_recaptcha
+    if verify_recaptcha
       if @player.save
         flash[:notice] = 'Player was successfully created.'
         session[:player] = @player

@@ -33,7 +33,7 @@ No Posts
     <%= raw "<tr><td>Mod Level #{post.player.forum_attribute.mod_level}</td></tr>" if post.player.forum_attribute.mod_level > 0 %>
     <tr><td><%= post.player.forum_attribute.posts %> posts</td></tr>
     <tr><td>Member since:</td></tr>
-    <tr><td><%= post.player.joined.strftime("%m-%d-%Y") %></td></tr>
+    <tr><td><%= post.player.created_at.strftime("%m-%d-%Y") %></td></tr>
     <% if @user_mod_level > post.player.forum_attribute.mod_level %>
     <tr><td><%= link_to 'Punish', :action => 'banhammer', :player_id => post.player_id %></td></tr>
     <tr><td><%= link_to 'Promote', :action => 'promote_mod', :player_id => post.player_id %></td></tr>
