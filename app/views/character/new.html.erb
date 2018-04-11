@@ -1,6 +1,5 @@
 <% ( session[:player] ? @what = {:action => 'namenew'} : @what = {:controller => 'account', :action => 'new'} ) %>
-<script type="text/javascript" src="/javascripts/jquery.js"></script>
-<script type="text/javascript" src="/javascripts/charnew.js"></script>
+<%= javascript_include_tag 'charnew' %>
 
 <%= form_tag @what do %>
 

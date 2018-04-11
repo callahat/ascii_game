@@ -1,7 +1,10 @@
-<script type="text/javascript" src="/javascripts/jquery.js"></script>
-<script type="text/javascript" src="/javascripts/raiselevel.js"></script>
+<%= javascript_include_tag 'charnew' %>
 
-<%= error_messages_for 'distributed_freepts', :header_message => @message, :message  => nil %>
+<% if @message %>
+  <div id="error_explanation">
+    <h2><%= @message %></h2>
+  </div>
+<% end %>
 
 <!--[form:distributed_freepts]-->
 <%= form_tag :action => 'gainlevel' do %>

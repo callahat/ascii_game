@@ -4,6 +4,7 @@ gem 'rake'
 
 gem 'rails', '4.2.10'
 gem 'activerecord-session_store'
+gem 'jquery-rails'
 
 gem 'mysql2'
 
@@ -11,7 +12,6 @@ gem 'recaptcha', require: "recaptcha/rails"
 
 gem 'will_paginate'
 #gem 'verification'
-gem 'dynamic_form'
 gem 'figaro'
 
 # Deploy with Capistrano

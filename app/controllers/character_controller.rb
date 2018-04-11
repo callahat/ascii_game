@@ -146,7 +146,7 @@ class CharacterController < ApplicationController
 
   def raise_level
     @base_stats = @pc.base_stat
-    @distributed_freepts = StatPc.new(params[:distributed_freepts])
+    @distributed_freepts = StatPc.new
     
     if @pc[:freepts] == 0
       gainlevel
@@ -155,7 +155,7 @@ class CharacterController < ApplicationController
 
   def gainlevel
     @base_stats = @pc.base_stat
-    @distributed_freepts = StatPc.new(params[:distributed_freepts])
+    @distributed_freepts = StatPc.new(gain_level_params)
     
     @goback, @message = @pc.gain_level(@distributed_freepts)
     if @goback == 0
@@ -299,5 +299,9 @@ protected
         :name,
         :kingdom_id,
         image_attributes: [:image_text,:picture])
+  end
+
+  def gain_level_params
+    params.require(:distributed_freepts).permit(:str, :dex, :con, :int, :mag, :dfn, :dam)
   end
 end

@@ -3,7 +3,7 @@ class Admin::PlayersController < ApplicationController
   before_filter :is_admin
   before_filter :set_player, only: [:show,:edit,:update]
 
-  layout 'main'
+  layout 'admin'
 
   def index
     @players = Player.get_page(params[:page])

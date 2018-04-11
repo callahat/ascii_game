@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   resources :character, only: [] do
     collection do
       get  'new'
+      get  'namenew'
       post 'namenew'
       post 'create', action: :create, as: :create
       get  'choose_character'

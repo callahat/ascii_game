@@ -52,7 +52,7 @@ module CharacterHelper
   end
   
   def hidden_input_help(what, who, val)
-    return '<input type="hidden" class=' + what + ' id="' + who.id.to_s + '" value="' + val + '"/>' + "\n"
+    '<input type="hidden" class="' + what + ' ' + who.id.to_s + '" value="' + val + '"/>' + "\n"
   end
   
   def freepoint_distributer(foo, bar)

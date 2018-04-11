@@ -1,8 +1,5 @@
 <h1>Editing player</h1>
 
-<%= form_tag account_path(@player), method: :patch do %>
-	<%= render :partial => 'form' %>
-	<%= submit_tag 'Edit' %>
-<% end %>
+<%= render 'form' %>
 
 <%= link_to 'Back', account_path %>

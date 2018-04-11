@@ -1,21 +1,47 @@
-<%= error_messages_for 'player' %>
+<%= form_for(@player, url: account_path) do |f| %>
+  <%= error_messages_for 'player' %>
 
-<!--[form:player]-->
-<ul class="form">
-	<li><label for="player_handle">Handle</label>
-		<%= text_field 'player', 'handle', {:disabled => !@player.new_record?} %></li>
-	<li><label for="player_passwd">Passwd</label>
-		<%= password_field 'player', 'passwd'  %></li>
-	<li><label for="player_city">City</label>
-		<%= text_field 'player', 'city'  %></li>
-	<li><label for="player_state">State</label>
-		<%= text_field 'player', 'state'  %></li>
-	<li><label for="player_country">Country</label>
-		<%= text_field 'player', 'country'  %></li>
-	<li><label for="player_email">Email</label>
-		<%= text_field 'player', 'email'  %></li>
-	<li><label for="player_bio">Bio</label>
-		<%= text_area 'player', 'bio'  %></li>
-</ul>
+  <%= hidden_field_tag 'race_id', params[:race_id] %>
+  <%= hidden_field_tag 'c_class_id', params[:c_class_id] %>
 
-<!--[eoform:player]-->
+  <!--[form:player]-->
+  <table>
+    <tr>
+      <td><%= f.label :handle %></td>
+      <td><%= f.text_field :handle, {disabled: !@player.new_record?} %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :passwd %></td>
+      <td><%= f.password_field :passwd %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :city %></td>
+      <td><%= f.text_field :city %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :state %></td>
+      <td><%= f.text_field :state %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :country %></td>
+      <td><%= f.text_field :country %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :email %></td>
+      <td><%= f.text_field :email %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :bio %></td>
+      <td><%= f.text_area :bio, style: "height:200px;width:200px" %></td>
+    </tr>
+  </table>
+  <!--[eoform:player]-->
+
+  <% if @player.new_record? %>
+  <p>
+    <%= recaptcha_tags %>
+  </p>
+  <% end %>
+
+  <%= submit_tag %>
+<% end %>
