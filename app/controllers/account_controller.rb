@@ -17,7 +17,7 @@ class AccountController < ApplicationController
 
     @player.account_status = SpecialCode.get_code('account_status','active')
 
-    if verify_recaptcha
+    if ['development','test'].include?(Rails.env) || verify_recaptcha
       if @player.save
         flash[:notice] = 'Player was successfully created.'
         session[:player] = @player

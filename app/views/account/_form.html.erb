@@ -37,7 +37,7 @@
   </table>
   <!--[eoform:player]-->
 
-  <% if @player.new_record? %>
+  <% if ['development','test'].exclude?(Rails.env) && @player.new_record? %>
   <p>
     <%= recaptcha_tags %>
   </p>
