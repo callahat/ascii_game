@@ -1,6 +1,18 @@
 #require 'digest/sha1'
 
 class Player < ActiveRecord::Base
+  include UserAuthentication
+
+  # Include default devise modules. Others available are:
+  # :lockable, :timeoutable and :omniauthable
+  devise :database_authenticatable,
+         :registerable,
+         :recoverable,
+         :rememberable,
+         :trackable,
+         :validatable,
+         :confirmable
+
   has_many :forum_node_boards
   has_many :creatures
   has_many :events
@@ -14,6 +26,13 @@ class Player < ActiveRecord::Base
   
   has_one :forum_user_attribute, :foreign_key => 'user_id'
   alias :forum_attribute :forum_user_attribute
+
+
+  validates :handle,
+            :presence => true,
+            :uniqueness => {
+                :case_sensitive => false
+            }
 
   # Authenticate a player.
   # /borrrowed code
@@ -75,8 +94,10 @@ protected
     return true #otherwise, if player does not have table editor access, this returns FALSE and prevents update
   end
 
-  validates_uniqueness_of :handle, :on => :create
-  validates_presence_of :handle,:passwd, :on => :create
+
+  # validates_uniqueness_of :handle, :on => :create
+  # validates_presence_of :handle,:passwd, :on => :create
+  # validates_presence_of :email
 
   after_create :make_forum_attribute
   

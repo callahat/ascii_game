@@ -5,7 +5,7 @@
 <%= form_tag :action => 'verify', :id => @player do %>
 	<ul class="form">
 		<li><label for="player_handle">Handle</label><%= text_field 'player', 'handle'  %></li>
-		<li><label for="player_passwd">Password</label><%= password_field 'player', 'passwd'  %></li>
+		<li><label for="player_password">Password</label><%= password_field 'player', 'password'  %></li>
 	</ul>
 	<ul class="form">
 		<li><%= submit_tag 'Login' %></li>

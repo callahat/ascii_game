@@ -13,6 +13,7 @@ gem 'recaptcha', require: "recaptcha/rails"
 gem 'will_paginate'
 #gem 'verification'
 gem 'figaro'
+gem 'devise'
 
 # Deploy with Capistrano
 # gem 'capistrano'

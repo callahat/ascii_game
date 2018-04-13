@@ -50,7 +50,7 @@ class Admin::PlayersController < ApplicationController
 
 protected
   def player_params
-    params.require(:player).permit(:handle,:passwd,:city,:state,:country,:email,:bio)
+    params.require(:player).permit(:handle,:password,:city,:state,:country,:email,:bio)
   end
 
   def set_player

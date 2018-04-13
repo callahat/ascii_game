@@ -19,7 +19,10 @@ class Admin::PlayersControllerTest < ActionController::TestCase
 
   test "should create player" do
     assert_difference('Player.count') do
-      post :create, player: @player.attributes.merge(handle: 'New Playa', passwd: 'Goof123')
+      post :create, player: @player.attributes.merge(
+                      handle: 'New Playa',
+                      password: 'Goof123456',
+                      email: 'system@example.com')
     end
 
     assert_redirected_to admin_player_path(assigns(:player))
@@ -37,7 +40,7 @@ class Admin::PlayersControllerTest < ActionController::TestCase
 
   test "should update player" do
     patch :update, id: @player, player: { bio: 'updated bio' }
-    assert_redirected_to admin_player_path(assigns(:player))
+    assert_redirected_to admin_player_path(assigns(:player)), assigns(:player).errors.full_messages
   end
 
   # test "should destroy player" do

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180410120132) do
+ActiveRecord::Schema.define(version: 20180413023630) do
 
   create_table "attack_spells", force: :cascade do |t|
     t.string   "name",         limit: 32,  default: "", null: false
@@ -717,25 +717,40 @@ ActiveRecord::Schema.define(version: 20180410120132) do
   add_index "player_characters", ["race_id"], name: "race_id", using: :btree
 
   create_table "players", force: :cascade do |t|
-    t.string   "handle",              limit: 32,    default: "",    null: false
-    t.string   "passwd",              limit: 256,   default: "",    null: false
-    t.string   "city",                limit: 32,    default: ""
-    t.string   "state",               limit: 2,     default: ""
-    t.string   "country",             limit: 32,    default: ""
-    t.string   "email",               limit: 64,    default: ""
-    t.string   "AIM",                 limit: 32,    default: ""
-    t.string   "yahoo_sn",            limit: 32,    default: ""
-    t.text     "bio",                 limit: 65535
-    t.integer  "account_status",      limit: 4,     default: 1,     null: false
-    t.boolean  "admin",                             default: false
-    t.boolean  "table_editor_access",               default: false
+    t.string   "handle",                 limit: 32,    default: "",    null: false
+    t.string   "passwd",                 limit: 256,   default: "",    null: false
+    t.string   "city",                   limit: 32,    default: ""
+    t.string   "state",                  limit: 2,     default: ""
+    t.string   "country",                limit: 32,    default: ""
+    t.string   "email",                  limit: 64,    default: ""
+    t.string   "AIM",                    limit: 32,    default: ""
+    t.string   "yahoo_sn",               limit: 32,    default: ""
+    t.text     "bio",                    limit: 65535
+    t.integer  "account_status",         limit: 4,     default: 1,     null: false
+    t.boolean  "admin",                                default: false
+    t.boolean  "table_editor_access",                  default: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "encrypted_password",     limit: 255,   default: "",    null: false
+    t.string   "reset_password_token",   limit: 255
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          limit: 4,     default: 0,     null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip",     limit: 255
+    t.string   "last_sign_in_ip",        limit: 255
+    t.string   "confirmation_token",     limit: 255
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string   "unconfirmed_email",      limit: 255
   end
 
   add_index "players", ["city"], name: "city", using: :btree
+  add_index "players", ["confirmation_token"], name: "index_players_on_confirmation_token", unique: true, using: :btree
   add_index "players", ["country"], name: "country", using: :btree
   add_index "players", ["handle"], name: "handle", using: :btree
+  add_index "players", ["reset_password_token"], name: "index_players_on_reset_password_token", unique: true, using: :btree
   add_index "players", ["state"], name: "state", using: :btree
 
   create_table "pref_lists", force: :cascade do |t|
