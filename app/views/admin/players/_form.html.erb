@@ -8,8 +8,12 @@
       <td><%= f.text_field :handle, {disabled: !@player.new_record?} %></td>
     </tr>
     <tr>
+      <td><%= f.label :email %></td>
+      <td><%= f.text_field :email %></td>
+    </tr>
+    <tr>
       <td><%= f.label :password %></td>
-      <td><%= f.password_field :password %></td>
+      <td><%= f.password_field :password, minlength: 8 %></td>
     </tr>
     <tr>
       <td><%= f.label :city %></td>
@@ -22,10 +26,6 @@
     <tr>
       <td><%= f.label :country %></td>
       <td><%= f.text_field :country %></td>
-    </tr>
-    <tr>
-      <td><%= f.label :email %></td>
-      <td><%= f.text_field :email %></td>
     </tr>
     <tr>
       <td><%= f.label :bio %></td>

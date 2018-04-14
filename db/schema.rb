@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180413023630) do
+ActiveRecord::Schema.define(version: 20180414140840) do
 
   create_table "attack_spells", force: :cascade do |t|
     t.string   "name",         limit: 32,  default: "", null: false

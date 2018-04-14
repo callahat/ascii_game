@@ -2,7 +2,7 @@
 <p>Note, in order to post you must have at least one character level 10 or higher</p>
 
 <p>
-<% if player_signed_in? && !curernt_player.forum_restrictions.exists?(:restriction => [SpecialCode.get_code('restrictions','no_threading'), SpecialCode.get_code('restrictions','no_threding')]) %>
+<% if player_signed_in? && !current_player.forum_restrictions.exists?(:restriction => [SpecialCode.get_code('restrictions','no_threading'), SpecialCode.get_code('restrictions','no_threding')]) %>
 <%= link_to 'New thred', :action => 'new_thred', :bname => @board.name %> |
 <% end %>
 <%= link_to 'Back', :action => 'boards' %>

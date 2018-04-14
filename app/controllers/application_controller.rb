@@ -139,4 +139,8 @@ protected
                                                         :country,
                                                         :bio]
   end
+
+  def after_sign_in_path_for(_user)
+    root_path
+  end
 end

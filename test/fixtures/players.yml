@@ -5,6 +5,7 @@ test_system_player:
   account_status: 1
   admin: 1
   table_editor_access: 1
+  confirmed_at: <%= Time.now %>
 test_player_one:
   handle: "Test Player One"
   passwd: <%= Digest::SHA1.hexdigest("45354bcd4--#{'GotMyPassword!'}--de4dbe3f") %>
@@ -12,21 +13,25 @@ test_player_one:
   admin: 0
   table_editor_access: 0
   email: legitperson@example.com
+  confirmed_at: <%= Time.now %>
 test_player_mod:
   handle: "Test Player Mod"
   account_status: 1
   admin: 0
   table_editor_access: 0
+  confirmed_at: <%= Time.now %>
 test_player_junior_mod:
   handle: "Test Player Junior Mod"
   account_status: 1
   admin: 0
   table_editor_access: 0
+  confirmed_at: <%= Time.now %>
 banned_player:
   handle: "Banned"
   account_status: 1
   admin: 0
   table_editor_access: 0
+  confirmed_at: <%= Time.now %>
 
 player_with_only_old_password:
   handle: OldPlayer
@@ -35,3 +40,4 @@ player_with_only_old_password:
   admin: 0
   table_editor_access: 0
   email: test@example.com
+  confirmed_at: <%= Time.now %>

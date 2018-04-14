@@ -3,49 +3,44 @@
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
   <%= devise_error_messages! %>
 
-  <div class="field">
-    <%= f.label :handle %><br />
-    <%= f.text_field :handle, autofocus: true %>
-  </div>
-
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password %>
-    <% if @minimum_password_length %>
-    <em>(<%= 8 || @minimum_password_length %> characters minimum)</em>
-    <% end %><br />
-    <%= f.password_field :password, autocomplete: "off", min_length: 8 %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "off" %>
-  </div>
-
-
-  <div class="field">
-    <%= f.label :city %><br />
-    <%= f.text_field :city %>
-  </div>
-
-  <div class="field">
-    <%= f.label :state %><br />
-    <%= f.text_field :state %>
-  </div>
-
-  <div class="field">
-    <%= f.label :country %><br />
-    <%= f.text_field :country %>
-  </div>
-
-  <div class="field">
-    <%= f.label :bio %><br />
-    <%= f.text_area :bio, style: "height:200px;width:200px" %>
-  </div>
+  <table>
+    <tr class="field">
+      <td><%= f.label :handle %></td>
+      <td><%= f.text_field :handle, autofocus: true %></td>
+    </tr>
+    <tr class="field">
+      <td><%= f.label :email %></td>
+      <td><%= f.email_field :email %></td>
+    </tr>
+    <tr class="field">
+      <td><%= f.label :password %>
+        <% if @minimum_password_length %>
+          <br/><em>(<%= 8 || @minimum_password_length %> characters minimum)</em>
+        <% end %>
+      </td>
+      <td><%= f.password_field :password, autocomplete: "off", minlength: 8 %></td>
+    </tr>
+    <tr class="field">
+      <td><%= f.label :password_confirmation %></td>
+      <td><%= f.password_field :password_confirmation, autocomplete: "off" %></td>
+    </tr>
+    <tr class="field">
+      <td><%= f.label :city %></td>
+      <td><%= f.text_field :city %></td>
+    </tr>
+    <tr class="field">
+      <td><%= f.label :state %></td>
+      <td><%= f.text_field :state %></td>
+    </tr>
+    <tr class="field">
+      <td><%= f.label :country %></td>
+      <td><%= f.text_field :country %></td>
+    </tr>
+    <tr class="field">
+      <td><%= f.label :bio %></td>
+      <td><%= f.text_area :bio, style: "height:200px;width:200px" %></td>
+    </tr>
+  </table>
 
   <div class="actions">
     <%= f.submit "Sign up" %>

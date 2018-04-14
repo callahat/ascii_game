@@ -1,10 +1,10 @@
 <p><b>handle: </b><%= @player.handle %></p>
+<p><b>email: </b><%= @player.email %></p>
 <p><b>city: </b><%= @player.city %></p>
 <p><b>state: </b><%= @player.state %></p>
 <p><b>country: </b><%= @player.country %></p>
-<p><b>email: </b><%= @player.email %></p>
 <p><b>bio: </b><%= @player.bio %></p>
 <p><b>joined: </b><%= @player.created_at %></p>
 
 <%= link_to 'Edit', edit_player_registration_path %> |
-<%= link_to 'Back', main_game_path %>
+<%= link_to 'Back', :back %>

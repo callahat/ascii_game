@@ -10,8 +10,8 @@ class Player < ActiveRecord::Base
          :recoverable,
          :rememberable,
          :trackable,
-         :validatable
-         # :confirmable
+         :validatable,
+         :confirmable
 
   has_many :forum_node_boards
   has_many :creatures
