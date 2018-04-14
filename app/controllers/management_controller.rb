@@ -17,8 +17,7 @@ class ManagementController < ApplicationController
       #code for regular menu to do things
       #Have the player pick a kingdom to manage, they mgith have multiple
       #Kingdoms depending on their characters in play
-      #@pcs = PlayerCharacter.find_all(:player_id => session[:player][:id])
-      @pcs = session[:player].player_characters
+      @pcs = current_player.player_characters
       @kingdoms = Array.new
 
       #get the kingdoms for the drop down menu
@@ -33,7 +32,7 @@ class ManagementController < ApplicationController
 
   def select_kingdom
     @kingdom = Kingdom.find(params[:king][:kingdom_id])
-    if session[:player].player_characters.find(@kingdom.player_character_id)
+    if current_player.player_characters.find(@kingdom.player_character_id)
       session[:kingdom] = @kingdom
     else
       flash[:notice] = 'You are not the king in the kingdom submitted!'

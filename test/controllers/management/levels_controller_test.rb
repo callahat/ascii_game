@@ -2,7 +2,7 @@ require 'test_helper'
 
 class Management::LevelsControllerTest < ActionController::TestCase
 	def setup
-		# session[:player] = Player.find_by_handle("Test Player One")
+		# sign_in Player.find_by_handle("Test Player One")
 		# session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
 		# session[:kingdom] = Kingdom.find_by_name("HealthyTestKingdom")
 		
@@ -11,27 +11,27 @@ class Management::LevelsControllerTest < ActionController::TestCase
 	end
 	
 	test "mgmt level controller index" do
-		# get 'index', {}, session.to_hash
+		# get 'index', {}
 		# assert_response :success
 		# assert_not_nil assigns(:features)
 	end
 	
 	test "mgmt level controller show" do
-		# get 'show', {:id => @f.id}, session.to_hash
+		# get 'show', {:id => @f.id}
 		# assert_response :success
 		# assert_not_nil assigns(:feature)
 	end
 	
 	test "mgmt level controller new and create" do
-		# get 'new', {}, session.to_hash
+		# get 'new', {}
 		# assert_response :success
 		
-		# post 'create', {:feature => {}, :image => {:image_text => ""}}, session.to_hash
+		# post 'create', {:feature => {}, :image => {:image_text => ""}}
 		# assert_response :success
 		# assert_template 'new'
 		
 		# assert_difference 'Feature.count', +1 do
-			# post 'create', { :feature => @f_hash, :image => @i_hash }, session.to_hash
+			# post 'create', { :feature => @f_hash, :image => @i_hash }
 			# assert_response :redirect
 			# assert_redirected_to :controller => 'management/features', :action => 'index'
 		# end

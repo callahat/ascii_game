@@ -29,7 +29,7 @@
 <p><label for="feature_public">Public</label><br/>
 <%= check_box 'feature','public' %></p>
 
-<% if session[:player].admin %>
+<% if current_player.admin %>
 <p><label for="feature_world_feature">World feature</label><br/>
 <%= check_box 'feature','world_feature' %></p>
 <% else %>

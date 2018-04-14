@@ -5,7 +5,7 @@
   <tr><td><b>player: </b></td><td><%=h @feature.player.handle %></td></tr>
   <tr><td><b>kingdom: </b></td><td><%=h @feature.kingdom.name %></td></tr>
   <tr><td><b>public: </b></td><td><%=h @feature.public %></td></tr>
-  <% if session[:player].admin %><tr><td><b>world feature: </b></td><td><%=h @feature.world_feature %></td></tr><% end %>
+  <% if current_player.admin %><tr><td><b>world feature: </b></td><td><%=h @feature.world_feature %></td></tr><% end %>
   <tr><td><b>cost: </b></td><td><%=h @feature.cost %></td></tr>
   <tr><td><b>num occupants: </b></td><td><%=h @feature.num_occupants %></td></tr>
   <tr><td><b>store front size: </b></td><td><%=h @feature.store_front_size %></td></tr>

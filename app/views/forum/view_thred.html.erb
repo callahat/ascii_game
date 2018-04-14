@@ -6,9 +6,9 @@
  </td><td>
  <% if (@thred.parent_forum_node(:is_locked) && @user_mod_level < 6) %>
  <b>This thread is locked</b>
- <% elsif session[:player].nil? %>
+ <% elsif not player_signed_in? %>
  <b>Must be signed in to post.</b>
- <% elsif (!ForumRestriction.no_posting(session[:player]) && session[:player].player_characters.find_by('level > 9').present? && @post.nil?) %>
+ <% elsif (!ForumRestriction.no_posting(current_player) && current_player.player_characters.find_by('level > 9').present? && @post.nil?) %>
  <table class="post_text"><tr><td>
  <%= form_tag :action => 'create_post', :bname => @board.name, :tname => @thred.name do %>
    <%= render :partial => 'post_form' %>
@@ -20,7 +20,7 @@
  </td></tr>
 </table>
 
-<% if session[:player] && ForumRestriction.no_viewing(session[:player]) %>
+<% if player_signed_in? && ForumRestriction.no_viewing(current_player) %>
 You are prohibited from viewing the posts.
 <% elsif @posts.size == 0 %>
 No Posts
@@ -41,7 +41,7 @@ No Posts
   </table>
 </td><td>
   <table width=385>
-    <% if @post && @post.id == post.id && @post.can_be_edited_by(session[:player]) %>
+    <% if @post && @post.id == post.id && @post.can_be_edited_by(current_player) %>
       <tr><td colspan=3>
       <%= form_tag :action => 'update_post', :forum_node_id => post.id, :bname => @board.name, :tname => @thred.name do %>
         <%= render :partial => 'post_form' %>
@@ -67,9 +67,9 @@ No Posts
       <tr class="edit_notices"><td colspan=3><%= raw post.edit_notices %></td></tr>
       <tr class="post_info"><td>posted <%= post.created_at.strftime("%m-%d-%Y %H:%M.%S %p") %></td>
       <td>
-        <%= link_to('-edit', :action => 'edit_post', :bname => @board.name, :tname => @thred.name, :forum_node_id => post.id) if post.can_be_edited_by(session[:player]) %></td>
+        <%= link_to('-edit', :action => 'edit_post', :bname => @board.name, :tname => @thred.name, :forum_node_id => post.id) if post.can_be_edited_by(current_player) %></td>
       <td>
-        <%= link_to('-delete', :action => 'delete_post', :bname => @board.name, :tname => @thred.name, :forum_node_id => post.id) if post.can_be_deleted_by(session[:player]) %></td>
+        <%= link_to('-delete', :action => 'delete_post', :bname => @board.name, :tname => @thred.name, :forum_node_id => post.id) if post.can_be_deleted_by(current_player) %></td>
       </tr>
     <% end %>
   </table>

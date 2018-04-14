@@ -24,7 +24,7 @@ module UserAuthentication
     end
 
     def convert_password_to_devise(password)
-      update!(password: password)
+      update(password: password)
     end
   end
 end

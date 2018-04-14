@@ -21,7 +21,7 @@ class ForumController < ApplicationController
   end
 
   def boards
-    @more_conds = node_flags(session[:player])
+    @more_conds = node_flags(current_player)
     @boards = ForumNodeBoard.get_page(params[:page], @more_conds)
   end
 
@@ -31,7 +31,7 @@ class ForumController < ApplicationController
 
   def create_board
     @board = ForumNodeBoard.new(board_params)
-    @board.player_id = session[:player][:id]
+    @board.player_id = current_player.id
     
     if @board.save
       flash[:notice] = "Board created"
@@ -59,12 +59,12 @@ class ForumController < ApplicationController
   end
   
   def threds
-    @more_conds = node_flags(session[:player])
+    @more_conds = node_flags(current_player)
     @threds = ForumNodeThread.get_page(params[:page], @more_conds, @board.id)
   end
   
   def view_thred
-    unless @thred.can_be_viewed_by(session[:player])
+    unless @thred.can_be_viewed_by(current_player)
       redirect_back_or_default(boards_url(:bname => @board.name))
       return
     end
@@ -73,9 +73,9 @@ class ForumController < ApplicationController
       @post = ForumNodePost.find( params[:forum_node_id] )
     end
     
-    @user_mod_level = (session[:player] ? session[:player].forum_attribute.mod_level : -1)
+    @user_mod_level = (player_signed_in? ? current_player.forum_attribute.mod_level : -1)
     
-    @more_conds = node_flags(session[:player])
+    @more_conds = node_flags(current_player)
     
     @posts = ForumNodePost.get_page(params[:page], @more_conds, @thred.id)
   end
@@ -86,7 +86,7 @@ class ForumController < ApplicationController
   
   def create_thred
     @thred = @board.threads.new(thred_params)
-    @thred.player_id = session[:player][:id]
+    @thred.player_id = current_player.id
     
     if !@thred.save
       render :action => 'new_thred'
@@ -122,7 +122,7 @@ class ForumController < ApplicationController
 
   def create_post
     @post = @thred.posts.new(post_params)
-    @post.player_id = session[:player][:id]
+    @post.player_id = current_player.id
 
     if !@post.save
       view_thred
@@ -143,9 +143,9 @@ class ForumController < ApplicationController
   def update_post
     @post = ForumNodePost.find(params[:forum_node_id])
 
-    if @post.update_post(session[:player][:handle],
+    if @post.update_post(current_player.handle,
                          post_params[:text],
-                         session[:player].forum_attribute.mod_level > 0 && params[:post][:is_mods_only]  == "1")
+                         current_player.forum_attribute.mod_level > 0 && params[:post][:is_mods_only]  == "1")
        flash[:notice] = "Updated post!"
       redirect_back_or_default(boards_url(:bname => @board.name))
     else
@@ -156,7 +156,7 @@ class ForumController < ApplicationController
   end
 
   def delete_post
-    flash[:notice] = ForumNodePost.find(params[:forum_node_id]).mark_deleted(session[:player])
+    flash[:notice] = ForumNodePost.find(params[:forum_node_id]).mark_deleted(current_player)
     redirect_back_or_default(boards_url(:bname => @board.name))
   end
 
@@ -172,7 +172,7 @@ class ForumController < ApplicationController
     @player = Player.find(params[:player_id])
     @restrictions = SPEC_CODET['restrictions'].to_a
     @forum_restriction.player_id = @player.id
-    @forum_restriction.given_by = session[:player][:id]
+    @forum_restriction.given_by = current_player.id
     if params[:forum_restriction][:expires].present?
       @forum_restriction.expires = Date.today + params[:forum_restriction][:expires].to_i
     end
@@ -189,7 +189,7 @@ class ForumController < ApplicationController
   def kill_ban
     @ban = ForumRestriction.find(params[:ban_id])
     (redirect_to(:back) && return) unless @ban
-    res, msg = @ban.kill_ban(session[:player])
+    res, msg = @ban.kill_ban(current_player)
     flash[:notice] = msg    
     params[:ban_id] = nil #make it safe for refreshes
     redirect_to :action => 'banhammer', :player_id => @ban.player_id
@@ -201,7 +201,7 @@ class ForumController < ApplicationController
   
   def do_promote
     @player = Player.find(params[:player_id])
-    if session[:player].forum_attribute.mod_level > params[:player][:mod_level].to_i && params[:player][:mod_level].to_i > -1
+    if current_player.forum_attribute.mod_level > params[:player][:mod_level].to_i && params[:player][:mod_level].to_i > -1
       Player.transaction do
         @player.forum_attribute.lock!
         @player.forum_attribute.mod_level = params[:player][:mod_level].to_i
@@ -210,7 +210,7 @@ class ForumController < ApplicationController
       end
       redirect_back_or_default(boards_url(:bname => @board.name))
     else
-      flash[:notice] = "mod level must be between 0 and " + (session[:player].forum_attribute.mod_level - 1).to_s
+      flash[:notice] = "mod level must be between 0 and " + (current_player.forum_attribute.mod_level - 1).to_s
       render :action => 'promote_mod'
     end
   end
@@ -282,7 +282,7 @@ protected
   end
 
   def filter_mod(level)
-    if session[:player].forum_attribute.mod_level > level
+    if current_player.forum_attribute.mod_level > level
       return true
     else
       begin
@@ -318,7 +318,7 @@ protected
     if @player.nil?
       redirect_to :action => 'view_thred'
       return false
-    elsif session[:player].forum_attribute.mod_level > @player.forum_attribute.mod_level+1
+    elsif current_player.forum_attribute.mod_level > @player.forum_attribute.mod_level+1
       return true
     else
       #do not allow promotion
@@ -330,31 +330,31 @@ protected
 
   def board_params
     params.require(:board).permit(
-        *create_node_attributes(session[:player].forum_attribute.mod_level)
+        *create_node_attributes(current_player.forum_attribute.mod_level)
     )
   end
 
   def update_board_params
     params.require(:board).permit(
-        *update_node_attributes(session[:player].forum_attribute.mod_level)
+        *update_node_attributes(current_player.forum_attribute.mod_level)
     )
   end
 
   def thred_params
     params.require(:thred).permit(
-        *create_node_attributes(session[:player].forum_attribute.mod_level)
+        *create_node_attributes(current_player.forum_attribute.mod_level)
     )
   end
 
   def update_thred_params
     params.require(:thred).permit(
-        *update_node_attributes(session[:player].forum_attribute.mod_level)
+        *update_node_attributes(current_player.forum_attribute.mod_level)
     )
   end
 
   def post_params
     params.require(:post).permit(
-        *create_node_attributes(session[:player].forum_attribute.mod_level)
+        *create_node_attributes(current_player.forum_attribute.mod_level)
     )
   end
 

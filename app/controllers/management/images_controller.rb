@@ -27,13 +27,13 @@ class Management::ImagesController < ApplicationController
   def new
     if params[:image]
       @image = accessible_images.new(image_params.merge(
-                                       player_id: session[:player][:id]))
+                                       player_id: current_player.id))
     else
       @image = accessible_images.new
     end
 
     @types = SPEC_CODET['image_type']
-    unless session[:player][:admin]
+    unless current_player.admin
       @types.delete('world')
       @types.delete('character')
     end
@@ -61,7 +61,7 @@ class Management::ImagesController < ApplicationController
     @image = accessible_images.find(params[:id])
     set_image_box_size
     @types = SPEC_CODET['image_type']
-    unless session[:player][:admin]
+    unless current_player.admin
       @types.delete('world')
       @types.delete('character')
     end
@@ -132,7 +132,7 @@ protected
   end
 
   def accessible_images
-    if session[:player][:admin]
+    if current_player.admin
       @accessible_images ||= session[:kingdom].images
     else
       @accessible_images ||= session[:kingdom].images.where.not(

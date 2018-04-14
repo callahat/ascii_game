@@ -38,7 +38,7 @@ class Management::QuestsController < ApplicationController
     @prereqs = @kingdom.quests.where(quest_status: SpecialCode.get_code('quest_status','active'))
     setup_reward_items
     
-    @quest.player_id = session[:player][:id]
+    @quest.player_id = current_player.id
     @quest.quest_status = SpecialCode.get_code('quest_status','design')
     
     if @quest.save

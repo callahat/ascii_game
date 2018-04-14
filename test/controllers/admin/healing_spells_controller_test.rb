@@ -3,7 +3,7 @@ require 'test_helper'
 class Admin::HealingSpellsControllerTest < ActionController::TestCase
   setup do
     @healing_spell = healing_spells(:heal_spell_one)
-    session[:player] = players(:test_system_player)
+    sign_in players(:test_system_player)
   end
 
   test "should get index" do

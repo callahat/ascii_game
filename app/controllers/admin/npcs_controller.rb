@@ -26,7 +26,7 @@ class Admin::NpcsController < ApplicationController
     @npc = Npc.new_of_kind(npc_params)
     @npc.image_id = nil
     @npc.image.name = @npc.name + ' Image'
-    @npc.image.player_id = session[:player].id
+    @npc.image.player_id = current_player.id
     @npc.image.kingdom_id = Kingdom.find_by(name: 'SystemGeneratd').id
     
     if @npc.save

@@ -20,7 +20,7 @@
 
 <br />
 <b>Player's characters</b>
-<% for character in session[:player].player_characters.all.order('char_stat') %>
+<% for character in current_player.player_characters.all.order('char_stat') %>
 <br />
 <% if character.char_stat == SpecialCode.get_code("char_stat","active") %>
 <%= h character.name %>

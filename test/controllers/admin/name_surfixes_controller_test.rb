@@ -3,7 +3,7 @@ require 'test_helper'
 class Admin::NameSurfixesControllerTest < ActionController::TestCase
   setup do
     @name_surfix = name_surfixes(:surfix_one)
-    session[:player] = players(:test_system_player)
+    sign_in players(:test_system_player)
   end
 
   test "should get index" do

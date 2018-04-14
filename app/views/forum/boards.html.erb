@@ -1,10 +1,10 @@
 <h1>Boards</h1>
 
-<% if session[:player] && session[:player].forum_attribute.mod_level == 9 %>
+<% if player_signed_in? && current_player.forum_attribute.mod_level == 9 %>
 <%= link_to 'Create new board', :action => 'new_board' %>
 <% end %>
 
-<% if session[:player] && ForumRestriction.no_viewing(session[:player]) %>
+<% if player_signed_in? && ForumRestriction.no_viewing(current_player) %>
 You are prohibited from viewing the boards.
 <% elsif @boards.size == 0 %>
 you don't see any boards
@@ -25,13 +25,13 @@ you don't see any boards
   <td class="board_info"><% if lp %><%=h lp.created_at %> in <%= link_to "#{lp.thread.name}", threds_url(:bname => board.name, :tname => lp.thread.name) %> by <%= lp.player.handle %><% end %></td>
 </tr>
 <tr>
-  <td class="board_info"><% if session[:player] && session[:player].forum_attribute.mod_level > 2 %>Mod Ops:<% elsif board.is_locked %>Board Locked<% end %></td>
+  <td class="board_info"><% if player_signed_in? && current_player.forum_attribute.mod_level > 2 %>Mod Ops:<% elsif board.is_locked %>Board Locked<% end %></td>
   <td colspan=3>
   <table>
     <tr>
     <td class="board_info" style="word-spacing:3em">
-    <%= link_to('-edit', forum_action_url(:action => 'edit_board', :forum_node_id => board.id)) if board.can_be_edited_by(session[:player] ) %>
-    <%= raw forum_node_statuses(session[:player], board) %></td>
+    <%= link_to('-edit', forum_action_url(:action => 'edit_board', :forum_node_id => board.id)) if board.can_be_edited_by(current_player) %>
+    <%= raw forum_node_statuses(current_player, board) %></td>
     </tr>
   </table>
   </td>

@@ -4,7 +4,7 @@
 <% for r in @player.forum_restrictions %>
 <%=h SpecialCode.get_text('restrictions',r.restriction) %> 
 <% if r.expires.nil? %>ever<% else %>until <%=h r.expires.strftime("%m-%d-%Y") %><% end %>, 
-punished by <%=h r.giver.handle %><% if r.given_by == session[:player][:id] %><%= link_to 'Remove ban', :action => 'kill_ban', :ban_id => r.id %><% end %><br/>
+punished by <%=h r.giver.handle %><% if r.given_by == current_player.id %><%= link_to 'Remove ban', :action => 'kill_ban', :ban_id => r.id %><% end %><br/>
 <% end %>
 
 <%= form_tag :action => 'hammer_strike', :player_id => @player.id do %>

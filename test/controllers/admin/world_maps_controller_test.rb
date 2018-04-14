@@ -4,7 +4,7 @@ class Admin::WorldMapsControllerTest < ActionController::TestCase
   setup do
     @world = worlds(:world_one)
     @bigxpos, @bigypos = 0, 0
-    session[:player] = players(:test_system_player)
+    sign_in players(:test_system_player)
     # kingdom_id -1 is hardcoded system placeholder kingdom
     kingdom = Kingdom.new name: 'Generated',
         player_character_id: players(:test_system_player).id,

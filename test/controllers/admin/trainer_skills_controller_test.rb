@@ -3,7 +3,7 @@ require 'test_helper'
 class Admin::TrainerSkillsControllerTest < ActionController::TestCase
   setup do
     @trainer_skill = trainer_skills(:trainer_skill_one)
-    session[:player] = players(:test_system_player)
+    sign_in players(:test_system_player)
   end
 
   test "should get index" do

@@ -7,7 +7,7 @@ class Management::CreaturesController < ApplicationController
   layout 'main'
 
   def index
-    @creatures = Creature.get_page(params[:page], session[:player][:id], session[:kingdom][:id])
+    @creatures = Creature.get_page(params[:page], current_player.id, session[:kingdom][:id])
   end
 
   def new
@@ -26,10 +26,10 @@ class Management::CreaturesController < ApplicationController
 
     @creature.build_image unless @creature.image
     @creature.image.name = @creature.name.to_s + ' image'
-    @creature.image.player_id = session[:player].id
+    @creature.image.player_id = current_player.id
     @creature.image.kingdom_id = session[:kingdom].id
 
-    @creature.player_id = session[:player].id
+    @creature.player_id = current_player.id
     @creature.kingdom_id = session[:kingdom].id
 
     if @creature.save
@@ -69,7 +69,7 @@ class Management::CreaturesController < ApplicationController
                                      cp[:image_attributes].merge!(
                                                               id: @creature.image_id,
                                                               name: "#{@creature.name} image",
-                                                              player_id: session[:player].id,
+                                                              player_id: current_player.id,
                                                               kingdom_id: session[:kingdom].id
                                      )})
       flash[:notice] = @creature.name + ' was successfully updated.'
@@ -130,7 +130,7 @@ protected
 
   def verify_creature_owner
     #if someone tries to edit a creature not belonging to them
-    if @creature.player_id != session[:player][:id] &&
+    if @creature.player_id != current_player.id &&
        @creature.kingdom_id != session[:kingdom][:id]
       flash[:notice] = 'An error occured while retrieving ' + @creature.name
       false

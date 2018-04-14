@@ -3,7 +3,7 @@ require 'test_helper'
 class Admin::CreaturesControllerTest < ActionController::TestCase
   setup do
     @creature = creatures(:unarmed_monster)
-    session[:player] = players(:test_system_player)
+    sign_in players(:test_system_player)
     @s_hash = {:dam => 10, :dex => 5, :dfn => 5, :con => 5, :int => 5, :mag => 10, :str => 30}
     @i_hash = {:image_text => "   -_o     ", :image_type => SpecialCode.get_code('image_type','creature') }
   end

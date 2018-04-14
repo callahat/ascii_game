@@ -6,7 +6,7 @@ class Management::PrefListController < ApplicationController
   layout 'main'
 
   def index
-    @stuff = session[:pref_list_type].eligible_list(session[:player][:id], session[:kingdom][:id])
+    @stuff = session[:pref_list_type].eligible_list(current_player.id, session[:kingdom][:id])
     @pref_list = session[:pref_list_type].current_list(session[:kingdom])
     session[:cur_pref_list_class] = @stuff.collect{|s| s.id}
 

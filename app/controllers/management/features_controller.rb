@@ -9,7 +9,7 @@ class Management::FeaturesController < ApplicationController
 
   def index
     #design features
-    @features = Feature.get_page(params[:page], session[:player][:id], session[:kingdom][:id])
+    @features = Feature.get_page(params[:page], current_player.id, session[:kingdom][:id])
   end
 
   def show
@@ -23,8 +23,8 @@ class Management::FeaturesController < ApplicationController
   end
   
   def create
-    @feature = Feature.new(feature_params.merge(player_id: session[:player][:id], kingdom_id: session[:kingdom][:id]))
-    @image = @feature.image || Image.new(image_params.merge(player_id: session[:player][:id], kingdom_id: session[:kingdom][:id]))
+    @feature = Feature.new(feature_params.merge(player_id: current_player.id, kingdom_id: session[:kingdom][:id]))
+    @image = @feature.image || Image.new(image_params.merge(player_id: current_player.id, kingdom_id: session[:kingdom][:id]))
 
     @feature.image_id = 0 unless @feature.image
     calc_feature_cost
@@ -218,7 +218,7 @@ class Management::FeaturesController < ApplicationController
 
 protected
   def good_event
-    if Event.where(armed: true, id: params[:feature_event][:event_id]).find_by(['kingdom_id = ? or player_id  = ?', session[:kingdom][:id], session[:player][:id]])
+    if Event.where(armed: true, id: params[:feature_event][:event_id]).find_by(['kingdom_id = ? or player_id  = ?', session[:kingdom][:id], current_player.id])
       return true
     else
       flash[:notice] = "You can't use that event"
@@ -278,7 +278,7 @@ protected
   
   def is_feature_owner
     #if someone tries to edit a feature not belonging to them
-    if @feature.player_id != session[:player][:id] && 
+    if @feature.player_id != current_player.id &&
        @feature.kingdom_id != session[:kingdom][:id]
       flash[:notice] = 'An error occured while retrieving ' + @feature.name
       false

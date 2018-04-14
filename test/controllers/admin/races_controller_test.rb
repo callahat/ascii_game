@@ -3,7 +3,7 @@ require 'test_helper'
 class Admin::RacesControllerTest < ActionController::TestCase
   setup do
     @race = races(:race_two)
-    session[:player] = players(:test_system_player)
+    sign_in players(:test_system_player)
   end
 
   test "should get index" do

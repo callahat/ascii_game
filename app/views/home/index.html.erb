@@ -22,11 +22,11 @@
   <% end %>
 <% else %>
 	<h1>Weclome!</h1>
-	<div style="float:left;"><img src="images/peasant.png" height=95px width=70px /></div>
+	<div style="float:left;"><%= image_tag "peasant.png", height: '95px', width: '70px' %></div>
 	<p>Asciigame.com is a free online mmorpg, consisting of quasi graphics composed of ascii characters.</p>
-	<p>You'll need to <%= link_to('signin', login_url()) + ' or ' + link_to('register', register_url()) %> to access the game or post to the forums.</p>
+	<p>You'll need to <%= link_to('signin', new_player_session_path) + ' or ' + link_to('register', new_player_registration_path) %> to access the game or post to the forums.</p>
 	<div style="float:right;clear:left;">
-		<img src="images/cap2.png" height=300px width=300 />
+		<%= image_tag "cap2.png", height: '300px', width: '300px' %>
 	</div><br/>
 	<%= render(:file => 'account/what') %>
 <% end %>

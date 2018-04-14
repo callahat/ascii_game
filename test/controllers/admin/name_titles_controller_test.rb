@@ -3,7 +3,7 @@ require 'test_helper'
 class Admin::NameTitlesControllerTest < ActionController::TestCase
   setup do
     @name_title = name_titles(:name_title_one)
-    session[:player] = players(:test_system_player)
+    sign_in players(:test_system_player)
   end
 
   test "should get index" do

@@ -2,13 +2,13 @@
 <p>Note, in order to post you must have at least one character level 10 or higher</p>
 
 <p>
-<% unless session[:player].nil? || session[:player].forum_restrictions.exists?(:restriction => [SpecialCode.get_code('restrictions','no_threading'), SpecialCode.get_code('restrictions','no_threding')]) %>
+<% if player_signed_in? && !curernt_player.forum_restrictions.exists?(:restriction => [SpecialCode.get_code('restrictions','no_threading'), SpecialCode.get_code('restrictions','no_threding')]) %>
 <%= link_to 'New thred', :action => 'new_thred', :bname => @board.name %> |
 <% end %>
 <%= link_to 'Back', :action => 'boards' %>
 </p>
 
-<% if session[:player] && ForumRestriction.no_viewing(session[:player]) %>
+<% if player_signed_in? && ForumRestriction.no_viewing(current_player) %>
 You are prohibited from viewing the threds.
 <% elsif @threds.size == 0 %>
 you don't see any threds
@@ -28,13 +28,13 @@ you don't see any threds
   <td class="board_info"><% if thred.last_post %><%= thred.last_post.created_at.strftime("%m-%d-%Y %I:%M.%S %p") %> by <%=h thred.last_post.player.handle %><% end %></td>
 </tr>
 <tr>
-  <td class="board_info"><% if session[:player] && session[:player].forum_attribute.mod_level > 2 %>Mod Ops:<% elsif thred.parent_forum_node(:is_locked) %>Thred Locked<% end %></td>
+  <td class="board_info"><% if player_signed_in? && current_player.forum_attribute.mod_level > 2 %>Mod Ops:<% elsif thred.parent_forum_node(:is_locked) %>Thred Locked<% end %></td>
   <td colspan=3>
   <table>
     <tr>
     <td class="board_info" style="word-spacing:1em">
-    <%= link_to('-edit', board_action_url(:action => 'edit_thred', :bname => @board.name, :forum_node_id => thred.id) ) if thred.can_be_edited_by(session[:player] ) %>
-    <%= raw forum_node_statuses(session[:player], thred, @board) %></td>
+    <%= link_to('-edit', board_action_url(:action => 'edit_thred', :bname => @board.name, :forum_node_id => thred.id) ) if thred.can_be_edited_by(current_player) %>
+    <%= raw forum_node_statuses(current_player, thred, @board) %></td>
     </tr>
     </table>
   </td>

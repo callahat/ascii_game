@@ -6,7 +6,7 @@ class Management::EventsController < ApplicationController
   layout 'main'
 
   def index
-    @events = Event.get_page(params[:page], session[:player][:id], session[:kingdom][:id])
+    @events = Event.get_page(params[:page], current_player.id, session[:kingdom][:id])
   end
 
   def show
@@ -15,7 +15,7 @@ class Management::EventsController < ApplicationController
 
   def new
     @event = params[:event].blank? ? Event.new : Event.new_of_kind(event_params)
-    @event_types = Event.get_event_types(session[:player].admin )
+    @event_types = Event.get_event_types(current_player.admin )
     @event_rep_types = SPEC_CODET['event_rep_type'].to_a
 
     pop_sub_event
@@ -24,7 +24,7 @@ class Management::EventsController < ApplicationController
   def create
     new
 
-    @event.player_id = session[:player][:id]
+    @event.player_id = current_player.id
     @event.kingdom_id = session[:kingdom][:id]
     if @event.kind == "EventCreature" || @event.kind == "EventStat"
       @event.flex = params[:flex]["0"].to_s + ";" + params[:flex]["1"].to_s
@@ -139,7 +139,7 @@ class Management::EventsController < ApplicationController
 protected
   def good_event_params
     if @event.class == EventCreature
-      if Creature.where(armed: true, id: params[:event][:thing_id]).find_by(['public = true or kingdom_id = ? or player_id  = ?', session[:kingdom][:id], session[:player][:id]])
+      if Creature.where(armed: true, id: params[:event][:thing_id]).find_by(['public = true or kingdom_id = ? or player_id  = ?', session[:kingdom][:id], current_player.id])
         return true
       else
         flash[:notice] = "You can't use that creature"
@@ -152,7 +152,7 @@ protected
 
   def is_event_owner
     #if someone tries to edit a creature not belonging to them
-    if @event.player_id != session[:player][:id] &&
+    if @event.player_id != current_player.id &&
        @event.kingdom_id != session[:kingdom][:id]
       flash[:notice] = 'An error occured while retrieving ' + @event.name
       false

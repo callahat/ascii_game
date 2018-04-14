@@ -2,7 +2,7 @@ require 'test_helper'
 
 class Management::ImagesControllerTest < ActionController::TestCase
 	def setup
-		session[:player] = Player.find_by_handle("Test Player One")
+		sign_in Player.find_by_handle("Test Player One")
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
 		session[:kingdom] = Kingdom.find_by_name("HealthyTestKingdom")
 		

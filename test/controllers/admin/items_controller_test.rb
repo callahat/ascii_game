@@ -3,7 +3,7 @@ require 'test_helper'
 class Admin::ItemsControllerTest < ActionController::TestCase
   setup do
     @item = items(:newish_item)
-    session[:player] = players(:test_system_player)
+    sign_in players(:test_system_player)
   end
 
   test "should get index" do

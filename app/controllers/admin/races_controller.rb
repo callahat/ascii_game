@@ -22,7 +22,7 @@ class Admin::RacesController < ApplicationController
   def create
     @race = Race.new(race_params)
     @race.image.name = 'DEFAULT ' + @race.name + ' IMAGE'
-    @race.image.player_id = session[:player].id
+    @race.image.player_id = current_player.id
     @race.image.kingdom_id = Kingdom.find_by(name: 'SystemGeneratd').id
 
     if @race.save

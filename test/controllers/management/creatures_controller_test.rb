@@ -2,17 +2,18 @@ require 'test_helper'
 
 class Management::CreaturesControllerTest < ActionController::TestCase
 	def setup
-		session[:player] = Player.find_by_handle("Test Player One")
+    @player = Player.find_by_handle("Test Player One")
+    sign_in @player
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
 		session[:kingdom] = Kingdom.find_by_name("HealthyTestKingdom")
 		
 		@c_armed = Creature.find_by_name("Wimp Monster")
 		@c = Creature.find_by_name("Unarmed Monster")
 		@c_hash = {:name => "New creature Name", :HP => 60, :gold => 5, :number_alive => -1, :fecundity => 10,
-								:kingdom_id => session[:kingdom][:id], :player_id => session[:player][:id]}
+								:kingdom_id => session[:kingdom][:id], :player_id => @player.id}
 		@s_hash = {:dam => 10, :dex => 5, :dfn => 5, :con => 5, :int => 5, :mag => 10, :str => 30}
 		@i_hash = {:image_text => "                -_o                ", :image_type => SpecialCode.get_code('image_type','creature'),
-							:player_id => session[:player][:id], :kingdom_id => session[:kingdom][:id]}
+							:player_id => @player.id, :kingdom_id => session[:kingdom][:id]}
 	end
 	
 	test "mgmt creature controller index" do

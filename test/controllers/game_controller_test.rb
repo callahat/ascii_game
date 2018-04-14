@@ -9,7 +9,7 @@ class GameControllerTest < ActionController::TestCase
 		@creature = Creature.find_by_name("Wimp Monster")
 		@level = kingdoms(:kingdom_one).levels.where(level: 0).first
 		@level_map = @level.level_maps.where(['feature_id is not null']).first
-		session[:player] = Player.find_by_handle("Test Player One")
+		sign_in Player.find_by_handle("Test Player One")
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
 		session[:player_character].present_level = @level
 	end
@@ -17,13 +17,13 @@ class GameControllerTest < ActionController::TestCase
 	test "game controller main" do
 		#p "game controller main"
 		session[:player_character] = nil
-		get 'main', {}, session.to_hash
+		get 'main', {}
 		assert_response :redirect
 		assert_redirected_to choose_character_character_index_url()
 		
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
 		#p "WAAA"
-		get 'main', {}, session.to_hash
+		get 'main', {}
 		#p "AAAW"
 		assert_response :success
 		assert_not_nil assigns(:where)
@@ -31,7 +31,7 @@ class GameControllerTest < ActionController::TestCase
 	end
 	
 	test "game controller leave kingdom" do
-		get 'leave_kingdom', {}, session.to_hash
+		get 'leave_kingdom', {}
 		assert_response :redirect
 		assert_redirected_to :controller => 'game', :action => 'main'
 		assert session[:player_character].in_kingdom.nil?
@@ -42,49 +42,49 @@ class GameControllerTest < ActionController::TestCase
 		session[:player_character].in_kingdom = nil?
 		session[:player_character].kingdom_level = nil?
 		
-		post 'world_move', {:id => 'north'}, session.to_hash
+		post 'world_move', {:id => 'north'}
 		assert_response :redirect
 		assert_redirected_to :controller => 'game', :action => 'main'
 		assert session[:player_character].bigx == 0
 		assert session[:player_character].bigy == -1
 		assert flash[:notice] =~ /[Nn]orth/
 		
-		post 'world_move', {:id => 'north'}, session.to_hash
+		post 'world_move', {:id => 'north'}
 		assert_response :redirect
 		assert_redirected_to :controller => 'game', :action => 'main'
 		assert session[:player_character].bigx == 0
 		assert session[:player_character].bigy == -1
 		assert flash[:notice] =~ /invalid/
 		
-		post 'world_move', {:id => 'west'}, session.to_hash
+		post 'world_move', {:id => 'west'}
 		assert_response :redirect
 		assert_redirected_to :controller => 'game', :action => 'main'
 		assert session[:player_character].bigx == 0
 		assert session[:player_character].bigy == -1
 		assert flash[:notice] =~ /invalid/
 		
-		post 'world_move', {:id => 'south'}, session.to_hash
+		post 'world_move', {:id => 'south'}
 		assert_response :redirect
 		assert_redirected_to :controller => 'game', :action => 'main'
 		assert session[:player_character].bigx == 0
 		assert session[:player_character].bigy == 0
 		assert flash[:notice] =~ /[Ss]outh/
 		
-		post 'world_move', {:id => 'east'}, session.to_hash
+		post 'world_move', {:id => 'east'}
 		assert_response :redirect
 		assert_redirected_to :controller => 'game', :action => 'main'
 		assert session[:player_character].bigx == 1
 		assert session[:player_character].bigy == 0
 		assert flash[:notice] =~ /[Ee]ast/
 		
-		post 'world_move', {:id => 'east'}, session.to_hash
+		post 'world_move', {:id => 'east'}
 		assert_response :redirect
 		assert_redirected_to :controller => 'game', :action => 'main'
 		assert session[:player_character].bigx == 1
 		assert session[:player_character].bigy == 0
 		assert flash[:notice] =~ /invalid/
 		
-		post 'world_move', {:id => 'west'}, session.to_hash
+		post 'world_move', {:id => 'west'}
 		assert_response :redirect
 		assert_redirected_to :controller => 'game', :action => 'main'
 		assert session[:player_character].bigx == 0
@@ -94,23 +94,23 @@ class GameControllerTest < ActionController::TestCase
 	
 	
 	test "game controller feature action when not loged in or character selected" do
-		session[:player] = nil
+		sign_out :player
 		session[:player_character] = nil
 		
-		get 'feature', {:id => @level_map.id}, session.to_hash
+		get 'feature', {:id => @level_map.id}
 		assert_response :redirect
 		
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
-		get 'feature', {:id => @level_map.id}, session.to_hash
+		get 'feature', {:id => @level_map.id}
 		assert_response :redirect
 		
 		session[:player_character] = nil
-		session[:player] = Player.find_by_handle("Test Player One")
-		get 'feature', {:id => @level_map.id}, session.to_hash
+		sign_in Player.find_by_handle("Test Player One")
+		get 'feature', {:id => @level_map.id}
 		assert_redirected_to choose_character_character_index_url()
 		
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
-		get 'feature', {}, session.to_hash
+		get 'feature', {}
 		assert_redirected_to main_game_url
 	end
 	
@@ -119,10 +119,10 @@ class GameControllerTest < ActionController::TestCase
 		battle, msg = Battle.new_creature_battle(@pc, @creature, 5, 5, @pc.in_kingdom)
 		assert battle
 		
-		get 'feature', {}, session.to_hash
+		get 'feature', {}
 		assert_redirected_to :controller => 'game/battle', :action => 'battle'
 		
-		get 'feature', {:id => @level_map.id}, session.to_hash
+		get 'feature', {:id => @level_map.id}
 		assert_redirected_to :controller => 'game/battle', :action => 'battle'
 	end
 	
@@ -130,13 +130,13 @@ class GameControllerTest < ActionController::TestCase
 		session[:player_character].update_attribute(:turns,0)
 		@kl = @level.level_maps.where(['xpos = 1 and ypos = 1']).first
 		
-		get 'feature', {:id => @kl.id}, session.to_hash
+		get 'feature', {:id => @kl.id}
 		assert_redirected_to :controller => 'game', :action => 'main'
 		assert flash[:notice] =~ /tired/
 		
 		#using no parameters for the get causes the controller to behave as if there is a current event, which
 		#hits the controller, and reaches the exec_event function, and hits nil for the event name
-		#get 'feature', {}, session.to_hash
+		#get 'feature', {}
 		#assert_redirected_to :controller => 'game', :action => 'main'
 		#assert flash[:notice] =~ /tired/, flash[:notice].inspect
 	end
@@ -145,7 +145,7 @@ class GameControllerTest < ActionController::TestCase
 		@kl = @level.level_maps.where(['xpos = 1 and ypos = 1']).first
 		
 		assert_difference 'session[:player_character].turns', -1 do
-			get 'feature', {:id => @kl.id}, session.to_hash
+			get 'feature', {:id => @kl.id}
 		end
 		
 		assert_response :redirect
@@ -155,15 +155,15 @@ class GameControllerTest < ActionController::TestCase
 		assert session[:player_character].battle
 		
 		#not really completed, so following the trail returns us to the battle
-		get 'complete', {}, session.to_hash
+		get 'complete', {}
 		assert_redirected_to :controller => 'game', :action => 'feature'
 		
-		get 'feature', {}, session.to_hash
+		get 'feature', {}
 		assert_redirected_to :controller => 'game/battle', :action => 'battle'
 		
 		session[:player_character].current_event.update_attribute(:completed, EVENT_COMPLETED)
 
-		get 'complete', {}, session.to_hash
+		get 'complete', {}
 		session[:player_character].reload
 		session[:player_character].current_event
 		assert_redirected_to :controller => 'game', :action => 'main'
@@ -174,7 +174,7 @@ class GameControllerTest < ActionController::TestCase
 		@kl = @level.level_maps.where(['xpos = 2 and ypos = 2']).first
 		
 		assert_difference 'session[:player_character].turns', -1 do
-			get 'feature', {:id => @kl.id}, session.to_hash
+			get 'feature', {:id => @kl.id}
 		end
 		assert_redirected_to :controller => 'game', :action => 'main'
 		assert flash[:notice] =~ /Nothing/
@@ -185,25 +185,25 @@ class GameControllerTest < ActionController::TestCase
 		@kl = @level.level_maps.where(['xpos = 0 and ypos = 0']).first
 		
 		assert_difference 'session[:player_character].turns', -1 do
-			get 'feature', {:id => @kl.id}, session.to_hash
+			get 'feature', {:id => @kl.id}
 		end
 		assert_response :success
 		assert_template 'choose'
 		assert session[:ev_choice_ids]
 		
-		get 'do_choose', {:id => 1}, session.to_hash
+		get 'do_choose', {:id => 1}
 		assert_response :success
 		assert_template 'choose'
 		assert flash[:notice] =~ /Invalid/
 		assert session[:player_character].current_event.event_id.nil?
 		
-		post 'do_choose', {:id => 1}, session.to_hash
+		post 'do_choose', {:id => 1}
 		assert_response :success
 		assert_template 'choose'
 		assert flash[:notice] =~ /Invalid/
 		assert session[:player_character].current_event.event_id.nil?
 		
-		post 'do_choose', {:id => session[:ev_choice_ids][0]}, session.to_hash
+		post 'do_choose', {:id => session[:ev_choice_ids][0]}
 		assert_response :redirect
 		assert session[:ev_choice_ids].nil?
 		assert session[:player_character].current_event.event_id
@@ -213,23 +213,23 @@ class GameControllerTest < ActionController::TestCase
 		@kl = @level.level_maps.where(['xpos = 0 and ypos = 0']).first
 		
 		assert_difference 'session[:player_character].turns', -1 do
-			get 'feature', {:id => @kl.id}, session.to_hash
+			get 'feature', {:id => @kl.id}
 		end
 		assert_response :success
 		assert_template 'choose'
 		assert session[:ev_choice_ids]
 		
-		post 'do_choose', {}, session.to_hash
+		post 'do_choose', {}
 		session[:player_character].reload
 		assert_redirected_to :controller => 'game', :action => 'complete'
 		assert session[:ev_choice_ids].nil?
 		
-		get 'complete', {}, session.to_hash
+		get 'complete', {}
 		assert_redirected_to :controller => 'game', :action => 'feature'
 		refute session[:player_character].current_event.event_id
 		
 		assert_difference 'session[:player_character].current_event.priority', +1 do
-			get 'feature', {}, session.to_hash
+			get 'feature', {}
 		end
 		assert_response :success
 		assert session[:player_character].current_event.event_id
@@ -239,35 +239,35 @@ class GameControllerTest < ActionController::TestCase
 		session[:player_character].update_attribute(:in_kingdom, nil)
 		session[:player_character].update_attribute(:kingdom_level, nil)
 		@world_map = WorldMap.where(xpos: 1, ypos: 1, bigxpos: 0, bigypos: -1).last
-		get 'spawn_kingdom', {}, session.to_hash
+		get 'spawn_kingdom', {}
 		assert_response :success
 		assert_template 'spawn_kingdom'
 		
 		##no current event
 		assert_no_difference 'Kingdom.count' do
-			post 'do_spawn', {:kingdom => {:name => 'Awesomeland'}}, session.to_hash
+			post 'do_spawn', {:kingdom => {:name => 'Awesomeland'}}
 		end
 		assert_redirected_to :controller => 'game', :action => 'feature'
 		
 		#Try feature even when level too low
-		get 'feature', {:id => @world_map.id}, session.to_hash
+		get 'feature', {:id => @world_map.id}
 		assert_redirected_to :controller => 'game', :action => 'complete'
 		assert flash[:notice] =~ /not yet powerful/
 		
-		get 'complete', {}, session.to_hash
+		get 'complete', {}
 		assert_redirected_to main_game_url
 		
 		#try feature with high enough level
 		session[:player_character].update_attribute(:level, 50)
-		get 'feature', {:id => @world_map.id}, session.to_hash
+		get 'feature', {:id => @world_map.id}
 		
 		assert_redirected_to :controller => 'game', :action => 'spawn_kingdom'
 		assert_no_difference 'Kingdom.count' do
-			post 'do_spawn', {:kingdom => {:name => 'HealthyTestKingdom'}}, session.to_hash
+			post 'do_spawn', {:kingdom => {:name => 'HealthyTestKingdom'}}
 		end
 		assert_template 'spawn_kingdom'
 		assert_difference 'Kingdom.count', +1 do
-			post 'do_spawn', {:kingdom => {:name => 'Awesomeland'}}, session.to_hash
+			post 'do_spawn', {:kingdom => {:name => 'Awesomeland'}}
 		end
 		assert_redirected_to :controller => 'game', :action => 'complete'
 	end
@@ -277,13 +277,13 @@ class GameControllerTest < ActionController::TestCase
 		@kl1 = @level.level_maps.where(['xpos = 1 and ypos = 0']).first
 		@kl2 = @level.level_maps.where(['xpos = 2 and ypos = 0']).first
 		
-		get 'feature', {:id => @kl1.id}, session.to_hash
+		get 'feature', {:id => @kl1.id}
 		assert_response :redirect
 		assert_redirected_to game_quests_path
 		
 		session[:player_character].current_event.destroy
 		
-		get 'feature', {:id => @kl2.id}, session.to_hash
+		get 'feature', {:id => @kl2.id}
 		assert_response :redirect
 		assert_redirected_to game_quests_path
 		#Will be nil when it hits the filter in the quests controller
@@ -298,11 +298,11 @@ class GameControllerTest < ActionController::TestCase
 		res, msg = @lq.complete_quest
 		assert res, msg.inspect
 		
-		get 'feature', {:id => @kl2.id}, session.to_hash
+		get 'feature', {:id => @kl2.id}
 		assert_response :redirect
 		session[:player_character].current_event.destroy
 		
-		get 'feature', {:id => @kl1.id}, session.to_hash
+		get 'feature', {:id => @kl1.id}
 		assert_response :redirect
 		assert_redirected_to do_complete_game_quests_path
 		assert session[:player_character].current_event.completed == EVENT_COMPLETED
@@ -312,7 +312,7 @@ class GameControllerTest < ActionController::TestCase
 		res, msg = @lq.collect_reward
 		
 		assert res, msg
-		get 'feature', {:id => @kl1.id}, session.to_hash
+		get 'feature', {:id => @kl1.id}
 		assert_response :redirect
 		assert_redirected_to  :controller => 'game', :action => 'main'
 		assert session[:player_character].current_event.completed == EVENT_COMPLETED

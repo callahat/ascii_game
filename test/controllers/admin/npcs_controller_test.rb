@@ -3,7 +3,7 @@ require 'test_helper'
 class Admin::NpcsControllerTest < ActionController::TestCase
   setup do
     @npc = npcs(:npc_one)
-    session[:player] = players(:test_system_player)
+    sign_in players(:test_system_player)
   end
 
   test "should get index" do

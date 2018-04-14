@@ -1,9 +1,9 @@
-<% ( session[:player] ? @what = {:action => 'namenew'} : @what = {:controller => 'account', :action => 'new'} ) %>
+<% ( player_signed_in? ? @what = {:action => 'namenew'} : @what = {:controller => 'devise/registrations', :action => 'new'} ) %>
 <%= javascript_include_tag 'charnew' %>
 
 <%= form_tag @what do %>
 
-<% if session[:player].nil? %>
+<% if player_signed_in? %>
 <p>Choose among many exciting races and classes for your character!</p>
 <% end %>
 
@@ -87,7 +87,7 @@
    </td>
   </tr>
   <tr><td>
-	 <% if session[:player] %>
+	 <% if player_signed_in? %>
 		<%= submit_tag "Accept" %>
 	 <% else %>
 		<%= submit_tag "Register to play" %>

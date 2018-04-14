@@ -3,7 +3,7 @@ require 'test_helper'
 class Admin::BlacksmithSkillsControllerTest < ActionController::TestCase
   setup do
     @blacksmith_skill = blacksmith_skills(:blacksmith_skill_initial1)
-    session[:player] = players(:test_system_player)
+    sign_in players(:test_system_player)
   end
 
   test "should get index" do

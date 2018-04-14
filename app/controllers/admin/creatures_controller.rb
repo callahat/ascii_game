@@ -27,7 +27,7 @@ class Admin::CreaturesController < ApplicationController
 
     @creature.build_image unless @creature.image
     @creature.image.name = @creature.name + ' image'
-    @creature.image.player_id = session[:player].id
+    @creature.image.player_id = current_player.id
     @creature.image.kingdom_id = Kingdom.find_by(name: 'SystemGeneratd').id
 
     @creature.kingdom_id = -1
@@ -133,6 +133,6 @@ class Admin::CreaturesController < ApplicationController
   def set_images
     @images = Image.where(
         ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
-         session[:player].id, -1, SpecialCode.get_code('image_type', 'creature')])
+         current_player.id, -1, SpecialCode.get_code('image_type', 'creature')])
   end
 end
