@@ -3,15 +3,23 @@ namespace :maintenance do
 	task(:full_maintenance => :environment) do
 		puts "\nTime is now: " + Time.now.to_s
 		puts "\nRunning the nightly kingdom maintenance, bringing down system  . . ."
-		@start = Time.now
+    puts `ps -o rss -p #{$$}`.strip.split.last.to_i * 1024
+
+    @start = Time.now
 		SystemStatus.stop(1)
 		Maintenance.clear_report
 		Maintenance.kingdom_maintenance
+    puts `ps -o rss -p #{$$}`.strip.split.last.to_i * 1024
+    GC.start
 		Maintenance.player_character_maintenance
+    puts `ps -o rss -p #{$$}`.strip.split.last.to_i * 1024
+    GC.start
 		puts Maintenance.report.join("\n")
 		puts "\n\n" + (Time.now - @start).to_s + " elapsed seconds.\n"
 		puts "\nNightly kingdom maintenance complete, bringing up system  . . ."
-		SystemStatus.start(1)
+    puts `ps -o rss -p #{$$}`.strip.split.last.to_i * 1024
+
+    SystemStatus.start(1)
 	end
 
 	desc "This will run the nightly kingdom maintenance"

@@ -17,10 +17,30 @@ class NpcGuard < Npc
 
   def self.create_image(kingdom_id)
     @kingdom_name = Kingdom.find(kingdom_id).name
-    @base_image = Image.find_by(name: "GUARD IMAGE", kingdom_id: -1, player_id: -1)
-    @image = Image.deep_copy(@base_image)
+    @image = Image.new(
+        image_text: DEFUALT_NPC_IMAGE,
+        public: false,
+        image_type: SpecialCode.get_code('image_type','kingdom'),
+        player_id: -1
+    )
+
     @image.kingdom_id = kingdom_id
     @image.name = @kingdom_name + " Guard Image"
     @image.save!
   end
+
+  protected
+  DEFUALT_NPC_IMAGE = <<-ASCII
+
+            /\'\
+      _|_ <_XX  }
+     /   \  ||./
+    / === \ ||
+  ------""_ ||
+  |    |' _@d3
+  |    | :; ||
+  \    /':; ||
+   \__/'''  ||
+    [M] [[> \/
+  ASCII
 end

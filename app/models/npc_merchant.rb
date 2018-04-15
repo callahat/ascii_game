@@ -7,8 +7,13 @@ class NpcMerchant < Npc
   accepts_nested_attributes_for :npc_merchant_detail
 
   def self.generate(kingdom_id)
-    @new_image = Image.deep_copy(Image.find_by(name: 'DEFAULT NPC'))
+    @new_image = Image.new(
+      image_text: DEFUALT_NPC_IMAGE,
+      public: false,
+      image_type: SpecialCode.get_code('image_type','kingdom')
+    )
     @new_image.kingdom_id = kingdom_id
+    @new_image.player_id = -1
     @new_image.save
 
     @new_merch = self.create(
@@ -200,4 +205,23 @@ class NpcMerchant < Npc
       [false, "You do not have " + (@pc_item ? "a " + @pc_item.item.name : "one of those") + " to sell."]
     end
   end
+
+  protected
+
+  DEFUALT_NPC_IMAGE = <<-ASCII
+     __
+    /  \
+    |  |
+   ======
+    "  "
+  --""""--
+  || \|  |
+  ||_.. ||
+   \3.. ||
+   | .. --
+   ------~
+    | | |
+    |_|_|
+   (@#)##)
+  ASCII
 end
