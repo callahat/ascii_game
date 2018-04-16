@@ -9,6 +9,7 @@ module UserAuthentication
     def valid_password?(password)
       if !has_devise_password? && valid_transitional_password?(password)
         convert_password_to_devise(password)
+        return true
       end
 
       super
