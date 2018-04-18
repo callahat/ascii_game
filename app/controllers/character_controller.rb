@@ -1,5 +1,6 @@
 class CharacterController < ApplicationController
   before_filter :authenticate, :except => ['raise_level', 'gainlevel', 'new']
+  before_filter :set_player
   before_filter :setup_pc_vars, :only => ['raise_level', 'gainlevel']
 
   #figure out caching later. It seems to work faster if the boot file has the cacheing
@@ -303,5 +304,9 @@ protected
 
   def gain_level_params
     params.require(:distributed_freepts).permit(:str, :dex, :con, :int, :mag, :dfn, :dam)
+  end
+
+  def set_player
+    @player = current_player
   end
 end
