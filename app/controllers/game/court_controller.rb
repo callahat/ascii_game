@@ -25,7 +25,6 @@ class Game::CourtController < ApplicationController
       @king = @kingdom.player_character
       if @king
         @message = 'King ' + @king.name + ' glowers at your attempt to sit upon his throne.'
-        render 'game/complete'
       else
         if @pc.level < 15
           @message = 'The steward approaches "You are yet not strong enough to claim the crown."'
@@ -34,10 +33,10 @@ class Game::CourtController < ApplicationController
           @message = 'You have claimed the crown'
           KingdomNotice.create_notice(@pc.name + " has found the throne vacant, and claimed it for their own.", @pc.in_kingdom)
         end
-        render 'game/complete'
       end
-    @kingdom.save!
+      @kingdom.save!
     end
+    render 'game/complete'
   end
 
   def castle

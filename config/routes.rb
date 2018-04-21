@@ -23,23 +23,18 @@ Rails.application.routes.draw do
     get :what
   end
 
-  resources :character, only: [] do
+  resource :character, controller: :character, only: [] do
     collection do
       get  'new'
       get  'namenew'
       post 'namenew'
       post 'create', action: :create, as: :create
-      get  'choose_character'
-      post 'do_chose/:id', action: :do_choose
+      post 'do_chose/:id', action: :do_choose, as: :do_choose
       get  'menu'
-      get  'retire'
-      post 'do_retire/:id', action: :do_retire
-      get  'unretire'
-      post 'do_unretire/:id', action: :do_unretire
-      get  'edit_character'
-      get  'destroy'
-      post 'do_destroy/:id', action: :do_destroy
-      post 'do_image_update/:id', action: :do_image_update
+      post 'do_retire/:id', action: :do_retire, as: :do_retire
+      post 'do_unretire/:id', action: :do_unretire, as: :do_unretire
+      post 'do_destroy/:id', action: :do_destroy, as: :do_destroy
+      get  'do_image_update/:id', action: :do_image_update, as: :do_image_update
       post 'updateimage/:id', action: :updateimage
       get  'raise_level', action: :raise_level
       post 'gainlevel'

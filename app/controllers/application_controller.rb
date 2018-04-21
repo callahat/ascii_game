@@ -32,7 +32,7 @@ class ApplicationController < ActionController::Base
     if @pc = session[:player_character]
       true
     else
-      redirect_to choose_character_character_index_url
+      redirect_to menu_character_url
       false
     end
   end
@@ -42,7 +42,7 @@ class ApplicationController < ActionController::Base
     if @pc = session[:kingdom].player_character
       true
     else
-      redirect_to choose_character_character_index_url
+      redirect_to menu_character_url
       false
     end
   end

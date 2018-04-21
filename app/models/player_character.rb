@@ -57,7 +57,7 @@ class PlayerCharacter < ActiveRecord::Base
     
     @delta = level_zero.to_level(level + 1)
     @delta.subtract_stats(self.level_zero.to_level(level))
-    p"HIT"
+
     Stat.transaction do
       #pc = self
       

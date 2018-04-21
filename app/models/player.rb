@@ -21,7 +21,7 @@ class Player < ActiveRecord::Base
   has_many :forum_node_posts
   has_many :quests
   has_many :forum_node_threads
-  has_many :player_characters, ->{ order(:name) }
+  has_many :player_characters, ->{ order(:char_stat,:name) }
   has_many :forum_restrictions, ->{ where(['expires is null OR expires > ?', Time.now.to_date]) }
   
   has_one :forum_user_attribute, :foreign_key => 'user_id'

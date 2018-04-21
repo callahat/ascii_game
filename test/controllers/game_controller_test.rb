@@ -19,7 +19,7 @@ class GameControllerTest < ActionController::TestCase
 		session[:player_character] = nil
 		get 'main', {}
 		assert_response :redirect
-		assert_redirected_to choose_character_character_index_url()
+		assert_redirected_to menu_character_url
 		
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
 		#p "WAAA"
@@ -107,7 +107,7 @@ class GameControllerTest < ActionController::TestCase
 		session[:player_character] = nil
 		sign_in Player.find_by_handle("Test Player One")
 		get 'feature', {:id => @level_map.id}
-		assert_redirected_to choose_character_character_index_url()
+		assert_redirected_to menu_character_url
 		
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
 		get 'feature', {}

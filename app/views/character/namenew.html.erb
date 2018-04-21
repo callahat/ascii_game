@@ -1,6 +1,6 @@
 <%= error_messages_for 'player_character' %>
 
-<%= form_for @player_character, url: create_character_index_path(@player_character) do |f| %>
+<%= form_for @player_character, url: create_character_path(@player_character) do |f| %>
 <table border=3>
  <tr><td>
   <p><%= f.label :name, 'Character Name:' %><br/>

@@ -15,6 +15,9 @@ one_pc_stat_base:
 one_pc_stat_trn:
   owner: pc_one
   kind: "StatPcTrn"
+one_pc_level_zero:
+  <<: *default_stat10
+  kind: "StatPcLevelZero"
 
 sick_pc_stat:
   str: 1
