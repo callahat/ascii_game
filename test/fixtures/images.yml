@@ -52,6 +52,14 @@ castle_image:
   image_text: "CASTLE!\n(not really though)"
   image_type: <%= SpecialCode.get_code('image_type','world') %>
 
+throne_image:
+  name: "DEFAULT THRONE"
+  player_id: -1
+  kingdom_id: -1
+  public: 0
+  image_text: "THRONE!\n(not really though)"
+  image_type: <%= SpecialCode.get_code('image_type','kingdom') %>
+
 creature_image2:
   name: "creature image2"
   player: test_player_one

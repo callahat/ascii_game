@@ -1,7 +1,7 @@
 <% if !@levels.nil? %>
   <%= form_tag :action => 'throne_square' do %>
   <p>Select level:</p>
-  <%= collection_select 'level','id',@levels,'id','level', selected: @throne.level_maps.last.level_id %>
+  <%= collection_select 'level','id',@levels,'id','level', selected: (@throne ? @throne.level_maps.last.level_id : nil) %>
    <%= submit_tag 'Accept' %>
   <% end %>
 

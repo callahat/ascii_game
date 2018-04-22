@@ -2,48 +2,25 @@ require 'test_helper'
 
 class Management::KingdomEntriesControllerTest < ActionController::TestCase
   setup do
-    @management_kingdom_entry = management_kingdom_entries(:one)
-  end
-
-  test "should get index" do
-    get :index
-    assert_response :success
-    assert_not_nil assigns(:management_kingdom_entries)
-  end
-
-  test "should get new" do
-    get :new
-    assert_response :success
-  end
-
-  test "should create management_kingdom_entry" do
-    assert_difference('Management::KingdomEntry.count') do
-      post :create, management_kingdom_entry: {  }
-    end
-
-    assert_redirected_to management_kingdom_entry_path(assigns(:management_kingdom_entry))
+    sign_in players(:test_player_one)
+    session[:kingdom] = player_characters(:test_king).kingdoms.first
+    @kingdom_ban = kingdom_bans(:one)
   end
 
   test "should show management_kingdom_entry" do
-    get :show, id: @management_kingdom_entry
+    get :show
     assert_response :success
   end
 
   test "should get edit" do
-    get :edit, id: @management_kingdom_entry
+    get :edit
     assert_response :success
   end
 
   test "should update management_kingdom_entry" do
-    patch :update, id: @management_kingdom_entry, management_kingdom_entry: {  }
-    assert_redirected_to management_kingdom_entry_path(assigns(:management_kingdom_entry))
-  end
-
-  test "should destroy management_kingdom_entry" do
-    assert_difference('Management::KingdomEntry.count', -1) do
-      delete :destroy, id: @management_kingdom_entry
-    end
-
-    assert_redirected_to management_kingdom_entries_path
+    assert_not_equal SpecialCode.get_code('entry_limitations','allies'), session[:kingdom].kingdom_entry
+    patch :update, kingdom_entry: { allowed_entry: SpecialCode.get_code('entry_limitations','allies') }
+    assert_redirected_to management_kingdom_entries_path(assigns(:management_kingdom_entry))
+    assert_equal SpecialCode.get_code('entry_limitations','allies'), session[:kingdom].kingdom_entry.allowed_entry
   end
 end

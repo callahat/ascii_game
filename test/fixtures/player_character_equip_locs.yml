@@ -1,1 +1,9 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+one:
+  player_character: pc_one
+  equip_loc: <%= SpecialCode.get_code("equip_loc","hand") %>
+
+two:
+  player_character: pc_one
+  equip_loc: <%= SpecialCode.get_code("equip_loc","hand") %>
+  item: item_1

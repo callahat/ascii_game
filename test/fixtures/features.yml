@@ -54,3 +54,8 @@ healer_npc:
 multiclass_npc:
   <<: *default_feature
   name: "Multiclass Npc"
+
+kingdom_one_castle_feature:
+  <<: *default_feature
+  name: "\nCastle HealthyTestKingdom"
+  description: "HealthyTestKingdom's castle"

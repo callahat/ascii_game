@@ -5,7 +5,7 @@ item_<%= it %>:
   name: "Item<%= it %>"
   price: 50
   min_level: 1
-  equip_loc: req_2
+  equip_loc: <%= SpecialCode.get_code("equip_loc",((it % 2 == 0) ? "torso" : "hand")) %>
   base_item: base_item_one
 <% } %>
   
@@ -13,14 +13,14 @@ item_99:
   name: "Item99"
   price: 99
   min_level: 1
-  equip_loc: req_1
+  equip_loc: <%= SpecialCode.get_code("equip_loc","head") %>
   base_item: base_item_two
 
 cool_item:
   name: "Cool item"
   price: 1125
   min_level: 1
-  equip_loc: req_1
+  equip_loc: <%= SpecialCode.get_code("equip_loc","foot") %>
   base_item: base_item_three
 
 newish_item:

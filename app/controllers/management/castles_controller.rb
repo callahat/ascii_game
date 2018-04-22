@@ -67,13 +67,6 @@ class Management::CastlesController < ApplicationController
   def throne_square
     session[:level_id] ||= params[:level][:id]
     @squares = session[:kingdom].levels.find(session[:level_id])
-
-    if @squares.nil?
-      flash[:notice] = 'Invalid level; no squares found.'
-      redirect_to :action => 'throne_level'
-      return false
-    end
-
     render :action => 'throne'
   end
 
@@ -106,8 +99,8 @@ class Management::CastlesController < ApplicationController
       @throne = Feature.sys_gen("\nThrone #{session[:kingdom].name}", @new_image.id)
 
       if !@throne.save
-        print 'Failed to save throne.'
-        print @throne.errors
+        Rails.logger.error 'Failed to save throne.'
+        Rails.logger.error @throne.errors
       end
 
       throne_feature_event(@throne,@throne_event)
@@ -132,27 +125,21 @@ class Management::CastlesController < ApplicationController
     @temp.xpos = @level_map.xpos
     @temp.ypos = @level_map.ypos
     @temp.feature_id = @throne.id
-    if !@temp.save
-      print "\nBollocks"
-      params[:f][:f]
-    end
+    @temp.save!
 
     session[:level_id] = nil
     redirect_to :action => 'throne'
   end
 
-protected
+  protected
+
   def build_stairway(level,feature)
     #MAKE EVENT
     @event = EventMoveLocal.sys_gen({:name => "\nSYSTEM GENERATED",
                                      :event_rep_type => SpecialCode.get_code('event_rep_type','unlimited'),
                                      :thing_id => level.id } )
-    if @event.save
-      flash[:notice] = "Created event\n"
-    else
-      #break code in case event fails to save while developeing this stuff
-      flash[:n][:n]
-    end
+    @event.save!
+    flash[:notice] = "Created event\n"
 
     #LINK EVENT TO FEATURE
     @feature_event = FeatureEvent.new
@@ -162,11 +149,8 @@ protected
     @feature_event.priority = 42
     @feature_event.choice = true
 
-    if @feature_event.save
-      flash[:notice] += "Created feature_event\n"
-    else
-      flash[:n][:n]
-    end
+    @feature_event.save!
+    flash[:notice] += "Created feature_event\n"
   end
 
   #throne event should already exist for kingdom.

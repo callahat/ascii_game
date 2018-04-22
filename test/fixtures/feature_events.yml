@@ -108,3 +108,16 @@ fe_npc_multiclass:
   chance: 100
   priority: 1
   choice: true
+
+fe_stairs:
+  feature: kingdom_one_castle_feature
+  event: local_move_event
+  chance: 100
+  priority: 1
+  choice: true
+fe_throne:
+  feature: kingdom_one_castle_feature
+  event: throne_event
+  chance: 100
+  priority: 1
+  choice: true

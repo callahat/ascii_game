@@ -40,10 +40,6 @@ class Inventory < ActiveRecord::Base
   end
   
   #Pagination related stuff
-  def self.per_page
-    25
-  end
-  
   def self.get_page(page, oid = nil, equip_loc = nil)
     conds = ['quantity > 0']
 
