@@ -25,7 +25,7 @@ class Management::KingdomItemsController < ApplicationController
       redirect_to :action => 'store', :id => params[:id]
     elsif PlayerCharacterItem.update_inventory(@pc.id,@item.id,-1 * quant) &&
           KingdomItem.update_inventory(session[:kingdom].id,@item.id,1 * quant)
-      flash[:notice] = quant.to_s + ' ' + @item.name.pluralize + ' moved from the storerooms to your inventory.'
+      flash[:notice] = quant.to_s + ' ' + @item.name.pluralize + ' moved from your inventory to the storerooms.'
       redirect_to :action => 'list_inventory'
     else
       flash[:notice] = 'You cannot store more items than you have in the character\'s inventory.'

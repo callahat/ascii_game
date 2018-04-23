@@ -4,6 +4,7 @@ class Inventory < ActiveRecord::Base
   belongs_to :item
 
   validates_presence_of :quantity,:owner_id,:item_id
+  validates_uniqueness_of :item_id, scope: [:kind, :owner_id]
   
   def self.validate
     if !quantity.nil? && quantity < 0
@@ -13,7 +14,14 @@ class Inventory < ActiveRecord::Base
   end
   
   def self.update_inventory(oid,iid,amount)
-    inv = self.find_or_create(oid, iid)
+    inv = begin
+      self.find_or_create_by(owner_id: oid, item_id: iid)
+    rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid
+      Rails.logger.warn "Retrying Inventory.update_inventory find_or_create_by due to race"
+      Rails.logger.warn "params: owner_id: #{oid} item_id: #{iid} kind: #{self.class}"
+      retry
+    end
+
     inv.transaction do
       inv.lock!
       if inv.quantity < (-1) * amount
@@ -23,20 +31,6 @@ class Inventory < ActiveRecord::Base
         return inv.save!
       end
     end
-  end
-  
-  def self.find_or_create(oid, iid)
-    conds = {:owner_id => oid, :item_id =>  iid }
-
-    it = find_by(conds)
-    return it unless it.nil?
-  
-    TableLock.transaction do
-      tl = TableLock.find_by_name(self.sti_name).lock!
-      it = find_or_create_by(conds)
-      tl.save!
-    end
-    return it
   end
   
   #Pagination related stuff

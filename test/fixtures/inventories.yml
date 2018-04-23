@@ -36,6 +36,11 @@ pcinv_7:
   item:     cool_item
   quantity: 0
   kind:     "PlayerCharacterItem"
+pcinv_8:
+  owner:    test_king
+  item:     cool_item
+  quantity: 3
+  kind:     "PlayerCharacterItem"
 
 #
 #NpcStock
