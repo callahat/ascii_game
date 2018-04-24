@@ -22,7 +22,7 @@ class CurrentEventTest < ActiveSupport::TestCase
 	end
 	
 	test "next event on feature with one priority level one auto" do
-		@location = @level.level_maps.find_by(xpos: 1, ypos: 1)
+		@location = @level.level_maps.find_by(xpos: 1, ypos: 0)
 		@current_k_event.update_attribute(:location_id, @location.id)
 		@next, @ev = @current_k_event.next_event
 

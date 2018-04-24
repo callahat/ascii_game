@@ -9,16 +9,11 @@ test_level_map_0_1:
   xpos: 0
   ypos: 1
   feature: healer_npc
-#test_level_map_0_2:
-#  level: first_kingdom_level_one
-#  xpos: 0
-#  ypos: 2
-#  feature: throne_event
 test_level_map_0_2:
   level: first_kingdom_level_one
   xpos: 0
   ypos: 2
-  feature: empty_feature
+  feature: feature_creature_one
 
 test_level_map_1_0:
   level: first_kingdom_level_one
@@ -29,7 +24,7 @@ test_level_map_1_1:
   level: first_kingdom_level_one
   xpos: 1
   ypos: 1
-  feature: feature_creature_one
+  feature: kingdom_one_castle_feature
 test_level_map_1_2:
   level: first_kingdom_level_one
   xpos: 1
@@ -52,3 +47,13 @@ test_level_map_2_2:
   ypos: 2
   feature: feature_no_events
 
+# Dungeon
+<% 0.upto(3) do |x|
+     0.upto(3) do |y| %>
+dungeon_one_map_<%= x %>_<%= y %>:
+  level: first_kingdom_level_dungeon_one
+  xpos: <%= x %>
+  ypos: <%= y %>
+  feature: empty_feature
+<%   end
+   end %>

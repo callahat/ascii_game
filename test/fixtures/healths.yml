@@ -61,6 +61,18 @@ sick_npc_health:
   HP: 9
   owner: sick_npc
   kind: "HealthNpc"
+unhired_merchant_health:
+  wellness: <%= SpecialCode.get_code('wellness','alive') %>
+  base_HP: 99
+  HP: 99
+  owner: unhired_merchant
+  kind: "HealthNpc"
+unhired_guard_health:
+  wellness: <%= SpecialCode.get_code('wellness','alive') %>
+  base_HP: 300
+  HP: 300
+  owner: unhired_guard
+  kind: "HealthNpc"
 
 <% 1.upto(10){|i| %>
 guard_<%= i %>_health:

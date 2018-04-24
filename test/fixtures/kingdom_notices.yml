@@ -1,2 +1,6 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-
+one:
+  kingdom: kingdom_one
+  shown_to: <%= SpecialCode.get_code('shown_to','everyone') %>
+  text: 'Test notice, nothing to see here'
+  signed: 'King Kong'

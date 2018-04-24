@@ -120,7 +120,8 @@ class Management::QuestsController < ApplicationController
     end
   end
 
-protected
+  protected
+
   def quest_status_change_update
     if @quest.save
       flash[:notice] = 'Quest status updated to "' + SpecialCode.get_text('quest_status',@quest.quest_status) + '".'
@@ -139,8 +140,8 @@ protected
   end
   
   def verify_quest_not_in_use(quest)
-    if @quest.quest_status != SpecialCode.get_code('quest_status','design')
-      flash[:notice] = @quest.name + ' cannot be edited; it is already being used.'
+    if quest.quest_status != SpecialCode.get_code('quest_status','design')
+      flash[:notice] = quest.name + ' cannot be edited; it is already being used.'
       false
     else
       true

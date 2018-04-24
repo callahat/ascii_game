@@ -1,13 +1,6 @@
 require 'test_helper'
 
 class InventoryTest < ActiveSupport::TestCase
-	test "verify inventory fixtures loaded" do
-		assert_equal 42, Inventory.count
-		assert_equal  7, PlayerCharacterItem.count
-		assert_equal  4, NpcStock.count
-		assert_equal 31, KingdomItem.count
-	end
-
 	test "remove item" do
 		[PlayerCharacterItem, NpcStock, KingdomItem].each{|inv_type|
 			pci = inv_type.where(['quantity = 1']).first
@@ -52,7 +45,7 @@ class InventoryTest < ActiveSupport::TestCase
 
 	test "pagination" do
 		assert Inventory.get_page(1).to_a.size == 25, Inventory.get_page(1).size.to_s
-		assert_equal  6, PlayerCharacterItem.get_page(1).to_a.size
+		assert_equal  7, PlayerCharacterItem.get_page(1).to_a.size
 		assert_equal  4, NpcStock.get_page(1).to_a.size
 		assert_equal 25, KingdomItem.get_page(1).to_a.size
 		assert_equal  6, KingdomItem.get_page(2).to_a.size

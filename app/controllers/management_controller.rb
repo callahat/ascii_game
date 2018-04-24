@@ -1,10 +1,5 @@
 class ManagementController < ApplicationController
-  before_filter :authenticate
-  before_filter :king_filter
-  before_filter :setup_kingdom_vars, :except => ['choose_kingdom', 'select_kingdom']
-  before_filter :setup_king_pc_vars, :except => ['choose_kingdom', 'select_kingdom']
-
-  layout 'main'
+  include KingdomManagement
 
   def choose_kingdom
     session[:kingdom] = nil
@@ -93,10 +88,5 @@ class ManagementController < ApplicationController
 
       redirect_to :controller => 'game', :action => "main"
     end
-  end
-
-protected
-  def setup_kingdom_vars
-    redirect_to :action => 'choose_kingdom' unless @kingdom = session[:kingdom]
   end
 end

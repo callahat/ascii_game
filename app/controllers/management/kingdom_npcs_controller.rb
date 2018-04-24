@@ -1,4 +1,6 @@
-class Management::KingdomNpcsController < ManagementController
+class Management::KingdomNpcsController < ApplicationController
+  include KingdomManagement
+
   def index
     @merchs = @kingdom.merchants.joins(:health).order('healths.wellness')
     @guards = @kingdom.guards.joins(:health).order('healths.wellness')
@@ -15,9 +17,6 @@ class Management::KingdomNpcsController < ManagementController
     @npc = @kingdom.hireable_merchants.find(params[:id])
     if @kingdom.kingdom_empty_shops.size == 0
       flash[:notice] = 'No available storefronts for the merchants.'
-      redirect_to :action => 'index'
-    elsif @npc.is_hired
-      flash[:notice] = 'This merchant already has a shop!'
       redirect_to :action => 'index'
     else
       @shops = @kingdom.kingdom_empty_shops
@@ -62,14 +61,16 @@ class Management::KingdomNpcsController < ManagementController
     @npc = @kingdom.npcs.find(params[:id])
 
     if @npc.is_hired && @npc.kind == "NpcMerchant"
-      #PUT THAT STOREFRONT BACK INTO CIRCULATION
-      @kingdom_empty_shop = KingdomEmptyShop.create(
-          :kingdom_id => @kingdom.id,
-          :level_map_id => @npc.event_npcs.last.level_map_id )
+      #PUT THAT STOREFRONTS BACK INTO CIRCULATION
+      @npc.event_npcs.each do |event|
+        @kingdom_empty_shop = KingdomEmptyShop.create(
+            :kingdom_id => @kingdom.id,
+            :level_map_id => event.flex )
+      end
       
       @npc.update_attribute(:is_hired, false)
-      @npc.event.feature_events.destroy_all
-      @npc.event.destroy 
+      @npc.event_npcs.each{|event| event.feature_events.destroy_all}
+      @npc.event_npcs.destroy_all
     end
     
     @npc.update_attributes(:kingdom_id => nil, :is_hired => false)

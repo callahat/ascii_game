@@ -74,17 +74,19 @@ class Management::CastlesControllerTest < ActionController::TestCase
 
     throne_feature_name = "\nThrone #{session[:kingdom].name}"
 
+    level_maps(:test_level_map_2_0).update_attribute :feature_id, features(:empty_feature).id
+
     # valid spot, for placement of throne; event no longer attached to the castle
     assert_difference 'Feature.where(name: throne_feature_name).count', +1 do
-      post :set_throne, throne: {spot: level_maps(:test_level_map_0_2)}
-      assert_redirected_to throne_management_castles_path
+      post :set_throne, throne: {spot: level_maps(:test_level_map_2_0)}
+      assert_redirected_to throne_management_castles_path, flash[:notice]
     end
 
     # also valid spot, resets last spot
     assert_no_difference 'Feature.where(name: throne_feature_name).count' do
       post :set_throne, throne: {spot: level_maps(:test_level_map_1_2)}
       assert_redirected_to throne_management_castles_path
-      assert_equal features(:empty_feature), level_maps(:test_level_map_0_2).feature
+      assert_equal features(:empty_feature), level_maps(:test_level_map_2_0).feature
     end
   end
 end

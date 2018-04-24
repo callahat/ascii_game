@@ -240,7 +240,7 @@ protected
     @cost = 500  #base cost of any feature
     
     if @feature.store_front_size > 0
-      @cost += ((@feature.store_front_size).power!(@feature.store_front_size)) * 10
+      @cost += ((@feature.store_front_size)**(@feature.store_front_size)) * 10
     end
       
     if @fees.nil? || @fees.size == 0

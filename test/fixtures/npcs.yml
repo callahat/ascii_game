@@ -5,12 +5,14 @@ npc_one:
   kingdom: kingdom_one
   image: npc_image
   kind: "NpcMerchant"
+  is_hired: true
 
 sick_npc:
   kingdom: kingdom_one
   name: "Sick NPC"
   image: npc_image
   kind: "NpcMerchant"
+  is_hired: true
 
 <% 1.upto(10){|i| %>
 guard_<%= i %>:
@@ -21,3 +23,17 @@ guard_<%= i %>:
   image: guard_image
   kind: "NpcGuard"
 <% } %>
+
+unhired_merchant:
+  name: "Unemployed Merchant"
+  image: npc_image
+  kind: "NpcMerchant"
+  kingdom: kingdom_one
+  is_hired: false
+
+unhired_guard:
+  name: "Unemployed Merchant"
+  image: guard_image
+  kind: "NpcGuard"
+  kingdom: kingdom_one
+  is_hired: false

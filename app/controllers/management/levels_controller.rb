@@ -1,4 +1,6 @@
-class Management::LevelsController < ManagementController
+class Management::LevelsController < ApplicationController
+  include KingdomManagement
+
   before_filter :setup_level_variable, :only => [:edit, :update]
 
   def index
@@ -25,14 +27,14 @@ class Management::LevelsController < ManagementController
 
     unless TxWrapper.take(@kingdom, :gold, @cost)
       flash[:notice] = 'It would cost ' + @cost.to_s + ' gold, which the kingdom doesn\'t have.'
-      redirect_to new_management_level_url
+      redirect_to new_management_level_path
     else
       if @level.save
         @emtpy_feature = Feature.find_by(name: "\nEmpty", kingdom_id: -1, player_id: -1)
         LevelMap.gen_level_map_squares(@level, @emtpy_feature)
         flash[:notice] = 'Level ' + @level.level.to_s + ' was successfully created.'
         flash[:notice] += '<br/>' + @savecount.to_s + ' map squares out of ' + (@level.maxy * @level.maxx).to_s + ' created.'
-        redirect_to management_levels_url
+        redirect_to management_levels_path
       else
         @lowest = session[:kingdom].levels.first.level - 1
         @highest = session[:kingdom].levels.last.level + 1
@@ -53,7 +55,7 @@ class Management::LevelsController < ManagementController
     unless TxWrapper.take(@kingdom, :gold, @cost)
       flash[:notice] = 'There is not enough gold in your coffers to pay for the construction.<br/>'
       flash[:notice] += 'Available amount : ' + session[:kingdom][:gold].to_s + ' ; Total build cost : ' + @cost.to_s
-      redirect_to edit_management_level_url(:id => @level.id)
+      redirect_to edit_management_level_path(:id => @level.id)
     else
       0.upto(@level.maxy-1){|y|
         0.upto(@level.maxx-1){|x|
@@ -95,11 +97,12 @@ class Management::LevelsController < ManagementController
         }
       }
       flash[:notice] = 'Level was successfully updated. Cost was : ' + @cost.to_s
-      redirect_to management_level_url(:id => @level.id)
+      redirect_to management_level_path(:id => @level.id)
     end
   end
 
-protected
+  protected
+
   def calc_cost
     @cost = 0
     return if params.nil? || params[:map].nil?
@@ -121,7 +124,10 @@ protected
   end
 
   def setup_level_variable
-    redirect_to management_level_url() and return() unless @level = @kingdom.levels.where( ['id = ?', params[:id] ] ).last
+    unless @level = @kingdom.levels.where( ['id = ?', params[:id] ] ).last
+      redirect_to management_level_path()
+      return
+    end
   end
 
   def level_params

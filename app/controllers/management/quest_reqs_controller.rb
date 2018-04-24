@@ -34,7 +34,6 @@ class Management::QuestReqsController < ApplicationController
 
   def update
     find_quest_req_obj
-    @quest_req.detail = "#{params[:quest_req].try(:[],:npc_division)}:#{params[:quest_req].try(:[],:kingdom_id)}"
 
     if @quest_req.update_attributes(quest_req_params)
       flash[:notice] = 'Requirement updated sucessfully.'
@@ -56,7 +55,8 @@ class Management::QuestReqsController < ApplicationController
     redirect_to management_quest_path(@quest)
   end
   
-protected
+  protected
+
   def new_quest_req_obj
     if params[:type] == 'creature_kill'
       @quest_req = @quest.creature_kills.build(quest_req_params)

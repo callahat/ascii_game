@@ -37,6 +37,7 @@ npc_event:
   cost: 500
   kind: "EventNpc"
   thing: npc_one
+  level_map: test_level_map_2_1
 storm_gate_event:
   kingdom_id: -1
   player_id: -1
@@ -175,20 +176,22 @@ quest_event_two:
   quest: quest_two
 
 npc_event_healer:
-  kingdom: kingdom_one
-  player: test_player_one
+  kingdom: -1
+  player: -1
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
   name: "Healer NPC"
   armed: 1
   cost: 500
   kind: "EventNpc"
   thing: sick_npc
+  level_map: test_level_map_0_1
 npc_event_multiclass:
-  kingdom: kingdom_one
-  player: test_player_one
+  kingdom: -1
+  player: -1
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
   name: "Multiclass NPC"
   armed: 1
   cost: 500
   kind: "EventNpc"
   thing: npc_one
+  level_map: test_level_map_2_1

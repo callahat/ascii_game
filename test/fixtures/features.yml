@@ -1,6 +1,6 @@
 feature_creature_one: &default_feature
   name: "Creature Feature One"
-  description: "A feature with a creatures attacking"
+  description: "A feature with a creatures attacking, but also a store and a house"
   action_cost: 1
   image: feature_image
   player: test_player_one 
@@ -8,9 +8,9 @@ feature_creature_one: &default_feature
   kingdom: kingdom_one
   public: 0
   cost: 1000
-  num_occupants: 0
+  num_occupants: 5
   armed: 1
-  store_front_size: 0
+  store_front_size: 1
 feature_no_events:
   <<: *default_feature
   name: "Feature Nothing"
@@ -38,7 +38,7 @@ empty_feature:
   image: feature_image
   world_feature: 0
   public: 0
-  cost: 1000
+  cost: 0
   num_occupants: 0
   armed: 1
   store_front_size: 0

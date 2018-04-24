@@ -2,13 +2,15 @@ require 'test_helper'
 
 class Management::KingdomNoticesControllerTest < ActionController::TestCase
   setup do
-    @management_kingdom_notice = management_kingdom_notices(:one)
+    sign_in players(:test_player_one)
+    session[:kingdom] = player_characters(:test_king).kingdoms.first
+    @kingdom_notice = kingdom_notices(:one)
   end
 
   test "should get index" do
     get :index
     assert_response :success
-    assert_not_nil assigns(:management_kingdom_notices)
+    assert_not_nil assigns(:kingdom_notices)
   end
 
   test "should get new" do
@@ -16,32 +18,34 @@ class Management::KingdomNoticesControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test "should create management_kingdom_notice" do
-    assert_difference('Management::KingdomNotice.count') do
-      post :create, management_kingdom_notice: {  }
+  test "should create kingdom_notice" do
+    assert_no_difference('KingdomNotice.count') do
+      post :create, kingdom_notice: @kingdom_notice.attributes.merge(text: '')
     end
 
-    assert_redirected_to management_kingdom_notice_path(assigns(:management_kingdom_notice))
-  end
+    assert_difference('KingdomNotice.count') do
+      post :create, kingdom_notice: @kingdom_notice.attributes.merge(text: 'New Notice')
+    end
 
-  test "should show management_kingdom_notice" do
-    get :show, id: @management_kingdom_notice
-    assert_response :success
+    assert_redirected_to management_kingdom_notices_path
   end
 
   test "should get edit" do
-    get :edit, id: @management_kingdom_notice
+    get :edit, id: @kingdom_notice
     assert_response :success
   end
 
-  test "should update management_kingdom_notice" do
-    patch :update, id: @management_kingdom_notice, management_kingdom_notice: {  }
-    assert_redirected_to management_kingdom_notice_path(assigns(:management_kingdom_notice))
+  test "should update kingdom_notice" do
+    patch :update, id: @kingdom_notice, kingdom_notice: { text: '' }
+    assert_template :edit
+
+    patch :update, id: @kingdom_notice, kingdom_notice: { text: 'Something new...' }
+    assert_redirected_to management_kingdom_notices_path
   end
 
-  test "should destroy management_kingdom_notice" do
-    assert_difference('Management::KingdomNotice.count', -1) do
-      delete :destroy, id: @management_kingdom_notice
+  test "should destroy kingdom_notice" do
+    assert_difference('KingdomNotice.count', -1) do
+      delete :destroy, id: @kingdom_notice
     end
 
     assert_redirected_to management_kingdom_notices_path

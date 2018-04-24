@@ -143,6 +143,14 @@ sick_npc_stat:
   dam: 3
   kind: "StatNpc"
   owner: sick_npc
+unhired_merchant_stat:
+  <<: *default_stat10
+  kind: "StatNpc"
+  owner: unhired_merchant
+unhired_guard_stat:
+  <<: *default_stat10
+  kind: "StatNpc"
+  owner: unhired_guard
 
 <% 1.upto(10){|i| %>
 guard_<%= i %>_stat:

@@ -166,7 +166,7 @@ Rails.application.routes.draw do
         post :do_take
       end
     end
-    resources :kingdom_notices
+    resources :kingdom_notices, except: [:show]
     resources :kingdom_npcs, only: [:index, :show] do
       member do
         get  :edit
@@ -176,7 +176,7 @@ Rails.application.routes.draw do
         post :turn_away
       end
     end
-    resources :levels
+    resources :levels, except: [:destroy]
     get       'pref_list'                =>  'pref_list#index'
     post      'pref_list/drop_from_list' =>  'pref_list#drop_from_list'
     post      'pref_list/add_to_list'    =>  'pref_list#add_to_list'

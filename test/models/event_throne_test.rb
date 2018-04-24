@@ -17,7 +17,7 @@ class EventThroneTest < ActiveSupport::TestCase
 	end
 	
 	test "throne event" do
-		e = EventThrone.find_by_name("throne event")
+		e = events(:throne_event)
 		@pc.in_kingdom = @kingdom.id
 		@pc.kingdom_level = @kingdom.levels.find_by(level: 0).id
 		
@@ -37,7 +37,7 @@ class EventThroneTest < ActiveSupport::TestCase
 	end
 	
 	test "throne event completes" do
-		e = EventThrone.find_by_name("throne event")
+		e = events(:throne_event)
 		@pc.in_kingdom = @kingdom.id
 		@pc.kingdom_level = @kingdom.levels.find_by(level: 0).id
 		e.completes(@pc)

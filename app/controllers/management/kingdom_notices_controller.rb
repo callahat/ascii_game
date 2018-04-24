@@ -44,15 +44,13 @@ class Management::KingdomNoticesController < ApplicationController
   end
 
   def destroy
-    @kingdom_notice = @kingdom.kingdom_notices.find(params[:id])
-
+    @kingdom.kingdom_notices.destroy(params[:id])
     flash[:notice] = "Censored!"
-
-    @kingdom_notice.destroy
     redirect_to :action => 'index', :page => params[:page]
   end
   
-protected
+  protected
+
   def kingdom_notice_params
     params.require(:kingdom_notice).permit(:text, :shown_to, :signed)
   end

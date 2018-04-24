@@ -52,7 +52,7 @@ class Maintenance < ActiveRecord::Base
   def self.kingdom_npcs_maintenance(kingdom, npcs)
     for npc in npcs
       #get the disease damage toll first
-      @disease_damage = npc.illnesses.inject(0) { |c, i| c+i.disease.HP_per_turn }
+      @disease_damage = npc.illnesses.inject(0) { |c, i| c+i.disease.HP_per_turn.to_i }
 
       #lock NPC, just to be safe
       Npc.transaction do

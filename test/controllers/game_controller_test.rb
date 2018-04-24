@@ -142,7 +142,7 @@ class GameControllerTest < ActionController::TestCase
 	end
 	
 	test "game controller feature action where no choice fight creature" do
-		@kl = @level.level_maps.where(['xpos = 1 and ypos = 1']).first
+		@kl = @level.level_maps.where(['xpos = 0 and ypos = 2']).first
 		
 		assert_difference 'session[:player_character].turns', -1 do
 			get 'feature', {:id => @kl.id}
