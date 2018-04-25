@@ -47,7 +47,7 @@ class ForumNodePost < ForumNode
     self.text = text
     self.edit_notices = edit_notices.to_s + '<br/>Edited by ' + user + ' at ' + Time.now.strftime("%m-%d-%Y %I:%M.%S %p")
     self.is_mods_only = mods_only
-    self.save!
+    self.save
   end
   
   def can_be_edited_by(user)

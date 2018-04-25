@@ -14,11 +14,6 @@ class ForumController < ApplicationController
 #  before_filter :load_parent_post, :only => [ :create_post ]
   
   layout 'forum'
-  
-  def index
-    boards
-    render :action => 'boards'
-  end
 
   def boards
     @more_conds = node_flags(current_player)
@@ -51,7 +46,7 @@ class ForumController < ApplicationController
   
     if @board.update_attributes(update_board_params)
       flash[:notice] = "Description updated"
-      redirect_back_or_default(forums_url())
+      redirect_back_or_default(forums_path)
     else
       flash[:notice] = "Failed to update descritpion"
       render :action => 'edit_board',:board_id => @board.id
@@ -70,7 +65,7 @@ class ForumController < ApplicationController
     end
   
     if params[:forum_node_id]
-      @post = ForumNodePost.find( params[:forum_node_id] )
+      @post ||= ForumNodePost.find( params[:forum_node_id] )
     end
     
     @user_mod_level = (player_signed_in? ? current_player.forum_attribute.mod_level : -1)
@@ -92,7 +87,7 @@ class ForumController < ApplicationController
       render :action => 'new_thred'
     else
       flash[:notice] = 'Thred created sucessfully'
-      redirect_to(boards_url(:bname => @board.name))
+      redirect_to(boards_path(:bname => @board.name))
     end
   end
 
@@ -113,11 +108,11 @@ class ForumController < ApplicationController
     end
   end
 
-  def leaderboard
-  end
+  # def leaderboard
+  # end
 
   def cancel_edit
-    redirect_back_or_default(boards_url())
+    redirect_back_or_default(boards_path)
   end
 
   def create_post
@@ -136,7 +131,7 @@ class ForumController < ApplicationController
 
   def edit_post
     view_thred
-    @post = ForumNodePost.find(params[:forum_node_id])
+    @post ||= ForumNodePost.find(params[:forum_node_id])
     render :action => 'view_thred', :bname => @board.name, :tname => @thred.name
   end
 
@@ -179,7 +174,7 @@ class ForumController < ApplicationController
 
     if @forum_restriction.save
       flash[:notice] = "Restriction saved"
-      redirect_back_or_default(forums_url())
+      redirect_back_or_default(forums_path)
     else
       flash[:notice] = "Error in creating restriction"
       render :action => 'banhammer'
@@ -235,10 +230,11 @@ class ForumController < ApplicationController
     redirect_to :back
   end
   
-  def show_restrictions
-  end
+  # def show_restrictions
+  # end
 
-protected
+  protected
+
   # We can return to this location by calling #redirect_back_or_default.
   def store_location
     session[:return_to] = request.url unless params[:forum_node_id]

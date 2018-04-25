@@ -8,7 +8,7 @@
  <b>This thread is locked</b>
  <% elsif not player_signed_in? %>
  <b>Must be signed in to post.</b>
- <% elsif (!ForumRestriction.no_posting(current_player) && current_player.player_characters.find_by('level > 9').present? && @post.nil?) %>
+ <% elsif (!ForumRestriction.no_posting(current_player) && current_player.player_characters.find_by('level > 9').present? && (@post.nil? || (@post.new_record? && @post.errors.present?))) %>
  <table class="post_text"><tr><td>
  <%= form_tag :action => 'create_post', :bname => @board.name, :tname => @thred.name do %>
    <%= render :partial => 'post_form' %>

@@ -1,6 +1,4 @@
 class HomeController < ApplicationController
-  #before_filter :authenticate
-
   layout 'main'
   
   def index

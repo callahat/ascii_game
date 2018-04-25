@@ -2,6 +2,8 @@ class ForumRestriction < ActiveRecord::Base
   belongs_to :player
   belongs_to :giver, :foreign_key => 'given_by', :class_name => 'Player'
 
+  validates_presence_of :restriction
+
   def self.no_posting(who)
     return self.no_whating('no_posting', who)
   end

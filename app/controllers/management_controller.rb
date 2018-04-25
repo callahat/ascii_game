@@ -27,7 +27,7 @@ class ManagementController < ApplicationController
 
   def select_kingdom
     @kingdom = Kingdom.find(params[:king][:kingdom_id])
-    if current_player.player_characters.find(@kingdom.player_character_id)
+    if current_player.player_characters.exists?(@kingdom.player_character_id)
       session[:kingdom] = @kingdom
     else
       flash[:notice] = 'You are not the king in the kingdom submitted!'
@@ -36,14 +36,10 @@ class ManagementController < ApplicationController
   end
 
   def retire
-    if session[:kingdom].nil?
-      redirect_to :action => 'retire'
-      return
-    elsif params[:commit] == "Abandon"
+    if params[:commit] == "Abandon"
       @no_king = true
       @message = 'Really leave the kingdom without a monarch?'
     elsif params[:new_king]
-      print "in here"
       @player_character = PlayerCharacter.find_by(name: params[:new_king])
       session[:new_king] = @player_character
       if @player_character.nil?

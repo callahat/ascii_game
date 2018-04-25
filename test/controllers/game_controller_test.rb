@@ -17,17 +17,31 @@ class GameControllerTest < ActionController::TestCase
 	test "game controller main" do
 		#p "game controller main"
 		session[:player_character] = nil
-		get 'main', {}
+		get 'main'
 		assert_response :redirect
 		assert_redirected_to menu_character_url
-		
+
+    # in a kingdom
 		session[:player_character] = PlayerCharacter.find_by_name("Test PC One")
-		#p "WAAA"
-		get 'main', {}
-		#p "AAAW"
+		get 'main'
 		assert_response :success
 		assert_not_nil assigns(:where)
 		assert_template 'main'
+
+    # in world
+    session[:player_character].update_attribute :in_kingdom, nil
+    session[:player_character].update_attribute :kingdom_level, nil
+    get 'main'
+    assert_response :success
+    assert_not_nil assigns(:where)
+    assert_template 'main'
+
+    # corrupted location
+    session[:player_character].update_attribute :in_world, nil
+    get 'main'
+    assert_response :success
+    assert_template 'main'
+    assert_match /floating in empty space/, flash[:notice]
 	end
 	
 	test "game controller leave kingdom" do
@@ -91,8 +105,7 @@ class GameControllerTest < ActionController::TestCase
 		assert session[:player_character].bigy == 0
 		assert flash[:notice] =~ /[Ww]est/
 	end
-	
-	
+
 	test "game controller feature action when not loged in or character selected" do
 		sign_out :player
 		session[:player_character] = nil
@@ -190,7 +203,15 @@ class GameControllerTest < ActionController::TestCase
 		assert_response :success
 		assert_template 'choose'
 		assert session[:ev_choice_ids]
-		
+
+    # get a different featue, without choosing, make sure the choice pops again
+    assert_difference 'session[:player_character].turns', -0 do
+      get 'feature', {:id => @kl.id}
+    end
+    assert_response :success
+    assert_template 'choose'
+    assert session[:ev_choice_ids]
+
 		get 'do_choose', {:id => 1}
 		assert_response :success
 		assert_template 'choose'
@@ -207,7 +228,13 @@ class GameControllerTest < ActionController::TestCase
 		assert_response :redirect
 		assert session[:ev_choice_ids].nil?
 		assert session[:player_character].current_event.event_id
-	end
+  end
+
+  test "bad do_choose, no current event" do
+    post 'do_choose'
+    assert_equal 'You feel like something should have happened.', flash[:notice]
+    assert_redirected_to complete_game_path
+  end
 	
 	test "game controller feature action where there are choices then skip" do
 		@kl = @level.level_maps.where(['xpos = 0 and ypos = 0']).first
@@ -300,8 +327,19 @@ class GameControllerTest < ActionController::TestCase
 		
 		get 'feature', {:id => @kl2.id}
 		assert_response :redirect
-		session[:player_character].current_event.destroy
-		
+    assert session[:player_character].current_event.completed == EVENT_INPROGRESS
+
+    incomplete_quest_event = session[:player_character].current_event
+    get 'feature', {:id => @kl1.id}
+    assert_response :redirect
+    assert_equal incomplete_quest_event, session[:player_character].current_event
+
+    session[:player_character].current_event.update_attribute :completed, EVENT_FAILED
+    get 'feature', {:id => @kl1.id}
+    assert_response :redirect
+    assert_redirected_to main_game_path
+    assert_nil session[:player_character].reload.current_event
+
 		get 'feature', {:id => @kl1.id}
 		assert_response :redirect
 		assert_redirected_to do_complete_game_quests_path
@@ -316,5 +354,44 @@ class GameControllerTest < ActionController::TestCase
 		assert_response :redirect
 		assert_redirected_to  :controller => 'game', :action => 'main'
 		assert session[:player_character].current_event.completed == EVENT_COMPLETED
-	end
+  end
+
+  test "wave at pc" do
+    assert_difference 'session[:player_character].illnesses.count', +1 do
+      session[:player_character].current_event = CurrentKingdomEvent.new event: events(:pc_event),
+                                                                         location: level_maps(:test_level_map_0_0),
+                                                                         priority: 1
+      get :wave_at_pc
+      assert_response :success
+    end
+  end
+
+  test "make_camp" do
+    session[:player_character].current_event = CurrentKingdomEvent.new event: events(:pc_event),
+                                                                       location: level_maps(:test_level_map_0_0),
+                                                                       priority: 1
+    get :make_camp
+    assert_equal 'Cannot rest while in midst of action!', flash[:notice]
+    assert_redirected_to main_game_path
+
+    session[:player_character].current_event.destroy
+    session[:player_character].current_event = nil
+    session[:player_character].update_attribute :turns, 0
+    get :make_camp
+    assert_equal 'Too tired to make camp', flash[:notice]
+    assert_redirected_to main_game_path
+
+    session[:player_character].update_attribute :turns, 10
+    session[:player_character].health.update_attribute :HP, session[:player_character].health.base_HP - 1
+    session[:player_character].health.update_attribute :MP, session[:player_character].health.base_MP
+    session[:player_character].health.update_attribute :wellness, SpecialCode.get_code('wellness','dead')
+
+    assert_difference 'session[:player_character].health.HP', +1 do
+      assert_difference 'session[:player_character].health.MP', +0 do
+        get :make_camp
+        assert_equal SpecialCode.get_code('wellness', 'alive'), session[:player_character].health.reload.wellness
+        assert_redirected_to main_game_path
+      end
+    end
+  end
 end

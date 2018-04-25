@@ -121,13 +121,13 @@ class GameController < ApplicationController
   end
 
   def wave_at_pc
-    @other_pc = PlayerCharacter.find(session[:current_event].event_player_character.player_character_id)
+    @other_pc = @pc.current_event.event.player_character
     Illness.spread(@pc, @other_pc, SpecialCode.get_code('trans_method','air') )
     Illness.spread(@other_pc, @pc, SpecialCode.get_code('trans_method','air') )
   end
 
   def make_camp
-    if session[:current_event]
+    if @pc.current_event
       flash[:notice] = "Cannot rest while in midst of action!"
     elsif TxWrapper.take(@pc, :turns, 1)
       Health.transaction do

@@ -7,7 +7,7 @@
       <span title="Click to play this character">
       <p>
       <%= link_to '[#]', {:controller => 'character', :action => 'do_choose', :id => active.id} , :method => :post %><%=h active.name %>
-      <% if active.kingdom_id %> of <%=h active.kingdom.name %><% end %>
+      <% if active.kingdom.present? %> of <%=h active.kingdom.name %><% end %>
       </p>
       </span>
     <% end %>

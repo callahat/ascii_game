@@ -11,13 +11,6 @@ Rails.application.routes.draw do
   #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action
 
-  # TODO: DELET THESE
-  # get       'login'             =>  'account#login'
-  # get       'logout'            =>  'account#logout'
-  # post      'account/verify'    =>  'account#verify'
-  # get       'register'          =>  'account#new'
-  # post      'register'          =>  'account#new'
-
   resource  :account, controller: :account, only: [:show] do
     # not sure if still need what action
     get :what

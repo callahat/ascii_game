@@ -5,4 +5,4 @@
 <% if @pc.battle.enemies.count > 0 %>
 <%= link_to 'Claim throne, continue fighting', {controller: '/game/battle', action: 'fate_of_throne', q: 'keep_fighting'}, :method => :post %><br/>
 <% end %>
-<%= link_to 'Abandon throne', {controller: '/game/battle', action: 'fate_of_throne', q: 'abandon'}, :method => :post, :method => :post %>
+<%= link_to 'Abandon throne', {controller: '/game/battle', action: 'fate_of_throne', q: 'abandon'}, :method => :post %>

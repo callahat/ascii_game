@@ -84,7 +84,7 @@ class CharacterControllerTest < ActionController::TestCase
     assert_not_nil assigns(:player_character).errors
 
     post :create, player_character: {name: 'TestChar', image_text: ":O", kingdom_id: @kingdom.id}
-    assert_redirected_to menu_character_path
+    assert_redirected_to menu_character_path, assigns(:player_character).errors.full_messages
     assert assigns(:player_character).image
     assert assigns(:player_character).race
     assert assigns(:player_character).c_class
