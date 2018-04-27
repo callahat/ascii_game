@@ -32,11 +32,11 @@ class Management::ImagesController < ApplicationController
       @image = accessible_images.new
     end
 
-    @types = SPEC_CODET['image_type']
-    unless current_player.admin
-      @types.delete('world')
-      @types.delete('character')
-    end
+    @types = unless current_player.admin
+               SPEC_CODET['image_type'].except('world','character')
+             else
+               SPEC_CODET['image_type']
+             end
     set_image_box_size
   end
 
@@ -60,11 +60,11 @@ class Management::ImagesController < ApplicationController
   def edit
     @image = accessible_images.find(params[:id])
     set_image_box_size
-    @types = SPEC_CODET['image_type']
-    unless current_player.admin
-      @types.delete('world')
-      @types.delete('character')
-    end
+    @types = unless current_player.admin
+               SPEC_CODET['image_type'].except('world','character')
+             else
+               SPEC_CODET['image_type']
+             end
     if !verify_image_owner
       redirect_to :action => 'index'
       return

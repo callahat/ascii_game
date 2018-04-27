@@ -1,4 +1,4 @@
-SPEC_CODET = {
+SPEC_CODET = IceNine.deep_freeze({
   "restrictions" =>
     {
       "no_posting" => 1,
@@ -147,8 +147,8 @@ SPEC_CODET = {
       "magic" => 2,
       "combat" => 3
     }
-  }
-SPEC_CODEC = {
+  })
+SPEC_CODEC = IceNine.deep_freeze({
   "restrictions" =>
     {
       1 => "no_posting",
@@ -297,4 +297,4 @@ SPEC_CODEC = {
       2 => "magic",
       3 => "combat"
     }
-  } #End of Special Codes
+  }) #End of Special Codes

@@ -14,6 +14,7 @@ gem 'will_paginate'
 #gem 'verification'
 gem 'figaro'
 gem 'devise'
+gem 'ice_nine'
 
 # Deploy with Capistrano
 # gem 'capistrano'
@@ -28,6 +29,7 @@ gem 'simplecov', :require => false, :group => :test
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
+  gem 'bullet'
 end
 
 group :development do

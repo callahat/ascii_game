@@ -37,4 +37,10 @@ AsciiGame3::Application.configure do
 
   config.active_support.test_order = :sorted
   config.eager_load = true
+
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.bullet_logger = true
+    Bullet.raise = true
+  end
 end
