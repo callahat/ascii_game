@@ -63,7 +63,7 @@ class GameController < ApplicationController
     if @pc.reload && @pc.battle
       redirect_to :controller => 'game/battle', :action => 'battle'
     else #check for current event
-      if session[:ev_choice_ids] && (@events = Event.find(session[:ev_choice_ids]))
+      if session[:ev_choice_ids] && (@events = Event.where(id: session[:ev_choice_ids]).includes(:thing))
         render :file => 'game/choose', :layout => true
       elsif @current_event = @pc.current_event
         if @current_event.completed == EVENT_INPROGRESS #already have an event in progress

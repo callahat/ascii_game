@@ -10,10 +10,10 @@ class EventNpc < EventLifeNeutral
   end
   
   def as_option_text(pc=nil)
-    if npc.health.wellness == SpecialCode.get_code('wellness','dead')
-      "Poke " + npc.name + "'s corpse"
+    if thing.health.wellness == SpecialCode.get_code('wellness','dead')
+      "Poke " + thing.name + "'s corpse"
     else
-      "Chat with " + npc.name
+      "Chat with " + thing.name
     end
   end
   

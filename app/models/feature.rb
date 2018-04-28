@@ -38,13 +38,12 @@ class Feature < ActiveRecord::Base
     [true, false].inject([]) {|ret, c|
       conds = ['priority = ? and chance >= ? and choice = ?', p, chance, c]
       ret << feature_events.where(conds).includes(:event).inject([]){|a,fe|
-        e = fe.event(->{includes(:player_character)}) if fe.event.kind_of?(EventPlayerCharacter)
-        e ||= fe.event
+        e = fe.event(->{includes(:thing)})
         if (e.class == EventQuest) && (q = e.quest) &&
             (((lq = q.log_quests.find_by(player_character_id: pid)) && lq.rewarded) )
             #|| q.quest_id && DoneQuest.find(:first,:conditions => ['quest_id = ? and player_character_id = ?', q.quest_id, pid ]).nil?)
           a
-        else
+        elsif e
           case e.event_rep_type
             when SpecialCode.get_code('event_rep_type','unlimited')
               a << e
@@ -55,6 +54,9 @@ class Feature < ActiveRecord::Base
               ( loc.done_events.where(player_character_id: pid, event_id: e.id).count < e.event_reps ?
                   a << e : a )
           end
+        else
+          Rails.logger.warn "Event was nil for #{self.id} #{feature_events.where(conds)}"
+          a
         end
       }
     }

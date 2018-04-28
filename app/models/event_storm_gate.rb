@@ -1,5 +1,6 @@
 class EventStormGate < Event
   belongs_to :level, :foreign_key => 'thing_id'
+  belongs_to :thing, :foreign_key => 'thing_id', :class_name => 'Level'
   
   validates_presence_of :thing_id
   
@@ -24,6 +25,6 @@ class EventStormGate < Event
   end
   
   def as_option_text(pc=nil)
-    "Storm the gates of " + level.kingdom.name
+    "Storm the gates of " + thing.kingdom.name
   end
 end

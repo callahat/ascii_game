@@ -1,5 +1,6 @@
 class EventCreature < Event
   belongs_to :creature, :foreign_key => 'thing_id'
+  belongs_to :thing, :foreign_key => 'thing_id', :class_name => 'Creature'
 
   validates_presence_of :thing_id,:flex
   

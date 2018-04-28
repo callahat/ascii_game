@@ -1,6 +1,7 @@
 class EventMoveLocal < EventLifeNeutral
   belongs_to :level, :foreign_key => 'thing_id', :class_name => 'Level'
-  
+  belongs_to :thing, :foreign_key => 'thing_id', :class_name => 'Level'
+
   validates_presence_of :thing_id
   
   def make_happen(who)
@@ -54,9 +55,9 @@ class EventMoveLocal < EventLifeNeutral
   
   def as_option_text(pc=nil)
     if pc && pc.in_kingdom.nil?
-      @link_text = "Enter " + level.kingdom.name
+      @link_text = "Enter " + thing.kingdom.name
     else
-      @link_text = "Go to level " + level.level.to_s
+      @link_text = "Go to level " + thing.level.to_s
     end
   end
 end

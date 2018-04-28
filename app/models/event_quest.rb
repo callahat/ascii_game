@@ -1,5 +1,6 @@
 class EventQuest < Event
   belongs_to :quest, :foreign_key => 'thing_id'
+  belongs_to :thing, :foreign_key => 'thing_id', :class_name => 'Npc'
 
   #validates_presence_of :thing_id
 
