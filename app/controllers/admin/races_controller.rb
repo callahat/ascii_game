@@ -6,7 +6,7 @@ class Admin::RacesController < ApplicationController
   layout 'admin'
 
   def index
-    @races = Race.get_page(params[:pages])
+    @races = Race.get_page(params[:pages]).includes(:level_zero)
   end
 
   def show

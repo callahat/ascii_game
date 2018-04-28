@@ -6,7 +6,7 @@ class Admin::CreaturesController < ApplicationController
   layout 'admin'
 
   def index
-    @creatures = Creature.get_page(params[:page])
+    @creatures = Creature.get_page(params[:page]).includes(:stat,:disease)
   end
 
   def new

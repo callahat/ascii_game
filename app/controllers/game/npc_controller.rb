@@ -24,7 +24,7 @@ class Game::NpcController < ApplicationController
   end
 
   def heal
-    redirect_to npc_game_npc_path and return unless (@npc_healer_skills = @npc.npc_merchant_detail.healer_skills).size > 0
+    redirect_to npc_game_npc_path and return unless (@npc_healer_skills = @npc.npc_merchant_detail.healer_skills.includes(:disease)).size > 0
 
     @diseases_cured = @npc_healer_skills.collect{|cure| cure.disease }.compact
 
@@ -72,7 +72,7 @@ class Game::NpcController < ApplicationController
   
   def buy
     redirect_to npc_game_npc_path and return unless @npc.npc_merchant_detail.consignor
-    @stocks = NpcStock.get_page(params[:page], @npc.id)
+    @stocks = NpcStock.get_page(params[:page], @npc.id).includes(:item)
   end
   
   def do_buy

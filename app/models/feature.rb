@@ -8,7 +8,7 @@ class Feature < ActiveRecord::Base
   has_many :world_maps
   has_many :events, through: :feature_events
   has_many :local_move_events, ->{where(kind: 'EventMoveLocal')}, source: :event, through: :feature_events
-  has_many :npc_events, ->{where(kind: 'EventNpc')}, source: :event, through: :feature_events
+  has_many :npc_events, ->{where(kind: 'EventNpc').includes(:npc)}, source: :event, through: :feature_events
 
   validates_presence_of :name,:action_cost,:image_id,:player_id,:kingdom_id,:cost,:num_occupants
   validates_uniqueness_of :name
@@ -37,8 +37,9 @@ class Feature < ActiveRecord::Base
   def available_events(p, loc, pid, chance=(rand(100)+1) )
     [true, false].inject([]) {|ret, c|
       conds = ['priority = ? and chance >= ? and choice = ?', p, chance, c]
-      ret << feature_events.where(conds).inject([]){|a,fe|
-        e = fe.event
+      ret << feature_events.where(conds).includes(:event).inject([]){|a,fe|
+        e = fe.event(->{includes(:player_character)}) if fe.event.kind_of?(EventPlayerCharacter)
+        e ||= fe.event
         if (e.class == EventQuest) && (q = e.quest) &&
             (((lq = q.log_quests.find_by(player_character_id: pid)) && lq.rewarded) )
             #|| q.quest_id && DoneQuest.find(:first,:conditions => ['quest_id = ? and player_character_id = ?', q.quest_id, pid ]).nil?)

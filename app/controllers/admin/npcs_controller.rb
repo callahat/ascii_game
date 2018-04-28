@@ -8,7 +8,7 @@ class Admin::NpcsController < ApplicationController
   layout 'admin'
 
   def index
-    @npcs = Npc.get_page(params[:page])
+    @npcs = Npc.get_page(params[:page]).includes(:kingdom)
   end
 
   def show

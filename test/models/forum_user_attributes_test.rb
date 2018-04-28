@@ -3,7 +3,7 @@ require 'test_helper'
 class ForumUserAttributesTest < ActiveSupport::TestCase
   # Replace this with your real tests.
   test "forum_user_attributes" do
-    Player.all.each do |p|
+    Player.all.includes(:forum_user_attribute).each do |p|
       assert p.forum_attribute.mod_level
       assert p.forum_attribute.posts
     end

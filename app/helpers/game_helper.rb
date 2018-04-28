@@ -2,7 +2,7 @@ module GameHelper
   def battle_grid(battle)
     ret = "<table><tr>\n"
     c = 0
-    battle.groups.each{|bg|
+    battle.groups.includes(enemies: :enemy).each{|bg|
       ret += "<td>"
       ret += "<span class=\"creature image\">" + h(bg.enemies[0].enemy.image.image_text) + "</span>\n"
       ret += submit_tag(bg.name)

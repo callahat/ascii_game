@@ -8,7 +8,7 @@ class NpcBlacksmithItem < ActiveRecord::Base
     @last_min_sales = npc.npc_blacksmith_items.by_min_sales.last
     @last_min_sales = ( @last_min_sales ? @last_min_sales.min_sales : -1 )
     
-    @skill_base_items = BlacksmithSkill.find_base_items(sales, @last_min_sales, npc.npc_merchant_detail.race_body_type)
+    @skill_base_items = BlacksmithSkill.find_base_items(sales, @last_min_sales, npc.npc_merchant_detail.race_body_type).includes(base_item: :stat)
     
     @new_items = []
     

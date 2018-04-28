@@ -236,7 +236,7 @@ protected
     end
   
     #can be expensive computatinally.
-    @fees = @feature.feature_events
+    @fees = @feature.feature_events.includes(:event)
     @cost = 500  #base cost of any feature
     
     if @feature.store_front_size > 0

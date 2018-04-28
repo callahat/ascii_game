@@ -20,11 +20,11 @@ you don't see any threds
   <th>Posts</th>
   <th>Last Post</th>
 </tr>
-<% for thred in @threds %>
+<% for thred in @threds.includes(:last_post) %>
 <tr>
   <td><%= link_to "#{thred.name}", threds_url( :bname => @board.name, :tname => thred.name) %></td>
   <td class="board_info"><%=h thred.text %></td>
-  <td class="board_info"><%=h thred.childs.size %></td>
+  <td class="board_info"><%=h thred.childs.count %></td>
   <td class="board_info"><% if thred.last_post %><%= thred.last_post.created_at.strftime("%m-%d-%Y %I:%M.%S %p") %> by <%=h thred.last_post.player.handle %><% end %></td>
 </tr>
 <tr>

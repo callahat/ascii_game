@@ -5,7 +5,7 @@ class Management::KingdomItemsController < ApplicationController
   layout 'main'
 
   def index
-    @kingdom_items = KingdomItem.get_page(params[:page], session[:kingdom][:id] )
+    @kingdom_items = KingdomItem.get_page(params[:page], session[:kingdom][:id] ).includes(:item)
   end
 
   def list_inventory

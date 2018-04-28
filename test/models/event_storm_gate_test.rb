@@ -25,7 +25,7 @@ class EventStormGateTest < ActiveSupport::TestCase
 		assert_equal EVENT_INPROGRESS, @comp
 		
 		#test where there are no guards
-		es.level.kingdom.npcs.destroy_all
+		es.level.kingdom.guards.includes(:event_npcs,:illnesses).destroy_all
 		assert_difference 'Battle.count', +0 do
 			@direct, @comp, @msg = es.happens(player_characters(:pc_one))
 		end

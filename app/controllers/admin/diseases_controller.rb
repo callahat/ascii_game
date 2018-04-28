@@ -6,7 +6,7 @@ class Admin::DiseasesController < ApplicationController
   layout 'admin'
 
   def index
-    @diseases = Disease.get_page(params[:page])
+    @diseases = Disease.get_page(params[:page]).includes(:stat)
   end
 
   def show

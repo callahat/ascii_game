@@ -22,11 +22,11 @@
 
 <% if player_signed_in? && ForumRestriction.no_viewing(current_player) %>
 You are prohibited from viewing the posts.
-<% elsif @posts.size == 0 %>
+<% elsif @posts.count == 0 %>
 No Posts
 <% else %>
 <table>
-<% for post in @posts %>
+<% for post in @posts.includes(player: :forum_user_attribute) %>
 <tr valign="top"><td>
   <table class="author" width=115>
     <tr><td><%= post.player.handle %></td></tr>

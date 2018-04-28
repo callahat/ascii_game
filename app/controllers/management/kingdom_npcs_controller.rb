@@ -2,9 +2,9 @@ class Management::KingdomNpcsController < ApplicationController
   include KingdomManagement
 
   def index
-    @merchs = @kingdom.merchants.joins(:health).order('healths.wellness')
-    @guards = @kingdom.guards.joins(:health).order('healths.wellness')
-    @npcs_for_hire = @kingdom.npcs.joins(:health) \
+    @merchs = @kingdom.merchants.includes(:health).order('healths.wellness')
+    @guards = @kingdom.guards.includes(:health).order('healths.wellness')
+    @npcs_for_hire = @kingdom.npcs.includes(:health) \
                          .where(is_hired: false)  \
                          .where.not(healths: { wellness: SpecialCode.get_code('wellness','dead')} )
   end
@@ -69,7 +69,7 @@ class Management::KingdomNpcsController < ApplicationController
       end
       
       @npc.update_attribute(:is_hired, false)
-      @npc.event_npcs.each{|event| event.feature_events.destroy_all}
+      @npc.event_npcs.includes(:feature_events).each{|event| event.feature_events.destroy_all}
       @npc.event_npcs.destroy_all
     end
     

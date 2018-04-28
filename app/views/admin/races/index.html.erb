@@ -18,7 +18,7 @@
 		<td><%= race.description %></td>
 		<td><%= SpecialCode.get_text('race_body_type', race.race_body_type) %></td>
 		<td><%= race.freepts %></td>
-		<td><%= race.race_equip_locs.size %></td>
+		<td><%= race.race_equip_locs.count %></td>
 		<td><%= link_to 'Show', [:admin,race] %></td>
 		<td><%= link_to 'Edit', edit_admin_race_path(race) %></td>
 		<td><%= link_to 'Destroy', [:admin, race], data: {confirm: 'Are you sure?'}, method: :delete %></td>

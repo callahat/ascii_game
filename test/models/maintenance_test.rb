@@ -18,9 +18,12 @@ class MaintenanceTest < ActiveSupport::TestCase
 	end
 	
 	test "maint npc solicitation" do
-		@kingdom.npcs.destroy_all
-	
-		assert @kingdom.npcs.size == 0
+		@kingdom.guards.includes(:event_npcs,:illnesses).destroy_all
+		@kingdom.merchants.includes(:event_npcs,:illnesses,:npc_blacksmith_items,:npc_stocks).destroy_all
+		@kingdom.hireable_guards.count
+		@kingdom.hireable_merchants.count
+
+		assert @kingdom.npcs.size == @kingdom.hireable_guards.count + @kingdom.hireable_merchants.count
 		Maintenance.npc_solicitation(@kingdom,NpcMerchant)
 		Maintenance.npc_solicitation(@kingdom,NpcGuard)
 		@kingdom.npcs.reload
@@ -30,13 +33,13 @@ class MaintenanceTest < ActiveSupport::TestCase
 	
 	test "maint kingdom npcs maintenance" do
 		assert Maintenance.report.size == 0
-		Maintenance.kingdom_npcs_maintenance(@kingdom, @kingdom.live_npcs)
+		Maintenance.kingdom_npcs_maintenance(@kingdom, @kingdom.live_npcs.includes(illnesses: :disease))
 		assert Maintenance.report.size >= 0
 	end
 	
 	test "maint kingdom pandemics" do
 		assert Maintenance.report.size == 0
-		Maintenance.kingdom_pandemics(@kingdom, @kingdom.live_npcs)
+		Maintenance.kingdom_pandemics(@kingdom, @kingdom.live_npcs.includes(illnesses: :disease))
 		assert Maintenance.report.size >= 0
 	end
 	

@@ -7,7 +7,7 @@ class Illness < ActiveRecord::Base
     #spread disease to target
     # @illnesses = host.illnesses.find(:all, :joins => "INNER JOIN diseases ON diseases.id = disease_id",
     #                                  :conditions => ['diseases.trans_method = ?', trans_method])
-    @illnesses = host.illnesses.joins(:disease).where(diseases: { trans_method: trans_method })
+    @illnesses = host.illnesses.includes(disease: :stat).where(diseases: { trans_method: trans_method })
     for illness in @illnesses
       @disease = illness.disease
       caught +=1 if Illness.infect(target, @disease)

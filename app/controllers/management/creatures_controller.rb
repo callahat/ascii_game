@@ -7,7 +7,7 @@ class Management::CreaturesController < ApplicationController
   layout 'main'
 
   def index
-    @creatures = Creature.get_page(params[:page], current_player.id, session[:kingdom][:id])
+    @creatures = Creature.get_page(params[:page], current_player.id, session[:kingdom][:id]).includes(:stat,:disease)
   end
 
   def new

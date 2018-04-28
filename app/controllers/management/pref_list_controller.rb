@@ -10,7 +10,7 @@ class Management::PrefListController < ApplicationController
     @pref_list = session[:pref_list_type].current_list(session[:kingdom])
     session[:cur_pref_list_class] = @stuff.collect{|s| s.id}
 
-    @all_things = @stuff.paginate(:page => params[:page])
+    @all_things = @stuff.paginate(:page => params[:page]).includes(:kingdom)
   end
 
   def add_to_list

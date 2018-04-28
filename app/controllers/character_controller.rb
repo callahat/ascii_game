@@ -50,8 +50,8 @@ class CharacterController < ApplicationController
 
   def new
     #code to create a new character
-    @c_classes = CClass.all.order(:name)
-    @races = Race.all.order(:name)
+    @c_classes = CClass.all.includes(:level_zero).order(:name)
+    @races = Race.all.includes(:level_zero,:kingdom).order(:name)
     session[:nplayer_character] = PlayerCharacter.new
   end
 

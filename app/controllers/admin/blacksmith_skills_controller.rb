@@ -6,7 +6,7 @@ class Admin::BlacksmithSkillsController < ApplicationController
   layout 'admin'
 
   def index
-    @blacksmith_skills = BlacksmithSkill.get_page(params[:page])
+    @blacksmith_skills = BlacksmithSkill.get_page(params[:page]).includes(:base_item)
   end
 
   def show

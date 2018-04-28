@@ -85,7 +85,7 @@ class Game::BattleController < ApplicationController
   end
 
   def run_away
-    @battle = @pc.battle
+    @battle = @pc.battle(->{includes(:items,:enemies,:groups)})
 
     if @battle.run_away(75)
       @pc.current_event.update_attribute(:completed, EVENT_FAILED) if @pc.current_event

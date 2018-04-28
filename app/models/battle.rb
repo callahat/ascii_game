@@ -163,10 +163,10 @@ class Battle < ActiveRecord::Base
 
   def clear_battle
     @creature_ids = {}
-    self.creatures.each{|c|
+    self.creatures.includes(:health,:stat).each{|c|
       c.health.destroy
       c.stat.destroy
-      @creature_ids[c.creature.id] = 1 + @creature_ids[c.creature.id].to_i
+      @creature_ids[c.enemy_id] = 1 + @creature_ids[c.enemy_id].to_i
       c.destroy  }
     self.enemies.destroy_all
     self.items.destroy_all

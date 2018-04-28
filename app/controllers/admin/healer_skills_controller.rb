@@ -6,7 +6,7 @@ class Admin::HealerSkillsController < ApplicationController
   layout 'admin'
 
   def index
-    @healer_skills = HealerSkill.get_page(params[:page])
+    @healer_skills = HealerSkill.get_page(params[:page]).includes(:disease)
   end
 
   def show

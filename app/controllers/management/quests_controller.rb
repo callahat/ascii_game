@@ -11,8 +11,8 @@ class Management::QuestsController < ApplicationController
   #**********************************************************************
   def index
     #design quest
-    #@quests = session[:kingdom].quests
-    @quests = Quest.get_page(params[:page], session[:kingdom][:id])
+    # @quests = session[:kingdom].quests.includes(:kingdom,:player)
+    @quests = Quest.get_page(params[:page], session[:kingdom][:id]).includes(:kingdom,:player)
   end
   
   def show
@@ -131,7 +131,7 @@ class Management::QuestsController < ApplicationController
   end
   
   def setup_reward_items
-    @kingdom_items = session[:kingdom].kingdom_items
+    @kingdom_items = session[:kingdom].kingdom_items.includes(:item)
     @items = []
     
     for ki in @kingdom_items

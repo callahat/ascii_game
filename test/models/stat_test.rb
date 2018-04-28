@@ -4,14 +4,14 @@ class HealthTest < ActiveSupport::TestCase
   # Replace this with your real tests.
   # Replace this with your real tests.
   test "verify stat fixtures loaded" do
-    PlayerCharacter.all.each{|pc|
+    PlayerCharacter.all.includes(:stat,:base_stat,:trn_stat).each{|pc|
       assert pc.stat
       assert pc.base_stat
       assert pc.trn_stat }
-    [Disease, Npc].each{|t| t.all.each{|c|
+    [Disease, Npc].each{|t| t.all.includes(:stat).each{|c|
       assert c.stat, c.inspect
     } }
-    [Race, CClass].each{|t| t.all.each{|c|
+    [Race, CClass].each{|t| t.all.includes(:stat,:level_zero).each{|c|
       assert c.stat
       assert c.level_zero
     } }

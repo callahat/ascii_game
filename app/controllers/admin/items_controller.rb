@@ -6,7 +6,7 @@ class Admin::ItemsController < ApplicationController
   layout 'admin'
 
   def index
-    @items = Item.get_page(params[:page])
+    @items = Item.get_page(params[:page]).includes(:base_item,:c_class,:race,:stat)
   end
 
   def show

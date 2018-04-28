@@ -19,8 +19,8 @@ class Maintenance < ActiveRecord::Base
     kingdom.npcs.where(is_hired: 0).each {
         |uh| uh.update_attribute(:kingdom_id, nil) if rand > 0.75 }
 
-    @unhired_merchants = kingdom.merchants.where(is_hired: 0)
-    @unhired_guards    = kingdom.guards.where(is_hired: 0)
+    @unhired_merchants = kingdom.merchants.where(is_hired: false)
+    @unhired_guards    = kingdom.guards.where(is_hired: false)
 
     if @unhired_merchants.size < kingdom.kingdom_empty_shops.size * 1.5
       npc_solicitation(kingdom, NpcMerchant)
@@ -29,7 +29,7 @@ class Maintenance < ActiveRecord::Base
   end
 
   def self.npc_solicitation(kingdom, npc_class)
-    if @unhired_merchants.size < kingdom.player_character.level * 2
+    if kingdom.merchants.where(is_hired: false).size < kingdom.player_character.level * 2
 
       @npc_from_pool = npc_class.order('rand()').find_by(kingdom_id: nil)
 
@@ -155,10 +155,10 @@ class Maintenance < ActiveRecord::Base
   #main routine to take care of all the kingdom maintenance that needs done
   def self.kingdom_maintenance
     @updates = 0
-    Kingdom.where('id > 0').each do |kingdom|
+    Kingdom.where('id > 0').includes(pandemics: :disease).each do |kingdom|
       @@report << "Maintenance for " + kingdom.name
 
-      @npcs           = kingdom.live_npcs
+      @npcs           = kingdom.live_npcs.includes(illnesses: :disease)
       @disease_deaths = kingdom_pandemics(kingdom, @npcs)
       kingdom_npcs_maintenance(kingdom, @npcs)
 
