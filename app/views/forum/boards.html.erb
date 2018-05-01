@@ -6,7 +6,7 @@
 
 <% if player_signed_in? && ForumRestriction.no_viewing(current_player) %>
 You are prohibited from viewing the boards.
-<% elsif @boards.size == 0 %>
+<% elsif @boards.count == 0 %>
 you don't see any boards
 <% else %>
 <table class="map">
@@ -21,7 +21,7 @@ you don't see any boards
 <tr>
   <td><%= link_to "#{board.name}", boards_url( :bname => board.name ) %></td>
   <td class="board_info"><%=h board.text %></td>
-  <td><%=h board.childs.size %></td>
+  <td><%=h board.childs.count %></td>
   <td class="board_info"><% if lp %><%=h lp.created_at %> in <%= link_to "#{lp.thread.name}", threds_url(:bname => board.name, :tname => lp.thread.name) %> by <%= lp.player.handle %><% end %></td>
 </tr>
 <tr>

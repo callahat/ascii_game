@@ -11,7 +11,8 @@ class Game::NpcController < ApplicationController
   end
   
   def smithy
-    redirect_to npc_game_npc_path and return unless (@can_make = @npc.npc_blacksmith_items).size > 0
+    @can_make = @npc.npc_blacksmith_items.includes(:item)
+    redirect_to npc_game_npc_path and return unless @can_make.size > 0
   end
   
   def do_buy_new
@@ -94,8 +95,8 @@ class Game::NpcController < ApplicationController
   
 protected
   def setup_npc_vars
-    redirect_to feature_game_path unless @pc.current_event && @pc.current_event.event.class == EventNpc
-    @event = @pc.current_event.event
+    redirect_to feature_game_path unless @pc.current_event(->{includes(:event)}) && @pc.current_event.event.class == EventNpc
+    @event = @pc.current_event.event(->{includes(npc: :health)})
     @npc = @event.npc
     
     unless @npc.health.HP > 0 && @npc.health.wellness != SpecialCode.get_code('wellness','dead')

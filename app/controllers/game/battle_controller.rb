@@ -62,9 +62,9 @@ class Game::BattleController < ApplicationController
   end
 
   def fight
-    @battle = @pc.battle
+    @battle = @pc.battle(->{includes(:groups)})
     
-    @bg = @battle.groups.find_by_name(params[:commit]) if params[:commit] && params[:commit] != ""
+    @bg = @battle.groups.includes(enemies: [:creature,:health,:stat,:enemy,:battle_group]).find_by_name(params[:commit]) if params[:commit] && params[:commit] != ""
     
     session[:attack] = params[:attack]
     session[:attack] = (@spell = AttackSpell.find(params[:attack])).id if params[:commit] !~ /Heal/ && params[:attack] && params[:attack] != ""

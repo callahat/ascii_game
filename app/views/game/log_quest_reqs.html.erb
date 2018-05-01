@@ -6,15 +6,15 @@ Quest not attempted.
 </tr></td>
 <% elsif !@log_quest.completed %>
 
- <% for ck in @log_quest.creature_kills %>
+ <% for ck in @log_quest.creature_kills.includes(:objective) %>
  <tr><td><%= ck.to_sentence %></td></tr>
  <% end %>
 
- <% for qe in @log_quest.explores %>
+ <% for qe in @log_quest.explores.includes(:objective) %>
  <tr><td><%= qe.to_sentence %></td></tr>
  <% end %>
 
- <% for qi in @quest.items %>
+ <% for qi in @quest.items.includes(:objective) %>
  <% @pc_inv = @pc.items.find_by(item_id: qi.detail)
     @pc_inv = ( @pc_inv ? @pc_inv.quantity : 0 )
     @diff = (qi.quantity - @pc_inv) %>
@@ -29,11 +29,11 @@ Quest not attempted.
  <tr><td><%= kn.to_sentence %></td></tr>
  <% end %>
 
- <% for kpc in @log_quest.kill_pcs %>
+ <% for kpc in @log_quest.kill_pcs.includes(:objective) %>
  <tr><td><%= kpc.to_sentence %></td></tr>
  <% end %>
 
- <% for ks in @log_quest.kill_s_npcs %>
+ <% for ks in @log_quest.kill_s_npcs.includes(:objective) %>
  <tr><td><%= ks.to_sentence %></td></tr>
  <% end %>
 

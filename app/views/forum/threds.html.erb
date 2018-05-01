@@ -2,7 +2,7 @@
 <p>Note, in order to post you must have at least one character level 10 or higher</p>
 
 <p>
-<% if player_signed_in? && !current_player.forum_restrictions.exists?(:restriction => [SpecialCode.get_code('restrictions','no_threading'), SpecialCode.get_code('restrictions','no_threding')]) %>
+<% if player_signed_in? && current_player.player_characters.find_by('level > 9').present? && !current_player.forum_restrictions.exists?(:restriction => [SpecialCode.get_code('restrictions','no_threading'), SpecialCode.get_code('restrictions','no_threding')]) %>
 <%= link_to 'New thred', :action => 'new_thred', :bname => @board.name %> |
 <% end %>
 <%= link_to 'Back', :action => 'boards' %>
@@ -20,7 +20,7 @@ you don't see any threds
   <th>Posts</th>
   <th>Last Post</th>
 </tr>
-<% for thred in @threds.includes(:last_post) %>
+<% for thred in @threds %>
 <tr>
   <td><%= link_to "#{thred.name}", threds_url( :bname => @board.name, :tname => thred.name) %></td>
   <td class="board_info"><%=h thred.text %></td>

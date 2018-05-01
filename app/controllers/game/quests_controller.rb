@@ -37,10 +37,12 @@ class Game::QuestsController < ApplicationController
     end
     redirect_to game_quests_path
   end
-protected
+
+  protected
+
   def setup_quest
-    redirect_to game_feature_path unless @pc.current_event && @pc.current_event.event.class == EventQuest
-    @event = @pc.current_event.event
+    redirect_to game_feature_path unless @pc.current_event(->{includes(:event)}) && @pc.current_event.event.class == EventQuest
+    @event = @pc.current_event.event(->{includes(:quest)})
     @quest = @event.quest
     if @quest.quest_id && 
         DoneQuest.find_by(quest_id: @quest.quest_id, player_character_id: @pc.id ).nil?

@@ -159,7 +159,7 @@ class GameController < ApplicationController
   
   def complete
     flash[:notice] = flash[:notice]
-    @current_event = @pc.current_event
+    @current_event = @pc.current_event(->{includes(:event,:location)})
     if @current_event
       @next,@events = @current_event.complete
     else

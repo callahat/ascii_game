@@ -6,6 +6,7 @@ board_1:
   text: "This is the first board created"
   elders: 0
   kind: "ForumNodeBoard"
+  last_post: post_1_1_2
 thread_1_1:
   player: test_player_one
   forum_node: board_1
@@ -13,6 +14,7 @@ thread_1_1:
   text: "This is the first thread, open to all"
   elders: 1
   kind: "ForumNodeThread"
+  last_post: post_1_1_2
 post_1_1_1:
   player: test_player_one
   forum_node: thread_1_1
@@ -20,6 +22,7 @@ post_1_1_1:
   text: "This is the first post, open to all"
   elders: 2
   kind: "ForumNodePost"
+  created_at: <%= Time.now - 2 %>
 post_1_1_2:
   player: test_player_one
   forum_node: thread_1_1
@@ -27,6 +30,7 @@ post_1_1_2:
   text: "This is the secoind post, open to all"
   elders: 2
   kind: "ForumNodePost"
+  created_at: <%= Time.now - 1 %>
 post_1_1_3:
   player: test_player_mod
   forum_node: thread_1_1
@@ -35,6 +39,7 @@ post_1_1_3:
   elders: 2
   kind: "ForumNodePost"
   is_mods_only: true
+  created_at: <%= Time.now - 1 %>
 post_1_1_4:
   player: test_player_mod
   forum_node: thread_1_1
@@ -43,6 +48,7 @@ post_1_1_4:
   elders: 2
   kind: "ForumNodePost"
   is_locked: true
+  created_at: <%= Time.now - 2 %>
 post_1_1_5:
   player: test_player_mod
   forum_node: thread_1_1
@@ -51,6 +57,7 @@ post_1_1_5:
   elders: 2
   kind: "ForumNodePost"
   is_hidden: true
+  created_at: <%= Time.now - 2 %>
 post_1_1_6:
   player: test_player_mod
   forum_node: thread_1_1
@@ -59,6 +66,7 @@ post_1_1_6:
   elders: 2
   kind: "ForumNodePost"
   is_deleted: true
+  created_at: <%= Time.now - 1 %>
 
 thread_1_2:
   player: test_player_one
@@ -68,6 +76,7 @@ thread_1_2:
   elders: 1
   kind: "ForumNodeThread"
   is_locked: true
+  last_post: post_1_2_1
 post_1_2_1:
   player: test_player_mod
   forum_node: thread_1_2
@@ -75,6 +84,7 @@ post_1_2_1:
   text: "This is the six post, deleted"
   elders: 2
   kind: "ForumNodePost"
+  created_at: <%= Time.now %>
 
 board_2:
   player: test_player_mod
@@ -84,6 +94,7 @@ board_2:
   elders: 0
   kind: "ForumNodeBoard"
   is_mods_only: true
+  last_post: post_2_1_1
 thread_2_1:
   player: test_player_mod
   forum_node: board_2
@@ -91,6 +102,7 @@ thread_2_1:
   text: "This is the first thread, open to all mods for it is on the mods board"
   elders: 1
   kind: "ForumNodeThread"
+  last_post: post_2_1_1
 post_2_1_1:
   player: test_player_mod
   forum_node: thread_2_1
@@ -98,4 +110,5 @@ post_2_1_1:
   text: "This is the six post, deleted"
   elders: 2
   kind: "ForumNodePost"
+  created_at: <%= Time.now %>
 

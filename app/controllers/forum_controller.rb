@@ -17,7 +17,7 @@ class ForumController < ApplicationController
 
   def boards
     @more_conds = node_flags(current_player)
-    @boards = ForumNodeBoard.get_page(params[:page], @more_conds)
+    @boards = ForumNodeBoard.get_page(params[:page], @more_conds).includes(last_post: [:parent,:player])
   end
 
   def new_board
@@ -55,7 +55,11 @@ class ForumController < ApplicationController
   
   def threds
     @more_conds = node_flags(current_player)
-    @threds = ForumNodeThread.get_page(params[:page], @more_conds, @board.id)
+    if current_player.forum_attribute.mod_level > 2
+    @threds = ForumNodeThread.get_page(params[:page], @more_conds, @board.id).includes(last_post: [:player])
+    else
+      @threds = ForumNodeThread.get_page(params[:page], @more_conds, @board.id).includes(:parent,:forum_node,last_post: [:player])
+    end
   end
   
   def view_thred
@@ -72,7 +76,7 @@ class ForumController < ApplicationController
     
     @more_conds = node_flags(current_player)
     
-    @posts = ForumNodePost.get_page(params[:page], @more_conds, @thred.id)
+    @posts = ForumNodePost.get_page(params[:page], @more_conds, @thred.id).includes(:player)
   end
   
   def new_thred
