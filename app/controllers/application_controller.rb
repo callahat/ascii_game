@@ -14,6 +14,7 @@ class ApplicationController < ActionController::Base
   # Scrub sensitive parameters from your log
   # filter_parameter_logging :password
 
+  before_filter :set_kingbit
 
   layout 'main'
   
@@ -62,13 +63,7 @@ class ApplicationController < ActionController::Base
   #Checks that the player is a king
   def is_king
     if authenticate_player!
-      if current_player.player_characters.where(char_stat: SpecialCode.get_code('char_stat','active')).joins(:kingdoms).any?
-        session[:kingbit] = true
-        return true
-      else
-        session[:kingbit] = false
-        return false
-      end
+      set_kingbit
     end
   end
   
@@ -86,6 +81,16 @@ protected
   #def debuggery(crap)
   #  print "\n" + crap.to_s
   #end
+
+  def set_kingbit
+    if current_player
+      session[:kingbit] = current_player.player_characters
+                              .where(char_stat: SpecialCode.get_code('char_stat','active'))
+                              .joins(:kingdoms).any?
+    else
+      session[:kingbit] = false
+    end
+  end
 
   def create_peasant_feature_event(feature)
     #MAKE EVENT  
