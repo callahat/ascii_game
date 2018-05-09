@@ -1,0 +1,27 @@
+<h1>Listing name_titles</h1>
+
+<table>
+  <tr>
+    <th>Title</th>
+    <th>Stat</th>
+    <th>Points</th>
+    <th></th>
+    <th></th>
+  </tr>
+  
+<% @name_titles.each do |name_title| %>
+  <tr>
+    <td><%= name_title.title %></td>
+    <td><%= name_title.stat %></td>
+    <td><%= name_title.points %></td>
+    <td><%= link_to 'Edit', edit_admin_name_title_path(name_title) %></td>
+    <td><%= link_to 'Destroy', [:admin,name_title], data:{confirm: "Really delete #{name_title.title}?"}, method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @name_titles %> 
+
+<br />
+
+<%= link_to 'New name_title', new_admin_name_title_path %>

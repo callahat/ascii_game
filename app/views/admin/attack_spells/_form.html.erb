@@ -1,34 +1,60 @@
-<%= error_messages_for 'attack_spell' %>
+<%= form_for([:admin, @attack_spell]) do |f| %>
+  <%= error_messages_for :attack_spell %>
 
-<!--[form:attack_spell]-->
-<p><label for="attack_spell_name">Name</label><br/>
-<%= text_field 'attack_spell', 'name'  %></p>
+  <!--[form:attack_spell]-->
 
-<p><label for="attack_spell_description">Description</label><br/>
-<%= text_field 'attack_spell', 'description'  %></p>
+  <div class="field">
+    <%= f.label :name %><br/>
+    <%= f.text_field :name %>
+  </div>
 
-<p><label for="attack_spell_min_level">Min level</label><br/>
-<%= text_field 'attack_spell', 'min_level'  %></p>
+  <div class="field">
+    <%= f.label :description %><br/>
+    <%= f.text_field :description %>
+  </div>
 
-<p><label for="attack_spell_min_dam">Min dam</label><br/>
-<%= text_field 'attack_spell', 'min_dam'  %></p>
+  <div class="field">
+    <%= f.label :min_level %><br/>
+    <%= f.text_field :min_level %>
+  </div>
 
-<p><label for="attack_spell_max_dam">Max dam</label><br/>
-<%= text_field 'attack_spell', 'max_dam'  %></p>
+  <div class="field">
+    <%= f.label :min_dam %><br/>
+    <%= f.text_field :min_dam %>
+  </div>
 
-<p><label for="attack_spell_dam_from_mag">Dam from mag</label><br/>
-<%= text_field 'attack_spell', 'dam_from_mag'  %></p>
+  <div class="field">
+    <%= f.label :max_dam %><br/>
+    <%= f.text_field :max_dam %>
+  </div>
 
-<p><label for="attack_spell_dam_from_int">Dam from int</label><br/>
-<%= text_field 'attack_spell', 'dam_from_int'  %></p>
+  <div class="field">
+    <%= f.label :dam_from_mag %><br/>
+    <%= f.text_field :dam_from_mag %>
+  </div>
 
-<p><label for="attack_spell_mp_cost">Mp cost</label><br/>
-<%= text_field 'attack_spell', 'mp_cost'  %></p>
+  <div class="field">
+    <%= f.label :dam_from_int %><br/>
+    <%= f.text_field :dam_from_int %>
+  </div>
 
-<p><label for="attack_spell_hp_cost">Hp cost</label><br/>
-<%= text_field 'attack_spell', 'hp_cost'  %></p>
+  <div class="field">
+    <%= f.label :mp_cost %><br/>
+    <%= f.text_field :mp_cost %>
+  </div>
 
-<p><label for="attack_spell_splashhp_cost">Splash</label><br/>
-<%= check_box 'attack_spell', 'splash'  %></p>
-<!--[eoform:attack_spell]-->
+  <div class="field">
+    <%= f.label :hp_cost %><br/>
+    <%= f.text_field :hp_cost %>
+  </div>
 
+  <div class="field">
+    <%= f.label :splash %><br/>
+    <%= f.check_box :splash %>
+  </div>
+  <!--[eoform:attack_spell]-->
+
+  <div class="actions">
+    <%= submit_tag %>
+  </div>
+<% end %>

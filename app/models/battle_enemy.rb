@@ -3,6 +3,7 @@ class BattleEnemy < ActiveRecord::Base
 
   belongs_to :battle
   belongs_to :battle_group
+  belongs_to :image
   
   def award_exp(amount)
     self.enemy.award_exp(amount)

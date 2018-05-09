@@ -1,6 +1,7 @@
 class EventMoveLocal < EventLifeNeutral
   belongs_to :level, :foreign_key => 'thing_id', :class_name => 'Level'
-  
+  belongs_to :thing, :foreign_key => 'thing_id', :class_name => 'Level'
+
   validates_presence_of :thing_id
   
   def make_happen(who)
@@ -17,7 +18,7 @@ class EventMoveLocal < EventLifeNeutral
         @inf_flag = false #flag that will be true if player can enter kingdom, and contact possible disease
       
         #gotta check for the player not being allowed in.
-        if who.kingdom_bans.find(:first, :conditions => ['kingdom_id = ?', self.level.kingdom_id] )
+        if who.kingdom_bans.find_by(kingdom_id: self.level.kingdom_id)
           @message = '"You are prevented from entry, by order of the king" a gaurd shouts'
         elsif SpecialCode.get_code('entry_limitations','no one') == self.level.kingdom.kingdom_entry.allowed_entry
           @message = '"No one may enter the kingdom today" the gaurd explains'
@@ -49,14 +50,14 @@ class EventMoveLocal < EventLifeNeutral
       end
     end
     
-    return {:action => 'complete'}, EVENT_COMPLETED, @message
+    return url_helpers.complete_game_path, EVENT_COMPLETED, @message
   end
   
   def as_option_text(pc=nil)
     if pc && pc.in_kingdom.nil?
-      @link_text = "Enter " + level.kingdom.name
+      @link_text = "Enter " + thing.kingdom.name
     else
-      @link_text = "Go to level " + level.level.to_s
+      @link_text = "Go to level " + thing.level.to_s
     end
   end
 end

@@ -1,8 +1,8 @@
-<%= form_tag :action => 'do_take', :id => @kingdom_item, :item_id => @kingdom_item.item_id do %>
+<%= form_tag do_take_management_kingdom_items_path(id: @kingdom_item.id, item_id: @kingdom_item.item_id) do %>
 <p><b>Removing Item:</b><%= @kingdom_item.item.name %><br/></p>
 <p><label for="kingdom_item_quantity">Number</label><br/>
 <%= text_field 'kingdom_item', 'quantity'  %></p>
   <%= submit_tag 'Remove' %>
 <% end %>
 
-<%= link_to 'Back', :action => 'list' %>
+<%= link_to 'Back', management_kingdom_items_path %>

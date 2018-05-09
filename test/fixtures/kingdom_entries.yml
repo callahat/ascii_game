@@ -1,9 +1,7 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 test_kingdom_one_entry_limits:
-  id: 1
-  kingdom_id: 1
+  kingdom: kingdom_one
   allowed_entry: <%= SpecialCode.get_code('entry_limitations','everyone') %>
 sick_kingdom_entry_limits:
-  id: 2
-  kingdom_id: 2
+  kingdom: sick_kingdom
   allowed_entry: <%= SpecialCode.get_code('entry_limitations','everyone') %>

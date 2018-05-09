@@ -4,8 +4,8 @@
 <tr>
   <td><%= qck.to_sentence %></td>
  <% if @quest.quest_status == SpecialCode.get_code("quest_status","design") && controller.class == Management::QuestsController %>
-  <td><%= link_to "edit", :action => "edit_req",:id => params[:id],:type => "creature_kill",:req_id => qck %></td>
-  <td><%= link_to "drop", :action => "destroy_req",:id => params[:id],:type => "creature_kill",:req_id => qck %></td>
+  <td><%= link_to "edit", edit_management_quest_req_path(quest_id: params[:id], id: qck, type: "creature_kill") %></td>
+  <td><%= link_to "drop", management_quest_req_path(quest_id: params[:id], id: qck, type: "creature_kill"), data:{confirm: "Are you sure?"}, method: :delete %></td>
  <% end %>
 </tr>
 <% end %>
@@ -14,8 +14,8 @@
 <tr>
   <td><%= quest_explore.to_sentence %></td>
  <% if @quest.quest_status == SpecialCode.get_code("quest_status","design") && controller.class == Management::QuestsController %>
-  <td><%= link_to "edit", :action => "edit_req",:id => params[:id],:type => "explore",:req_id => quest_explore %></td>
-  <td><%= link_to "drop", :action => "destroy_req",:id => params[:id],:type => "explore",:req_id => quest_explore %></td>
+  <td><%= link_to "edit", edit_management_quest_req_path(quest_id: params[:id], id: quest_explore, type: "explore") %></td>
+  <td><%= link_to "drop", management_quest_req_path(quest_id: params[:id], id: quest_explore, type: "explore"), data:{confirm: "Are you sure?"}, method: :delete %></td>
  <% end %>
 </tr>
 <% end %>
@@ -24,8 +24,8 @@
 <tr>
   <td><%= quest_item.to_sentence %></td>
  <% if @quest.quest_status == SpecialCode.get_code("quest_status","design") && controller.class == Management::QuestsController %>
-  <td><%= link_to "edit", :action => "edit_req",:id => params[:id],:type => "item",:req_id => quest_item %></td>
-  <td><%= link_to "drop", :action => "destroy_req",:id => params[:id],:type => "item",:req_id => quest_item %></td>
+  <td><%= link_to "edit", edit_management_quest_req_path(quest_id: params[:id], id: quest_item, type: "item") %></td>
+  <td><%= link_to "drop", management_quest_req_path(quest_id: params[:id], id: quest_item, type: "item"), data:{confirm: "Are you sure?"}, method: :delete %></td>
  <% end %>
 </tr>
 <% end %>
@@ -34,8 +34,8 @@
 <tr>
   <td><%= quest_kill_n_npc.to_sentence %></td>
  <% if @quest.quest_status == SpecialCode.get_code("quest_status","design") && controller.class == Management::QuestsController %>
-  <td><%= link_to "edit", :action => "edit_req",:id => params[:id],:type => "kill_any_npc",:req_id => quest_kill_n_npc %></td>
-  <td><%= link_to "drop", :action => "destroy_req",:id => params[:id],:type => "kill_any_npc",:req_id => quest_kill_n_npc %></td>
+  <td><%= link_to "edit", edit_management_quest_req_path(quest_id: params[:id], id: quest_kill_n_npc, type: "kill_any_npc") %></td>
+  <td><%= link_to "drop", management_quest_req_path(quest_id: params[:id], id: quest_kill_n_npc, type: "kill_any_npc"), data:{confirm: "Are you sure?"}, method: :delete %></td>
  <% end %>
 </tr>
 <% end %>
@@ -44,8 +44,8 @@
 <tr>
   <td><%= quest_kill_pc.to_sentence %></td>
  <% if @quest.quest_status == SpecialCode.get_code("quest_status","design") && controller.class == Management::QuestsController %>
-  <td><%= link_to "edit", :action => "edit_req",:id => params[:id],:type => "kill_pc",:req_id => quest_kill_pc %></td>
-  <td><%= link_to "drop", :action => "destroy_req",:id => params[:id],:type => "kill_pc",:req_id => quest_kill_pc %></td>
+  <td><%= link_to "edit", edit_management_quest_req_path(quest_id: params[:id], id: quest_kill_pc, type: "kill_pc") %></td>
+  <td><%= link_to "drop", management_quest_req_path(quest_id: params[:id], id: quest_kill_pc, type: "kill_pc"), data:{confirm: "Are you sure?"}, method: :delete %></td>
  <% end %>
 </tr>
 <% end %>
@@ -54,8 +54,8 @@
 <tr>
   <td><%= qks.to_sentence %></td>
  <% if @quest.quest_status == SpecialCode.get_code("quest_status","design") && controller.class == Management::QuestsController %>
-  <td><%= link_to "edit", :action => "edit_req",:id => params[:id],:type => "kill_specific_npc",:req_id => qks %></td>
-  <td><%= link_to "drop", :action => "destroy_req",:id => params[:id],:type => "kill_specific_npc",:req_id => qks %></td>
+  <td><%= link_to "edit", edit_management_quest_req_path(quest_id: params[:id], id: qks, type: "kill_specific_npc") %></td>
+  <td><%= link_to "drop", management_quest_req_path(quest_id: params[:id], id: qks, type: "kill_specific_npc"), data:{confirm: "Are you sure?"}, method: :delete %></td>
  <% end %>
 </tr>
 <% end %>

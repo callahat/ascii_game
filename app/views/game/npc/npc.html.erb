@@ -21,5 +21,5 @@
 <p>Unrecognized NPC type</p>
 <% end %>
 
-<p><%= link_to 'Attack!', :controller => '/game/battle', :action => 'fight_npc' %></p>
+<p><%= link_to 'Attack!', fight_npc_game_battle_path, :method => :post %></p>
 <p><%= link_to 'Leave', :controller => '/game', :action => 'complete' %></p>

@@ -1,6 +1,6 @@
 <h1>Editing kingdom_entry</h1>
 
-<%= form_tag :action => 'update' do %>
+<%= form_tag management_kingdom_entries_path, method: :patch do %>
   <%= render :partial => 'form' %>
   <%= submit_tag 'Edit' %>
 <% end %>

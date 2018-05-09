@@ -1,7 +1,9 @@
 class ForumRestriction < ActiveRecord::Base
   belongs_to :player
   belongs_to :giver, :foreign_key => 'given_by', :class_name => 'Player'
-  
+
+  validates_presence_of :restriction
+
   def self.no_posting(who)
     return self.no_whating('no_posting', who)
   end
@@ -23,12 +25,12 @@ class ForumRestriction < ActiveRecord::Base
   
   def check_expiration(mod, expiry)
     if mod.forum_attribute.mod_level < 9 &&
-       (expiry.nil? || expiry == "" || expiry.to_i > mod.forum_attribute.mod_level*2)
+       (expiry.nil? || expiry == "" || (expiry) > (Date.today + mod.forum_attribute.mod_level*2))
       errors[:expires] << "Too long"
     elsif expiry.nil? || expiry == ""
       self.expires = nil
     else
-      self.expires = Date.today + [expires.to_i.day,27.years].min
+      self.expires = (expiry < (Date.today + 27.years) ? expiry : (Date.today + 27.years))
     end
   end
   

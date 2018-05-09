@@ -2,25 +2,32 @@
 #referenced by the inventories unit test
 <% 1.upto(34){ |it| %>
 item_<%= it %>:
-  id: <%= it %>
   name: "Item<%= it %>"
   price: 50
   min_level: 1
-  equip_loc: 1
+  equip_loc: <%= SpecialCode.get_code("equip_loc",((it % 2 == 0) ? "torso" : "hand")) %>
   base_item: base_item_one
 <% } %>
   
 item_99:
-  id: 99
   name: "Item99"
   price: 99
   min_level: 1
-  equip_loc: 1
+  equip_loc: <%= SpecialCode.get_code("equip_loc","head") %>
   base_item: base_item_two
 
 cool_item:
   name: "Cool item"
   price: 1125
   min_level: 1
-  equip_loc: 1
+  equip_loc: <%= SpecialCode.get_code("equip_loc","foot") %>
   base_item: base_item_three
+
+newish_item:
+  name: "Newish item"
+  price: 1125
+  min_level: 1
+  equip_loc: req_1
+  base_item: base_item_three
+  c_class:
+  race:

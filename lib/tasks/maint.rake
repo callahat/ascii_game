@@ -3,15 +3,23 @@ namespace :maintenance do
 	task(:full_maintenance => :environment) do
 		puts "\nTime is now: " + Time.now.to_s
 		puts "\nRunning the nightly kingdom maintenance, bringing down system  . . ."
-		@start = Time.now
+    puts `ps -o rss -p #{$$}`.strip.split.last.to_i * 1024
+
+    @start = Time.now
 		SystemStatus.stop(1)
 		Maintenance.clear_report
 		Maintenance.kingdom_maintenance
+    puts `ps -o rss -p #{$$}`.strip.split.last.to_i * 1024
+    GC.start
 		Maintenance.player_character_maintenance
+    puts `ps -o rss -p #{$$}`.strip.split.last.to_i * 1024
+    GC.start
 		puts Maintenance.report.join("\n")
 		puts "\n\n" + (Time.now - @start).to_s + " elapsed seconds.\n"
 		puts "\nNightly kingdom maintenance complete, bringing up system  . . ."
-		SystemStatus.start(1)
+    puts `ps -o rss -p #{$$}`.strip.split.last.to_i * 1024
+
+    SystemStatus.start(1)
 	end
 
 	desc "This will run the nightly kingdom maintenance"
@@ -59,7 +67,7 @@ namespace :maintenance do
     nuke_array(DoneEvent.find_all)
     nuke_array(DoneQuest.find_all)
   
-    kingdoms=Kingdom.find(:all, :conditions => ['id > 0'])
+    kingdoms=Kingdom.where('id > 0')
     for kingdom in kingdoms do
       puts "***************************************"
       puts "Wiping " + kingdom.name
@@ -140,7 +148,7 @@ namespace :maintenance do
         q.update
       end
       puts "Destroying players"
-      nuke_array(Player.find(:all, :conditions => ['id > 1']))
+      nuke_array(Player.where('id > 1'))
     else
       puts "...pussy"
     end
@@ -203,7 +211,7 @@ namespace :maintenance do
     
     puts "Abandoning features and destroying feature events"
     @features = []
-    @features << kingdom.all_features.find(:all, :conditions => ['public = false OR armed = false'])
+    @features << kingdom.all_features.where('public = false OR armed = false')
     puts "Destroying castle feature"
     @features << Feature.find_first(:name => "\nCastle #{kingdom.name}")
     puts "Destroying the throne feature"

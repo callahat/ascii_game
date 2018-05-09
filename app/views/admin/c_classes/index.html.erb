@@ -1,0 +1,26 @@
+<h1>Listing c_classes</h1>
+
+<table>
+  <tr>
+  <% CClass.content_columns.each do |column| %>
+    <th><%= column.human_name %></th>
+  <% end %>
+  </tr>
+
+<% @c_classes.each do |c_class| %>
+  <tr>
+  <% CClass.content_columns.each do |column| %>
+    <td><%=h c_class.send(column.name) %></td>
+  <% end %>
+    <td><%= link_to 'Show', [:admin,c_class] %></td>
+    <td><%= link_to 'Edit', edit_admin_c_class_path(c_class) %></td>
+    <td><%= link_to 'Destroy', [:admin,c_class], data:{confirm: 'Are you sure?'}, method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @c_classes %> 
+
+<br />
+
+<%= link_to 'New c_class', new_admin_c_class_path %>

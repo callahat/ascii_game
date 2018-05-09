@@ -1,13 +1,15 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
-  id: 1
+race_one:
   name: "Race One"
+  description: "A Race"
+  kingdom: kingdom_one
   freepts: 10
   image: pc_image
   race_body_type: <%= SpecialCode.get_code('race_body_type','human') %>
-two:
-  id: 2
+race_two:
   name: "Race Two"
+  description: "Another race"
+  kingdom: kingdom_one
   freepts: 3
   image: pc_image
   race_body_type: <%= SpecialCode.get_code('race_body_type','human') %>

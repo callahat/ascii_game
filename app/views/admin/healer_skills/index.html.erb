@@ -1,0 +1,30 @@
+<h1>Listing healer_skills</h1>
+
+<table>
+  <tr>
+    <th>max HP restore</th>	   
+    <th>max MP restore</th>	   
+    <th>disease</th>	   
+    <th>max stat restore</th>	   
+    <th>min_sales</th>	 
+  </tr>
+  
+<% @healer_skills.each do |healer_skill| %>
+  <tr>
+    <td><%= healer_skill.max_HP_restore %></td>
+    <td><%= healer_skill.max_MP_restore %></td>
+    <td><% if healer_skill.disease.nil? %>N/A<% else %><%= healer_skill.disease.name %><% end %></td>
+    <td><%= healer_skill.max_stat_restore %></td>	   
+    <td><%= healer_skill.min_sales %></td>	 
+    <td><%= link_to 'Show', [:admin,healer_skill] %></td>
+    <td><%= link_to 'Edit', edit_admin_healer_skill_path(healer_skill) %></td>
+    <td><%= link_to 'Destroy', [:admin,healer_skill], data:{confirm: 'Are you sure?'}, method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @healer_skills %> 
+
+<br />
+
+<%= link_to 'New healer_skill', new_admin_healer_skill_path %>

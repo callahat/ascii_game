@@ -8,7 +8,7 @@ class Image < ActiveRecord::Base
   has_many :player_characters
   
   validates_presence_of :image_type
-  
+
   def self.deep_copy(image)
     @copy_image = Image.new
     @copy_image.image_text = image.image_text
@@ -22,7 +22,7 @@ class Image < ActiveRecord::Base
   end
   
   def self.new_castle(k)
-    @image = Image.find(:first, :conditions => ['name = ? and kingdom_id = ? and player_id = ?', 'DEFAULT CASTLE', -1, -1])
+    @image = Image.find_by(name: 'DEFAULT CASTLE', kingdom_id: -1, player_id: -1)
     @new_image = Image.deep_copy(@image)
     @new_image.kingdom_id = k.id
     @new_image.name = k.name + " Castle Image"
@@ -37,7 +37,7 @@ class Image < ActiveRecord::Base
   
   def resize_image(rowcap,colcap)
     return self.image_text if rowcap < 1 || colcap < 1
-    it = self.image_text
+    it = self.image_text.to_s
     it.gsub!(/\r/,"") #ie adds this character, it must go
     it = it.split("\n")
     (rowcap < it.size ? rowcap : it.size).times{|r|

@@ -29,10 +29,8 @@ class Stat < ActiveRecord::Base
   #true if this object would be a validly distributed free points row
   def valid_distrib(free)
     Stat.symbols.each{|sym|
-      if self[sym].nil?
-        errors.add(sym, " cannot be null.")
-      elsif self[sym] < 0
-        errors.add(sym, " cannot be negative.")
+      if self[sym].to_i < 0
+        errors.add(sym, " can't be negative.")
       end
     }
     points = self.sum_points
@@ -56,14 +54,12 @@ class Stat < ActiveRecord::Base
 
   def valid_for_level_zero
     Stat.symbols.each{|sym|
-      if self[sym].nil?
-        errors.add(sym, " cannot be null.")
-      elsif self[sym] < 0
-        errors.add(sym, " cannot be negative.")
+      if self[sym].to_i < 0
+        errors.add(sym, " can't be negative.")
       end
     }
     points = self.sum_points
-    errors.add(" ","Attribute points must be between 30 and 80. (Current = " + points.to_s + ")") \
+    errors.add('',"attribute points must be between 30 and 80. (Current = " + points.to_s + ")") \
       if points < 30 || points > 80
     errors.size == 0
   end

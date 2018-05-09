@@ -1,24 +1,15 @@
 class Admin::WorldsController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
+  before_filter :set_world, only: [:show,:edit,:update]
   
   layout 'admin'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],
-#         :redirect_to => { :action => :list }
-
-  def list
     @worlds = World.get_page(params[:page])
   end
 
   def show
-    @world = World.find(params[:id])
   end
 
   def new
@@ -26,31 +17,39 @@ class Admin::WorldsController < ApplicationController
   end
 
   def create
-    @world = World.new(params[:world])
+    @world = World.new(world_params)
     if @world.save
       flash[:notice] = 'World was successfully created.'
-      redirect_to :action => 'list'
+      redirect_to [:admin,@world]
     else
       render :action => 'new'
     end
   end
 
   def edit
-    @world = World.find(params[:id])
   end
 
   def update
-    @world = World.find(params[:id])
-    if @world.update_attributes(params[:world])
+    if @world.update_attributes(world_params)
       flash[:notice] = 'World was successfully updated.'
-      redirect_to :action => 'show', :id => @world
+      redirect_to [:admin,@world]
     else
       render :action => 'edit'
     end
   end
 
-  #def destroy
+  # def destroy
   #  World.find(params[:id]).destroy
   #  redirect_to :action => 'list'
-  #end
+  # end
+
+  protected
+
+  def world_params
+    params.require(:world).permit(:name,:minbigx,:minbigy,:maxbigx,:maxbigy,:maxx,:maxy,:text)
+  end
+
+  def set_world
+    @world = World.find(params[:id])
+  end
 end

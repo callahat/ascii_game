@@ -1,12 +1,14 @@
 class NpcBlacksmithItem < ActiveRecord::Base
-  belongs_to :npc_merchant
+  belongs_to :npc_merchant, foreign_key: 'npc_id'
   belongs_to :item
+
+  scope :by_min_sales, -> { order('min_sales') }
   
   def self.gen_blacksmith_items(npc, sales, new)
-    @last_min_sales = npc.npc_blacksmith_items_by_min_sales.last
+    @last_min_sales = npc.npc_blacksmith_items.by_min_sales.last
     @last_min_sales = ( @last_min_sales ? @last_min_sales.min_sales : -1 )
     
-    @skill_base_items = BlacksmithSkill.find_base_items(sales, @last_min_sales, npc.npc_merchant_detail.race_body_type)
+    @skill_base_items = BlacksmithSkill.find_base_items(sales, @last_min_sales, npc.npc_merchant_detail.race_body_type).includes(base_item: :stat)
     
     @new_items = []
     
@@ -57,24 +59,22 @@ class NpcBlacksmithItem < ActiveRecord::Base
       @new_item.name = npc.name + "'s " + @new_item_title + " " + base_item.name
       @new_item.min_level = @new_item_stat.sum_points**1.1983 / 7
       
-      return(nil) && print("Failed to save new blacksmith item") unless @new_item.save!
+      return(nil) && Rails.logger.warn("Failed to save new blacksmith item") unless @new_item.save!
       return self.new(:npc_id => npc.id, 
                       :item_id => @new_item.id,
                       :min_sales => sales)
     else #check that a comprable item exists and can be made, otherwise fallback on generateing new item
-      if ( @next_item_level_rough_price = BlacksmithSkill.find(:first, :conditions => ['min_sales > ?',sales]) )
+      if ( @next_item_level_rough_price = BlacksmithSkill.find_by(['min_sales > ?',sales]) )
         @next_item_level_rough_price = @next_item_level_rough_price.min_sales
       else
         @next_item_level_rough_price = sales ** 1.234
       end
       
-      if @prefab_item = Item.find(:first,
-                                  :conditions => ['npc_id is null and base_item_id = ? and price < ? and price > ?',
-                                                  base_item.id,
-                                                  @next_item_level_rough_price / 40,
-                                                  @next_item_level_rough_price / 60],
-                                  :order => 'rand()')
-      #then
+      if @prefab_item = Item.where(npc_id: nil, base_item_id: base_item.id) \
+                            .order('rand()') \
+                            .find_by( ['price < ? and price > ?',
+                                       @next_item_level_rough_price / 40,
+                                       @next_item_level_rough_price / 60])
         return self.new(:npc_id => npc.id,
                         :item_id => @prefab_item.id,
                         :min_sales => sales)

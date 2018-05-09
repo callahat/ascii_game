@@ -5,7 +5,7 @@ module ManagementHelper
     0.upto(where.maxy-1){|y|
       @ret += "<tr>\n"
       0.upto(where.maxx-1){|x|
-        level_map = where.level_maps.find(:last,:conditions => ['ypos = ? AND xpos = ?', y, x])
+        level_map = where.level_maps.where(ypos: y, xpos: x).last
         if level_map && feature = level_map.feature
           @ret += "<td>\n<span class=\"feature image\" title=\"#{ h(feature.name) }\">#{ h(feature.image.image_text) }</span>\n</td>\n"
         else
@@ -23,7 +23,7 @@ module ManagementHelper
       @ret += "<tr>\n"
       0.upto(where.maxx-1){ |x|
         @ret += "<td>\n"
-        square = where.level_maps.find(:all, :conditions => ['ypos = ? and xpos = ?', y, x]).last.feature
+        square = where.level_maps.where(ypos: y, xpos: x).last.feature
         if square.nil? || square.name == "\nEmpty"
           @ret += "<select name=\"map[#{ y }][#{ x }]\" style=\"width:9em\">\n" +
                   "  <option value = \"\"></option>\n  " +
@@ -49,8 +49,8 @@ module ManagementHelper
     <td>#{ npc.name }</td>
     <td>#{ npc.kind }</td>
     <td>#{ SpecialCode.get_text('wellness', npc.health.wellness) }</td>
-    <td>#{ link_to 'Show', :action => 'show', :id => npc }</td>
-    <td>#{ link_to 'Fire', { :action => 'turn_away', :id => npc }, :confirm => 'Are you sure?', :method => :post }</td>
+    <td>#{ link_to 'Show', management_kingdom_npc_path(id: npc.id) }</td>
+    <td>#{ link_to 'Fire', turn_away_management_kingdom_npc_path(id: npc), data: {confirm: 'Are you sure?'}, :method => :post }</td>
   </tr>\n"
     }.html_safe
   end
@@ -62,9 +62,9 @@ module ManagementHelper
               link_to('Hire', {:action => 'hire_guard', :id => npc },  :method => :post) )
       ret += "  <tr>
     <td>#{ npc.name } - #{ npc.kind }</td>
-    <td>#{ link_to 'Show', :action => 'show', :id => npc }</td>
+    <td>#{ link_to 'Show', management_kingdom_npc_path(id: npc) }</td>
     <td>#{ l }</td>
-    <td>#{ link_to 'Turn Away', {:action => 'turn_away', :id => npc },  :method => :post }</td>
+    <td>#{ link_to 'Turn Away', turn_away_management_kingdom_npc_path(id: npc), data: {confirm: 'Are you sure?'}, :method => :post }</td>
   </tr>\n"
     }.html_safe
   end

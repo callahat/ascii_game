@@ -1,34 +1,29 @@
 <h1>New world_map</h1>
 
-<%= form_tag :action => 'create' do %>
+<%= form_tag admin_world_maps_path(@world), method: :post  do %>
 
 <table>
 <tr>
 <td></td>
-<% while @x <= @world.maxbigx %>
-<td><%=h @x %></td>
-<% @x += 1 %>
+<% @world.minbigx.upto(@world.maxbigx) do |x| %>
+<td><%= x %></td>
 <% end %>
 </tr>
 
-<% @x = @world.minbigx
-   while @y <= @world.maxbigy %>
-   <tr>
-     <td><%=h @y %></td>
-<%   while @x <= @world.maxbigx 
-        square = WorldMap.find(:all, :conditions => ['world_id = ? and bigypos = ? and bigxpos = ?', session[:wid], @y, @x]) %>
+
+<% @world.minbigy.upto(@world.maxbigy) do |y| %>
+  <tr>
+    <td><%= y %></td>
+    <%   @world.minbigx.upto(@world.maxbigx) do |x|
+        square = WorldMap.where(world_id: @world, bigypos: y, bigxpos: x) %>
     <td>
-      <%= radio_button "map", "loc", "#{@x},#{@y}", :disabled => square.size > 0 %>
+      <%= radio_button "map", "loc", "#{x},#{y}", :disabled => square.size > 0 %>
     </td>
-<%   @x += 1
-     end
-     @x = @world.minbigx
-     @y += 1 %>
+<%   end %>
    </tr>
    <% end %>
 </table>
   <%= submit_tag 'Generate' %>
-
 <% end %>
 
-<%= link_to 'Back', :action => 'show' %>
+<%= link_to 'Back', admin_world_maps_path(@world) %>

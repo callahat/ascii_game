@@ -1,9 +1,6 @@
 <h1>Editing healer_skill</h1>
 
-<%= form_tag :action => 'update', :id => @healer_skill do %>
-  <%= render :partial => 'form' %>
-  <%= submit_tag 'Edit' %>
-<% end %>
+<%= render 'form' %>
 
-<%= link_to 'Show', :action => 'show', :id => @healer_skill %> |
-<%= link_to 'Back', :action => 'list' %>
+<%= link_to 'Show', [:admin,@healer_skill] %> |
+<%= link_to 'Back', admin_healer_skills_path %>

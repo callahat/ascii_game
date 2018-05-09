@@ -2,7 +2,7 @@
 
 <!--[form:kingdom_notice]-->
 <p><label for="kingdom_notice_shown_to">Shown to</label><br/>
-<%= collection_select 'kingdom_notice', 'shown_to', @shows, 'col_num', 'text'  %></p>
+<%= collection_select 'kingdom_notice', 'shown_to', @shows, 'second', 'first'  %></p>
 
 <p><label for="kingdom_notice_text">Text</label><br/>
 <%= text_area 'kingdom_notice', 'text'  %></p>

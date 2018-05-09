@@ -1,59 +1,56 @@
 class Admin::HealingSpellsController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
+  before_filter :set_healing_spell, only: [:show,:edit,:update,:destroy]
 
   layout 'admin'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],         :redirect_to => { :action => :list }
-
-  def list
-    @healing_spells = HealingSpell.get_page(params[:page])
+    @healing_spells = HealingSpell.get_page(params[:page]).includes(:disease)
   end
 
   def show
-    @healing_spell = HealingSpell.find(params[:id])
   end
 
   def new
     @healing_spell = HealingSpell.new
-    @diseases = Disease.find(:all)
   end
 
   def create
-    @healing_spell = HealingSpell.new(params[:healing_spell])
-    @diseases = Disease.find(:all)
+    @healing_spell = HealingSpell.new(healing_spell_params)
     if @healing_spell.save
-      flash[:notice] = 'HealingSpell was successfully created.'
-      redirect_to :action => 'list'
+      flash[:notice] = 'Healing Spell was successfully created.'
+      redirect_to admin_healing_spell_path(@healing_spell)
     else
       render :action => 'new'
     end
   end
 
   def edit
-    @healing_spell = HealingSpell.find(params[:id])
-    @diseases = Disease.find(:all)
   end
 
   def update
-    @healing_spell = HealingSpell.find(params[:id])
-    @diseases = Disease.find(:all)
-    if @healing_spell.update_attributes(params[:healing_spell])
-      flash[:notice] = 'HealingSpell was successfully updated.'
-      redirect_to :action => 'show', :id => @healing_spell
+    if @healing_spell.update_attributes(healing_spell_params)
+      flash[:notice] = 'Healing Spell was successfully updated.'
+      redirect_to admin_healing_spell_path(@healing_spell)
     else
-      render :action => 'edit'
+      render admin_healing_spells_path
     end
   end
 
   def destroy
-    HealingSpell.find(params[:id]).destroy
-    redirect_to :action => 'list'
+    @healing_spell.destroy
+    redirect_to admin_healing_spells_path
+  end
+
+  protected
+
+  def healing_spell_params
+    params.require(:healing_spell).permit(
+        :name,:description,:min_level,:min_heal,:max_heal,:disease_id,:mp_cost,:cast_on_others)
+  end
+
+  def set_healing_spell
+    @healing_spell = HealingSpell.find(params[:id])
   end
 end

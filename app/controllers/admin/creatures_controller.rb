@@ -1,57 +1,41 @@
 class Admin::CreaturesController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
+  before_filter :set_images, only: [:new, :create, :edit, :update]
 
   layout 'admin'
 
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],
-#                            :redirect_to => { :action => :index }
-
-
-  #**********************************************************************
-  #CREATURE MANAGEMENT
-  #**********************************************************************
   def index
-    #design creatures
-    @creatures = Creature.get_page(params[:page])
-    session[:kingdom][:id] = -1
+    @creatures = Creature.get_page(params[:page]).includes(:stat,:disease)
   end
 
   def new
-    @creature = Creature.new(params[:creature])
-    @stat = StatCreature.new(params[:stat])
-    @diseases = Disease.find(:all)
-    @kingdom_id = -1
-    @player_id = -1
-    @image = @creature.image || Image.new(params[:image])
-    @images = Image.find(:all,
-                :conditions => ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
-                @player_id,@kingdom_id,SpecialCode.get_code('image_type', 'creature')], :order => 'name')
+    @creature = Creature.new
+    @creature.build_image
+    @creature.build_stat
+    @diseases = Disease.all
   end
 
   def create
-    new
-    @creature.image_id = 0 unless @creature.image
-    @image.name = @creature.name + ' image'
-    
-    exp = Creature.exp_worth(@stat.dam,@stat.dfn,@creature.HP,@creature.fecundity)
-    exp = 0 if exp.nil?
+    if params[:creature][:image_id].present?
+      params[:creature][:image_attributes].merge!(
+          Image.find(params[:creature][:image_id]).attributes.slice('image_text','picture'))
+    end
 
-    @creature.experience = exp
+    @creature = Creature.new(creature_params)
+    @diseases = Disease.all
 
-    if @stat.valid? && @creature.valid?
-      if params[:creature][:image_id].nil? || params[:creature][:image_id] == ""
-        @image.save! 
-        @creature.image_id = @image.id
-      end
-    
-      @creature.save
-      @stat.owner_id = @creature.id
-      @stat.save
+    @creature.build_image unless @creature.image
+    @creature.image.name = @creature.name + ' image'
+    @creature.image.player_id = current_player.id
+    @creature.image.kingdom_id = Kingdom.find_by(name: 'SystemGeneratd').id
 
+    @creature.kingdom_id = -1
+    @creature.player_id = -1
+
+    if @creature.save
       flash[:notice] = @creature.name + ' was successfully created.'
-      redirect_to :action => 'index'
+      redirect_to admin_creature_path(@creature)
     else
       render :action => 'new'
     end
@@ -63,31 +47,26 @@ class Admin::CreaturesController < ApplicationController
 
   def edit
     @creature = Creature.find(params[:id])
-    @stat = @creature.stat
-    @diseases = Disease.find(:all)
-    @image = @creature.image
-    @kingdom_id = -1
-    @player_id = -1
-    @images = Image.find(:all,
-                :conditions => ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
-                @player_id,@kingdom_id,SpecialCode.get_code('image_type', 'creature')], :order => 'name')
+    @diseases = Disease.all
   end
 
   def update
     edit
-    @image.update_image(params[:image][:image_text]) unless params[:image][:image_text] == ""
 
-    exp = Creature.exp_worth(params[:stat][:dam].to_i,
-                             params[:stat][:dfn].to_i,
-                             params[:creature][:HP].to_i,
-                             params[:creature][:fecundity].to_i)
-    exp = 0 if exp.nil?
+    if params[:creature][:image_id].present?
+      params[:creature][:image_attributes].merge!(
+          Image.find(params[:creature][:image_id]).attributes.slice('image_text','picture'))
+    end
 
-    params[:creature][:experience] = exp
-    
-    if @stat.update_attributes(params[:stat]) & @creature.update_attributes(params[:creature]) & @image.save
+    if @creature.update_attributes(creature_params.tap{ |cp|
+                                     cp[:image_attributes].merge!(
+                                         id: @creature.image_id,
+                                         name: "#{@creature.name} image",
+                                         player_id: -1,
+                                         kingdom_id: -1
+                                     )})
       flash[:notice] = @creature.name + ' was successfully updated.'
-      redirect_to :action => 'index'
+      redirect_to admin_creature_path(@creature)
     else
       render :action => 'edit'
     end
@@ -99,38 +78,61 @@ class Admin::CreaturesController < ApplicationController
   #things.
   def destroy
     @creature = Creature.find(params[:id])
-    @stat = creature.stat
-    
-    if @stat.destroy && @creature.destroy
+
+    if !@creature.armed and @creature.destroy
       flash[:notice] = 'Creature destroyed.'
     else
       flash[:notice] = 'Creature was not destroyed.'
     end
-    redirect_to :action => 'index', :page => params[:page]
+    redirect_to admin_creatures_path(page: params[:page])
   end
 
-  def arm_creature
+  def arm
     @creature = Creature.find(params[:id])
     
     if @creature.update_attribute(:armed, true)
       flash[:notice] = @creature.name + ' sucessfully armed.'
       #add it to the pref list
-      if PrefList.add(session[:kingdom][:id],'creatures',@creature.id)
-        flash[:notice]+= '<br/>Added to preference list'
-      else
-        flash[:notice]+= '<br/>Could not be added to preference list'
-      end
+      # if PrefList.add(session[:kingdom][:id],'creatures',@creature.id)
+      #   flash[:notice]+= '<br/>Added to preference list'
+      # else
+      #   flash[:notice]+= '<br/>Could not be added to preference list'
+      # end
     else
       flash[:notice] = @creature.name + ' could not be armed.'
     end
 
-    redirect_to :action => 'index', :page => params[:page]
+    redirect_to admin_creatures_path(page: params[:page])
   end
 
   #probably dont need this in the admin controller
-  def pref_lists
-    session[:pref_list_type] = :creature
-    
-    redirect_to :controller => '/admin/pref_list'
+  # def pref_lists
+  #   session[:pref_list_type] = :creature
+  #
+  #   redirect_to :controller => '/admin/pref_list'
+  # end
+
+  protected
+
+  def creature_params
+    params.require(:creature).permit(
+        :name,
+        :description,
+        :experience,
+        :HP,
+        :gold,
+        :number_alive,
+        :fecundity,
+        :public,
+        :disease_id,
+        image_attributes: [:image_text, :public, :picture, :image_type],
+        stat_attributes: [:str, :dex, :con, :int, :mag, :dfn, :dam]
+    )
+  end
+
+  def set_images
+    @images = Image.where(
+        ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
+         current_player.id, -1, SpecialCode.get_code('image_type', 'creature')])
   end
 end

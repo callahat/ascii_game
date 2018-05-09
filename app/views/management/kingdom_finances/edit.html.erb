@@ -3,20 +3,20 @@
 <% if @pc && @pc.id == session[:kingdom][:player_character_id] %>
   <%= form_tag :action => 'withdraw' do %>
     <p><label for="withdraw">Withdraw amount:</label>(<%= session[:kingdom].gold %> gold in coffers)<br/>
-    <%= text_field 'withdraw',''  %></p>
+    <%= text_field_tag 'withdraw'  %></p>
     <%= submit_tag 'Withdrawl' %>
   <% end %>
 
   <%= form_tag :action => 'deposit' do %>
     <p><label for="deposit">Deposit amount:</label>(<%= @pc.gold %> gold on person)<br/>
-    <%= text_field 'deposit',''  %></p>
+    <%= text_field_tag 'deposit'  %></p>
     <%= submit_tag 'Deposit' %>
   <% end %>
 <% end %>
 
 <%= form_tag :action => 'adjust_tax' do %>
   <p><label for="adjust_tax">New tax rate:</label>(<%= session[:kingdom].tax_rate %> current rate)<br/>
-  <%= text_field 'taxes',''  %></p>
+  <%= text_field_tag 'taxes' %></p>
   <%= submit_tag 'Adjust' %>
 <% end %>
 

@@ -1,0 +1,53 @@
+<h2>Sign up</h2>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+  <%= devise_error_messages! %>
+
+  <table>
+    <tr class="field">
+      <td><%= f.label :handle %></td>
+      <td><%= f.text_field :handle, autofocus: true %></td>
+    </tr>
+    <tr class="field">
+      <td><%= f.label :email %></td>
+      <td><%= f.email_field :email %></td>
+    </tr>
+    <tr class="field">
+      <td><%= f.label :password %>
+        <% if @minimum_password_length %>
+          <br/><em>(<%= 8 || @minimum_password_length %> characters minimum)</em>
+        <% end %>
+      </td>
+      <td><%= f.password_field :password, autocomplete: "off", minlength: 8 %></td>
+    </tr>
+    <tr class="field">
+      <td><%= f.label :password_confirmation %></td>
+      <td><%= f.password_field :password_confirmation, autocomplete: "off" %></td>
+    </tr>
+    <tr class="field">
+      <td><%= f.label :city %></td>
+      <td><%= f.text_field :city %></td>
+    </tr>
+    <tr class="field">
+      <td><%= f.label :state %></td>
+      <td><%= f.text_field :state %></td>
+    </tr>
+    <tr class="field">
+      <td><%= f.label :country %></td>
+      <td><%= f.text_field :country %></td>
+    </tr>
+    <tr class="field">
+      <td><%= f.label :bio %></td>
+      <td><%= f.text_area :bio, style: "height:200px;width:200px" %></td>
+    </tr>
+  </table>
+
+  <p><%= flash[:recaptcha_error] %></p>
+  <p><%= recaptcha_tags %></p>
+
+  <div class="actions">
+    <%= f.submit "Sign up" %>
+  </div>
+<% end %>
+
+<%= render "devise/shared/links" %>

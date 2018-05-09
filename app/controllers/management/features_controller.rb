@@ -1,20 +1,15 @@
 class Management::FeaturesController < ApplicationController
   before_filter :authenticate
   before_filter :king_filter
+  before_filter :setup_king_pc_vars
+  before_filter :set_images, only: [:new, :create, :edit, :update]
+
 
   layout 'main'
 
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update, :create_feature_event, :update_feature_event, :destroy_feature_event, :arm_feature ],         :redirect_to => { :action => :index }
-  
-  
-  #**********************************************************************
-  #FEATURE MANAGEMENT
-  #**********************************************************************
-  public
   def index
     #design features
-    @features = Feature.get_page(params[:page], session[:player][:id], session[:kingdom][:id])
+    @features = Feature.get_page(params[:page], current_player.id, session[:kingdom][:id])
   end
 
   def show
@@ -23,17 +18,14 @@ class Management::FeaturesController < ApplicationController
   end
   
   def new
-    @feature = Feature.new(params[:feature])
-    @kingdom_id = session[:kingdom][:id]
-    @player_id = session[:player][:id]
-    @image = @feature.image || Image.new(params[:image])
-    @images = Image.find(:all,
-                :conditions => ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
-                @player_id,@kingdom_id,SpecialCode.get_code('image_type', 'kingdom')], :order => 'name')
+    @feature = Feature.new
+    @image = Image.new
   end
   
   def create
-    new
+    @feature = Feature.new(feature_params.merge(player_id: current_player.id, kingdom_id: session[:kingdom][:id]))
+    @image = @feature.image || Image.new(image_params.merge(player_id: current_player.id, kingdom_id: session[:kingdom][:id]))
+
     @feature.image_id = 0 unless @feature.image
     calc_feature_cost
     @feature.cost = @cost
@@ -41,6 +33,7 @@ class Management::FeaturesController < ApplicationController
     if @feature.valid?
       if params[:feature][:image_id].nil? || params[:feature][:image_id] == ""
         @image.resize_image(10,15)
+        @image.name ||= "Feature #{@feature.name}"
         @image.save! 
         @feature.image_id = @image.id
       end
@@ -57,11 +50,6 @@ class Management::FeaturesController < ApplicationController
   def edit
     @feature = Feature.find(params[:id])
     @image = @feature.image
-    @kingdom_id = session[:kingdom][:id]
-    @player_id = session[:player][:id]
-    @images = Image.find(:all,
-                :conditions => ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
-                @player_id,@kingdom_id,SpecialCode.get_code('image_type', 'kingdom')], :order => 'name')
     if !is_feature_owner || !is_feature_not_in_use
       redirect_to :action => 'index'
       return
@@ -70,10 +58,12 @@ class Management::FeaturesController < ApplicationController
   
   def update
     edit
-    
+
     @image.update_image(params[:image][:image_text],10,15) unless params[:image][:image_text] == ""
+    @image.name = "Feature #{@feature.name}" unless @image.name.present?
+    params[:feature][:image_id] = @image.id unless params[:feature].try(:[],:image_id).present?
     
-    if @feature.update_attributes(params[:feature]) & @image.save
+    if @feature.update_attributes(feature_params) & @image.save
       calc_feature_cost
       @feature.cost = @cost
       @feature.save
@@ -84,16 +74,18 @@ class Management::FeaturesController < ApplicationController
       render :action => 'edit'
     end
   end
-  
+
+  # TODO: this feature_event stuff should be their own resource under feature
   def new_feature_event
     @feature = Feature.find(params[:id])
-    @feature_event = FeatureEvent.new(params[:feature_event])
-    @feature_event.feature_id = params[:id]
+    @feature_event = FeatureEvent.new
     @events = session[:kingdom].pref_list_events.reload.collect{|pf| pf.event}
   end
   
   def create_feature_event
-    new_feature_event
+    @feature = Feature.find(params[:id])
+    @feature_event = FeatureEvent.new(feature_event_params.merge(feature_id: params[:id]))
+    @events = session[:kingdom].pref_list_events.reload.collect{|pf| pf.event}
     
     if !good_event || !is_feature_owner
       redirect_to :action => 'new_feature_event', :id => params[:id]
@@ -129,7 +121,7 @@ class Management::FeaturesController < ApplicationController
     end
     
     @events = session[:kingdom].pref_list_events.reload.collect{|pf| pf.event}
-    if @feature_event.update_attributes(params[:feature_event])
+    if @feature_event.update_attributes(feature_event_params)
       flash[:notice] = 'Feature event updated.'
       update_feature_cost
     else
@@ -162,7 +154,7 @@ class Management::FeaturesController < ApplicationController
     redirect_to :action => 'show', :id => @feature.id
   end
   
-  def arm_feature
+  def arm
     @feature = Feature.find(params[:id])
     if !is_feature_owner
       redirect_to :action => 'index'
@@ -172,7 +164,7 @@ class Management::FeaturesController < ApplicationController
     #create the peasant feature encounters if applicable
     #must have the peasant creature and event in the database or this will fail
     flash[:notice] = ''
-    @peasant = Creature.find(:first, :conditions => ['name = ?', 'Peasant'])
+    @peasant = Creature.find_by(name: 'Peasant')
     if @peasant.nil?
       flash[:notice] += 'The Peasants haven\'t been created yet!<br/>'
     elsif !@feature.num_occupants.nil? && @feature.num_occupants > 0
@@ -223,12 +215,10 @@ class Management::FeaturesController < ApplicationController
     
     redirect_to :controller => '/management/pref_list'
   end
-  
-  
-  
+
 protected
   def good_event
-    if Event.find(:first,:conditions => ['armed = true AND (kingdom_id = ? or player_id  = ?) AND id = ?', session[:kingdom][:id], session[:player][:id], params[:feature_event][:event_id]])
+    if Event.where(armed: true, id: params[:feature_event][:event_id]).find_by(['kingdom_id = ? or player_id  = ?', session[:kingdom][:id], current_player.id])
       return true
     else
       flash[:notice] = "You can't use that event"
@@ -246,11 +236,11 @@ protected
     end
   
     #can be expensive computatinally.
-    @fees = @feature.feature_events
+    @fees = @feature.feature_events.includes(:event)
     @cost = 500  #base cost of any feature
     
     if @feature.store_front_size > 0
-      @cost += ((@feature.store_front_size).power!(@feature.store_front_size)) * 10
+      @cost += ((@feature.store_front_size)**(@feature.store_front_size)) * 10
     end
       
     if @fees.nil? || @fees.size == 0
@@ -288,7 +278,7 @@ protected
   
   def is_feature_owner
     #if someone tries to edit a feature not belonging to them
-    if @feature.player_id != session[:player][:id] && 
+    if @feature.player_id != current_player.id &&
        @feature.kingdom_id != session[:kingdom][:id]
       flash[:notice] = 'An error occured while retrieving ' + @feature.name
       false
@@ -308,5 +298,46 @@ protected
   
   def setup_events_array
     @events = session[:kingdom].pref_list_events.reload.collect{|pf| pf.event}
+  end
+
+  def feature_params
+    params.require(:feature).permit(
+        :name,
+        :action_cost,
+        :image_id,
+        # :player_id,:kingdom_id,
+        # :cost,
+        :num_occupants,
+        :world_feature,
+        # :armed,
+        :description,
+        :store_front_size,
+        # :image_text,
+        :public
+    )
+  end
+
+  def feature_event_params
+    params.require(:feature_event).permit(
+        :chance,
+        :event_id,
+        :priority,
+        :choice
+    )
+  end
+
+  def image_params
+    params.require(:image).permit(
+        :image_text,
+        :public,
+        :picture,
+        :image_type
+    )
+  end
+
+  def set_images
+    @images = Image.where(
+        ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
+         @player_id, @kingdom_id, SpecialCode.get_code('image_type', 'creature')]).order(:name)
   end
 end

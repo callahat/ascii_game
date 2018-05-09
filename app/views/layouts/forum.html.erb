@@ -5,11 +5,9 @@
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <title>Ascii Game the MMORPG</title>
-  <%= stylesheet_link_tag 'main' %>
+  <%= stylesheet_link_tag    'application', media: 'all' %>
+  <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tag %>
-  <%= javascript_include_tag :defaults %>
-  <%= javascript_include_tag 'prototype' %>
-  <%= javascript_include_tag 'rails' %>
 </head>
 <body>
 
@@ -17,15 +15,18 @@
   <!-- 140px -->
 
   <ul class="nav_tabs">
-    <li><span class="user_tab"><%= ( session[:player] ? "Player:#{session[:player][:handle]}" : "Welcome, guest" ) %></span></li>
-    <li><%= link_to 'Home', :controller => 'home' %></li>
+    <li><span class="user_tab"><%= ( player_signed_in? ? "Player:#{current_player.handle}" : "Welcome, guest" ) %></span></li>
+    <li><%= link_to 'Home', root_path %></li>
     <li><%= link_to 'Forums', :controller => '/forum', :action => 'boards' %></li>
-    <li><%= link_to 'Characters', :controller => '/character', :action => (session[:player] ? 'menu' : 'new') %></li>
-    <li><%= link_to('Game', :controller => '/game', :action => 'feature') if session[:player] %></li>
+    <li><%= link_to 'Characters', :controller => '/character', :action => (player_signed_in? ? 'menu' : 'new') %></li>
+    <li><%= link_to('Game', :controller => '/game', :action => 'feature') if player_signed_in? %></li>
     <li><%= link_to('Kingdom Management', :controller => '/management', :action => 'main_index') if session[:kingbit] %></li>
-    <li><%= session[:player] ? link_to('Logout', logout_url()) :
-                               link_to('Login', login_url()) + ' or ' + link_to('Register', register_url()) %></li>
-  </ul>
+    <% if player_signed_in? -%>
+      <li><%= link_to(current_player.handle, account_path)%></li>
+      <li><%= link_to('Logout', destroy_player_session_path, method: :delete) %></li>
+    <% else -%>
+      <li><%= link_to('Login', new_player_session_path) + ' or ' + link_to('Register', new_player_registration_path) %></li>
+    <% end -%>  </ul>
 </div>
 
 <div id="mid">

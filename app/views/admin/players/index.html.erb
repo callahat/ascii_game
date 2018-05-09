@@ -1,0 +1,31 @@
+<h1>Listing players</h1>
+
+<table>
+	<tr>
+		<th>handle</th>
+		<th>city</th>
+		<th>state</th>
+		<th>country</th>
+    <th>Joined</th>
+    <th></th>
+    <th></th>
+	</tr>
+	
+<% for player in @players %>
+	<tr>
+		<td><%= player.handle %></td>
+		<td><%= player.city %></td>
+		<td><%= player.state %></td>
+		<td><%= player.country %></td>
+		<td><%= player.created_at %></td>
+		<td><%= link_to 'Show', [:admin,player] %></td>
+		<td><%= link_to 'Edit', edit_admin_player_path(player) %></td>
+	</tr>
+<% end %>
+</table>
+
+<%= will_paginate @players %> 
+
+<br />
+
+<%= link_to 'New Player', new_admin_player_path %>

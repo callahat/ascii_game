@@ -1,16 +1,49 @@
-<%= error_messages_for 'c_class' %>
-
 <!--[form:c_class]-->
-<p><label for="c_class_name">Name</label><br/>
-<%= text_field 'c_class', 'name'  %></p>
+<%= form_for [:admin,@c_class] do |f| %>
+  <%= error_messages_for 'c_class' %>
 
-<p><label for="c_class_description">Description</label><br/>
-<%= text_field 'c_class', 'description'  %></p>
+  <div class="field">
+    <%= f.label :name %><br/>
+    <%= f.text_field :name %>
+  </div>
 
-<p><label for="c_class_attack_spells">Attack spells</label><br/>
-<select id="c_class_attack_spells" name="c_class[attack_spells]"><option value="false">False</option><option value="true">True</option></select></p>
+  <div class="field">
+    <%= f.label :description %><br/>
+    <%= f.text_field :description %>
+  </div>
 
-<p><label for="c_class_healing_spells">Healing spells</label><br/>
-<select id="c_class_healing_spells" name="c_class[healing_spells]"><option value="false">False</option><option value="true">True</option></select></p>
+  <div class="field">
+    <%= f.label :attack_spells %><br/>
+    <%= f.check_box :attack_spells %>
+  </div>
+
+  <div class="field">
+    <%= f.label :healing_spells %><br/>
+    <%= f.check_box :healing_spells %>
+  </div>
+
+  <div class="field">
+    <%= f.label :freepts %><br/>
+    <%= f.text_field :freepts %>
+  </div>
+
+  <p>Distribute 30-80 points among the attributes. More points, more XP needed
+  for the next level.</p>
+
+  <%= f.fields_for(:level_zero) do |stat_form| %>
+    <table>
+      <% Stat.symbols.each{|stat_attr| %>
+        <tr>
+          <td><%= stat_form.label stat_attr %></td>
+          <td><%= stat_form.text_field stat_attr, size: 5 %></td>
+        </tr>
+      <% } %>
+    </table>
+  <% end %>
+
+  <div class="actions">
+    <%= submit_tag %>
+  </div>
+
+<% end %>
 <!--[eoform:c_class]-->
-

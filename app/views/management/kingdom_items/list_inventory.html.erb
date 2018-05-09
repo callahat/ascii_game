@@ -10,7 +10,7 @@
   <tr>
     <td><%=h pc_item.item.name %></td>
     <td><%=h pc_item.quantity %></td>
-    <td><%= link_to 'Store', :action => 'store', :id => pc_item %></td>
+    <td><%= link_to "Store", store_management_kingdom_items_path(id: pc_item) %></td>
   </tr>
 <% end %>
 </table>
@@ -19,4 +19,4 @@
 
 <br />
 
-<%= link_to 'Storerooms', :action => 'list' %>
+<%= link_to 'Storerooms', management_kingdom_items_path %>

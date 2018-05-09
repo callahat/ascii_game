@@ -1,0 +1,22 @@
+<h1>Listing kingdom_items</h1>
+
+<table>
+  <tr>
+    <th>Item</th>
+    <th>Quantity</th>
+  </tr>
+  
+<% for kingdom_item in @kingdom_items %>
+  <tr>
+    <td><%=h kingdom_item.item.name %></td>
+    <td><%=h kingdom_item.quantity %></td>
+    <td><%= link_to 'Remove', remove_management_kingdom_items_path(id: kingdom_item.id) %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @kingdom_items %> 
+
+<br />
+
+<%= link_to 'Store Items', list_inventory_management_kingdom_items_path %>

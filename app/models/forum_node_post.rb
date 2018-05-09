@@ -6,7 +6,7 @@ class ForumNodePost < ForumNode
   
   validates_presence_of :text
   
-  default_scope :order => 'created_at ASC'
+  default_scope { order('created_at ASC') }
   
   class CanMakePostValidator < ActiveModel::EachValidator
     def validate_each(record, attribute, value)
@@ -36,7 +36,7 @@ class ForumNodePost < ForumNode
         return "You may not edit delete a post; your mod level is insufficient"
       end
     else
-      is_deleted = true
+      self.is_deleted = true
       edit_notices = edit_notices.to_s + '<br/>Deleted by ' + user.handle + ' at ' + Time.now.strftime("%m-%d-%Y %I:%M.%S %p")
       save
       return "Post deleted"
@@ -47,7 +47,7 @@ class ForumNodePost < ForumNode
     self.text = text
     self.edit_notices = edit_notices.to_s + '<br/>Edited by ' + user + ' at ' + Time.now.strftime("%m-%d-%Y %I:%M.%S %p")
     self.is_mods_only = mods_only
-    self.save!
+    self.save
   end
   
   def can_be_edited_by(user)
@@ -62,7 +62,7 @@ class ForumNodePost < ForumNode
   
   def can_be_made_by(user)
     return false unless user
-    return false if user.player_characters.find(:first, :conditions => 'level > 9').nil?
+    return false if user.player_characters.find_by('level > 9').nil?
     user.forum_attribute.mod_level == 9 ||
       !(ForumRestriction.no_posting(user) ||
         parent_forum_node(:is_deleted) ||

@@ -4,39 +4,56 @@ test_level_map_0_0:
   xpos: 0
   ypos: 0
   feature: feature_multi_event
-test_level_map_1_1:
-  level: first_kingdom_level_one
-  xpos: 1
-  ypos: 1
-  feature: feature_creature_one
-test_level_map_2_2:
-  level: first_kingdom_level_one
-  xpos: 2
-  ypos: 2
-  feature: feature_no_events
-test_level_map_0_2:
-  level: first_kingdom_level_one
-  xpos: 0
-  ypos: 2
-  feature: throne_event
-test_level_map_1_0:
-  level: first_kingdom_level_one
-  xpos: 1
-  ypos: 0
-  feature: old_guy_1
-test_level_map_2_0:
-  level: first_kingdom_level_one
-  xpos: 2
-  ypos: 0
-  feature: old_guy_2
-
 test_level_map_0_1:
   level: first_kingdom_level_one
   xpos: 0
   ypos: 1
   feature: healer_npc
+test_level_map_0_2:
+  level: first_kingdom_level_one
+  xpos: 0
+  ypos: 2
+  feature: feature_creature_one
+
+test_level_map_1_0:
+  level: first_kingdom_level_one
+  xpos: 1
+  ypos: 0
+  feature: old_guy_1
+test_level_map_1_1:
+  level: first_kingdom_level_one
+  xpos: 1
+  ypos: 1
+  feature: kingdom_one_castle_feature
+test_level_map_1_2:
+  level: first_kingdom_level_one
+  xpos: 1
+  ypos: 2
+  feature: empty_feature
+
+test_level_map_2_0:
+  level: first_kingdom_level_one
+  xpos: 2
+  ypos: 0
+  feature: old_guy_2
 test_level_map_2_1:
   level: first_kingdom_level_one
   xpos: 2
   ypos: 1
   feature: multiclass_npc
+test_level_map_2_2:
+  level: first_kingdom_level_one
+  xpos: 2
+  ypos: 2
+  feature: feature_no_events
+
+# Dungeon
+<% 0.upto(3) do |x|
+     0.upto(3) do |y| %>
+dungeon_one_map_<%= x %>_<%= y %>:
+  level: first_kingdom_level_dungeon_one
+  xpos: <%= x %>
+  ypos: <%= y %>
+  feature: empty_feature
+<%   end
+   end %>

@@ -7,5 +7,5 @@
 <p><b>mp cost: </b><%= @healing_spell.mp_cost %></p>	   
 <p><b>cast on others?: </b><%= @healing_spell.cast_on_others? %></p>	 
 
-<%= link_to 'Edit', :action => 'edit', :id => @healing_spell %> |
-<%= link_to 'Back', :action => 'list' %>
+<%= link_to 'Edit', edit_admin_healing_spell_path(@healing_spell) %> |
+<%= link_to 'Back', admin_healing_spells_path %>

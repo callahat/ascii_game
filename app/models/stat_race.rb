@@ -1,7 +1,9 @@
 class StatRace < Stat
   belongs_to :race, :foreign_key => 'owner_id'
   belongs_to :owner, :foreign_key => 'owner_id', :class_name => 'Race'
-  
+
+  validate :valid_for_level_zero
+
   #How many experience points it would require for level
   def total_exp_for_level(l)
     attr = self.dup

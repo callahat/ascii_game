@@ -1,16 +1,19 @@
 class NpcMerchant < Npc
-#  include TxWrapper
-#  include MiscMath
+  has_many :npc_blacksmith_items, foreign_key: :npc_id, dependent: :destroy
+  has_many :npc_stocks, foreign_key: :owner_id, class_name: 'NpcStock', dependent: :destroy
   
-  has_many :npc_blacksmith_items, :foreign_key => 'npc_id'
-  has_many :npc_blacksmith_items_by_min_sales, :foreign_key => 'npc_id', :class_name => 'NpcBlacksmithItem', :order => 'min_sales'
-  has_many :npc_stocks, :foreign_key => 'owner_id', :class_name => 'NpcStock'
-  
-  has_one :npc_merchant_detail, :foreign_key => 'npc_id'
+  has_one :npc_merchant_detail, :foreign_key => 'npc_id', dependent: :destroy
+
+  accepts_nested_attributes_for :npc_merchant_detail
 
   def self.generate(kingdom_id)
-    @new_image = Image.deep_copy(Image.find(:first, :conditions => ['name = ?', 'DEFAULT NPC']))
+    @new_image = Image.new(
+      image_text: DEFUALT_NPC_IMAGE,
+      public: false,
+      image_type: SpecialCode.get_code('image_type','kingdom')
+    )
     @new_image.kingdom_id = kingdom_id
+    @new_image.player_id = -1
     @new_image.save
 
     @new_merch = self.create(
@@ -45,6 +48,7 @@ class NpcMerchant < Npc
 
   def self.gen_merch_attribs(npc)
     @rbt = npc.kingdom.player_character.race.race_body_type if npc.kingdom && npc.kingdom.player_character_id
+    @rbt ||= SpecialCode.get_codes_and_text('race_body_type').map(&:second).sample
     @kinds = 10
     @types = [0,0,0]
     
@@ -57,8 +61,8 @@ class NpcMerchant < Npc
     while @types.sum < @kinds
       @types[rand(3)] = 10
     end
-    
-    NpcMerchantDetail.new(:npc_id => npc.id,
+
+    npc.build_npc_merchant_detail(
           :consignor => rand(2),
           :race_body_type => @rbt,
           :healing_sales => @types[0],
@@ -138,13 +142,17 @@ class NpcMerchant < Npc
   def train(pc, stats)
     #double check the max skill taught from what was entered
     Stat.symbols.each{|at|
+      available_to_train = (pc.base_stat[at] * ( self.npc_merchant_detail.max_skill_taught / 100.0)).to_i
+      training_points_spent  = (stats[at] + pc.trn_stat[at])
+
       if stats[at] < 0
         stats.errors.add(at, "cannot be negative")
-      elsif (pc.base_stat[at] * ( self.npc_merchant_detail.max_skill_taught / 100.0)).to_i < (stats[at] + pc.trn_stat[at])
-        stats.errors.add(at, "cannot gain " + stats[at].to_s + " points") 
+      elsif training_points_spent > available_to_train
+        stats.errors.add(at, "cannot gain " + stats[at].to_s + " points")
       end
     }
-    return false, "" if stats.errors.size > 0
+
+    return([false, '']) if stats.errors.size > 0
     
     @pretax = stats.sum_points * pc.level * 10
     @tax = (@pretax * self.kingdom.tax_rate / 100.0).to_i
@@ -168,7 +176,7 @@ class NpcMerchant < Npc
   end
   
   def sell_used_to(pc, iid)
-    if @stock = self.npc_stocks.find(:first, :conditions => ['item_id = ?', iid]) and
+    if @stock = self.npc_stocks.find_by(item_id: iid) and
         NpcStock.update_inventory(self.id, @stock.item_id, -1)
       @pretax = @stock.item.used_price
       @tax = (@pretax * (self.kingdom.tax_rate / 100.0)).to_i
@@ -179,7 +187,7 @@ class NpcMerchant < Npc
       elsif PlayerCharacterItem.update_inventory(pc.id,@stock.item_id,1)
         Kingdom.pay_tax(@tax, self.kingdom_id)
         TxWrapper.give(self, :gold, @pretax)
-        [true, "Bought a " + @stock.item.name + " for " + @cost.to_s + " gold." ]
+        [true, "Bought a " + @stock.item.name + " for " + (@tax + @pretax).to_s + " gold." ]
       end
     else
       [false, self.name + " does not have " + (@stock ? "a " + @stock.item.name : "one of those" ) + " for sale."]
@@ -187,7 +195,7 @@ class NpcMerchant < Npc
   end
   
   def buy_from(pc, iid)
-    if @pc_item = pc.items.find(:first, :conditions => ['item_id = ?', iid]) and
+    if @pc_item = pc.items.find_by(item_id: iid) and
         PlayerCharacterItem.update_inventory(pc.id,@pc_item.item_id,-1)
       @cost = @pc_item.item.resell_value
       NpcStock.update_inventory(self.id,@pc_item.item_id,1)
@@ -197,4 +205,23 @@ class NpcMerchant < Npc
       [false, "You do not have " + (@pc_item ? "a " + @pc_item.item.name : "one of those") + " to sell."]
     end
   end
+
+  protected
+
+  DEFUALT_NPC_IMAGE = <<-ASCII
+     __
+    /  \
+    |  |
+   ======
+    "  "
+  --""""--
+  || \|  |
+  ||_.. ||
+   \3.. ||
+   | .. --
+   ------~
+    | | |
+    |_|_|
+   (@#)##)
+  ASCII
 end

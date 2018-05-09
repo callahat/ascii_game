@@ -13,7 +13,17 @@ AsciiGame3::Application.configure do
   config.action_controller.perform_caching             = false
 
   # Don't care if the mailer can't send
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default_url_options = { :host => (ENV['FQDN'] || 'asciigame.com') }
   
   config.active_support.deprecation = true
+  config.eager_load = false
+
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.bullet_logger = true
+    Bullet.add_footer = true
+  end
 end

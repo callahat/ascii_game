@@ -1,8 +1,5 @@
 <h1>Edit creature</h1>
 
-<%= form_tag :action => 'update', :id => params[:id] do %>
-  <%= render :partial => 'form' %>
-  <%= submit_tag "Update" %>
-<% end %>
+<%= render 'form' %>
 
-<%= link_to 'Back', :action => 'index' %>
+<%= link_to 'Back', admin_creatures_path %>

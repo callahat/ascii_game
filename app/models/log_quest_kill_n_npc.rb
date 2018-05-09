@@ -2,7 +2,7 @@ class LogQuestKillNNpc < LogQuestReq
   belongs_to :quest_req, :foreign_key => 'quest_req_id', :class_name => 'QuestKillNNpc'
   
   def self.complete_req(pcid,npcd,kid,kills=1)
-    @lq = LogQuestKillNNpc.find(:all, :conditions => ['owner_id = ? AND (detail = ? or detail = ?)', pcid, npcd.to_s + ":" + kid.to_s, ":" + kid.to_s ])
+    @lq = LogQuestKillNNpc.where(owner_id: pcid).where(['detail = ? or detail = ?', npcd.to_s + ":" + kid.to_s, ":" + kid.to_s ])
 
     #shouldn't need to wrap this in a transaction
     for lq in @lq

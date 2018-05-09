@@ -1,27 +1,29 @@
 <%= error_messages_for 'player_character' %>
 
-<%= form_tag :action => 'create' do %>
+<%= form_for @player_character, url: create_character_path(@player_character) do |f| %>
 <table border=3>
  <tr><td>
-  <p><label for="player_character_name">Character Name:</label><br/>
-  <%= text_field 'player_character', 'name' %></p>
+  <p><%= f.label :name, 'Character Name:' %><br/>
+  <%= f.text_field :name %></p>
  </td></tr>
+
+  <%= f.fields_for(:image) do |image_form| %>
+    <tr><td>
+      <%= image_form.label :image_text %>
+    </td></tr>
+    <tr><td>
+      <%= image_form.text_area :image_text, {:rows => '15', :cols => '20' } %>
+    </td></tr>
+  <% end %>
+
  <tr>
   <td>
-   <p><label for="image">Character Image:</label><br/>
-   <%#= text_area 'player_character', 'image', {:rows => '15', :cols => '20' } %>
-   <%= text_area 'image', 'image_text', {:rows => '15', :cols => '20' } %>
-   </p>   
-  </td>
- </tr>
- <tr>
-  <td>
-   <p><label for="kingdom_id">Home Kingdom:</label>
-   <%= collection_select('kingdom','id', @kingdoms, 'id', 'name') %></p>
+   <p><%= f.label :kingdom_id, 'Home Kingdom:' %>
+   <%= f.collection_select(:kingdom_id, @kingdoms, :id, :name) %></p>
   </td>
  </tr>
  <tr><td>
-   <%= submit_tag "Accept" %>
- </tr></td>
+   <%= submit_tag %>
+ </tr>
 </table>
 <% end %>

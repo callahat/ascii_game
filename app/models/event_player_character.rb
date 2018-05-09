@@ -1,5 +1,6 @@
 class EventPlayerCharacter < EventLifeNeutral
   belongs_to :player_character, :foreign_key => 'thing_id'
+  belongs_to :thing, :foreign_key => 'thing_id', :class_name => 'PlayerCharacter'
 
   validates_presence_of :thing_id
   
@@ -8,15 +9,15 @@ class EventPlayerCharacter < EventLifeNeutral
     if pc.health.HP > 0 && pc.health.wellness != SpecialCode.get_code('wellness','dead')
       return nil, EVENT_COMPLETED, ""
     else
-      return {:action => 'complete'}, EVENT_COMPLETED, pc.name + " has shuffled from this mortal coil"
+      return url_helpers.complete_game_path, EVENT_COMPLETED, pc.name + " has shuffled from this mortal coil"
     end
   end
   
   def as_option_text(pc=nil)
-    if player_character.health.wellness != SpecialCode.get_code('wellness','dead')
-      "Look at " + player_character.name + "'s corpse"
+    if thing.health.wellness != SpecialCode.get_code('wellness','dead')
+      "Look at " + thing.name + "'s corpse"
     else
-      "Chat with " + player_character.name
+      "Chat with " + thing.name
     end
   end
 end

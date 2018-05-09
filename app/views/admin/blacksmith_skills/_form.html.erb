@@ -1,17 +1,31 @@
-<%= error_messages_for 'blacksmith_skill' %>
-
 <!--[form:blacksmith_skill]-->
-<p><label for="blacksmith_skill_min_sales">Min sales</label><br/>
-<%= text_field 'blacksmith_skill', 'min_sales'  %></p>
+<%= form_for([:admin, @blacksmith_skill]) do |f| %>
+  <%= error_messages_for 'blacksmith_skill' %>
 
-<p><label for="blacksmith_skill_min_mod">Min mod</label><br/>
-<%= text_field 'blacksmith_skill', 'min_mod'  %></p>
+  <div class="field">
+    <%= f.label :min_sales %><br/>
+    <%= f.text_field :min_sales %>
+  </div>
 
-<p><label for="blacksmith_skill_max_mod">Max mod</label><br/>
-<%= text_field 'blacksmith_skill', 'max_mod'  %></p>
+  <div class="field">
+    <%= f.label :min_mod %><br/>
+    <%= f.text_field :min_mod %>
+  </div>
 
-<p><label for="blacksmith_skill_min_sales">Base Item</label><br/>
-<%= collection_select('blacksmith_skill',                      'base_item_id',                      BaseItem.find(:all, :conditions => [']),                       'id', 'name' ) %></p>
+  <div class="field">
+    <%= f.label :max_mod %><br/>
+    <%= f.text_field :max_mod %>
+  </div>
 
+  <div class="field">
+    <%= f.label :base_item_id %><br/>
+    <%= f.collection_select(:base_item_id, BaseItem.all, :id, :name) %>
+  </div>
+
+  <br/>
+
+  <div class="actions">
+    <%= submit_tag %>
+  </div>
+<% end %>
 <!--[eoform:blacksmith_skill]-->
-

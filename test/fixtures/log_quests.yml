@@ -1,1 +1,6 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+log_quest_one:
+  player_character: pc_one
+  quest: quest_one
+  completed: false
+  rewarded: false

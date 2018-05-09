@@ -1,17 +1,8 @@
 class Management::KingdomFinancesController < ApplicationController
-  before_filter :setup_pc_vars
   before_filter :king_filter
+  before_filter :setup_king_pc_vars
 
   layout 'main'
-
-  def index
-    show
-    render :action => 'show'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :withdraw, :deposit, :adjust_tax ],
-#         :redirect_to => { :action => :show }
 
   def show
     @cash = session[:kingdom].gold
@@ -24,7 +15,7 @@ class Management::KingdomFinancesController < ApplicationController
   end
 
   def withdraw
-    @withdraw = params[:withdraw][0].to_i
+    @withdraw = params[:withdraw].to_i
     if ! TxWrapper.take(session[:kingdom], :gold, @withdraw)
       flash[:notice] = 'Amount to withdrawl cannot exceed the gold in the coffers.'
     elsif TxWrapper.give(@pc, :gold, @withdraw)
@@ -34,7 +25,7 @@ class Management::KingdomFinancesController < ApplicationController
   end
 
   def deposit
-    @deposit = params[:deposit][0].to_i
+    @deposit = params[:deposit].to_i
     if ! TxWrapper.take(@pc, :gold, @deposit)
       flash[:notice] = 'Amount to withdrawl cannot exceed the gold in the coffers.'
     elsif TxWrapper.give(session[:kingdom], :gold, @deposit)
@@ -44,10 +35,11 @@ class Management::KingdomFinancesController < ApplicationController
   end
 
   def adjust_tax
-    if params[:taxes][0].to_f < 0 || params[:taxes][0].to_f > 100
+    new_rate = params[:taxes].to_f
+    if new_rate < 0 || new_rate > 100
       flash[:notice] = 'Tax rate must be between 0% and 100%'
     else
-      session[:kingdom].tax_rate = params[:taxes][0].to_f
+      session[:kingdom].tax_rate = new_rate
       session[:kingdom].save!
       flash[:notice] = 'Tax rate updated.'
     end

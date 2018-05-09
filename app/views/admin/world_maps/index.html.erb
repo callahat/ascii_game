@@ -1,16 +1,29 @@
-<h1>Listing world_maps</h1>
-
 <table>
-  <tr>
-    <th>World</th>
-  </tr>
-  
-<% for world in @worlds %>
-  <tr>
-    <td><%=h world.world.name %></td>
-    <td><%= link_to 'Show', :action => 'show', :wid => world %></td>
-  </tr>
+<tr>
+<td></td>
+<% @world.minbigx.upto(@world.maxbigx) do |x| %>
+<td><%= x %></td>
 <% end %>
+</tr>
+
+<% @world.minbigy.upto(@world.maxbigy) do |y| %>
+   <tr>
+     <td><%= y %></td>
+<%   @world.minbigx.upto(@world.maxbigx) do |x|
+        square = WorldMap.where(world: @world, bigypos: y, bigxpos: x).last %>
+    <td>
+      <% if !square.nil? %>
+        <%= link_to "#{square.bigxpos}, #{square.bigypos}", admin_world_map_path(@world, id: "#{square.bigxpos}x#{square.bigypos}") %>
+      <% else %>
+        _____
+      <% end %>
+    </td>
+<%   end %>
+   </tr>
+   <% end %>
 </table>
 
-<%= will_paginate @worlds %> 
+<br/>
+
+<%= link_to 'New map', new_admin_world_map_path(world_id: @world) %> |
+<%= link_to 'Back', admin_worlds_path %>

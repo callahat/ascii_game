@@ -1,9 +1,12 @@
 class EventItem < Event
   belongs_to :item, :foreign_key => 'thing_id'
+  belongs_to :thing, :foreign_key => 'thing_id', :class_name => 'Iten'
 
   validates_presence_of :thing_id,:flex
-  validates_inclusion_of :flex, :in => 1..100, :message => ' must be between 1 and 100.'
-  
+  validates_each :flex do |record, attr, value|
+    record.errors.add(attr, 'must be between 1 and 100.') unless (1..100).include? value.to_i
+  end
+
   def price
     item.price * flex.to_i
   end

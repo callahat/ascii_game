@@ -34,7 +34,7 @@
 <br/>
 <table>
 <tr><td>
-<%= link_to 'Castle Manager', :controller => 'management/castles' %>
+<%= link_to 'Castle Manager', controller: 'management/castles', action: :show %>
 </td></tr>
 <tr><td>
 <%= link_to 'Kingdom Notice Board', :controller => 'management/kingdom_notices' %>
@@ -43,23 +43,23 @@
 <%= link_to 'Banned Characters', :controller => 'management/kingdom_bans' %>
 </td></tr>
 <tr><td>
-<%= link_to 'Kingdom Entry Restrictions', :controller => 'management/kingdom_entries' %>
+<%= link_to 'Kingdom Entry Restrictions', management_kingdom_entries_path %>
 </td></tr>
 <tr><td>
-<%= link_to 'Pass the Throne', :action => 'retire' %>
+<%= link_to 'Pass the Throne', management_retire_path %>
 </td></tr>
 </table>
 
 <br/>
 <table>
 <tr><td>
-<%= link_to 'Kingdom Finances', :controller => 'management/kingdom_finances' %>
+<%= link_to 'Kingdom Finances', management_kingdom_finances_path %>
 </td></tr>
 <tr><td>
 <% if @pc && session[:kingdom].player_character_id == @pc.id %><%= link_to 'Kingdom Storerooms', :controller => 'management/kingdom_items' %><% end %>
 </td></tr>
 <tr><td>
-<%= link_to 'NPC\'s of the kingdom', :controller => 'management/kingdom_npcs' %><% if session[:kingdom].npcs.exists?(:is_hired => false) %> (<%= session[:kingdom].npcs.find(:all, :conditions => ['is_hired = ?', false]).size %> new)<% end %>
+<%= link_to 'NPC\'s of the kingdom', :controller => 'management/kingdom_npcs' %><% if session[:kingdom].npcs.exists?(:is_hired => false) %> (<%= session[:kingdom].npcs.where(is_hired: false).count %> new)<% end %>
 </td></tr>
 </table>
 

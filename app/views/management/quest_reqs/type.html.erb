@@ -1,0 +1,14 @@
+<h1>Pick Requirement</h1>
+
+<%= form_tag new_management_quest_req_path(@quest), method: :get do %>
+  <p>
+  <select id="type" name="type">
+    <% for req in @reqs %>
+      <option value="<%= req[0] %>"><%= req[0] %></option>
+    <% end %>
+  </select>
+  </p>
+  <%= submit_tag "Add" %>
+<% end %>
+
+<%= link_to 'Back', management_quest_path(@quest) %>

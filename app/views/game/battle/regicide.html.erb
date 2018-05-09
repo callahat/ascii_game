@@ -1,8 +1,8 @@
 <p>You have slain the king of <%= @kingdom.name %>!<p>
 <p>The kingdom is yours for the taking.</p>
 
-<%= link_to 'Claim the throne', {:controller => '/game', :action => 'complete'}, :method => :post %><br/>
-<% if session[:enemies].size > 0 %>
-<%= link_to 'Claim throne, continue fighting', :action => 'battle' %><br/>
+<%= link_to 'Claim the throne', {controller: '/game/battle', action: 'fate_of_throne', q: 'claim'}, :method => :post %><br/>
+<% if @pc.battle.enemies.count > 0 %>
+<%= link_to 'Claim throne, continue fighting', {controller: '/game/battle', action: 'fate_of_throne', q: 'keep_fighting'}, :method => :post %><br/>
 <% end %>
-<%= link_to 'Abandon throne', {:controller => '/game', :action => 'completeA'}, :method => :post %>
+<%= link_to 'Abandon throne', {controller: '/game/battle', action: 'fate_of_throne', q: 'abandon'}, :method => :post %>

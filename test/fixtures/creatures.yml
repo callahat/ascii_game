@@ -1,6 +1,5 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 wild_foo:
-  id: 1
   name: "Wild foo"
   experience: 5
   HP: 40
@@ -31,7 +30,7 @@ wimp_monster:
   armed: 1
   player: test_player_one
   fecundity: 10
-  kingdom_id: 1
+  kingdom: kingdom_one
   image: creature_image
 tough_monster:
   name: "Tough Monster"
@@ -42,7 +41,7 @@ tough_monster:
   armed: 1
   player: test_player_one
   fecundity: 4
-  kingdom_id: 1
+  kingdom: kingdom_one
   image: creature_image
 unarmed_monster:
   name: "Unarmed Monster"
@@ -53,5 +52,5 @@ unarmed_monster:
   armed: 0
   player: test_player_one
   fecundity: 10
-  kingdom_id: 1
+  kingdom: kingdom_one
   image: creature_image

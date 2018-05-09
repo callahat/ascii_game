@@ -2,20 +2,19 @@ class EventThrone < EventLifeNeutral
   def make_happen(who)
     @king = who.present_kingdom.player_character
     if @king && @king.health.HP > 0 && @king.health.wellness != SpecialCode.get_code('wellness','dead')
-      return {:controller => 'game/court', :action => 'throne'}, EVENT_COMPLETED, ""
+      return url_helpers.throne_game_court_path, EVENT_COMPLETED, ""
     else
-      return {:controller => 'game/court', :action => 'throne'}, EVENT_COMPLETED, ""
+      return url_helpers.throne_game_court_path, EVENT_COMPLETED, ""
     end
   end
   
   def completes(who)
     #Did they kill the king and accept the crown?
     #Have to have killed the king within ten minute ago
-    if PlayerCharacterKiller.find(:last,
-                                  :conditions => ['killed_id = ? and player_character_id =? and created_at > ?',
+    if PlayerCharacterKiller.where(['killed_id = ? and player_character_id =? and created_at > ?',
                                                   who.present_kingdom.player_character_id,
                                                   who.id,
-                                                  Time.now - 10.minutes])
+                                                  Time.now - 10.minutes]).last
       Kingdom.transaction do
         who.present_kingdom.lock!
         who.present_kingdom.player_character_id = who.id

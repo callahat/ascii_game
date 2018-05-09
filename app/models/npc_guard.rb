@@ -1,10 +1,10 @@
 class NpcGuard < Npc
   def self.generate(kingdom_id)
     @kingdom_name = Kingdom.find(kingdom_id).name
-    @image = Image.find(:first, :conditions => ['name = ? and kingdom_id = ?', @kingdom_name + " Guard Image", kingdom_id])
+    @image = Image.find_by(name: @kingdom_name + " Guard Image", kingdom_id: kingdom_id)
 
     @new_stock_guard = self.create(
-        :name => "Guard " + Name.gen_name,
+        :name => ("Guard " + Name.gen_name)[0...32],
         :kingdom_id => kingdom_id,
         :gold => rand(50),
         :experience => 100,
@@ -17,10 +17,30 @@ class NpcGuard < Npc
 
   def self.create_image(kingdom_id)
     @kingdom_name = Kingdom.find(kingdom_id).name
-    @base_image = Image.find(:first, :conditions => ['name = ? and kingdom_id = ? and player_id = ?', "GUARD IMAGE", -1, -1])
-    @image = Image.deep_copy(@base_image)
+    @image = Image.new(
+        image_text: DEFUALT_NPC_IMAGE,
+        public: false,
+        image_type: SpecialCode.get_code('image_type','kingdom'),
+        player_id: -1
+    )
+
     @image.kingdom_id = kingdom_id
     @image.name = @kingdom_name + " Guard Image"
     @image.save!
   end
+
+  protected
+  DEFUALT_NPC_IMAGE = <<-ASCII
+
+            /\'\
+      _|_ <_XX  }
+     /   \  ||./
+    / === \ ||
+  ------""_ ||
+  |    |' _@d3
+  |    | :; ||
+  \    /':; ||
+   \__/'''  ||
+    [M] [[> \/
+  ASCII
 end

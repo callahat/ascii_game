@@ -7,14 +7,17 @@ one_pc_stat: &default_stat10
   con: 10
   dfn: 10
   dam: 10
-  owner_id: 1
+  owner: pc_one
   kind: "StatPc"
 one_pc_stat_base:
   <<: *default_stat10
   kind: "StatPcBase"
 one_pc_stat_trn:
-  owner_id: 1
+  owner: pc_one
   kind: "StatPcTrn"
+one_pc_level_zero:
+  <<: *default_stat10
+  kind: "StatPcLevelZero"
 
 sick_pc_stat:
   str: 1
@@ -24,14 +27,14 @@ sick_pc_stat:
   con: 2
   dfn: 2
   dam: 3
-  owner_id: 2
+  owner: sick_pc
   kind: "StatPc"
 sick_pc_stat_base:
   <<: *default_stat10
-  owner_id: 2
+  owner: sick_pc
   kind: "StatPcBase"
 sick_pc_stat_trn:
-  owner_id: 2
+  owner: sick_pc
   kind: "StatPcTrn"
 
 test_pc_one_stat:
@@ -110,26 +113,26 @@ new_sickness_stat:
 
 race_one_stat:
   <<: *default_stat10
-  owner_id: 1
+  owner: race_one
   kind: "StatRace"
 race_two_stat:
   <<: *default_stat10
-  owner_id: 2
+  owner: race_two
   kind: "StatRace"
 
 cclass_one_stat:
   <<: *default_stat10
-  owner_id: 1
+  owner: c_class_one
   kind: "StatCClass"
 cclass_two_stat:
   <<: *default_stat10
-  owner_id: 2
+  owner: c_class_two
   kind: "StatCClass"
 
 npc_one_stat:
   <<: *default_stat10
   kind: "StatNpc"
-  owner_id: 1
+  owner: npc_one
 sick_npc_stat:
   str: 1
   dex: 0
@@ -139,7 +142,15 @@ sick_npc_stat:
   dfn: 2
   dam: 3
   kind: "StatNpc"
-  owner_id: 2
+  owner: sick_npc
+unhired_merchant_stat:
+  <<: *default_stat10
+  kind: "StatNpc"
+  owner: unhired_merchant
+unhired_guard_stat:
+  <<: *default_stat10
+  kind: "StatNpc"
+  owner: unhired_guard
 
 <% 1.upto(10){|i| %>
 guard_<%= i %>_stat:
@@ -151,7 +162,7 @@ guard_<%= i %>_stat:
 wild_foo_stat:
   <<: *default_stat10
   kind: "StatCreature"
-  owner_id: 1
+  owner: wild_foo
 Peasant_stat:
   <<: *default_stat10
   kind: "StatCreature"
@@ -200,3 +211,25 @@ base_item_two_stat:
 base_item_three_stat:
   <<: *default_base_item_stat
   owner: base_item_three
+
+newish_item_stat:
+  <<: *default_stat10
+  kind: "StatItem"
+  owner: newish_item
+
+<% 1.upto(34){ |it| %>
+item_<%= it %>_stat:
+  <<: *default_stat10
+  kind: "StatItem"
+  owner: item_<%= it %>
+<% } %>
+
+item_99_stat:
+  <<: *default_stat10
+  kind: "StatItem"
+  owner: item_99
+
+cool_item_stat:
+  <<: *default_stat10
+  kind: "StatItem"
+  owner: cool_item

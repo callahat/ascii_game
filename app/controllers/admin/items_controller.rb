@@ -1,77 +1,73 @@
 class Admin::ItemsController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
-  
+  before_filter :set_item, only: [:show,:edit,:update,:destroy]
+
   layout 'admin'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],         :redirect_to => { :action => :list }
-
-  def list
-    @items = Item.get_page(params[:page])
+    @items = Item.get_page(params[:page]).includes(:base_item,:c_class,:race,:stat)
   end
 
   def show
-    @item = Item.find(params[:id])
   end
 
   def new
     @item = Item.new
-    @rbts = SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'race_body_type'])
-    @base_items = BaseItem.find(:all)
-    @eqs = SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'equip_loc'])
-    @c_classes = CClass.find(:all)
-    @races = Race.find(:all)
+    @item.build_stat
   end
 
   def create
-    @item = Item.new(params[:item])
-    @rbts = SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'race_body_type'])
-    @base_items = BaseItem.find(:all)
-    @eqs = SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'equip_loc'])
-    @c_classes = CClass.find(:all)
-    @races = Race.find(:all)
+    @item = Item.new(item_params)
+
     if @item.save
       flash[:notice] = 'Item was successfully created.'
-      redirect_to :action => 'list'
+      redirect_to [:admin,@item]
     else
       render :action => 'new'
     end
   end
 
   def edit
-    @item = Item.find(params[:id])
-    @rbts = SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'race_body_type'])
-    @base_items = BaseItem.find(:all)
-    @eqs = SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'equip_loc'])
-    @c_classes = CClass.find(:all)
-    @races = Race.find(:all)
   end
 
   def update
-    @item = Item.find(params[:id])
-    @rbts = SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'race_body_type'])
-    @base_items = BaseItem.find(:all)
-    @eqs = SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'equip_loc'])
-    @c_classes = CClass.find(:all)
-    @races = Race.find(:all)
-    if @item.update_attributes(params[:item])
+    if @item.update_attributes(item_params)
       flash[:notice] = 'Item was successfully updated.'
-      redirect_to :action => 'show', :id => @item
+      redirect_to [:admin,@item]
     else
       render :action => 'edit'
     end
   end
 
   def destroy
-    #Add a check to make sure this item is not referenced anywhere before
-    #it is destroyed.
-    Item.find(params[:id]).destroy
-    redirect_to :action => 'list'
+    if !@item.in_use? && @item.destroy
+      flash[:notice] = "Destroyed #{@item.name}"
+    else
+      flash[:notice] = "Could not destroy #{@item.name}"
+    end
+
+    redirect_to admin_items_path
+  end
+
+  protected
+
+  def item_params
+    params.require(:item).permit(
+        :name,
+        :equip_loc,
+        :description,
+        :base_item_id,
+        :min_level,
+        :c_class_id,
+        :race_id,
+        :race_body_type,
+        :price,
+        # :npc_id,
+        stat_attributes: [:str, :dex, :con, :int, :mag, :dfn, :dam])
+  end
+
+  def set_item
+    @item = Item.find(params[:id])
   end
 end

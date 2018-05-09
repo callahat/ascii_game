@@ -3,7 +3,7 @@
 
 <% if @pc_items %>
   <table>
-  <tr><td><b>Inventory</b></td></td>
+  <tr><td><b>Inventory</b></td></tr>
     <tr>
       <th>Item</th>
       <th>Str</th>
@@ -36,6 +36,7 @@
 Nothing to equip there in your inventory.
 <% end %>
 
-<%= will_paginate @pc_items %> 
+<%= will_paginate @pc_items %>
 
-<%= render :file => 'characterse/footer' %>
+<br/>
+<%= link_to 'Back', :action => 'inventory' %>

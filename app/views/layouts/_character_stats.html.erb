@@ -9,7 +9,7 @@
 			<%= link_to 'GAIN LEVEL', :controller => '/character', :action => 'raise_level' %><br/>
 		<% end %>
 		<%= link_to('Camp', :controller => '/game' , :action => 'make_camp') unless session[:current_event] %><br/>
-		<%= link_to('Stats & Equip', :controller => '/characterse', :action => 'menu')%><br/>
+		<%= link_to('Stats & Equip', characterse_path)%><br/>
 		Current char stats
 		<table class="side_col">
 			<tr><td>Name:</td><td><%= @pc.name %></td></tr>

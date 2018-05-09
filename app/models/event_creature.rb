@@ -1,5 +1,6 @@
 class EventCreature < Event
   belongs_to :creature, :foreign_key => 'thing_id'
+  belongs_to :thing, :foreign_key => 'thing_id', :class_name => 'Creature'
 
   validates_presence_of :thing_id,:flex
   
@@ -12,7 +13,7 @@ class EventCreature < Event
     low, high = flex.split(";").collect{|c| c.to_i}
     result, msg = Battle.new_creature_battle(who, self.creature, low.to_i, high.to_i, who.present_kingdom)
     if result
-      return {:controller => 'game/battle', :action => 'battle'}, EVENT_INPROGRESS, "You encounter monsters!"
+      return url_helpers.battle_game_battle_path, EVENT_INPROGRESS, "You encounter monsters!"
     else
       return nil, EVENT_COMPLETED, msg
     end

@@ -1,7 +1,6 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 <% 1.upto(15) {|num| %>
 req_<%= num %>:
-  id: <%= num %>
-  race_id: 2
+  race: race_two
   equip_loc: <%= SpecialCode.get_code('equip_loc','hand') %>
 <% } %>

@@ -1,5 +1,4 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 one:
-  id: 1
-two:
-  id: 2
+  kingdom: kingdom_one
+  level_map: test_level_map_0_1

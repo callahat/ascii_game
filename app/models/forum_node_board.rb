@@ -19,7 +19,7 @@ class ForumNodeBoard < ForumNode
 
   validates_presence_of :name
   
-  default_scope :order => 'name ASC'
+  default_scope { order('name ASC') }
   
   def can_be_made_by(user)
     user && user.forum_attribute.mod_level == 9

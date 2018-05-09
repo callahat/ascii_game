@@ -17,9 +17,9 @@
   <p><label for="event_thing_id">Creature</label><br/>
   <%= collection_select('event', 'thing_id', @creatures, 'id', 'name') %></p>
   <p><label for="event_flex[0]">Least encountered</label><br/>
-  <%= text_field_tag 'flex[0]' %></p>
+  <%= text_field_tag 'flex[0]', @flex0 %></p>
   <p><label for="event_flex[1]">Most encountered</label><br/>
-  <%= text_field_tag 'flex[1]' %></p>
+  <%= text_field_tag 'flex[1]', @flex1 %></p>
 
 <% elsif @event.kind == "EventDisease" %>
   <p><label for="event_thing_id">Disease</label><br/>
@@ -80,9 +80,9 @@
   <p><label for="stat_def">Dfn</label><br/>
   <%= text_field 'stat', 'dfn'  %></p>
   <p><label for="event_flex[0]">Gold</label><br/>
-  <%= text_field_tag 'flex[0]'   %></p>
+  <%= text_field_tag 'flex[0]', @flex0  %></p>
   <p><label for="event_flex[1]">Experience</label><br/>
-  <%= text_field_tag 'flex[1]'  %></p>
+  <%= text_field_tag 'flex[1]', @flex1  %></p>
 
 <% elsif @event.kind == "EventText" %>
   <p><label for="event_text">Text</label><br/>

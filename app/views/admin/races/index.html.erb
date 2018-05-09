@@ -1,0 +1,41 @@
+<h1>Listing races</h1>
+
+<table>
+	<tr>
+		<th>Name</th>
+		<th>Description</th>
+		<th>Body Type</th>
+		<th>Freepts</th>
+	  <th>Slots</th>
+    <th></th>
+    <th></th>
+    <th></th>
+	</tr>
+  
+<% for race in @races %>
+	<tr>
+		<td><%= race.name %></td>
+		<td><%= race.description %></td>
+		<td><%= SpecialCode.get_text('race_body_type', race.race_body_type) %></td>
+		<td><%= race.freepts %></td>
+		<td><%= race.race_equip_locs.count %></td>
+		<td><%= link_to 'Show', [:admin,race] %></td>
+		<td><%= link_to 'Edit', edit_admin_race_path(race) %></td>
+		<td><%= link_to 'Destroy', [:admin, race], data: {confirm: 'Are you sure?'}, method: :delete %></td>
+	</tr>
+	<tr>
+	<td></td>
+		<td>
+		<% Stat.symbols.each{|sym| %>
+		<i><%= sym.to_s %></i>:<%= race.level_zero[sym] %>;
+		<% } %>
+		</td>
+	</tr>
+<% end %>
+</table>
+
+<%= will_paginate @races %> 
+
+<br />
+
+<%= link_to 'New race', new_admin_race_path %>

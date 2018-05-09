@@ -1,11 +1,11 @@
 class EventDisease < Event
   belongs_to :disease, :foreign_key => 'thing_id'
+  belongs_to :thing, :foreign_key => 'thing_id', :class_name => 'Disease'
 
   validates_presence_of :thing_id
   
   def price
-    return Disease.abs_cost(disease) if flex
-    0
+    flex ? Disease.abs_cost(disease) : 0
   end
   
   def make_happen(who)

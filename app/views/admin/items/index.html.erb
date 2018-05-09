@@ -1,0 +1,50 @@
+<h1>Listing items</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Equip loc</th>
+    <th>Base item</th>
+    <th>Min level</th>
+    <th>CClass</th>
+    <th>Race</th>
+    <th>Str mod</th>
+    <th>Dex mod</th>
+    <th>Mag mod</th>
+    <th>Int mod</th>
+    <th>Con mod</th>
+    <th>Dfn mod</th>
+    <th>Dam mod</th>
+    <th>Race body type</th>
+    <th>Price</th>
+  </tr>
+  
+<% for item in @items %>
+  <tr>
+    <td><%= item.name %></td>
+    <td><%= SpecialCode.get_text('equip_loc',item.equip_loc) %></td>
+    <td><%= item.base_item.name %></td>
+    <td><%= item.min_level %></td>
+    <td><%= item.c_class.try(:name) || "None" %></td>
+    <td><%= item.race.try(:name) || "None" %></td>
+    <td><%= item.stat.str %></td>
+    <td><%= item.stat.dex %></td>
+    <td><%= item.stat.mag %></td>
+    <td><%= item.stat.int %></td>
+    <td><%= item.stat.con %></td>
+    <td><%= item.stat.dfn %></td>
+    <td><%= item.stat.dam %></td>
+    <td><% if item.race_body_type.nil? %>N/A<% else %><%= SpecialCode.get_text('race_body_type',item.race_body_type) %><% end %></td>
+    <td><%= item.price %></td>
+    <td><%= link_to 'Show', [:admin,item] %></td>
+    <td><%= link_to 'Edit', edit_admin_item_path(item) %></td>
+    <td><%= link_to 'Destroy', [:admin,item], data:{confirm: "Really delete #{item.name}?"}, method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @items %> 
+
+<br />
+
+<%= link_to 'New item', new_admin_item_path %>

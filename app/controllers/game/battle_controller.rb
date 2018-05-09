@@ -4,9 +4,6 @@ class Game::BattleController < ApplicationController
 
   layout 'main'
 
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :do_heal, :do_choose, :do_train ],         :redirect_to => { :action => :feature }
-
   def fight_pc
     @enemy_pc = @pc.current_event.event.player_character
     result, msg = Battle.new_pc_battle(@pc, @enemy_pc)
@@ -29,10 +26,10 @@ class Game::BattleController < ApplicationController
   end
 
   def battle
-    @battle = Battle.find(:first, :conditions => ['owner_id = ?', @pc.id])
+    @battle = @pc.battle
 
     if @battle.nil?
-      redirect_to :controller => '/game', :action => 'main'
+      redirect_to main_game_path
     elsif session[:regicide] && session[:keep_fighting].nil?
       session[:keep_fighting] = true
       @pc.present_kingdom.change_king(nil)
@@ -53,11 +50,11 @@ class Game::BattleController < ApplicationController
       @healing_spells = []
       @attack_spells = []
       if @pc.c_class.healing_spells
-        healing_list = HealingSpell.find(:all, :conditions => ['min_level < ?', @pc.level])
+        healing_list = HealingSpell.where(['min_level < ?', @pc.level])
         @healing_spells = healing_list.collect() {|s| [s.name + ' (MP:' + s.mp_cost.to_s + ')' , s.id ] }
       end
       if @pc.c_class.attack_spells
-        attack_list = AttackSpell.find(:all, :conditions => ['min_level < ?', @pc.level])
+        attack_list = AttackSpell.where(['min_level < ?', @pc.level])
         @attack_spells = attack_list.collect() {|s| splash = ( s.splash ? ' (splash)' : '' )
                                   [ s.name + ' (MP:' + s.mp_cost.to_s + ' HP:' + s.hp_cost.to_s + ')' + splash , s.id]}
       end
@@ -65,9 +62,9 @@ class Game::BattleController < ApplicationController
   end
 
   def fight
-    @battle = Battle.find(:first, :conditions => ['owner_id = ?', @pc.id])
+    @battle = @pc.battle(->{includes(:groups)})
     
-    @bg = @battle.groups.find_by_name(params[:commit]) if params[:commit] && params[:commit] != ""
+    @bg = @battle.groups.includes(enemies: [:creature,:health,:stat,:enemy,:battle_group]).find_by_name(params[:commit]) if params[:commit] && params[:commit] != ""
     
     session[:attack] = params[:attack]
     session[:attack] = (@spell = AttackSpell.find(params[:attack])).id if params[:commit] !~ /Heal/ && params[:attack] && params[:attack] != ""
@@ -80,16 +77,20 @@ class Game::BattleController < ApplicationController
     @battle.report = {}
     @battle.for_this_round(@pc, @bg, @spell)
 
+    session[:regicide] = @battle.regicide
+
     flash[:battle_report] = @battle.report
 
     redirect_to :action => 'battle'
   end
 
   def run_away
-    @battle = Battle.find(:first, :conditions => ['owner_id = ?', @pc.id])
+    @battle = @pc.battle(->{includes(:items,:enemies,:groups)})
 
     if @battle.run_away(75)
       @pc.current_event.update_attribute(:completed, EVENT_FAILED) if @pc.current_event
+      session[:regicide] = nil
+      session[:keep_fighting] = nil
       @message = 'You ran away.'
       render 'game/complete'
     else
@@ -104,10 +105,46 @@ class Game::BattleController < ApplicationController
   def regicide
     if session[:regicide]
       session[:completed] = true
-      @kingdom = @pc.present_kingdom
+      @kingdom = Kingdom.find session[:regicide]
     else
-      redirect_to :controller => 'game', :action => 'feature'
+      redirect_to feature_game_path
     end
+  end
+
+  def fate_of_throne
+    if session[:regicide]
+      @kingdom = Kingdom.find session[:regicide]
+      case params[:q]
+        when 'abandon'
+          @pc.current_event.update_attribute(:completed, EVENT_COMPLETED) if @pc.current_event
+
+          @kingdom.player_character_id = nil
+          @kingdom.save
+
+          @pc.battle.clear_battle
+
+          @message = 'You leave a kingdom without a king.'
+          render 'game/complete'
+        when 'keep_fighting'
+          @kingdom.player_character_id = @pc.id
+          @kingdom.save
+
+          redirect_to action: :battle
+        else #claim
+          @pc.current_event.update_attribute(:completed, EVENT_COMPLETED) if @pc.current_event
+          @kingdom.player_character_id = @pc.id
+          @kingdom.save
+          @pc.battle.clear_battle
+
+          @message = 'Long live the new king.'
+          render 'game/complete'
+      end
+    else
+      redirect_to :action => 'battle'
+    end
+
+    session[:regicide] = nil
+    session[:keep_fighting] = nil
   end
 protected
   #In the future, this may not be needed if events leading to battles setup the battle stuff themselves and

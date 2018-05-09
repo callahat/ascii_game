@@ -1,24 +1,12 @@
 class Admin::NamesController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
+  before_filter :set_name, only: [:edit,:update,:destroy]
   
   layout 'admin'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],
-#         :redirect_to => { :action => :list }
-
-  def list
     @names = Name.get_page(params[:page])
-  end
-
-  def show
-    @name = Name.find(params[:id])
   end
 
   def new
@@ -26,31 +14,39 @@ class Admin::NamesController < ApplicationController
   end
 
   def create
-    @name = Name.new(params[:name])
+    @name = Name.new(name_params)
     if @name.save
       flash[:notice] = 'Name was successfully created.'
-      redirect_to :action => 'new'
+      redirect_to admin_names_path
     else
       render :action => 'new'
     end
   end
 
   def edit
-    @name = Name.find(params[:id])
   end
 
   def update
-    @name = Name.find(params[:id])
-    if @name.update_attributes(params[:name])
+    if @name.update_attributes(name_params)
       flash[:notice] = 'Name was successfully updated.'
-      redirect_to :action => 'show', :id => @name
+      redirect_to admin_names_path
     else
       render :action => 'edit'
     end
   end
 
   def destroy
-    Name.find(params[:id]).destroy
-    redirect_to :action => 'list'
+    @name.destroy
+    redirect_to admin_names_path
+  end
+
+  protected
+
+  def name_params
+    params.require(:name).permit(:name)
+  end
+
+  def set_name
+    @name = Name.find(params[:id])
   end
 end

@@ -1,8 +1,8 @@
-<%= form_tag :action => 'do_store', :id => @player_character_item, :item_id => @player_character_item.item_id do %>
+<%= form_tag do_store_management_kingdom_items_path(id: @player_character_item.id, item_id: @player_character_item.item_id) do %>
 <p><b>Storing Item:</b><%= @player_character_item.item.name %><br/></p>
 <p><label for="player_character_item_quantity">quantity</label><br/>
 <%= text_field 'player_character_item', 'quantity'  %></p>
   <%= submit_tag "Store" %>
 <% end %>
 
-<%= link_to 'Back', :action => 'list_inventory' %>
+<%= link_to 'Back', list_inventory_management_kingdom_items_path %>

@@ -5,6 +5,8 @@ air_disease:
   peasant_fatality: 10
   virility: 100
   min_peasants: 200
+  HP_per_turn: 0
+  MP_per_turn: 0
 contact_disease:
   name: "contact disease"
   trans_method: 2

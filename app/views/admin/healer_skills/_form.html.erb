@@ -1,19 +1,32 @@
-<%= error_messages_for 'healer_skill' %>
+<%= form_for([:admin,@healer_skill]) do |f| %>
+  <%= error_messages_for 'healer_skill' %>
 
-<!--[form:healer_skill]-->
-<p><label for="healer_skill_max_HP_restore">Max hp restore</label><br/>
-<%= text_field 'healer_skill', 'max_HP_restore'  %></p>
+  <div class="field">
+    <%= f.label :max_HP_restore %><br/>
+    <%= f.text_field :max_HP_restore %>
+  </div>
 
-<p><label for="healer_skill_max_MP_restore">Max mp restore</label><br/>
-<%= text_field 'healer_skill', 'max_MP_restore'  %></p>
+  <div class="field">
+    <%= f.label :max_MP_restore %><br/>
+    <%= f.text_field :max_MP_restore %>
+  </div>
 
-<p><label for="healer_skill_max_stat_restore">Max stat restore</label><br/>
-<%= text_field 'healer_skill', 'max_stat_restore'  %></p>
+  <div class="field">
+    <%= f.label :max_stat_restore %><br/>
+    <%= f.text_field :max_stat_restore %>
+  </div>
 
-<p><label for="healer_skill_disease_id">Disease</label><br/>
-<%= collection_select('healer_skill','disease_id', @diseases, 'id', 'name', {:include_blank => 'true'} ) %></p>
+  <div class="field">
+    <%= f.label :disease_id %><br/>
+    <%= f.collection_select(:disease_id, @diseases, 'id', 'name', {include_blank: true} ) %>
+  </div>
 
-<p><label for="healer_skill_min_sales">Min sales</label><br/>
-<%= text_field 'healer_skill', 'min_sales'  %></p>
-<!--[eoform:healer_skill]-->
+  <div class="field">
+    <%= f.label :min_sales %><br/>
+    <%= f.text_field :min_sales %>
+  </div>
 
+  <div class="actions">
+    <%= submit_tag %>
+  </div>
+<% end %>

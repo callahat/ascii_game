@@ -1,9 +1,9 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 surfix_one:
-  name_surfixes: "O'-"
+  surfix: "O'-"
 surfix_two:
-  name_surfixes: "-son"
+  surfix: "-son"
 surfix_three:
-  name_surfixes: "-stein"
+  surfix: "-stein"
 surfix_four:
-  name_surfixes: "Mc-"
+  surfix: "Mc-"

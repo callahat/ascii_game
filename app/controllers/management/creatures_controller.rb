@@ -1,56 +1,43 @@
 class Management::CreaturesController < ApplicationController
   before_filter :authenticate
   before_filter :king_filter
+  before_filter :setup_king_pc_vars
+  before_filter :set_images, only: [:new, :create, :edit, :update]
 
   layout 'main'
 
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],
-#         :redirect_to => { :action => :index }
-
-
-  #**********************************************************************
-  #CREATURE MANAGEMENT
-  #**********************************************************************
   def index
-    #design creatures
-    @creatures = Creature.get_page(params[:page], session[:player][:id], session[:kingdom][:id])
+    @creatures = Creature.get_page(params[:page], current_player.id, session[:kingdom][:id]).includes(:stat,:disease)
   end
 
   def new
-    @creature = Creature.new(params[:creature])
-    @stat = StatCreature.new(params[:stat])
-    @kingdom_id = session[:kingdom][:id]
-    @player_id = session[:player][:id]
-    @image = @creature.image || Image.new(params[:image])
-    @images = Image.find(:all,
-                :conditions => ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
-                @player_id,@kingdom_id,SpecialCode.get_code('image_type', 'creature')], :order => 'name')
+    @creature = Creature.new
+    @creature.build_stat
+    @image = @creature.image || @creature.build_image
   end
 
   def create
-    new
-    @creature.image_id = 0 unless @creature.image
-    @image.name = @creature.name + ' image'
+    if params[:creature][:image_id].present?
+      params[:creature][:image_attributes].merge!(
+          Image.find(params[:creature][:image_id]).attributes.slice('image_text','picture'))
+    end
 
-    exp = Creature.exp_worth(@stat.dam,@stat.dfn,@creature.HP,@creature.fecundity)
-    exp = 0 if exp.nil?
+    @creature = Creature.new(creature_params)
 
-    @creature.experience = exp
+    @creature.build_image unless @creature.image
+    @creature.image.name = @creature.name.to_s + ' image'
+    @creature.image.player_id = current_player.id
+    @creature.image.kingdom_id = session[:kingdom].id
 
-    if @stat.valid? && @creature.valid?
-      if params[:creature][:image_id].nil? || params[:creature][:image_id] == ""
-        @image.save!
-        @creature.image_id = @image.id
-      end
+    @creature.player_id = current_player.id
+    @creature.kingdom_id = session[:kingdom].id
 
-      @creature.save
-      @stat.owner_id = @creature.id
-      @stat.save
-
+    if @creature.save
       flash[:notice] = @creature.name + ' was successfully created.'
-      redirect_to :action => 'index'
+      redirect_to management_creature_path(@creature)
     else
+      @creature.build_stat
+      @image = @creature.image || @creature.build_image
       render :action => 'new'
     end
   end
@@ -61,32 +48,30 @@ class Management::CreaturesController < ApplicationController
 
   def edit
     @creature = Creature.find(params[:id])
-    @stat = @creature.stat
-    @image = @creature.image
+
     if !verify_creature_owner || !verify_creature_not_in_use
       redirect_to :action => 'index'
       return
     end
-    @kingdom_id = session[:kingdom][:id]
-    @player_id = session[:player][:id]
-    @images = Image.find(:all,
-                :conditions => ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
-                @player_id,@kingdom_id,SpecialCode.get_code('image_type', 'creature')], :order => 'name')
   end
 
   def update
     edit
-    @image.update_image(params[:image][:image_text]) unless params[:image][:image_text] == ""
 
-    exp = Creature.exp_worth(params[:stat][:dam].to_i,
-                             params[:stat][:dfn].to_i,
-                             params[:creature][:HP].to_i,
-                             params[:creature][:fecundity].to_i)
-    exp = 0 if exp.nil?
+    if params[:creature][:image_id].present?
+      params[:creature][:image_attributes].merge!(
+          Image.find(params[:creature][:image_id]).attributes.slice('image_text','picture'))
+    end
 
-    params[:creature][:experience] = exp
-
-    if @stat.update_attributes(params[:stat]) & @creature.update_attributes(params[:creature]) & @image.save
+    # Cause Image should really belong to things for nested_attributes_for to work better
+    # gotta just tap that hash for now :/
+    if @creature.update_attributes(creature_params.tap{ |cp|
+                                     cp[:image_attributes].merge!(
+                                                              id: @creature.image_id,
+                                                              name: "#{@creature.name} image",
+                                                              player_id: current_player.id,
+                                                              kingdom_id: session[:kingdom].id
+                                     )})
       flash[:notice] = @creature.name + ' was successfully updated.'
       redirect_to :action => 'index'
     else
@@ -106,7 +91,7 @@ class Management::CreaturesController < ApplicationController
       return
     end
 
-    if @stat.destroy && @creature.destroy
+    if @creature.destroy
       flash[:notice] = 'Creature destroyed.'
     else
       flash[:notice] = 'Creature was not destroyed.'
@@ -114,7 +99,7 @@ class Management::CreaturesController < ApplicationController
     redirect_to :action => 'index', :page => params[:page]
   end
 
-  def arm_creature
+  def arm
     @creature = Creature.find(params[:id])
     if !verify_creature_owner
       redirect_to :action => 'index'
@@ -145,7 +130,7 @@ protected
 
   def verify_creature_owner
     #if someone tries to edit a creature not belonging to them
-    if @creature.player_id != session[:player][:id] &&
+    if @creature.player_id != current_player.id &&
        @creature.kingdom_id != session[:kingdom][:id]
       flash[:notice] = 'An error occured while retrieving ' + @creature.name
       false
@@ -161,5 +146,27 @@ protected
     else
       true
     end
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def creature_params
+    params.require(:creature).permit(
+        :name,
+        :description,
+        :experience,
+        :HP,
+        :gold,
+        :number_alive,
+        :fecundity,
+        :public,
+        image_attributes: [:image_text, :public, :picture, :image_type],
+        stat_attributes: [:str, :dex, :con, :int, :mag, :dfn, :dam]
+    )
+  end
+
+  def set_images
+    @images = Image.where(
+        ['(public = true or player_id = ? or kingdom_id = ?) and image_type = ?',
+         @player_id, @kingdom_id, SpecialCode.get_code('image_type', 'creature')])
   end
 end

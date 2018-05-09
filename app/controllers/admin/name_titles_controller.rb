@@ -1,24 +1,12 @@
 class Admin::NameTitlesController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
+  before_filter :set_name_title, only: [:edit,:update,:destroy]
   
   layout 'admin'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],
-#         :redirect_to => { :action => :list }
-
-  def list
     @name_titles = NameTitle.get_page(params[:page])
-  end
-
-  def show
-    @name_title = NameTitle.find(params[:id])
   end
 
   def new
@@ -27,34 +15,42 @@ class Admin::NameTitlesController < ApplicationController
   end
 
   def create
-    @name_title = NameTitle.new(params[:name_title])
+    @name_title = NameTitle.new(name_title_params)
     @stats = ["","all","con","dam","dex","dfn","int","mag","str"]
     if @name_title.save
       flash[:notice] = 'NameTitle was successfully created.'
-      redirect_to :action => 'list'
+      redirect_to admin_name_titles_path
     else
       render :action => 'new'
     end
   end
 
   def edit
-    @name_title = NameTitle.find(params[:id])
     @stats = ["","all","con","dam","dex","dfn","int","mag","str"]
   end
 
   def update
-    @name_title = NameTitle.find(params[:id])
-    @stats = ["","all","con","dam","dex","dfn","int","mag","str"]
-    if @name_title.update_attributes(params[:name_title])
+    if @name_title.update_attributes(name_title_params)
       flash[:notice] = 'NameTitle was successfully updated.'
-      redirect_to :action => 'show', :id => @name_title
+      redirect_to admin_name_titles_path
     else
+      @stats = ["","all","con","dam","dex","dfn","int","mag","str"]
       render :action => 'edit'
     end
   end
 
   def destroy
-    NameTitle.find(params[:id]).destroy
-    redirect_to :action => 'list'
+    @name_title.destroy
+    redirect_to admin_name_titles_path
+  end
+
+  protected
+
+  def name_title_params
+    params.require(:name_title).permit(:title,:stat,:points)
+  end
+
+  def set_name_title
+    @name_title = NameTitle.find(params[:id])
   end
 end

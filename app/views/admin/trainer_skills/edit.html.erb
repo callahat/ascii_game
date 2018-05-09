@@ -1,9 +1,5 @@
 <h1>Editing trainer_skill</h1>
 
-<%= form_tag :action => 'update', :id => @trainer_skill do %>
-  <%= render :partial => 'form' %>
-  <%= submit_tag 'Edit' %>
-<% end %>
+<%= render 'form' %>
 
-<%= link_to 'Show', :action => 'show', :id => @trainer_skill %> |
-<%= link_to 'Back', :action => 'list' %>
+<%= link_to 'Back', admin_trainer_skills_path %>

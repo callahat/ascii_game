@@ -1,0 +1,11 @@
+<p><b>handle: </b><%= @player.handle %></p>
+<p><b>city: </b><%= @player.city %></p>
+<p><b>state: </b><%= @player.state %></p>
+<p><b>country: </b><%= @player.country %></p>
+<p><b>email: </b><%= @player.email %></p>
+<p><b>bio: </b><%= @player.bio %></p>
+<p><b>joined: </b><%= @player.created_at %></p>
+
+
+<%= link_to 'Edit', edit_admin_player_path(@player) %> |
+<%= link_to 'Back', admin_players_path %>

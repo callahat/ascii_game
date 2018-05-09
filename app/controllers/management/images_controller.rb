@@ -1,18 +1,17 @@
 class Management::ImagesController < ApplicationController
   before_filter :authenticate
   before_filter :king_filter
+  before_filter :accessible_images
+  before_filter :setup_king_pc_vars
 
   layout 'main'
 
   def index
-    @images = Image.get_page(params[:page], session[:kingdom][:id] )
+    @images = accessible_images.get_page(params[:page])
   end
 
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],         :redirect_to => { :action => :index }
-
   def show
-    @image = Image.find(params[:id])
+    @image = accessible_images.find(params[:id])
     if @image.image_type == SpecialCode.get_code('image_type','kingdom')
       @type = "feature"
     elsif @image.image_type == SpecialCode.get_code('image_type','creature') ||
@@ -26,14 +25,18 @@ class Management::ImagesController < ApplicationController
   end
 
   def new
-    @image = Image.new(params[:image])
-    @image.player_id = session[:player][:id]
-    @image.kingdom_id = session[:kingdom][:id]
-    @types = SPEC_CODET['image_type']
-    unless session[:player][:admin]
-      @types.delete('world')
-      @types.delete('character')
+    if params[:image]
+      @image = accessible_images.new(image_params.merge(
+                                       player_id: current_player.id))
+    else
+      @image = accessible_images.new
     end
+
+    @types = unless current_player.admin
+               SPEC_CODET['image_type'].except('world','character')
+             else
+               SPEC_CODET['image_type']
+             end
     set_image_box_size
   end
 
@@ -55,13 +58,13 @@ class Management::ImagesController < ApplicationController
   end
 
   def edit
-    @image = Image.find(params[:id])
+    @image = accessible_images.find(params[:id])
     set_image_box_size
-    @types = SPEC_CODET['image_type']
-    unless session[:player][:admin]
-      @types.delete('world')
-      @types.delete('character')
-    end
+    @types = unless current_player.admin
+               SPEC_CODET['image_type'].except('world','character')
+             else
+               SPEC_CODET['image_type']
+             end
     if !verify_image_owner
       redirect_to :action => 'index'
       return
@@ -71,7 +74,7 @@ class Management::ImagesController < ApplicationController
   def update
     edit
     
-    if @image.update_attributes(params[:image])
+    if @image.update_attributes(image_params)
       if @image.image_type == SpecialCode.get_code('image_type','kingdom') || 
          @image.image_type == SpecialCode.get_code('image_type','world')
         @image.resize_image(10,15)
@@ -126,5 +129,25 @@ protected
     else
       true
     end
+  end
+
+  def accessible_images
+    if current_player.admin
+      @accessible_images ||= session[:kingdom].images
+    else
+      @accessible_images ||= session[:kingdom].images.where.not(
+          image_type: [
+                          SpecialCode.get_code('image_type','character'),
+                          SpecialCode.get_code('image_type','world')
+                      ])
+    end
+  end
+
+  protected
+
+  def image_params
+    params.require(:image).permit(
+        :name, :image_text, :public, :image_type, :picture
+    )
   end
 end

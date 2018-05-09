@@ -1,5 +1,6 @@
 class QuestCreatureKill < QuestReq
   belongs_to :creature, :foreign_key => 'detail'
+  belongs_to :objective, :foreign_key => 'detail', :class_name => 'Creature'
 
   has_many :log_quests
   has_many :log_quest_creature_kills
@@ -8,7 +9,6 @@ class QuestCreatureKill < QuestReq
   validates_inclusion_of :quantity, :in => 1..100000, :message => ' must be between 1 and 100000.'
   
   def to_sentence
-    cname = self.creature.name
-    "Kill " + self.quantity.to_s + " " + (self.quantity > 1 ? cname.pluralize : cname) + "."
+    "Kill #{quantity} #{creature.name.pluralize quantity}"
   end
 end

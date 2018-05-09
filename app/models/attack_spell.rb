@@ -1,7 +1,7 @@
 class AttackSpell < ActiveRecord::Base
   validates_uniqueness_of :name
   validates_presence_of :name,:min_level,:min_dam,:max_dam,:dam_from_mag,:dam_from_int,:mp_cost,:hp_cost
-  
+
   def self.find_spells(level)
     find_by_sql("select * from attack_spells where min_level <= #{level} order by min_level")
   end

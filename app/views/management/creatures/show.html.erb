@@ -12,9 +12,7 @@
 <tr><td><b>gold: </b></td><td><%= @creature.gold %></td></tr>
 <tr><td><b>image: </b></td><td><%= @creature.image.name %></td></tr>
 <tr><td colspan=2>
-<table><tr><td>
-<tr><td><span class="creature image"><%= @creature.image.image_text %></span></td></tr>
-</td></tr></table>
+<table><tr><td><span class="creature image"><%= @creature.image.image_text %></span></td></tr></table>
 </td></tr>
 <tr><td><b>made by: </b></td><td><%= @creature.player.handle %></td></tr>
 <tr><td><b>public: </b></td><td><%= @creature.public %></td></tr>
@@ -25,7 +23,7 @@
 </table>
 
 <% if !@creature.armed %>
-<%= link_to 'ARM', :action => 'arm_creature', :id => @creature %> |
-<%= link_to 'Edit', :action => 'edit', :id => @creature %> |
+<%= link_to 'ARM', arm_management_creature_path(@creature), data: {confirm: 'Are you sure?'}, :method => :post %> |
+<%= link_to 'Edit', edit_management_creature_path(@creature) %> |
 <% end %>
-<%= link_to 'Back', :action => 'index' %>
+<%= link_to 'Back', management_creatures_path %>

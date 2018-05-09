@@ -1,4 +1,5 @@
-AsciiGame3::Application.routes.draw do
+Rails.application.routes.draw do
+  devise_for :players, controllers: { registrations: "registrations" }
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -10,207 +11,233 @@ AsciiGame3::Application.routes.draw do
   #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action
 
-  match     'login'             =>  'account#login'
-  match     'logout'            =>  'account#logout'
-  match     'register'          =>  'account#new'
-  match     'character'         =>  'character#menu'
-  match     'choose_character'  =>  'character#choose_character'
+  resource  :account, controller: :account, only: [:show] do
+    # not sure if still need what action
+    get :what
+  end
 
-  match     'characterse'       =>  'characterse#menu'
+  resource :character, controller: :character, only: [] do
+    collection do
+      get  'new'
+      get  'namenew'
+      post 'namenew'
+      post 'create', action: :create, as: :create
+      post 'do_chose/:id', action: :do_choose, as: :do_choose
+      get  'menu'
+      post 'do_retire/:id', action: :do_retire, as: :do_retire
+      post 'do_unretire/:id', action: :do_unretire, as: :do_unretire
+      post 'do_destroy/:id', action: :do_destroy, as: :do_destroy
+      get  'do_image_update/:id', action: :do_image_update, as: :do_image_update
+      post 'updateimage/:id', action: :updateimage
+      get  'raise_level', action: :raise_level
+      post 'gainlevel'
+    end
+  end
 
-  match     'game_feature'      =>  'game#feature'
-  match     'game_main'         =>  'game#main'
-  match     'complete'          =>  'game#complete'
+  resource :characterse, controller: :characterse, only: [:show] do
+    collection do
+      get  'attack_spells'
+      get  'healing_spells'
+      get  'infections'
+      get  'pc_kills'
+      get  'npc_kills'
+      get  'genocides'
+      get  'done_quests'
+      get  'inventory'
+      post 'equip/:id', action: :equip
+      post 'do_equip/:id', action: :do_equip
+      post 'unequip/:id', action: :unequip
+    end
+  end
 
-  #Game::* controllers
-  match     'game/battle'           =>  'game/battle', :action => :battle
-  match     'game/battle/:action'   =>  'game/battle'
-  match     'game/court/:action'    =>  'game/court'
+  resource :game, only: [], controller: :game do
+    get  :main
+    get  :leave_kingdom
+    get  'world_move/:id', action: :world_move, as: :world_move
+    get  :feature
+    post :do_choose
+    get  :wave_at_pc
+    get  :make_camp
+    get  :complete
+    get  :spawn_kingdom
+    post :do_spawn
+  end
 
-  match     'game/do_heal'        =>  'game#do_heal',    :via => :post
-  match     'game/do_choose'      =>  'game#do_choose',  :via => :post
-  match     'game/do_train'       =>  'game#do_train',   :via => :post
-  match     'game/do_spawn'       =>  'game#do_spawn',   :via => :post
-
-  match     'game/do_heal'        =>  'game#feature',    :via => :get
-  match     'game/do_choose'      =>  'game#feature',    :via => :get
-  match     'game/do_train'       =>  'game#feature',    :via => :get
-  match     'game/do_spawn'       =>  'game#feature',    :via => :get
-
-  match     'game/leave_kingdom'  =>  'game#leave_kingdom'
-  match     'game/spawn_kingdom'  =>  'game#spawn_kingdom'
-  match     'game/make_camp'      =>  'game#make_camp'
-  match     'game/world_move/:id' =>  'game#world_move'
-
-  #Game::QuestController
-  match     'quest_index'       =>  'game/quests#index'
-  match     'do_decline'        =>  'game/quests#do_decline'
-  match     'do_join_quest'     =>  'game/quests#do_join'
-  match     'do_complete_quest' =>  'game/quests#do_complete'
-  match     'do_reward_quest'   =>  'game/quests#do_reward'
-
-  #Game::NpcController
-  match     'npc_index'         =>  'game/npc#npc'
-  match     'npc_smithy'        =>  'game/npc#smithy'
-  match     'npc_do_buy_new'    =>  'game/npc#do_buy_new'
-  match     'npc_heal'          =>  'game/npc#heal'
-  match     'npc_do_heal'       =>  'game/npc#do_heal'
-  match     'npc_train'         =>  'game/npc#train'
-  match     'npc_do_train'      =>  'game/npc#do_train'
-  match     'npc_buy'           =>  'game/npc#buy'
-  match     'npc_do_buy'        =>  'game/npc#do_buy'
-  match     'npc_sell'          =>  'game/npc#sell'
-  match     'npc_do_sell'       =>  'game/npc#do_sell'
-
-  match     'management'        =>  'management#main_index'
-
-  #ManagementController
-  match     'mgmt_levels'       =>  'management/levels#index'
-  match     'mgmt_levels_show'  =>  'management/levels#show'
-  match     'mgmt_levels_new'   =>  'management/levels#new'
-  match     'mgmt_levels_create'=>  'management/levels#create'
-  match     'mgmt_levels_edit'  =>  'management/levels#edit'
-  match     'mgmt_levels_update'=>  'management/levels#update'
-
-  #PrefListController
-  match     'management/pref_list'                =>  'management/pref_list#index',          :via => :get
-  match     'management/pref_list/drop_from_list' =>  'management/pref_list#drop_from_list', :via => :post
-  match     'management/pref_list/add_to_list'    =>  'management/pref_list#add_to_list',    :via => :post
-  match     'management/pref_list/drop_from_list' =>  'management/pref_list#index',          :via => :get
-  match     'management/pref_list/add_to_list'    =>  'management/pref_list#index',          :via => :get
-
-  match     'management/main_index'  => 'management#main_index', :as => "management"
-
-  match     'management/events/new' => 'management/events#new'
+  namespace :game do
+    resource :battle, controller: :battle, only: [] do
+      post :fight_pc
+      post :fight_npc
+      post :fight_king
+      get  :battle
+      post :fight
+      post :run_away
+      get  :regicide
+      post :fate_of_throne
+    end
+    resource :court, controller: :court, only: [] do
+      get  :throne
+      post :join_king
+      post :king_me
+      get  :castle
+      get  :bulletin
+    end
+    resource :quests, only: [:show] do
+      post :do_decline
+      post :do_join
+      get  :do_complete
+      get  :do_reward
+    end
+    resource :npc, controller: :npc, only: [] do
+      get  :npc
+      get  :smithy
+      get  :do_buy_new
+      get  :heal
+      post :do_heal
+      get  :train
+      post :do_train
+      get  :buy
+      post :do_buy
+      get  :sell
+      post :do_sell
+    end
+  end
 
   namespace :management do
-    resources :castles do
+    root action: :main_index
+    get  :helptext
+    get  :choose_kingdom
+    post :select_kingdom
+    get  :retire
+    post :retire
+    post :do_retire
+
+    resource :castles do
       collection do
+        get 'levels'
         get 'throne'
         get 'throne_level'
         post 'throne_square'
         post 'set_throne'
       end
     end
-    resources :creatures, :features do
+    resources :creatures do
       get 'pref_lists', :on => :collection
+      post :arm, on: :member
     end
     resources :events do
       get 'pref_lists', :on => :collection
+      post :new, on: :member
+      post :arm, on: :member
     end
-    resources :images
-    resources :kingdom_bans
-    resources :kingdom_entries do
+    resources :features do
+      get 'pref_lists', :on => :collection
+      post   :arm, on: :member
       collection do
-        get 'show'
-        get 'index'
-        get 'edit'
-        post 'update'
+      get    :new_feature_event
+      post   :create_feature_event
+      get    :edit_feature_event
+      patch  :update_feature_event
+      delete :destroy_feature_event
       end
     end
-    resources :kingdom_finances do
+    resources :images
+    resources :kingdom_bans, except: [:edit, :update]
+    resource  :kingdom_entries, only: [:show, :edit, :update]
+    resource  :kingdom_finances, only: [:show, :edit] do
       collection do
-        get 'show'
-        get 'index'
-        get 'edit'
         post 'withdraw'
         post 'deposit'
         post 'adjust_tax'
       end
     end
-    resources :kingdom_items
-    resources :kingdom_notices
-    resources :kingdom_npcs, :except => [:show] do
+    resources :kingdom_items, only: [:index] do
       collection do
-        get :list
-        get ':action/:id', :only => [ :edit, :assign_store ]
-        post ':action/:id', :only => [ :hire_merchant, :hire_guard, :turn_away ]
+        get  :list_inventory
+        get  :store
+        post :do_store
+        get  :remove
+        post :do_take
       end
     end
-    resources :kingdom_npcs, :only => [:show]
-    resources :levels
-    resources :quests
+    resources :kingdom_notices, except: [:show]
+    resources :kingdom_npcs, only: [:index, :show] do
+      member do
+        get  :edit
+        get  :assign_store
+        post :hire_merchant
+        post :hire_guard
+        post :turn_away
+      end
+    end
+    resources :levels, except: [:destroy]
+    get       'pref_list'                =>  'pref_list#index'
+    post      'pref_list/drop_from_list' =>  'pref_list#drop_from_list'
+    post      'pref_list/add_to_list'    =>  'pref_list#add_to_list'
+    resources :quests do
+      member do
+        post :activate
+        post :retire
+      end
+      resources :quest_reqs, as: :reqs, only: [:new, :create, :edit, :update, :destroy] do
+        collection do
+          get :type
+        end
+      end
+    end
   end
 
   namespace :admin do
-    resource :attack_spells
-    resource :base_items
-    resource :blacksmith_skills
-    resource :c_classes
-    resource :creatures
-    resource :diseases
-    resource :healer_skills
-    resource :healing_spells
-    resource :items
-    resource :maintenance
-    resource :name_surfixes
-    resource :name_titles
-    resource :names
-    resource :npcs
-    resource :races
-    resource :trainer_skills
-    resource :world_maps
-    resource :worlds
+    root controller: :attack_spells, action: :index
+
+    resources :attack_spells
+    resources :base_items
+    resources :blacksmith_skills
+    resources :c_classes
+    resources :creatures do
+      post :arm, on: :member
+    end
+    resources :diseases
+    resources :healer_skills
+    resources :healing_spells
+    resources :items
+    resources :name_surfixes, except: [:show]
+    resources :name_titles, except: [:show]
+    resources :names, except: [:show]
+    resources :npcs
+    resources :players, except: [:destroy]
+    resources :races
+    resources :trainer_skills, except: [:show]
+
+    resources :worlds, except: [:destroy] do
+      resources :world_maps, except: [:destroy], as: :maps
+    end
   end
 
   #ForumsController
-  match     'forums'                                        =>  'forum#boards',     :as => "forums"
-  match     'forums/:bname'                                 =>  'forum#threds',     :as => "boards"
-  match     'forums/:bname/:tname'                          =>  'forum#view_thred', :as => "threds"
+  get       'forums/new_board'                              => 'forum#new_board'
+  get       'forums/:bname/new_thred'                       => 'forum#new_thred'
+  post      'forums/:bname/create_thred'                    => 'forum#create_thred'
+  post      'forums/create_board'                           => 'forum#create_board'
 
-  match     'forum_action/:bname/:tname/:forum_node_id/:action' =>  'forum',            :as => "thred_action"
-  match     'forum_action/:bname/:forum_node_id/:action'        =>  'forum',            :as => "board_action"
-  match     'forum_action/:forum_node_id/:action'               =>  'forum',            :as => "forum_action"
+  get       'forums'                                        =>  'forum#boards',     :as => "forums"
+  get       'forums/:bname'                                 =>  'forum#threds',     :as => "boards"
+  get       'forums/:bname/:tname'                          =>  'forum#view_thred', :as => "threds"
+  get       'forums/:bname/:tname/:action', controller: 'forum'
+  post      'forums/:bname/:tname/:action', controller: 'forum'
 
+  get       'forum_action/:bname/:tname/:forum_node_id/:action' =>  'forum',            :as => "thred_action"
+  post      'forum_action/:bname/:tname/:forum_node_id/:action' =>  'forum'
+  get       'forum_action/:bname/:forum_node_id/:action'        =>  'forum',            :as => "board_action"
+  post      'forum_action/:bname/:forum_node_id/:action'        =>  'forum'
+  get       'forum_action/:forum_node_id/:action'               =>  'forum',            :as => "forum_action"
+  post      'forum_action/:forum_node_id/:action'               =>  'forum'
 
-
-  #resource  :forum
-
-  # Sample of named route:
-  #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
-  # This route can be invoked with purchase_url(:id => product.id)
-
-  # Sample resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
-
-  # Sample resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
-
-  # Sample resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
-
-  # Sample resource route with more complex sub-resources
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', :on => :collection
-  #     end
-  #   end
-
-  # Sample resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
+  post      'forums/do_promote/:player_id'  => 'forums#do_promote'
 
   # See how all your routes lay out with "rake routes"
 
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
 
-
-  match     ':controller(/:action(/:id(.:format)))'
+  # get     ':controller(/:action(/:id(.:format)))'
 end

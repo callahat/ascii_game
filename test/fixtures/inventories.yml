@@ -2,66 +2,67 @@
 #PlayerCharacterItem
 #
 pcinv_1:
-  id:       1
-  owner_id: 1
-  item_id:  1
+  owner:    pc_one
+  item:     item_1
   quantity: 1
   kind:     "PlayerCharacterItem"
 pcinv_2:
-  id:       2
-  owner_id: 1
-  item_id:  2
+  owner:    pc_one
+  item:     item_2
   quantity: 1
   kind:     "PlayerCharacterItem"
 pcinv_3:
-  id:       3
-  owner_id: 1
-  item_id:  3
+  owner:    pc_one
+  item:     item_3
   quantity: 1
   kind:     "PlayerCharacterItem"
 pcinv_4:
-  id:       4
-  owner_id: 2
-  item_id:  1
+  owner:    sick_pc
+  item:     item_1
   quantity: 44
   kind:     "PlayerCharacterItem"
 pcinv_5:
-  id:       5
-  owner_id: 2
-  item_id:  3
+  owner:    sick_pc
+  item:     item_3
   quantity: 9
   kind:     "PlayerCharacterItem"
 pcinv_6:
-  player_character: test_pc_one
-  item_id:  1
+  owner:    test_pc_one
+  item:     item_1
   quantity: 1
+  kind:     "PlayerCharacterItem"
+pcinv_7:
+  owner:    test_pc_one
+  item:     cool_item
+  quantity: 0
+  kind:     "PlayerCharacterItem"
+pcinv_8:
+  owner:    test_king
+  item:     cool_item
+  quantity: 3
   kind:     "PlayerCharacterItem"
 
 #
 #NpcStock
 # 
 npcinv_1:
-  id:       6
-  owner_id: 1
-  item_id:  1
+  owner:    npc_one
+  item:     item_1
   quantity: 1
   kind:     "NpcStock"
 npcinv_2:
-  id:       7
-  owner_id: 1
-  item_id:  2
+  owner:    npc_one
+  item:     item_2
   quantity: 1
   kind:     "NpcStock"
 npcinv_3:
-  id:       8
-  owner_id: 1
-  item_id:  3
+  owner:    npc_one
+  item:     item_3
   quantity: 1
   kind:     "NpcStock"
 npcinv_4:
-  id:       9
-  owner_id: 1
-  item_id:  4
+  owner:    npc_one
+  item:     item_4
   quantity: 1
   kind:     "NpcStock"
  
@@ -69,16 +70,14 @@ npcinv_4:
 #KingdomItem
 #
 kinv_1:
-  id:       10
-  owner_id: 2
-  item_id:  1
+  owner:    sick_kingdom
+  item:     item_1
   quantity: 1
   kind:     "KingdomItem"
-<% 2.upto(31){|i| %>
+<% 2.upto(31) do |i| %>
 kinv_<%= i %>:
-  id:       <%= i + 9 %>
-  owner_id: 1
-  item_id:  <%= i %>
+  owner:    kingdom_one
+  item:     item_<%= i %>
   quantity: 100
   kind:     "KingdomItem"
-<% } %>
+<% end %>

@@ -1,6 +1,4 @@
 class LogQuest < ActiveRecord::Base
-#  include TxWrapper
-
   belongs_to :player_character
   belongs_to :quest
   
@@ -17,20 +15,18 @@ class LogQuest < ActiveRecord::Base
   #returns true if successfully joined & created the logs, otherwise retuns false and
   #possibly a message
   def self.join_quest(pc, qid)
-    @quest = Quest.find(:first,
-            :conditions => ['id = ? AND kingdom_id = ? AND quest_status = ?',
-            qid, pc[:in_kingdom], SpecialCode.get_code('quest_status','active') ])
+    @quest = Quest.find_by(id: qid, kingdom_id: pc[:in_kingdom], quest_status: SpecialCode.get_code('quest_status','active') )
     
     if @quest.nil?
       return false, "Could not find that quest"
-    elsif pc.log_quests.find(:first, :conditions => ['quest_id = ?', @quest.id])
+    elsif pc.log_quests.find_by(quest_id: @quest.id)
       return false, "Already signed up for this quest"
-    elsif DoneQuest.find(:first, :conditions => ['quest_id = ? and player_character_id = ?', qid, pc[:id] ])
+    elsif DoneQuest.find_by(quest_id: qid,player_character_id: pc[:id])
       return false, "Already completed this quest"
     elsif @quest.max_level && @quest.max_level < pc[:level]
       return false, "Player Character's level is too high to join this quest"
     elsif @quest.quest_id &&
-        DoneQuest.find(:first,:conditions => ['quest_id = ? and player_character_id = ?', @quest.quest_id, pc[:id] ]).nil?
+        DoneQuest.find_by(quest_id: @quest.quest_id, player_character_id: pc[:id]).nil?
       return false, "Have not completed " + @quest.quest.name + ", a prerequisite for this quest"
     end
       
@@ -39,7 +35,7 @@ class LogQuest < ActiveRecord::Base
   
     #create the requirement logs
     for req in @quest.reqs
-      print "Failed to create requirement!" unless\
+      Rails.logger.error "Failed to create requirement!" unless\
       Rails.module_eval("Log"+req.class.to_s).create(
                                                 :log_quest_id => new_log.id,
                                                 :owner_id => pc[:id],
@@ -47,15 +43,15 @@ class LogQuest < ActiveRecord::Base
                                                 :quantity => req[:quantity],
                                                 :detail => req.detail )
     end
-    true
+    return true, "You take an oath to pursue the Quest"
   end
   
   def self.abandon(pc, qid)
-    log_quest = pc.log_quests.find(:first, :conditions => ['quest_id = ?', qid])
+    log_quest = pc.log_quests.find_by(quest_id: qid)
     
     if log_quest.nil?
       return false, 'Not signed up for the quest submitted for abandonment'
-    elsif log_quest.quest.done_quests.find(:first, :conditions => ['player_character_id = ?', pc[:id]])
+    elsif log_quest.quest.done_quests.find_by(player_character_id: pc[:id])
       return false, 'Can\'t abandon a quest already completed'
   end
   

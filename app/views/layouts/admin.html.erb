@@ -5,11 +5,9 @@
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <title>ADMIN LAYOUT::<%= controller.controller_name + ":" + controller.action_name %></title>
-  <%= stylesheet_link_tag 'main' %>
+  <%= stylesheet_link_tag    'application', media: 'all' %>
+  <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tag %>
-  <%= javascript_include_tag :defaults %>
-  <%= javascript_include_tag 'prototype' %>
-  <%= javascript_include_tag 'rails' %>
 </head>
 <body>
 <a href="https://github.com/callahat/ascii_game"><img style="position: absolute; top: 0; right: 0; border: 0; z-index:1" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" /></a>
@@ -25,7 +23,8 @@
         </div>
         <div id="left_col" class="side_col">
                    <table width=100>
-    <tr><td><%= link_to 'Attack Spells', :controller => 'attack_spells' %></td></tr>
+    <tr><td><%= link_to 'Players', admin_players_path %></td></tr>
+    <tr><td><%= link_to 'Attack Spells', admin_attack_spells_path %></td></tr>
     <tr><td><%= link_to 'Base Items', :controller => 'base_items' %></td></tr>
     <tr><td><%= link_to 'Blacksmith Skills', :controller => 'blacksmith_skills' %></td></tr>
     <tr><td><%= link_to 'Classes', :controller => 'c_classes' %></td></tr>
@@ -40,11 +39,9 @@
     <tr><td><%= link_to 'NPCs', :controller => 'npcs' %></td></tr>
     <tr><td><%= link_to 'Races', :controller => 'races' %></td></tr>
     <tr><td><%= link_to 'Trainer Skills', :controller => 'trainer_skills' %></td></tr>
-    <tr><td><%= link_to 'World Maps', :controller => 'world_maps' %></td></tr>
     <tr><td><%= link_to 'Worlds', :controller => 'worlds' %></td></tr>
     <tr><td>Other stuff</td></tr>
-    <tr><td><%= link_to 'NM Button', :controller => 'maintain' %></td></tr>
-    <tr><td><%= link_to 'Back to Game', :controller => '/home' %></td></tr>
+    <tr><td><%= link_to 'Back to Game', root_path %></td></tr>
   </table>
   </div>
   <div id="right_col" class="side_col">

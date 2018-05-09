@@ -11,7 +11,7 @@
   <tr>
     <td><%= pl.name %></td>
     <td><%= pl.kingdom.name %></td>
-    <td><% if @pref_list.find(:first, :conditions => ['pref_lists.thing_id = ?', pl.id]) %><%= link_to 'Drop', {:action => 'drop_from_list', :id => pl.id, :page => params[:page]}, :method => :post %>
+    <td><% if @pref_list.find_by(['pref_lists.thing_id = ?', pl.id]) %><%= link_to 'Drop', {:action => 'drop_from_list', :id => pl.id, :page => params[:page]}, :method => :post %>
         <% else %><%= link_to 'Add', {:action => 'add_to_list', :id => pl.id, :page => params[:page]}, :method => :post %>
         <% end %>
     </td>
@@ -23,4 +23,4 @@
 
 <br />
 
-<%= link_to 'Back', management_path %>
+<%= link_to 'Back', management_root_path %>

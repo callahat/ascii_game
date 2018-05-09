@@ -1,13 +1,13 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
-  id: 1
+c_class_one:
   name: "Class One"
+  description: "one class"
   attack_spells: false
   healing_spells: false
   freepts: 5
-two:
-  id: 2
+c_class_two:
   name: "Class Two"
+  description: "a different simple class"
   attack_spells: true
   healing_spells: false
   freepts: 5

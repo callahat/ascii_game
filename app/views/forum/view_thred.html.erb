@@ -6,9 +6,9 @@
  </td><td>
  <% if (@thred.parent_forum_node(:is_locked) && @user_mod_level < 6) %>
  <b>This thread is locked</b>
- <% elsif session[:player].nil? %>
+ <% elsif not player_signed_in? %>
  <b>Must be signed in to post.</b>
- <% elsif (!ForumRestriction.no_posting(session[:player]) && @post.nil?) %>
+ <% elsif (!ForumRestriction.no_posting(current_player) && current_player.player_characters.find_by('level > 9').present? && (@post.nil? || (@post.new_record? && @post.errors.present?))) %>
  <table class="post_text"><tr><td>
  <%= form_tag :action => 'create_post', :bname => @board.name, :tname => @thred.name do %>
    <%= render :partial => 'post_form' %>
@@ -20,20 +20,20 @@
  </td></tr>
 </table>
 
-<% if session[:player] && ForumRestriction.no_viewing(session[:player]) %>
+<% if player_signed_in? && ForumRestriction.no_viewing(current_player) %>
 You are prohibited from viewing the posts.
-<% elsif @posts.size == 0 %>
+<% elsif @posts.count == 0 %>
 No Posts
 <% else %>
 <table>
-<% for post in @posts %>
+<% for post in @posts.includes(player: :forum_user_attribute) %>
 <tr valign="top"><td>
   <table class="author" width=115>
     <tr><td><%= post.player.handle %></td></tr>
     <%= raw "<tr><td>Mod Level #{post.player.forum_attribute.mod_level}</td></tr>" if post.player.forum_attribute.mod_level > 0 %>
     <tr><td><%= post.player.forum_attribute.posts %> posts</td></tr>
     <tr><td>Member since:</td></tr>
-    <tr><td><%= post.player.joined.strftime("%m-%d-%Y") %></td></tr>
+    <tr><td><%= post.player.created_at.strftime("%m-%d-%Y") %></td></tr>
     <% if @user_mod_level > post.player.forum_attribute.mod_level %>
     <tr><td><%= link_to 'Punish', :action => 'banhammer', :player_id => post.player_id %></td></tr>
     <tr><td><%= link_to 'Promote', :action => 'promote_mod', :player_id => post.player_id %></td></tr>
@@ -41,7 +41,7 @@ No Posts
   </table>
 </td><td>
   <table width=385>
-    <% if @post && @post.id == post.id && @post.can_be_edited_by(session[:player]) %>
+    <% if @post && @post.id == post.id && @post.can_be_edited_by(current_player) %>
       <tr><td colspan=3>
       <%= form_tag :action => 'update_post', :forum_node_id => post.id, :bname => @board.name, :tname => @thred.name do %>
         <%= render :partial => 'post_form' %>
@@ -67,9 +67,9 @@ No Posts
       <tr class="edit_notices"><td colspan=3><%= raw post.edit_notices %></td></tr>
       <tr class="post_info"><td>posted <%= post.created_at.strftime("%m-%d-%Y %H:%M.%S %p") %></td>
       <td>
-        <%= link_to('-edit', :action => 'edit_thred', :bname => @board.name, :tname => @thred.name, :forum_node_id => post.id) if post.can_be_edited_by(session[:player]) %></td>
+        <%= link_to('-edit', :action => 'edit_post', :bname => @board.name, :tname => @thred.name, :forum_node_id => post.id) if post.can_be_edited_by(current_player) %></td>
       <td>
-        <%= link_to('-delete', :action => 'delete_thread', :bname => @board.name, :tname => @thred.name, :forum_node_id => post.id) if post.can_be_deleted_by(session[:player]) %></td>
+        <%= link_to('-delete', :action => 'delete_post', :bname => @board.name, :tname => @thred.name, :forum_node_id => post.id) if post.can_be_deleted_by(current_player) %></td>
       </tr>
     <% end %>
   </table>

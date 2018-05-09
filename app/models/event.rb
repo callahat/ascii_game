@@ -1,6 +1,8 @@
 class Event < ActiveRecord::Base
   self.inheritance_column = 'kind'
 
+  delegate :url_helpers, to: 'Rails.application.routes'
+
   belongs_to :player
   belongs_to :kingdom
 
@@ -89,10 +91,10 @@ class Event < ActiveRecord::Base
   end
 
   def self.new_of_kind(params)
-    return Event.new if params.class.to_s !~ /Hash/ && params.class.to_s !~ /Event/
+    return Event.new if params.class.to_s !~ /Hash|Event|Parameters/
     return Event.new(params) unless params
     params[:kind] =~ /^(Event(Creature|Disease|Item|MoveLocal|MoveRelative|Quest|Stat|Text)*$)/
-    return ($1 ? Rails.module_eval($1).new(params) : Event.new(params))
+    return ($1 ? Rails.module_eval($1).new(params) : Event.new(params.reject{:kind}))
   end
   
   #Pagination related stuff

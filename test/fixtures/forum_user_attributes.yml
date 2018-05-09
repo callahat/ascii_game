@@ -19,3 +19,7 @@ fua_5:
   user: banned_player
   mod_level: 1
   posts: 0
+fua_6:
+  user: player_with_only_old_password
+  mod_level: 0
+  posts: 0

@@ -1,53 +1,65 @@
-<%= error_messages_for 'item' %>
+<%= form_for([:admin, @item]) do |f| %>
+  <%= error_messages_for 'item' %>
 
-<!--[form:item]-->
-<p><label for="item_name">Name</label><br/>
-<%= text_field 'item', 'name'  %></p>
+  <div class="field">
+    <%= f.label :name %><br/>
+    <%= f.text_field :name %>
+  </div>
 
-<p><label for="item_description">Description</label><br/>
-<%= text_field 'item', 'description'  %></p>
+  <div class="field">
+    <%= f.label :description %><br/>
+    <%= f.text_field :description %>
+  </div>
 
-<p><label for="item_min_level">Min level</label><br/>
-<%= text_field 'item', 'min_level'  %></p>
+  <div class="field">
+    <%= f.label :min_level %><br/>
+    <%= f.text_field :min_level %>
+  </div>
 
-<p><label for="item_str_mod">Str mod</label><br/>
-<%= text_field 'item', 'str'  %></p>
+  <%= f.fields_for(:stat) do |stat_form| %>
+    <table>
+      <% Stat.symbols.each{|stat_attr| %>
+        <tr>
+          <td><%= stat_form.label stat_attr %></td>
+          <td><%= stat_form.text_field stat_attr, size: 5 %></td>
+        </tr>
+      <% } %>
+    </table>
+  <% end %>
 
-<p><label for="item_dex_mod">Dex mod</label><br/>
-<%= text_field 'item', 'dex'  %></p>
+  <div class="field">
+    <%= f.label :price %><br/>
+    <%= f.text_field :price %>
+  </div>
 
-<p><label for="item_mag_mod">Mag mod</label><br/>
-<%= text_field 'item', 'mag'  %></p>
+  <div class="field">
+    <%= f.label :base_item_id, "Base Item" %><br/>
+    <%= f.collection_select(:base_item_id, BaseItem.all, :id, :name) %>
+  </div>
 
-<p><label for="item_int_mod">Int mod</label><br/>
-<%= text_field 'item', 'int'  %></p>
+  <div class="field">
+    <%= f.label :equip_loc, "Equippable Location" %><br/>
+    <%= f.collection_select(:equip_loc, SpecialCode.get_codes_and_text('equip_loc'), :second, :first) %>
+  </div>
 
-<p><label for="item_con_mod">Con mod</label><br/>
-<%= text_field 'item', 'con'  %></p>
+  <div class="field">
+    <%= f.label :c_class_id, "Favored Class" %><br/>
+    <%= f.collection_select(:c_class_id, CClass.all, :id, :name) %>
+  </div>
 
-<p><label for="item_def_mod">Dfn mod</label><br/>
-<%= text_field 'item', 'dfn'  %></p>
+  <div class="field">
+    <%= f.label :race_id, "Favored Race" %><br/>
+    <%= f.collection_select(:race_id, Race.all, :id, :name) %>
+  </div>
 
-<p><label for="item_dam_mod">Dam mod</label><br/>
-<%= text_field 'item', 'dam'  %></p>
+  <div class="field">
+    <%= f.label :race_body_type, "Race Body Type Rescriction" %><br/>
+    <%= f.collection_select(:race_body_type, SpecialCode.get_codes_and_text('race_body_type'), :second, :first, {include_blank: true}) %>
+  </div>
 
-<p><label for="item_price">Price</label><br/>
-<%= text_field 'item', 'price'  %></p>
+  <br/>
 
-<p><label for="item_base_item_id">Base item type</label><br/>
-<%= collection_select('item', 'base_item_id', @base_items, 'id', 'name') %></p>
-
-<p><label for="item_equip_loc">Equip location</label><br/>
-<%= collection_select('item', 'equip_loc', @eqs, 'col_num', 'text') %></p>
-
-<p><label for="item_c_class_id">Favored class</label><br/>
-<%= collection_select('item', 'c_class_id', @c_classes, 'id', 'name') %></p>
-
-<p><label for="item_equip_loc">Favored race</label><br/>
-<%= collection_select('item', 'race_id', @races, 'id', 'name') %></p>
-
-<p><label for="item_race_body_type">Race body type</label><br/>
-<%= collection_select('item', 'race_body_type', @rbts, 'col_num', 'text', {:include_blank => 'true'}) %></p>
-
-<!--[eoform:item]-->
-
+  <div class="actions">
+    <%= submit_tag %>
+  </div>
+<% end %>

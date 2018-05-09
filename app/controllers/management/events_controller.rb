@@ -1,18 +1,12 @@
 class Management::EventsController < ApplicationController
   before_filter :authenticate
   before_filter :king_filter
+  before_filter :setup_king_pc_vars
 
   layout 'main'
 
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update, :arm_event ], :redirect_to => { :action => :index }
-
-
-  #**********************************************************************
-  #EVENT MANAGEMENT
-  #**********************************************************************
   def index
-    @events = Event.get_page(params[:page], session[:player][:id], session[:kingdom][:id])
+    @events = Event.get_page(params[:page], current_player.id, session[:kingdom][:id])
   end
 
   def show
@@ -20,8 +14,8 @@ class Management::EventsController < ApplicationController
   end
 
   def new
-    @event = Event.new_of_kind(params[:event])
-    @event_types = Event.get_event_types(session[:player].admin )
+    @event = params[:event].blank? ? Event.new : Event.new_of_kind(event_params)
+    @event_types = Event.get_event_types(current_player.admin )
     @event_rep_types = SPEC_CODET['event_rep_type'].to_a
 
     pop_sub_event
@@ -30,10 +24,10 @@ class Management::EventsController < ApplicationController
   def create
     new
 
-    @event.player_id = session[:player][:id]
+    @event.player_id = current_player.id
     @event.kingdom_id = session[:kingdom][:id]
     if @event.kind == "EventCreature" || @event.kind == "EventStat"
-      @event.flex = params[:flex][0].to_s + ";" + params[:flex][0].to_s
+      @event.flex = params[:flex]["0"].to_s + ";" + params[:flex]["1"].to_s
     end
 
     @event.cost = 500
@@ -41,8 +35,8 @@ class Management::EventsController < ApplicationController
     if good_event_params & @event.save
       @extras=true
       if @stat || @health
-        @stat.update_attributes(params[:stat].merge(:owner_id => @event.id)) &
-          @health.update_attributes(params[:health].merge(:owner_id => @event.id)) || @extras = false
+        @stat.update_attributes(stat_params.merge(:owner_id => @event.id)) &
+          @health.update_attributes(health_params.merge(:owner_id => @event.id)) || @extras = false
       end
       @event.reload #to refrsh the .stat and .health stuff
       if @extras
@@ -52,7 +46,7 @@ class Management::EventsController < ApplicationController
       redirect_to :action => 'index'
       return
     else
-      flash[:notice] = "Err, something wrong?" + @event.errors.to_s
+      flash[:notice] = "Err, something wrong?" + @event.errors.full_messages.join("; ")
     end
     render :action => 'new'
   end
@@ -60,6 +54,7 @@ class Management::EventsController < ApplicationController
   def edit
     @event = Event.find(params[:id])
     @event_rep_types = SPEC_CODET['event_rep_type'].to_a
+    @flex0, @flex1 = @event.flex.try(:split, ";")
     pop_sub_event
   end
 
@@ -67,15 +62,17 @@ class Management::EventsController < ApplicationController
     edit
 
     if @event.kind == "EventCreature" || @event.kind == "EventStat"
-      @flex = params[:flex][0].to_s + ";" + params[:flex][0].to_s
+      @flex = params[:flex]['0'].to_s + ";" + params[:flex]['1'].to_s
+    else
+      @flex = params[:event][:flex]
     end
 
     if is_event_not_in_use & is_event_owner & good_event_params &
-        @event.update_attributes(params[:event].merge(:flex => @flex))
+        @event.update_attributes(event_params.merge(:flex => @flex))
       @extras=true
       if @stat || @health
-        @stat.update_attributes(params[:stat].merge(:owner_id => @event.id)) &
-          @health.update_attributes(params[:health].merge(:owner_id => @event.id)) || @extras = false
+        @stat.update_attributes(stat_params.merge(:owner_id => @event.id)) &
+          @health.update_attributes(health_params.merge(:owner_id => @event.id)) || @extras = false
       end
 
       if @extras
@@ -107,7 +104,7 @@ class Management::EventsController < ApplicationController
     redirect_to :action => 'index'#, :page => params[:page]
   end
 
-  def arm_event
+  def arm
     @event = Event.find(params[:id])
 
     if !is_event_not_in_use || !is_event_owner
@@ -142,7 +139,7 @@ class Management::EventsController < ApplicationController
 protected
   def good_event_params
     if @event.class == EventCreature
-      if Creature.find(:first,:conditions => ['armed = true AND (public = true or kingdom_id = ? or player_id  = ?) AND id = ?', session[:kingdom][:id], session[:player][:id],params[:event][:thing_id]])
+      if Creature.where(armed: true, id: params[:event][:thing_id]).find_by(['public = true or kingdom_id = ? or player_id  = ?', session[:kingdom][:id], current_player.id])
         return true
       else
         flash[:notice] = "You can't use that creature"
@@ -155,7 +152,7 @@ protected
 
   def is_event_owner
     #if someone tries to edit a creature not belonging to them
-    if @event.player_id != session[:player][:id] &&
+    if @event.player_id != current_player.id &&
        @event.kingdom_id != session[:kingdom][:id]
       flash[:notice] = 'An error occured while retrieving ' + @event.name
       false
@@ -180,9 +177,9 @@ protected
       when "EventCreature"
         @creatures = @kingdom.pref_list_creatures.reload.collect{|plc| plc.creature}
       when "EventDisease"
-        @diseases = Disease.find(:all)
+        @diseases = Disease.all
       when "EventItem"
-        @items = Item.find(:all)
+        @items = Item.all
       when "EventMoveLocal"
         @levels = @kingdom.levels
       when "EventNpc"
@@ -190,10 +187,35 @@ protected
       when "EventPlayerCharacter"
         @pcs = @kingdom.player_characters
       when "EventStat"
-        @stat = @event.stat || StatEventStat.new(params[:stat])
-        @health = @event.health || HealthEventStat.new(params[:health])
+        @stat = @event.stat || StatEventStat.new(stat_params)
+        @health = @event.health || HealthEventStat.new(health_params)
       when "EventQuest"
         @quests = @kingdom.active_quests.reload
     end
+  end
+
+  def event_params
+    params.require(:event).permit(
+        :cost,
+        :name,
+        :kind,
+        :event_rep_type,
+        :event_reps,
+        :flex,
+        :thing_id,
+        :text,
+    )
+  end
+
+  def stat_params
+    params.permit(:stat).permit(
+        :str, :dex, :con, :int, :mag, :dfn, :dam,
+    )
+  end
+
+  def health_params
+    params.permit(:health).permit(
+        :HP, :MP, :base_HP, :base_MP, :wellness,
+    )
   end
 end

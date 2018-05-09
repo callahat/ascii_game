@@ -1,15 +1,14 @@
-class Management::LevelsController < ManagementController
+class Management::LevelsController < ApplicationController
+  include KingdomManagement
+
   before_filter :setup_level_variable, :only => [:edit, :update]
 
   def index
-    @levels = Level.get_page(params[:page], @kingdom.id)
+    @levels = @kingdom.levels.get_page(params[:page])
   end
 
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :create, :update ], :redirect_to => { :action => :index }
-
   def show
-    @level = @kingdom.levels.find(:first, :conditions => ['id = ?', params[:id] ] )
+    @level = @kingdom.levels.find(params[:id])
   end
 
   def new
@@ -20,22 +19,22 @@ class Management::LevelsController < ManagementController
   end
 
   def create
-    @level = Level.new(params[:level].merge(:kingdom_id => @kingdom.id))
+    @level = @kingdom.levels.build(level_params)
 
     #make sure king can afford
-    @cost = (@level.level.abs.power! 3) * @level.maxx.to_i * @level.maxy.to_i
+    @cost = (@level.level.abs ** 3) * @level.maxx.to_i * @level.maxy.to_i
     session[:kingdom][:gold] = Kingdom.find(session[:kingdom][:id]).gold
 
     unless TxWrapper.take(@kingdom, :gold, @cost)
       flash[:notice] = 'It would cost ' + @cost.to_s + ' gold, which the kingdom doesn\'t have.'
-      redirect_to mgmt_levels_new_url()
+      redirect_to new_management_level_path
     else
       if @level.save
-        @emtpy_feature = Feature.find(:first, :conditions => ['name = ? and kingdom_id = ? and player_id = ?', "\nEmpty", -1, -1])
+        @emtpy_feature = Feature.find_by(name: "\nEmpty", kingdom_id: -1, player_id: -1)
         LevelMap.gen_level_map_squares(@level, @emtpy_feature)
         flash[:notice] = 'Level ' + @level.level.to_s + ' was successfully created.'
         flash[:notice] += '<br/>' + @savecount.to_s + ' map squares out of ' + (@level.maxy * @level.maxx).to_s + ' created.'
-        redirect_to mgmt_levels_url()
+        redirect_to management_levels_path
       else
         @lowest = session[:kingdom].levels.first.level - 1
         @highest = session[:kingdom].levels.last.level + 1
@@ -49,7 +48,6 @@ class Management::LevelsController < ManagementController
     @features = @kingdom.pref_list_features.collect{|f| f.feature}
   end
 
-
   def update
     edit
     calc_cost
@@ -57,11 +55,11 @@ class Management::LevelsController < ManagementController
     unless TxWrapper.take(@kingdom, :gold, @cost)
       flash[:notice] = 'There is not enough gold in your coffers to pay for the construction.<br/>'
       flash[:notice] += 'Available amount : ' + session[:kingdom][:gold].to_s + ' ; Total build cost : ' + @cost.to_s
-      redirect_to mgmt_levels_edit_url(:id => @level.id)
+      redirect_to edit_management_level_path(:id => @level.id)
     else
       0.upto(@level.maxy-1){|y|
         0.upto(@level.maxx-1){|x|
-          @temp = @level.level_maps.find(:all, :conditions => ['ypos = ? and xpos = ?', y, x]).last
+          @temp = @level.level_maps.where(ypos: y, xpos: x).last
           Rails.logger.info @temp.feature.name == "\nEmpty"
           if params[:map][y.to_s][x.to_s] != "" && (@temp.feature_id.to_i != params[:map][y.to_s][x.to_s].to_i) &&
              (@temp.feature.nil? || @temp.feature.name[0..0] != "\n" || @temp.feature.name == "\nEmpty" )
@@ -99,11 +97,12 @@ class Management::LevelsController < ManagementController
         }
       }
       flash[:notice] = 'Level was successfully updated. Cost was : ' + @cost.to_s
-      redirect_to mgmt_levels_show_url(:id => @level.id)
+      redirect_to management_level_path(:id => @level.id)
     end
   end
 
-protected
+  protected
+
   def calc_cost
     @cost = 0
     return if params.nil? || params[:map].nil?
@@ -111,7 +110,7 @@ protected
     Rails.logger.info "Calculating cost of updated kingdom level, one feature at a time"
     0.upto(@level.maxy-1){|y|
       0.upto(@level.maxx-1){|x|
-        old = @level.level_maps.find(:all, :conditions => ['ypos = ? and xpos = ?', y, x]).last.feature
+        old = @level.level_maps.where(ypos: y, xpos: x).last.feature
         new = ( params[:map][y.to_s][x.to_s] && params[:map][y.to_s][x.to_s] != "" ?
                   Feature.find(params[:map][y.to_s][x.to_s]) : nil )
         Rails.logger.info "#{ new ? new.id : 'Nothing' } - #{ old ? old.id : 'Nothing' }"
@@ -125,6 +124,13 @@ protected
   end
 
   def setup_level_variable
-    redirect_to mgmt_levels_url() and return() unless @level = @kingdom.levels.where( ['id = ?', params[:id] ] ).last
+    unless @level = @kingdom.levels.where( ['id = ?', params[:id] ] ).last
+      redirect_to management_level_path()
+      return
+    end
+  end
+
+  def level_params
+    params.require(:level).permit(:maxx, :maxy, :level)
   end
 end

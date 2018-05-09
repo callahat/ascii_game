@@ -1,59 +1,60 @@
 class Admin::HealerSkillsController < ApplicationController
   before_filter :authenticate
   before_filter :is_admin
-  
+  before_filter :set_healer_skill, only: [:show,:edit,:update,:destroy]
+
   layout 'admin'
 
   def index
-    list
-    render :action => 'list'
-  end
-
-#  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post, :only => [ :destroy, :create, :update ],         :redirect_to => { :action => :list }
-
-  def list
-    @healer_skills = HealerSkill.get_page(params[:page])
+    @healer_skills = HealerSkill.get_page(params[:page]).includes(:disease)
   end
 
   def show
-    @healer_skill = HealerSkill.find(params[:id])
   end
 
   def new
     @healer_skill = HealerSkill.new
-    @diseases = Disease.find(:all)
+    @diseases = Disease.all
   end
 
   def create
-    @healer_skill = HealerSkill.new(params[:healer_skill])
-    @diseases = Disease.find(:all)
+    @healer_skill = HealerSkill.new(healer_skill_params)
+    @diseases = Disease.all
     if @healer_skill.save
       flash[:notice] = 'HealerSkill was successfully created.'
-      redirect_to :action => 'list'
+      redirect_to admin_healer_skill_path(@healer_skill)
     else
       render :action => 'new'
     end
   end
 
   def edit
-    @healer_skill = HealerSkill.find(params[:id])
-    @diseases = Disease.find(:all)
+    @diseases = Disease.all
   end
 
   def update
-    @healer_skill = HealerSkill.find(params[:id])
-    @diseases = Disease.find(:all)
-    if @healer_skill.update_attributes(params[:healer_skill])
+    if @healer_skill.update_attributes(healer_skill_params)
       flash[:notice] = 'HealerSkill was successfully updated.'
-      redirect_to :action => 'show', :id => @healer_skill
+      redirect_to admin_healer_skill_path(@healer_skill)
     else
+      @diseases = Disease.all
       render :action => 'edit'
     end
   end
 
   def destroy
-    HealerSkill.find(params[:id]).destroy
-    redirect_to :action => 'list'
+    @healer_skill.destroy
+    redirect_to admin_healer_skills_path
+  end
+
+  protected
+
+  def healer_skill_params
+    params.require(:healer_skill).permit(
+        :max_HP_restore,:max_MP_restore,:disease_id,:max_stat_restore,:min_sales)
+  end
+
+  def set_healer_skill
+    @healer_skill = HealerSkill.find(params[:id])
   end
 end

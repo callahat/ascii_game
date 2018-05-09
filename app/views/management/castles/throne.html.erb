@@ -1,7 +1,7 @@
 <% if !@levels.nil? %>
   <%= form_tag :action => 'throne_square' do %>
   <p>Select level:</p>
-  <%= collection_select 'level','id',@levels,'id','level' %>
+  <%= collection_select 'level','id',@levels,'id','level', selected: (@throne ? @throne.level_maps.last.level_id : nil) %>
    <%= submit_tag 'Accept' %>
   <% end %>
 
@@ -9,17 +9,15 @@
 <%= form_tag :action => 'set_throne' do %>
 <p>Select available square. Grey squares cannot be built upon; something already occupies that space.</p>
 <table>
-<% while @y < @squares.maxy %>
+<% (0..@squares.maxy-1).each do |y| %>
   <tr>
-    <% while @x < @squares.maxx %>
-    <td><% @lm = @squares.level_maps.find(:all,:conditions => ['ypos = ? AND xpos = ?', @y, @x]).last %>
-    <%= @lm.feature.name %>
-      <%= radio_button 'throne', 'spot', @lm.id, :disabled => (@lm.feature && @lm.feature.name != "\nEmpty" ) %>
+    <% (0..@squares.maxx-1).each do |x| %>
+    <td><% @lm = @squares.level_maps.where(ypos: y, xpos: x).last %>
+    <%= feature_name = @lm.feature.try(:name).to_s %>
+    <%= feature_name =~ /\nThrone/ %>
+    <%= radio_button_tag 'throne[spot]', @lm.id, feature_name =~ /\nThrone/, disabled: (feature_name !~ /\n(Empty|Throne)|\A\z/ ) %>
     </td>
-<%     @x += 1
-     end
-     @x = 0
-     @y += 1 %>
+<%  end %>
 </tr>
 <% end %>
 </table>
@@ -42,4 +40,4 @@
 <% end %>
 
 <br/>
-<%= link_to 'Cancel', :action => 'index' %>
+<%= link_to 'Cancel', :action => 'show' %>

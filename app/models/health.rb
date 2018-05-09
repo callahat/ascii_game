@@ -1,6 +1,6 @@
 class Health < ActiveRecord::Base
   self.inheritance_column = 'kind'
-  
+
   def self.symbols
     [:wellness, :HP, :MP, :base_HP, :base_MP]
   end

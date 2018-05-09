@@ -1,0 +1,20 @@
+<p><b>Castle has stairways to the following levels:</b></p>
+
+<% if @stairways.nil? %>
+<p>No stairways built.</p>
+<% else %>
+
+<table>
+<% for stairway in @stairways do %>
+<tr>
+  <td>Stairway to level <%=h stairway.level.level %></td>
+  <td><%= link_to 'Destroy', {:action => 'destroy', :id => stairway }, method: :delete, data: { confirm: 'There will be no refund, are you sure?' } %></td>
+</tr>
+<% end %>
+</table>
+<% end %>
+
+<br/>
+
+<%= link_to 'Build Castle Stairway', :action => 'new' %><br/>
+<%= link_to 'Back', :action => 'show' %>

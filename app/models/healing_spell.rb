@@ -3,7 +3,7 @@ class HealingSpell < ActiveRecord::Base
 
   validates_uniqueness_of :name
   validates_presence_of :name, :min_level, :min_heal, :max_heal, :mp_cost
-  
+
   def self.find_spells(level)
     find_by_sql("select * from healing_spells where min_level <= #{level} order by min_level")
   end
@@ -48,10 +48,6 @@ class HealingSpell < ActiveRecord::Base
   end
   
   #Pagination related stuff
-  def self.per_page
-    25
-  end
-  
   def self.get_page(page, l = nil)
     where(l ? ['min_level <= ?', l] : []) \
       .order('min_level,name') \

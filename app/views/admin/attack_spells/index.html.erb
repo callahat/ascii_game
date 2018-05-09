@@ -1,0 +1,26 @@
+<h1>Listing attack_spells</h1>
+
+<table>
+  <tr>
+  <% for column in AttackSpell.content_columns %>
+    <th><%= column.human_name %></th>
+  <% end %>
+  </tr>
+  
+<% for attack_spell in @attack_spells %>
+  <tr>
+  <% for column in AttackSpell.content_columns %>
+    <td><%=h attack_spell.send(column.name) %></td>
+  <% end %>
+    <td><%= link_to 'Show', admin_attack_spell_path(attack_spell) %></td>
+    <td><%= link_to 'Edit', edit_admin_attack_spell_path(attack_spell) %></td>
+    <td><%= link_to 'Destroy', admin_attack_spell_path(attack_spell) , data: {confirm: 'Are you sure?'}, method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @attack_spells %> 
+
+<br/>
+
+<%= link_to 'New attack_spell', new_admin_attack_spell_path %>

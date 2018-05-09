@@ -20,7 +20,7 @@
     <td><%= image.kingdom.name %></td>
     <td><%= link_to 'Show', :action => 'show', :id => image %></td>
     <td><%= link_to 'Edit', :action => 'edit', :id => image %></td>
-    <td><%= link_to 'Destroy', { :action => 'destroy', :id => image, :page => params[:page] }, :confirm => 'Are you sure?', :method => :post %></td>
+    <td><%= link_to 'Destroy', { :action => 'destroy', :id => image, :page => params[:page] }, data:{confirm: "Really delete #{image.name}?"}, method: :delete %></td>
   </tr>
 <% end %>
 </table>

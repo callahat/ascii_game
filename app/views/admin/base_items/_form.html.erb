@@ -1,26 +1,37 @@
-<%= error_messages_for 'base_item' %>
+<%= form_for([:admin, @base_item]) do |f| %>
+  <%= error_messages_for 'base_item' %>
 
-<!--[form:base_item]-->
-<p><label for="base_item_name">Name</label><br/>
-<%= text_field 'base_item', 'name'  %></p>
+  <!--[form:base_item]-->
+  <div class="field">
+    <%= f.label :name %><br/>
+    <%= f.text_field :name %>
+  </div>
 
-<p><label for="base_item_description">Description</label><br/>
-<%= text_field 'base_item', 'description'  %></p>
+  <div class="field">
+    <%= f.label :description %><br/>
+    <%= f.text_field :description %>
+  </div>
 
-<p><label for="base_item_dfn_mod">Dfn mod</label><br/>
-<%= text_field 'base_item', 'dfn_mod'  %></p>
+  <div class="field">
+    <%= f.label :price %><br/>
+    <%= f.text_field :price %>
+  </div>
 
-<p><label for="base_item_dam_mod">Dam mod</label><br/>
-<%= text_field 'base_item', 'dam_mod'  %></p>
+  <div class="field">
+    <%= f.label :equip_loc %><br/>
+    <%= f.collection_select(:equip_loc, SpecialCode.get_codes_and_text('equip_loc'), :second, :first, {:include_blank => true}) %>
+  </div>
 
-<p><label for="base_item_price">Price</label><br/>
-<%= text_field 'base_item', 'price'  %></p>
+  <div class="field">
+    <%= f.label :race_body_type %><br/>
+    <%= f.collection_select(:race_body_type, SpecialCode.get_codes_and_text('race_body_type'), :second, :first, {:include_blank => true}) %>
+  </div>
 
-<p><label for="base_item_equip_loc">Equip loc</label><br/>
-<%= collection_select('base_item',                      'equip_loc',                      SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'equip_loc']),                       'col_num', 'text', {:include_blank => true} ) %></p>
+  <br/>
 
-<p><label for="base_item_race_body_type">Race body type</label><br/>
-<%= collection_select('base_item',                      'race_body_type',                      SpecialCode.find(:all, :conditions => ['spec_col_type = ?', 'race_body_type']),                       'col_num', 'text', {:include_blank => true} ) %></p>
+  <div class="actions">
+    <%= submit_tag %>
+  </div>
 
-<!--[eoform:base_item]-->
-
+  <!--[eoform:base_item]-->
+<% end %>

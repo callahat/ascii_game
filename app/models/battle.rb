@@ -2,8 +2,8 @@ class Battle < ActiveRecord::Base
   has_many :enemies,    :class_name => "BattleEnemy"
   has_many :pcs,        :class_name => "BattlePc"
   has_many :npcs,        :class_name => "BattleNpc"
-  has_many :merchants,  :class_name => "BattleNpc", :conditions => {:special => "NpcMerchant"}
-  has_many :guards,      :class_name => "BattleNpc", :conditions => {:special => "NpcGuard"}
+  has_many :merchants, ->{ where(special: "NpcMerchant") },  :class_name => "BattleNpc"
+  has_many :guards,    ->{ where(special: "NpcGuard") },     :class_name => "BattleNpc"
   has_many :creatures,  :class_name => "BattleCreature"
   has_many :items,      :class_name => "BattleItem"
   has_many :groups,      :class_name => "BattleGroup"
@@ -17,9 +17,9 @@ class Battle < ActiveRecord::Base
   #Methods for starting different kinds of new battles
   def self.storm_gates(owner, kingdom)
     @guards = self.summon_guards(kingdom, 0.5)   #upto %70 of guards will show
-    if @guards.size > 0
+    if @guards.count > 0
       b = Battle.create(:owner_id => owner.id)
-      gname = @guards.size.to_s + ( @guards.size > 1 ? " guards" : " guard")
+      gname = @guards.count.to_s + ( @guards.count > 1 ? " guards" : " guard")
       bg = BattleGroup.create(:battle_id => b.id, :name => gname)
       spec = "NpcGuard"
       @guards.each{ |g|
@@ -48,7 +48,7 @@ class Battle < ActiveRecord::Base
       b = Battle.create(:owner_id => owner.id)
       @guards = self.summon_guards(npc.kingdom, 0.3)   #upto %30 of guards will show
       gname = npc.name
-      gname += " and " + @guards.size.to_s + ( @guards.size > 1 ? " guards" : " guard")
+      gname += " and " + @guards.count.to_s + ( @guards.count > 1 ? " guards" : " guard")
       bg = BattleGroup.create(:battle_id => b.id, :name => gname)
       BattleNpc.create(:battle_id => b.id, :enemy_id => npc.id, :battle_group_id => bg.id, :special => npc.kind)
       @guards.each{ |g|
@@ -65,7 +65,7 @@ class Battle < ActiveRecord::Base
       b = Battle.create(:owner_id => owner.id)
       @guards = self.summon_guards(kingdom, 0.7)   #upto %70 of guards will show
       gname = @king.name
-      gname += " and " + @guards.size.to_s + ( @guards.size > 1 ? " guards" : " guard")
+      gname += " and " + @guards.count.to_s + ( @guards.count > 1 ? " guards" : " guard")
       bg = BattleGroup.create(:battle_id => b.id, :name => gname)
       BattlePc.create(:battle_id => b.id, :enemy_id => @king.id, :battle_group_id => bg.id)
       @guards.each{ |g|
@@ -105,25 +105,28 @@ class Battle < ActiveRecord::Base
     self.report = {}
     if target
       if spell.nil?
-        self.phys_damage_enemies(pc, target.enemies)
+        self.phys_damage_enemies(pc, target.enemies.to_a)
       elsif spell.class == AttackSpell
-        return nil unless self.mag_damage_enemies(pc, spell, target.enemies)
+        return nil unless self.mag_damage_enemies(pc, spell, target.enemies.to_a)
       else #if attack.class == HealingSpell
         return nil unless self.cast_healing_spell(pc, spell, pc)
       end
     end
-    self.groups.each{|g|
-      0.upto( (g.enemies.size < 10 ? g.enemies.size : 10) - 1 ){|ind|
+    Rails.logger.info "Groups size: #{self.groups.count}"
+    self.groups.reload.each{|g|
+      Rails.logger.info "Initial Enemy count: #{g.enemies.count}"
+      0.upto( (g.enemies.reload.count < 10 ? g.enemies.count : 10) - 1 ){|ind|
+        Rails.logger.info "Enemy count: #{g.enemies.count}"
         self.phys_damage_enemies(g.enemies[ind], [pc]) } }
   end
 
 
   #Methods for ending a battle
   def victory
-    if self.enemies.size == 0
+    if self.enemies.count == 0
       self.groups.destroy_all
       if self.owner.present_kingdom && (@tax = (self.gold * self.owner.present_kingdom.tax_rate/100.0).to_i) > 0
-        Kingdom.pay_tax(@tax, self.owner.present_kingdom)
+        Kingdom.pay_tax(@tax, self.owner.in_kingdom)
         self.update_attribute(:gold, self.gold - @tax)
       end
       PlayerCharacter.transaction do
@@ -160,10 +163,10 @@ class Battle < ActiveRecord::Base
 
   def clear_battle
     @creature_ids = {}
-    self.creatures.each{|c|
+    self.creatures.includes(:health,:stat).each{|c|
       c.health.destroy
       c.stat.destroy
-      @creature_ids[c.creature.id] = 1 + @creature_ids[c.creature.id].to_i
+      @creature_ids[c.enemy_id] = 1 + @creature_ids[c.enemy_id].to_i
       c.destroy  }
     self.enemies.destroy_all
     self.items.destroy_all
@@ -179,8 +182,8 @@ class Battle < ActiveRecord::Base
 #called via a controller directly.
   def self.summon_guards(kingdom, ratio)
     return [] if kingdom.nil?
-    max_help = kingdom.guards.size * ratio
-    kingdom.guards.find(:all, :order => "rand()", :limit => rand(max_help) + 1 )
+    max_help = kingdom.guards.count * ratio
+    kingdom.guards.order("rand()").limit( rand(max_help) + 1 )
   end
 
   def fighter_killed(who)
@@ -198,6 +201,7 @@ class Battle < ActiveRecord::Base
         when "NpcMerchant"  ; @code = SpecialCode.get_code('npc_division','merchant')
         when "NpcGuard"      ; @code = SpecialCode.get_code('npc_division','guard')
       end
+
       case who.class.name
         when "BattleCreature"
           LogQuestCreatureKill.complete_req(self.owner_id, who.enemy_id)
@@ -269,7 +273,7 @@ class Battle < ActiveRecord::Base
     if defender.health.HP <= 0
       Battle.award_exp_from_kill(attacker, defender)
       self.report_kill(Battle.get_name(attacker), Battle.get_name(defender), damage)
-      if defender.class == BattlePc && defender.pc.kingdom
+      if defender.class == BattlePc && defender.pc.kingdom_id
         self.regicide = defender.pc.kingdom_id if defender.pc.kingdom.player_character_id == defender.pc.id
       end
       self.fighter_killed(defender) unless defender.class == PlayerCharacter

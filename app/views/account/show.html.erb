@@ -1,13 +1,10 @@
 <p><b>handle: </b><%= @player.handle %></p>
+<p><b>email: </b><%= @player.email %></p>
 <p><b>city: </b><%= @player.city %></p>
 <p><b>state: </b><%= @player.state %></p>
 <p><b>country: </b><%= @player.country %></p>
-<p><b>email: </b><%= "not displayed" %></p>
-<p><b>AIM: </b><%= @player.AIM %></p>
-<p><b>yahoo_sn: </b><%= @player.yahoo_sn %></p>
 <p><b>bio: </b><%= @player.bio %></p>
+<p><b>joined: </b><%= @player.created_at %></p>
 
-<% if session[:player] && session[:player][:id] == params[:id].to_i %>
-<%= link_to 'Edit', :action => 'edit', :id => @player.id %> |
-<% end %>
-<%= link_to 'Back', :action => 'list' %>
+<%= link_to 'Edit', edit_player_registration_path %> |
+<%= link_to 'Back', :back %>

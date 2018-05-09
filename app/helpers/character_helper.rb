@@ -52,10 +52,32 @@ module CharacterHelper
   end
   
   def hidden_input_help(what, who, val)
-    return '<input type="hidden" class=' + what + ' id="' + who.id.to_s + '" value="' + val + '"/>' + "\n"
+    '<input type="hidden" class="' + what + ' ' + who.id.to_s + '" value="' + val + '"/>' + "\n"
   end
   
   def freepoint_distributer(foo, bar)
     return '<input type="button" value="-" id="' + foo + '_' + bar + '"/>' + text_field(foo, bar, :size => 2) + '<input type="button" value="+" id="' + foo + '_' + bar + '"/>'
+  end
+
+  def character_link_cells character
+    if character.char_stat == SpecialCode.get_code('char_stat', 'deleted')
+      '<td colspan="4"></td>'.html_safe
+    else
+      links = [].tap do |str|
+        if character.char_stat == SpecialCode.get_code('char_stat', 'active')
+          str << link_to('Select', do_choose_character_path(character.id), data: {confirm: 'Are you sure?'}, method: :post)
+        else
+          str << ''
+        end
+        str << link_to('Edit Image', do_image_update_character_path(character.id))
+        if character.char_stat == SpecialCode.get_code('char_stat', 'retired')
+          str << link_to('Unretire', do_unretire_character_path(character.id), data: {confirm: 'Are you sure?'}, method: :post)
+        else
+          str << link_to('Retire', do_retire_character_path(character.id), data: {confirm: 'Warning: Retiring a character will erase all progress on quests, infections, and items your character has in its inventory.'}, method: :post)
+        end
+        str << link_to('Destroy', do_destroy_character_path(character.id), data: {confirm: 'Warning: Destroying a character will prevent you from ever playing it again, although history will remember its actions..'}, method: :post)
+      end
+      links.map{|l| content_tag(:td, l) }.join("\n").html_safe
+    end
   end
 end

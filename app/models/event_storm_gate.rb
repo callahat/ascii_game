@@ -1,12 +1,13 @@
 class EventStormGate < Event
   belongs_to :level, :foreign_key => 'thing_id'
+  belongs_to :thing, :foreign_key => 'thing_id', :class_name => 'Level'
   
   validates_presence_of :thing_id
   
   def make_happen(who)
     result, msg = Battle.storm_gates(who, self.level.kingdom)
     if result
-      return {:controller => 'game/battle', :action => 'battle'}, EVENT_INPROGRESS, "message seen anywhere for the storm gate event?"
+      return url_helpers.battle_game_battle_path, EVENT_INPROGRESS, "message seen anywhere for the storm gate event?"
     else
       return nil, EVENT_COMPLETED, msg
     end
@@ -24,6 +25,6 @@ class EventStormGate < Event
   end
   
   def as_option_text(pc=nil)
-    "Storm the gates of " + level.kingdom.name
+    "Storm the gates of " + thing.kingdom.name
   end
 end

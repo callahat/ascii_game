@@ -1,12 +1,7 @@
 class GameController < ApplicationController
-  #before_filter :authenticate
   before_filter :setup_pc_vars
 
   layout 'main'
-
-#    # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-#  verify :method => :post,:only => [ :do_heal, :do_choose, :do_train, :do_spawn ],
-#                          :redirect_to => { :action => :feature }
 
   def main
     flash[:notice] = flash[:notice]
@@ -34,7 +29,7 @@ class GameController < ApplicationController
       @message = "Left the kingdom"
     end
     
-    redirect_to :controller => 'game', :action => 'main'
+    redirect_to main_game_path
   end
 
   #moving in the world, by just walking. no need for an event
@@ -58,7 +53,7 @@ class GameController < ApplicationController
       end
       @pc.save!
     end
-    redirect_to :controller => 'game', :action => 'main'
+    redirect_to main_game_path
   end
 
   #deal with the feature, set up the session feature_event chain
@@ -68,14 +63,14 @@ class GameController < ApplicationController
     if @pc.reload && @pc.battle
       redirect_to :controller => 'game/battle', :action => 'battle'
     else #check for current event
-      if (@events = session[:ev_choices])
+      if session[:ev_choice_ids] && (@events = Event.where(id: session[:ev_choice_ids]).includes(:thing))
         render :file => 'game/choose', :layout => true
       elsif @current_event = @pc.current_event
         if @current_event.completed == EVENT_INPROGRESS #already have an event in progress
           exec_event(@current_event)
         elsif @current_event.completed == EVENT_FAILED
           @current_event.destroy
-          redirect_to :controller => 'game', :action => 'main'
+          redirect_to main_game_path
         else #skipped or completed, get the next event for the feature
           #p "Skipping: event completed code:" + @current_event.completed.to_s
           next_event_helper(@current_event)
@@ -89,10 +84,10 @@ class GameController < ApplicationController
         else
           @current_event.destroy
           flash[:notice] = 'Too tired for that, out of turns.'
-          redirect_to :controller => 'game', :action => 'main'
+          redirect_to main_game_path
         end
       else #no current event and no feature id
-        redirect_to :controller => 'game', :action => 'main'
+        redirect_to main_game_path
       end
     end
   end
@@ -100,34 +95,39 @@ class GameController < ApplicationController
   def do_choose
     Rails.logger.info "In do_choose"
     @current_event = @pc.current_event
-    if Event.exists?(:id => params[:id]) && session[:ev_choices].index(Event.find(params[:id]))
+    if Event.exists?(:id => params[:id]) && session[:ev_choice_ids].index(params[:id].to_i)
 
-    Rails.logger.info "exisst, going to execute"
+      Rails.logger.info "exisst, going to execute"
       @current_event.update_attribute(:event_id, params[:id])
-      session[:ev_choices] = nil
+      session[:ev_choice_ids] = nil
       exec_event(@current_event)
     elsif params[:id]
-    Rails.logger.info "invalid"
+      Rails.logger.info "invalid"
       flash[:notice] = "Invalid choice"
-      @events = session[:ev_choices]
+      @events = Event.find(session[:ev_choice_ids])
       render :file => 'game/choose', :layout => true
-    else#id is null, player didnt choose any event, or they attempted a hack
-    Rails.logger.info "player didnt choose as id is null"
+    elsif @current_event #id is null, player didnt choose any event, or they attempted a hack
+      Rails.logger.info "player didnt choose as id is null"
       @current_event.update_attribute(:completed, EVENT_SKIPPED)
-      session[:ev_choices] = nil
+      session[:ev_choice_ids] = nil
       flash[:notice] = 'You slink on by without anything interesting happening.'
-      redirect_to :controller => 'game', :action => 'complete'
+      redirect_to complete_game_path
+    else
+      Rails.logger.warn "!!! current event expected but not found for pc:#{@pc.id} chose event id:#{params[:id]}"
+      session[:ev_choice_ids] = nil
+      flash[:notice] = 'You feel like something should have happened.'
+      redirect_to complete_game_path
     end
   end
 
   def wave_at_pc
-    @other_pc = PlayerCharacter.find(session[:current_event].event_player_character.player_character_id)
+    @other_pc = @pc.current_event.event.player_character
     Illness.spread(@pc, @other_pc, SpecialCode.get_code('trans_method','air') )
     Illness.spread(@other_pc, @pc, SpecialCode.get_code('trans_method','air') )
   end
 
   def make_camp
-    if session[:current_event]
+    if @pc.current_event
       flash[:notice] = "Cannot rest while in midst of action!"
     elsif TxWrapper.take(@pc, :turns, 1)
       Health.transaction do
@@ -154,12 +154,12 @@ class GameController < ApplicationController
       flash[:notice] = "Too tired to make camp"
     end
     @pc.reload
-    redirect_to :controller => 'game', :action => 'main'
+    redirect_to main_game_path
   end
   
   def complete
     flash[:notice] = flash[:notice]
-    @current_event = @pc.current_event
+    @current_event = @pc.current_event(->{includes(:event,:location)})
     if @current_event
       @next,@events = @current_event.complete
     else
@@ -169,9 +169,9 @@ class GameController < ApplicationController
     
     if @next.nil?
       @current_event.destroy if @current_event
-      redirect_to :controller => 'game', :action => 'main'
+      redirect_to main_game_path
     else
-      redirect_to :controller => 'game', :action => 'feature'
+      redirect_to feature_game_path
     end
   end
   
@@ -190,17 +190,23 @@ class GameController < ApplicationController
     else
       flash[:notice] = @msg
       session[:completed] = true
-      redirect_to :controller => 'game', :action => 'complete'
+      redirect_to complete_game_path
     end
   end
   
 protected
   #should these live in the event class?
   def exec_event(ce)
-    @direction, @completed, @message = ce.event.happens(@pc)
-    ce.update_attribute(:completed, @completed)
-    @pc.reload
-    
+    if ce.event
+      @direction, @completed, @message = ce.event.happens(@pc)
+      ce.update_attribute(:completed, @completed)
+      @pc.reload
+    else
+      Rails.logger.warn "!!! No event found for current event; #{ce.inspect}"
+      ce.update_attribute(:completed, @completed)
+      @pc.reload
+    end
+
     if @direction
       flash[:notice] = @message
       redirect_to @direction
@@ -215,11 +221,11 @@ protected
     if @next.nil?
       flash[:notice] = "Nothing happens"
       @current_event.destroy
-      redirect_to :controller => 'game', :action => 'main'
+      redirect_to main_game_path
     elsif @it.class == Array
       ce.update_attributes(:priority => @next)
       @events = @it
-      session[:ev_choices] = @events.dup #simplify whats a valid choice or not
+      session[:ev_choice_ids] = @events.map(&:id) #simplify whats a valid choice or not
       render :file => 'game/choose', :layout => true
     else #must be an event
       ce.update_attributes(:event_id => @it.id, :priority => @next)

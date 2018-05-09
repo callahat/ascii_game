@@ -1,28 +1,47 @@
-<%= error_messages_for 'healing_spell' %>
+<%= form_for([:admin, @healing_spell]) do |f| %>
+  <%= error_messages_for 'healing_spell' %>
 
-<!--[form:healing_spell]-->
-<p><label for="healing_spell_name">Name</label><br/>
-<%= text_field 'healing_spell', 'name'  %></p>
+  <div class="field">
+    <%= f.label :name %><br/>
+    <%= f.text_field :name %>
+  </div>
 
-<p><label for="healing_spell_description">Description</label><br/>
-<%= text_field 'healing_spell', 'description'  %></p>
+  <div class="field">
+    <%= f.label :description %><br/>
+    <%= f.text_field :description %>
+  </div>
 
-<p><label for="healing_spell_min_level">Min level</label><br/>
-<%= text_field 'healing_spell', 'min_level'  %></p>
+  <div class="field">
+    <%= f.label :min_level %><br/>
+    <%= f.text_field :min_level %>
+  </div>
 
-<p><label for="healing_spell_min_heal">Min heal</label><br/>
-<%= text_field 'healing_spell', 'min_heal'  %></p>
+  <div class="field">
+    <%= f.label :min_heal %><br/>
+    <%= f.text_field :min_heal %>
+  </div>
 
-<p><label for="healing_spell_max_heal">Max heal</label><br/>
-<%= text_field 'healing_spell', 'max_heal'  %></p>
+  <div class="field">
+    <%= f.label :max_heal %><br/>
+    <%= f.text_field :max_heal %>
+  </div>
 
-<p><label for="healing_spell_mp_cost">Mp cost</label><br/>
-<%= text_field 'healing_spell', 'mp_cost'  %></p>
+  <div class="field">
+    <%= f.label :mp_cost %><br/>
+    <%= f.text_field :mp_cost %>
+  </div>
 
-<p><label for="healing_spell_disease_id">Disease</label><br/>
-<%= collection_select('healing_spell','disease_id', @diseases, 'id', 'name', {:include_blank => 'true'} ) %></p>
+  <div class="field">
+    <%= f.label :disease_id, "Disease" %><br/>
+    <%= f.collection_select(:disease_id, Disease.all, :id, :name, {include_blank: true} ) %>
+  </div>
 
-<p><label for="healing_spell_cast_on_others?">Cast on others?</label><br/>
-<select id="healing_spell_cast_on_others?" name="healing_spell[cast_on_others?]"><option value="false">False</option><option value="true">True</option></select></p>
-<!--[eoform:healing_spell]-->
+  <div class="field">
+    <%= f.label :cast_on_others %><br/>
+    <%= f.check_box :cast_on_others %>
+  </div>
 
+  <div class="actions">
+    <%= submit_tag %>
+  </div>
+<% end %>

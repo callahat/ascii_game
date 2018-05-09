@@ -1,8 +1,8 @@
 <h1>Editing level</h1>
 
-<%= form_tag :action => 'update', :id => @level do %>
+<%= form_for [:management,@level], path: management_level_path  do |f| %>
 	<%= edit_kingdom_map(@level) %>
-	<%= submit_tag 'Edit' %>
+	<%= f.submit %>
 <% end %>
 <table>
 <tr><td>Kingdom Coffers : <%= @gold %></td></tr>

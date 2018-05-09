@@ -1,10 +1,5 @@
 <h1>New npc</h1>
 
-<%= form_tag :action => 'create' do %>
-	<%= render :partial => 'form' %>
-	<ul class="form">
-		<li><%= submit_tag "Create" %></li
-	</ul>
-<% end %>
+<%= render 'form' %>
 
-<%= link_to 'Back', :action => 'list' %>
+<%= link_to 'Back', admin_npcs_path %>

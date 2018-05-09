@@ -3,7 +3,7 @@ class KingdomBan < ActiveRecord::Base
   belongs_to :player_character
   
   validates_presence_of :kingdom_id,:name
-  
+
   class PlayerExistsValidator < ActiveModel::EachValidator
     def validate_each(record, attribute, value)
       if record[:player_character_id].nil?

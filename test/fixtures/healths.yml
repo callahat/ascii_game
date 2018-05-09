@@ -5,7 +5,7 @@ one_pc_health:
   HP: 0
   MP: 0
   wellness: <%= SpecialCode.get_code('wellness','alive') %>
-  owner_id: 1
+  owner: pc_one
   kind: "HealthPc"
 sick_pc_health:
   base_HP: 30
@@ -13,7 +13,7 @@ sick_pc_health:
   HP: 3
   MP: 30
   wellness: <%= SpecialCode.get_code('wellness','diseased') %>
-  owner_id: 2
+  owner: sick_pc
   kind: "HealthPc"
 test_pc_one_health:
   base_HP: 30
@@ -53,13 +53,25 @@ npc_one_health:
   wellness: <%= SpecialCode.get_code('wellness','alive') %>
   base_HP: 30
   HP: 30
-  owner_id: 1
+  owner: npc_one
   kind: "HealthNpc"
 sick_npc_health:
   wellness: <%= SpecialCode.get_code('wellness','diseased') %>
   base_HP: 30
   HP: 9
-  owner_id: 2
+  owner: sick_npc
+  kind: "HealthNpc"
+unhired_merchant_health:
+  wellness: <%= SpecialCode.get_code('wellness','alive') %>
+  base_HP: 99
+  HP: 99
+  owner: unhired_merchant
+  kind: "HealthNpc"
+unhired_guard_health:
+  wellness: <%= SpecialCode.get_code('wellness','alive') %>
+  base_HP: 300
+  HP: 300
+  owner: unhired_guard
   kind: "HealthNpc"
 
 <% 1.upto(10){|i| %>

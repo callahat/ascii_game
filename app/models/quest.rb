@@ -20,22 +20,15 @@ class Quest < ActiveRecord::Base
   validates_presence_of :name,:kingdom_id,:player_id,:quest_status
   validates_uniqueness_of :name
   
-  validates :max_level, :numericality => { :greater_than => 0, :less_than => 500 }, :allow_nil => true
+  validates_inclusion_of :max_level, within: 1..500, allow_nil: true, message: "Must be between 1 and 500"
 
   validates :max_completeable, :numericality => { :greater_than => 0 }, :allow_nil => true
 
-#  def validate
-#    if !max_level.nil?
-#      if max_level < 0 || max_level > 500
-#        errors.add("max_level","must be betwen 0 and 500.")
-#      end
-#    end
-#    if !max_completeable.nil?
-#      if max_completeable < 0
-#        errors.add("max_completeable","must be greater than 0.")
-#      end
-#    end
-#  end
+ def validate
+   if quest_id && quest.kingdom_id != kingdom_id
+     errors.add("quest_id","invalid prerequisite quest.")
+   end
+ end
   
   def all_reqs
     return self.reqs
