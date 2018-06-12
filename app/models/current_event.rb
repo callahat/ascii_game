@@ -22,6 +22,7 @@ class CurrentEvent < ActiveRecord::Base
 
   #Returns [next priority, next event], or [next priority, array of events] if pc can choose, or nil if no events
   def next_event
+    return [nil,[]] unless location.feature
     f = location.feature
     @next = self.priority
     begin
