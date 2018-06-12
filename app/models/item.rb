@@ -45,8 +45,18 @@ class Item < ActiveRecord::Base
     false
   end
 
+  def can_be_equipped_by pc
+    body_types_compatible(pc) and pc.equip_locs.where(equip_loc: equip_loc).any?
+  end
+
   #Pagination related stuff
   def self.get_page(page)
     order('name').paginate(:per_page => 10, :page => page)
+  end
+
+  protected
+
+  def body_types_compatible pc
+    race_body_type.nil? || race_body_type == pc.race.race_body_type
   end
 end

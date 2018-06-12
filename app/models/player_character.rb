@@ -27,6 +27,7 @@ class PlayerCharacter < ActiveRecord::Base
   has_many :log_quest_kill_s_npcs
   has_many :nonplayer_character_killers
   has_many :player_character_equip_locs
+  has_many :equip_locs, :class_name => 'PlayerCharacterEquipLoc'
   has_many :items, :foreign_key => 'owner_id', :class_name => 'PlayerCharacterItem'
   has_many :player_character_killers
   

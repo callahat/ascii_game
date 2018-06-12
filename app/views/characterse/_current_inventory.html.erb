@@ -1,0 +1,37 @@
+<% if @pc_items %>
+  <table>
+    <tr><td colspan="100%"><b>Inventory</b></td></tr>
+    <tr>
+      <th></th>
+      <th>Item</th>
+      <th>Body Type</th>
+      <th>Slot</th>
+      <th>Str</th>
+      <th>Dex</th>
+      <th>Dam</th>
+      <th>Dfn</th>
+      <th>Int</th>
+      <th>Mag</th>
+      <th>Equippable?</th>
+    </tr>
+    <% for pc_item in @pc_items %>
+      <% if pc_item.quantity > 0 %>
+        <tr>
+          <td><%= pc_item.quantity %>x</td>
+          <td><span title="<%= pc_item.item.description %>"><%= pc_item.item.name %></span></td>
+          <td><%= SpecialCode.get_text('race_body_type', pc_item.item.race_body_type) || 'any' %></td>
+          <td><%= SpecialCode.get_text('equip_loc', pc_item.item.equip_loc) %></td>
+          <td><%= pc_item.item.stat.str %></td>
+          <td><%= pc_item.item.stat.dex %></td>
+          <td><%= pc_item.item.stat.dam %></td>
+          <td><%= pc_item.item.stat.dfn %></td>
+          <td><%= pc_item.item.stat.int %></td>
+          <td><%= pc_item.item.stat.mag %></td>
+          <td><%= pc_item.item.can_be_equipped_by(@pc) ? 'Y' : '' %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  </table>
+<% end %>
+
+<%= will_paginate @pc_items %>

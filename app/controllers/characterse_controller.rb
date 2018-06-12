@@ -40,7 +40,7 @@ class CharacterseController < ApplicationController
   end
   
   def inventory
-    @pc_items = PlayerCharacterItem.get_page(params[:page], @pc.id).includes(:item)
+    @pc_items = PlayerCharacterItem.get_page(params[:page], @pc.id).includes(item: [:stat])
     @equip_locs = @pc.player_character_equip_locs.includes(:item)
   end
   

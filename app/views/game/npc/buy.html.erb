@@ -1,5 +1,18 @@
 <table>
-<tr><td>Avail.</td><td>Item</td><td>Price Each</td></tr>
+<tr>
+  <th>Avail.</th>
+  <th>Item</th>
+  <th>Price Each</th>
+  <th>Body Type</th>
+  <th>Slot</th>
+  <th>Str</th>
+  <th>Dex</th>
+  <th>Dam</th>
+  <th>Dfn</th>
+  <th>Int</th>
+  <th>Mag</th>
+  <th>Equippable?</th>
+</tr>
 <% for stock in @stocks do %>
 	<tr>
 		<td>
@@ -11,11 +24,44 @@
 		<td>
 			<%= ((stock.item.price / 2) * (1 + @npc.kingdom.tax_rate / 100.0)).to_i.to_s %>
 		</td>
+    <td>
+      <%= SpecialCode.get_text('race_body_type', stock.item.race_body_type) || 'any' %>
+    </td>
+    <td>
+      <%= SpecialCode.get_text('equip_loc', stock.item.equip_loc) %>
+    </td>
+    <td>
+      <%= stock.item.stat.str %>
+    </td>
+    <td>
+      <%= stock.item.stat.dex %>
+    </td>
+    <td>
+      <%= stock.item.stat.dam %>
+    </td>
+    <td>
+      <%= stock.item.stat.dfn %>
+    </td>
+    <td>
+      <%= stock.item.stat.int %>
+    </td>
+    <td>
+      <%= stock.item.stat.mag %>
+    </td>
+    <td>
+      <%= stock.item.can_be_equipped_by(@pc) ? 'Y' : '' %>
+    </td>
 	</tr>
 <% end %>
 </table>
 
+<%= will_paginate @stocks %>
+
 <br/>
+
+<%= render partial: 'characterse/equipped_items', locals: {equippable_view: false} %>
+
+<%= render partial: 'characterse/current_inventory' %>
+
 <%= link_to 'Back', :action => 'npc' %>
 
-<%= will_paginate @stocks %> 

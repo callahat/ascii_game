@@ -206,6 +206,18 @@ class NpcMerchant < Npc
     end
   end
 
+  def name_and_titles
+    titles  = [
+        ['Healer',     npc_merchant_detail.healing_sales],
+        ['Trainer',    npc_merchant_detail.trainer_sales],
+        ['Blacksmith', npc_merchant_detail.blacksmith_sales],
+        ['Consignor',  npc_merchant_detail.consignor]
+    ].map{ |title, condition| title if condition }.reject(&:nil?).join(', ')
+
+    titles = " (#{titles})" if titles.present?
+    name + titles
+  end
+
   protected
 
   DEFUALT_NPC_IMAGE = <<-ASCII

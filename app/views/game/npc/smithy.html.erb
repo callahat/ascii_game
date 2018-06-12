@@ -1,5 +1,17 @@
 <table>
-<tr><td>Item</td><td>Price</td></tr>
+<tr>
+  <th>Item</th>
+  <th>Price</th>
+  <th>Body Type</th>
+  <th>Slot</th>
+  <th>Str</th>
+  <th>Dex</th>
+  <th>Dam</th>
+  <th>Dfn</th>
+  <th>Int</th>
+  <th>Mag</th>
+  <th>Equippable?</th>
+</tr>
 <% for forge_item in @can_make do %>
   <tr>
     <td>
@@ -8,8 +20,41 @@
     <td>
        <%= (forge_item.item.price * (1 + @npc.kingdom.tax_rate / 100.0)).to_i.to_s %>
     </td>
+    <td>
+      <%= SpecialCode.get_text('race_body_type', forge_item.item.race_body_type) || 'any' %>
+    </td>
+    <td>
+      <%= SpecialCode.get_text('equip_loc', forge_item.item.equip_loc) %>
+    </td>
+    <td>
+      <%= forge_item.item.stat.str %>
+    </td>
+    <td>
+      <%= forge_item.item.stat.dex %>
+    </td>
+    <td>
+      <%= forge_item.item.stat.dam %>
+    </td>
+    <td>
+      <%= forge_item.item.stat.dfn %>
+    </td>
+    <td>
+      <%= forge_item.item.stat.int %>
+    </td>
+    <td>
+      <%= forge_item.item.stat.mag %>
+    </td>
+    <td>
+      <%= forge_item.item.can_be_equipped_by(@pc) ? 'Y' : '' %>
+    </td>
   </tr>
 <% end %>
 </table>
+
+<br/>
+
+<%= render partial: 'characterse/equipped_items', locals: {equippable_view: false} %>
+
+<%= render partial: 'characterse/current_inventory' %>
 
 <%= link_to 'Back', :action => 'npc' %>

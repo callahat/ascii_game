@@ -1,0 +1,33 @@
+<table>
+  <tr><th>Equipped Items</th></tr>
+  <tr>
+    <th>Location</th>
+    <th>Item</th>
+    <th></th>
+    <th>Str</th>
+    <th>Dex</th>
+    <th>Dam</th>
+    <th>Dfn</th>
+    <th>Int</th>
+    <th>Mag</th>
+  </tr>
+  <% for loc in @equip_locs %>
+    <tr>
+      <td><%= SpecialCode.get_text('equip_loc',loc.equip_loc) %></td>
+      <% if loc.item %>
+      <td><%= loc.item.name %></td>
+      <td><%= link_to('Unequip', {:action => 'unequip', :id => loc}, :method => :post) if equippable_view %>
+      <td><%= loc.item.stat.str %></td>
+      <td><%= loc.item.stat.dex %></td>
+      <td><%= loc.item.stat.dam %></td>
+      <td><%= loc.item.stat.dfn %></td>
+      <td><%= loc.item.stat.int %></td>
+      <td><%= loc.item.stat.mag %></td>
+      <% else %>
+        <td>nothing</td>
+        <td><%= link_to('Equip', {:action => 'equip', :id => loc}, :method => :post) if equippable_view %></td>
+        <td colspan="6"></td>
+        <% end %>
+    <tr>
+  <% end %>
+</table>

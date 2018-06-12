@@ -40,8 +40,8 @@ class Admin::WorldMapsController < ApplicationController
       1.upto(@world.maxx) do |x|
         @temp = @world.world_maps.where(bigypos: @bigypos, bigxpos: @bigxpos, ypos: y, xpos: x).last
         #print "\n#{@temp.id}  #{@temp.nil?} #{@temp.feature_id} #{@temp.feature_id.to_i != params[:map][@y.to_s][@x.to_s].to_i} #{params[:map][@y.to_s][@x.to_s]}\n"
-        
-        #Destroy the level map if it has changed, and make a new one. 
+
+        #Destroy the level map if it has changed, and make a new one.
         #Might want to timestamp this later.
         #but for now, just return the array of those level_maps, and get the last,
         #which should be the latest edit to the contents of that square.
