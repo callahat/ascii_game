@@ -11,7 +11,9 @@ class Game::NpcController < ApplicationController
   end
   
   def smithy
-    @can_make = @npc.npc_blacksmith_items.includes(:item)
+    @pc_items = PlayerCharacterItem.get_page(params[:page], @pc.id).includes(item: [:stat])
+    @equip_locs = @pc.equip_locs.includes(item: [:stat])
+    @can_make = @npc.npc_blacksmith_items.includes(item: [:stat])
     redirect_to npc_game_npc_path and return unless @can_make.size > 0
   end
   
@@ -20,7 +22,7 @@ class Game::NpcController < ApplicationController
     
     res, msg = @npc.manufacture(@pc, params[:iid])
     flash[:notice] = msg + ( flash[:notice] ? "<br/>" + flash[:notice] : "" )
-    
+
     redirect_to smithy_game_npc_path
   end
 
@@ -72,8 +74,10 @@ class Game::NpcController < ApplicationController
   end
   
   def buy
+    @pc_items = PlayerCharacterItem.get_page(params[:page], @pc.id).includes(item: [:stat])
+    @equip_locs = @pc.equip_locs.includes(item: [:stat])
     redirect_to npc_game_npc_path and return unless @npc.npc_merchant_detail.consignor
-    @stocks = NpcStock.get_page(params[:page], @npc.id).includes(:item)
+    @stocks = NpcStock.get_page(params[:page], @npc.id).includes(item: [:stat])
   end
   
   def do_buy

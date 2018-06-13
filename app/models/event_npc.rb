@@ -13,7 +13,7 @@ class EventNpc < EventLifeNeutral
     if thing.health.wellness == SpecialCode.get_code('wellness','dead')
       "Poke " + thing.name + "'s corpse"
     else
-      "Chat with " + thing.name
+      "Chat with " + thing.name_and_titles
     end
   end
   

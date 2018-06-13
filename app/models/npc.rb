@@ -65,6 +65,10 @@ class Npc < ActiveRecord::Base
     )
   end
 
+  def name_and_titles
+    name
+  end
+
   #Pagination related stuff
   def self.get_page(page)
     order('name').paginate(:per_page => 20, :page => page)

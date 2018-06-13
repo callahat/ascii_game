@@ -1,7 +1,7 @@
-<% ( player_signed_in? ? @what = {:action => 'namenew'} : @what = {:controller => 'devise/registrations', :action => 'new'} ) %>
+<% ( player_signed_in? ? @what = {:action => 'namenew'} : @what = {:controller => 'registrations', :action => 'new'} ) %>
 <%= javascript_include_tag 'charnew' %>
 
-<%= form_tag @what do %>
+<%= form_tag @what, method: (player_signed_in? ? 'post' : 'get') do %>
 
 <% if player_signed_in? %>
 <p>Choose among many exciting races and classes for your character!</p>
