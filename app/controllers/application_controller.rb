@@ -40,7 +40,7 @@ class ApplicationController < ActionController::Base
 
   def setup_king_pc_vars
     return(false) unless authenticate
-    if @pc = session[:kingdom].player_character
+    if @pc = session[:kingdom].player_character(includes: [:image,:c_class,:race,:health,:stat,:kingdom])
       true
     else
       redirect_to menu_character_url
@@ -103,14 +103,11 @@ protected
     @event.cost = 0
 
     @event.creature = Creature.find_by(name: "Peasant")
-    @event.flex = "1;#{feature.num_occupants}"
-    
-    if @event.save
-      flash[:notice] += "Created event_npc\n"
-    else
-      #break code in case event fails to save while developing this stuff
-      flash[:n][:n]
-    end
+    @event.flex = "1;#{[feature.num_occupants,500].min}"
+
+    @event.save!
+
+    flash[:notice] += "Created event_npc\n"
 
     @feature_event = FeatureEvent.new
     
@@ -120,7 +117,7 @@ protected
     @feature_event.priority = 42
     @feature_event.choice = true
     
-    @feature_event.save
+    @feature_event.save!
   end
 
   def configure_permitted_parameters

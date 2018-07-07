@@ -1,0 +1,37 @@
+<div id="feature_details_<%= feature.id %>" style="display:none" title="<%= feature.name %>">
+  <table>
+    <tr><td><b>description: </b></td><td><%= feature.description %></td></tr>
+    <tr><td><b>action cost: </b></td><td><%= feature.action_cost %></td></tr>
+    <tr><td><b>cost: </b></td><td><%= feature.cost %></td></tr>
+    <tr><td><b>num occupants: </b></td><td><%= feature.num_occupants %></td></tr>
+    <tr><td><b>store front size: </b></td><td><%= feature.store_front_size %></td></tr>
+  </table>
+
+  <table><tr><td>
+    <p><span class="feature image"><%= feature.image.try :image_text %></span></p>
+  </table>
+
+  <b>Events:</b><br />
+  <% if feature.feature_events.size > 0 %>
+    <table>
+      <tr>
+        <th>Priority</th>
+        <th>Event</th>
+        <th>Chance</th>
+        <th>Choice</th>
+      </tr>
+      <% feature.feature_events.each do |feature_event| %>
+        <%# if feature_event.event.try(:name) != "\nSYSTEM GENERATED" %>
+        <tr data-event-id="<%= feature_event.event_id %>">
+          <td><%= feature_event.priority %></td>
+          <td><%= feature_event.event.try(:name) || 'nil' %></td>
+          <td><%= feature_event.chance %></td>
+          <td><%= feature_event.choice %></td>
+        </tr>
+        <%# end %>
+      <% end %>
+    </table>
+  <% else %>
+    None
+  <% end %>
+</div>

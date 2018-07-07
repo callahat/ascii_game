@@ -5,6 +5,7 @@ gem 'rake'
 gem 'rails', '4.2.10'
 gem 'activerecord-session_store'
 gem 'jquery-rails'
+gem 'jquery-ui-rails'
 
 gem 'mysql2'
 

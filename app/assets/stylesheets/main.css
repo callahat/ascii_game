@@ -43,7 +43,11 @@ ul.battle_report {
 	list-style-type:none;
 	padding:0px;}
 
-.image {
+div.image {
+    display: inline-block;
+}
+
+span.image {
   white-space: pre;
   background-color: #eee;
   margin:0;

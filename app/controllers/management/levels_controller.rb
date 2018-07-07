@@ -45,11 +45,13 @@ class Management::LevelsController < ApplicationController
 
   def edit
     @gold = @kingdom.gold
-    @features = @kingdom.pref_list_features.collect{|f| f.feature}
+    @empty_feature = Feature.find_by(name: "\nEmpty", kingdom_id: -1, player_id: -1)
+    @features = @kingdom.pref_list_features.includes(feature: [:image,{feature_events: :event}]).collect{|f| f.feature}.unshift(@empty_feature)
   end
 
   def update
-    edit
+    @gold = @kingdom.gold
+    @empty_feature = Feature.find_by(name: "\nEmpty", kingdom_id: -1, player_id: -1)
     calc_cost
 
     unless TxWrapper.take(@kingdom, :gold, @cost)
@@ -115,7 +117,7 @@ class Management::LevelsController < ApplicationController
                   Feature.find(params[:map][y.to_s][x.to_s]) : nil )
         Rails.logger.info "#{ new ? new.id : 'Nothing' } - #{ old ? old.id : 'Nothing' }"
         Rails.logger.info "#{(new ? new.cost : 0)} - #{(old ? old.cost : 0) / 5} = #{params[:map][y.to_s][x.to_s]}"
-    Rails.logger.info "Total cost:" + @cost.to_s
+        Rails.logger.info "Total cost:" + @cost.to_s
         @cost += ((new ? new.cost : 0) - ( (old ? old.cost : 0) / 5)) if new and (old.nil? or old.id != new.id)
       }
     }
