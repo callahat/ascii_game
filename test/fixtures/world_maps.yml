@@ -7,6 +7,7 @@ test_world_map_0_0_<%= x %>_<%= y %>:
   ypos: <%= y %>
   bigxpos: 0
   bigypos: 0
+  feature: empty_feature
 <%  end
   end %>
 
