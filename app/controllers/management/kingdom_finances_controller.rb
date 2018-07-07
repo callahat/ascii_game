@@ -16,7 +16,9 @@ class Management::KingdomFinancesController < ApplicationController
 
   def withdraw
     @withdraw = params[:withdraw].to_i
-    if ! TxWrapper.take(session[:kingdom], :gold, @withdraw)
+    if @withdraw < 0
+      flash[:notice] = 'Amount to withdrawl must be positive.'
+    elsif ! TxWrapper.take(session[:kingdom], :gold, @withdraw)
       flash[:notice] = 'Amount to withdrawl cannot exceed the gold in the coffers.'
     elsif TxWrapper.give(@pc, :gold, @withdraw)
       flash[:notice] = 'Withdrawl successful.'
@@ -26,7 +28,9 @@ class Management::KingdomFinancesController < ApplicationController
 
   def deposit
     @deposit = params[:deposit].to_i
-    if ! TxWrapper.take(@pc, :gold, @deposit)
+    if @deposit < 0
+      flash[:notice] = 'Amount to deposit must be positive.'
+    elsif ! TxWrapper.take(@pc, :gold, @deposit)
       flash[:notice] = 'Amount to withdrawl cannot exceed the gold in the coffers.'
     elsif TxWrapper.give(session[:kingdom], :gold, @deposit)
       flash[:notice] = 'Withdrawl successful.'
