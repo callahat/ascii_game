@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180414140840) do
+ActiveRecord::Schema.define(version: 20180707204451) do
 
   create_table "attack_spells", force: :cascade do |t|
     t.string   "name",         limit: 32,  default: "", null: false
@@ -507,7 +507,7 @@ ActiveRecord::Schema.define(version: 20180414140840) do
     t.integer  "num_of_pc",           limit: 4
     t.float    "tax_rate",            limit: 24, default: 5.0
     t.integer  "num_peasants",        limit: 4,                  null: false
-    t.integer  "gold",                limit: 4,  default: 0,     null: false
+    t.integer  "gold",                limit: 8,  default: 0,     null: false
     t.integer  "world_id",            limit: 4,                  null: false
     t.integer  "bigx",                limit: 4,                  null: false
     t.integer  "bigy",                limit: 4,                  null: false
@@ -629,9 +629,9 @@ ActiveRecord::Schema.define(version: 20180414140840) do
 
   create_table "npc_merchant_details", force: :cascade do |t|
     t.integer  "npc_id",           limit: 4,                 null: false
-    t.integer  "healing_sales",    limit: 4
-    t.integer  "blacksmith_sales", limit: 4
-    t.integer  "trainer_sales",    limit: 4
+    t.integer  "healing_sales",    limit: 8
+    t.integer  "blacksmith_sales", limit: 8
+    t.integer  "trainer_sales",    limit: 8
     t.boolean  "consignor",                  default: false
     t.integer  "race_body_type",   limit: 4,                 null: false
     t.boolean  "lock",                       default: false
@@ -693,7 +693,7 @@ ActiveRecord::Schema.define(version: 20180414140840) do
     t.integer  "house_y",       limit: 4,  default: 0,     null: false
     t.integer  "turns",         limit: 4,  default: 0,     null: false
     t.integer  "freepts",       limit: 4,  default: 0,     null: false
-    t.integer  "gold",          limit: 4,  default: 0
+    t.integer  "gold",          limit: 8,  default: 0
     t.integer  "image_id",      limit: 4
     t.integer  "char_stat",     limit: 4,  default: 1,     null: false
     t.integer  "in_kingdom",    limit: 4
