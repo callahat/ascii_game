@@ -9,7 +9,7 @@ namespace :game_data do
   desc "This will check map coordinates for no feature and inject the empty feature"
   task(fill_in_empty_map_spaces: :environment) do
     puts "\nReplacing nil map locations with the empty feature"
-    @empty_feature = Feature.find_by(name: "\nEmpty", kingdom_id: -1, player_id: -1)
+    @empty_feature = Feature.find_by(name: "Empty", kingdom_id: -1, player_id: -1)
 
     puts "Checking Kingdom Maps"
     Level.all.each do |level|

@@ -30,7 +30,7 @@ class Management::LevelsController < ApplicationController
       redirect_to new_management_level_path
     else
       if @level.save
-        @emtpy_feature = Feature.find_by(name: "\nEmpty", kingdom_id: -1, player_id: -1)
+        @emtpy_feature = Feature.find_by(name: "Empty", kingdom_id: -1, player_id: -1)
         LevelMap.gen_level_map_squares(@level, @emtpy_feature)
         flash[:notice] = 'Level ' + @level.level.to_s + ' was successfully created.'
         flash[:notice] += '<br/>' + @savecount.to_s + ' map squares out of ' + (@level.maxy * @level.maxx).to_s + ' created.'
@@ -45,13 +45,13 @@ class Management::LevelsController < ApplicationController
 
   def edit
     @gold = @kingdom.gold
-    @empty_feature = Feature.find_by(name: "\nEmpty", kingdom_id: -1, player_id: -1)
+    @empty_feature = Feature.find_by(name: "Empty", kingdom_id: -1, player_id: -1)
     @features = @kingdom.pref_list_features.includes(feature: [:image,{feature_events: :event}]).collect{|f| f.feature}.unshift(@empty_feature)
   end
 
   def update
     @gold = @kingdom.gold
-    @empty_feature = Feature.find_by(name: "\nEmpty", kingdom_id: -1, player_id: -1)
+    @empty_feature = Feature.find_by(name: "Empty", kingdom_id: -1, player_id: -1)
     calc_cost
 
     unless TxWrapper.take(@kingdom, :gold, @cost)
@@ -62,20 +62,21 @@ class Management::LevelsController < ApplicationController
       0.upto(@level.maxy-1){|y|
         0.upto(@level.maxx-1){|x|
           @temp = @level.level_maps.where(ypos: y, xpos: x).last
-          Rails.logger.info @temp.feature.name == "\nEmpty"
+
           if params[:map][y.to_s][x.to_s] != "" && (@temp.feature_id.to_i != params[:map][y.to_s][x.to_s].to_i) &&
-             (@temp.feature.nil? || @temp.feature.name[0..0] != "\n" || @temp.feature.name == "\nEmpty" )
+             (@temp.feature.nil? || !@temp.feature.system_generated )
             #The above is why you should not use special characters in a name to drive certain behavior.
             #This whole management console should be refactored.
             #if this is has storefronts, get rid of the previous store vacancies.
             if @temp.feature
               if @temp.feature.store_front_size.to_i > 0
                 @temp.kingdom_empty_shops.each{ |store| store.destroy }
-                @temp.feature.feature_events.each{ |fe|
+                @temp.feature.feature_events(includes: [:event]).each do |fe|
                   next unless fe.event.class == EventNpc
                   fe.event.npc.update_attribute(:is_hired, false)
                   fe.event.destroy
-                  fe.destroy }
+                  fe.destroy
+                end
               end
               TxWrapper.take(@kingdom, :housing_cap, @temp.feature.num_occupants.to_i)
             end

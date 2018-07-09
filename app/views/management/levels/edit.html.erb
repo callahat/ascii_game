@@ -38,7 +38,7 @@
               square = @level.level_maps.where(ypos: y, xpos: x).last.feature
               square ||= @empty_feature %>
             <td>
-              <% if square and square.name[0..0] == "\n" and square.name != "\nEmpty" %>
+              <% if square and square.system_generated %>
                 <div>
                   <div class="unchangeable_feature_slot" data-feature-id="<%= square.id %>">
                     <%= draw_feature square %>

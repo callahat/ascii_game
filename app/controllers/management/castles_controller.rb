@@ -35,7 +35,7 @@ class Management::CastlesController < ApplicationController
 
     @levels = session[:kingdom].levels
     @level = Level.find(params[:level][:id])
-    @feature = Feature.find_by(name: "\nCastle #{session[:kingdom].name}")
+    @feature = Feature.find_by(name: "Castle #{session[:kingdom].name}", system_generated: true)
 
     build_stairway(@level,@feature)
 
@@ -73,7 +73,7 @@ class Management::CastlesController < ApplicationController
   def set_throne
     #delete the old throne by setting that the old square to nil (unless this is the first set_throne)
     @level_map = LevelMap.find(params[:throne][:spot])
-    if @level_map.feature.try(:name).to_s !~ /\n(Empty|Throne)|\A\z/
+    unless @level_map.feature.try(:valid_throne_location)
       flash[:notice] = "Invalid place for throne; something else is already there"
       throne_square
       return
@@ -81,8 +81,8 @@ class Management::CastlesController < ApplicationController
     @level = @level_map.level
     if @throne.nil?
       #This assumes that the throne event was created when the kingom itself was created!
-      @throne_event = Event.find_by(name: "\nThrone #{session[:kingdom].name} event")
-      @old_fe = Feature.where(name: "\nCastle #{session[:kingdom].name}").last.feature_events.where(event_id: @throne_event).last
+      @throne_event = Event.find_by(name: "Throne #{session[:kingdom].name} event", system_generated: true)
+      @old_fe = Feature.where(name: "Castle #{session[:kingdom].name}", system_generated: true).last.feature_events.where(event_id: @throne_event).last
       if !@old_fe.nil?
         @old_fe.destroy
       end
@@ -96,7 +96,7 @@ class Management::CastlesController < ApplicationController
       #/ IMAGE SETUP CODE
 
       #However, assume the throne feature not set up yet.
-      @throne = Feature.sys_gen("\nThrone #{session[:kingdom].name}", @new_image.id)
+      @throne = Feature.sys_gen("Throne #{session[:kingdom].name}", @new_image.id)
 
       if !@throne.save
         Rails.logger.error 'Failed to save throne.'
@@ -105,7 +105,7 @@ class Management::CastlesController < ApplicationController
 
       throne_feature_event(@throne,@throne_event)
     else
-      @emtpy_feature = Feature.find_by(name: "\nEmpty", kingdom_id: -1, player_id: -1)
+      @emtpy_feature = Feature.find_by(name: "Empty", kingdom_id: -1, player_id: -1)
 
       @old_level_map = @throne.level_maps.last
       @old_level = @old_level_map.level
@@ -135,7 +135,7 @@ class Management::CastlesController < ApplicationController
 
   def build_stairway(level,feature)
     #MAKE EVENT
-    @event = EventMoveLocal.sys_gen({:name => "\nSYSTEM GENERATED",
+    @event = EventMoveLocal.sys_gen({:name => "Standard Stairway",
                                      :event_rep_type => SpecialCode.get_code('event_rep_type','unlimited'),
                                      :thing_id => level.id } )
     @event.save!
@@ -178,12 +178,12 @@ class Management::CastlesController < ApplicationController
 
   def init_stairways
     @stairways = Feature
-        .where(['name = ?', "\nCastle #{session[:kingdom].name}"])
+        .where(['name = ? and system_generated = true', "Castle #{session[:kingdom].name}"])
         .first
         .try(:local_move_events) || []
   end
 
   def init_throne
-    @throne = Feature.where(name: "\nThrone #{session[:kingdom].name}").last
+    @throne = Feature.find_by(name: "Throne #{session[:kingdom].name}", system_generated: true)
   end
 end

@@ -213,11 +213,11 @@ namespace :maintenance do
     @features = []
     @features << kingdom.all_features.where('public = false OR armed = false')
     puts "Destroying castle feature"
-    @features << Feature.find_first(:name => "\nCastle #{kingdom.name}")
+    @features << Feature.find_first(:name => "Castle #{kingdom.name}", system_generated: true)
     puts "Destroying the throne feature"
-    @features << Feature.find_first(:name => "\nThrone #{kingdom.name}")
+    @features << Feature.find_first(:name => "Throne #{kingdom.name}", system_generated: true)
     puts "Destroying worldmap entrance feature and world map tile"
-    @features << Feature.find_first(:name => "\nKingdom #{kingdom.name} entrance")
+    @features << Feature.find_first(:name => "Kingdom #{kingdom.name} entrance", system_generated: true)
     @features.flatten!.delete(nil)
     
     for feature in @features
@@ -247,14 +247,14 @@ namespace :maintenance do
     end
     
     puts "Destroying the castle event"
-    if @e=Event.find_first(:name => "\nCastle #{kingdom.name} event")
+    if @e=Event.find_by(name: "Castle #{kingdom.name} event", system_generated: true)
       nuke_array(@e.done_events)
       nuke_array(@e.event_subs)
       @e.destroy
     end
     
     puts "Destroying the throne event"
-    if @e=Event.find_first(:name => "\nThrone #{kingdom.name} event")
+    if @e=Event.find_by(name: "Throne #{kingdom.name} event", system_generated: true)
       nuke_array(@e.done_events)
       nuke_array(@e.event_subs)
       nuke_array(@e.feature_events) #just in case the throne doesnt have a specific feature

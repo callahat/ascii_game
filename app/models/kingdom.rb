@@ -122,14 +122,14 @@ class Kingdom < ActiveRecord::Base
   end
 
   def build_the_rest(wm)
-    @emtpy_feature = Feature.find_by(name: "\nEmpty", kingdom_id: -1, player_id: -1)
+    @emtpy_feature = Feature.find_by(name: "Empty", kingdom_id: -1, player_id: -1)
     @unlimited = SpecialCode.get_code('event_rep_type','unlimited')
-    @ec = EventCastle.sys_gen!(:name => "\nCastle #{self.name} event",
+    @ec = EventCastle.sys_gen!(:name => "Castle #{self.name} event",
                               :event_rep_type => @unlimited)
-    @et = EventThrone.sys_gen!(:name => "\nThrone #{self.name} event",
+    @et = EventThrone.sys_gen!(:name => "Throne #{self.name} event",
                               :event_rep_type => @unlimited)
     @castle_img = Image.new_castle(self)
-    @castle_feature = Feature.sys_gen("\nCastle #{self.name}", @castle_img.id)
+    @castle_feature = Feature.sys_gen("Castle #{self.name}", @castle_img.id)
     @castle_feature.save!
     @castle_fe = FeatureEvent.spawn_gen(:feature_id => @castle_feature.id,
                                         :event_id => @ec.id )
@@ -143,13 +143,13 @@ class Kingdom < ActiveRecord::Base
                                         :xpos => 2,
                                         :ypos => 1,
                                         :feature_id => @castle_feature.id)
-    @entrance = EventMoveLocal.sys_gen!(:name => "\nKingdom #{self.name} entrance",
+    @entrance = EventMoveLocal.sys_gen!(:name => "Kingdom #{self.name} entrance",
                                         :event_rep_type => @unlimited,
                                         :thing_id => @level.id )
-    @storm_event = EventStormGate.sys_gen!(:name => "\nKingdom #{self.name} storm event",
+    @storm_event = EventStormGate.sys_gen!(:name => "Kingdom #{self.name} storm event",
                                           :event_rep_type => @unlimited,
                                           :thing_id => @level.id )
-    @kingdom_entrance_feature = Feature.sys_gen("\nKingdom #{self.name} entrance", @castle_img.id)
+    @kingdom_entrance_feature = Feature.sys_gen("Kingdom #{self.name} entrance", @castle_img.id)
     @kingdom_entrance_feature.world_feature = true
     @kingdom_entrance_feature.save!
     @entrance_fe = FeatureEvent.spawn_gen(:feature_id => @kingdom_entrance_feature.id,
