@@ -98,9 +98,9 @@ class Kingdom < ActiveRecord::Base
           @msg = "Someone has already founded a kingdom here!"
         elsif ( @kingdom = Kingdom.build_foundation(who, kname, wm) ).valid?
           @kingdom.build_the_rest(wm)
-          @msg = "test1"
+          @msg = "Kingdom foundation build"
         else
-          @msg = "test2"
+          @msg = "Something went wrong building the foundation..."
           @ret_kingdom = @kingdom
         end
       end

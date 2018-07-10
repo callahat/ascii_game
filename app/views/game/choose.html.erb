@@ -1,6 +1,6 @@
 <p><b>There are several things you can do here:</b></p>
 
-<% for ev in @events do %>
+<% @events.each do |ev| %>
 <p>
 <%= link_to ev.as_option_text(@pc), {:action => 'do_choose', :id => ev.id } , :method => :post %>
 </p>

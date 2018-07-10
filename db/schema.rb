@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180707204451) do
+ActiveRecord::Schema.define(version: 20180709023304) do
 
   create_table "attack_spells", force: :cascade do |t|
     t.string   "name",         limit: 32,  default: "", null: false
@@ -213,19 +213,20 @@ ActiveRecord::Schema.define(version: 20180707204451) do
   add_index "done_quests", ["quest_id"], name: "quest_id", using: :btree
 
   create_table "events", force: :cascade do |t|
-    t.integer  "kingdom_id",     limit: 4,                     null: false
-    t.integer  "player_id",      limit: 4,                     null: false
-    t.integer  "event_rep_type", limit: 4,                     null: false
-    t.integer  "event_reps",     limit: 4
-    t.string   "name",           limit: 64,    default: "",    null: false
-    t.boolean  "armed",                        default: false
-    t.integer  "cost",           limit: 4,                     null: false
-    t.text     "text",           limit: 65535
-    t.string   "kind",           limit: 20
-    t.integer  "thing_id",       limit: 4
-    t.string   "flex",           limit: 256
+    t.integer  "kingdom_id",       limit: 4,                     null: false
+    t.integer  "player_id",        limit: 4,                     null: false
+    t.integer  "event_rep_type",   limit: 4,                     null: false
+    t.integer  "event_reps",       limit: 4
+    t.string   "name",             limit: 64,    default: "",    null: false
+    t.boolean  "armed",                          default: false
+    t.integer  "cost",             limit: 4,                     null: false
+    t.text     "text",             limit: 65535
+    t.string   "kind",             limit: 20
+    t.integer  "thing_id",         limit: 4
+    t.string   "flex",             limit: 256
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "system_generated",               default: false
   end
 
   add_index "events", ["armed", "kind", "kingdom_id"], name: "armed_kind_kingdom_id", using: :btree
@@ -268,6 +269,7 @@ ActiveRecord::Schema.define(version: 20180707204451) do
     t.integer  "store_front_size", limit: 4,   default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "system_generated",             default: false
   end
 
   add_index "features", ["armed", "world_feature", "name"], name: "armed_wrold_feature_name", using: :btree

@@ -8,29 +8,36 @@
     <tr>
       <!-- Available Features -->
       <td>
-        <div  style="overflow-y:scroll;height:500px">
-        <table>
-          <% @features.each do |feature| %>
-            <tr>
-              <td>
-                <div class="placeable_feature" data-feature-id="<%= feature.id %>" data-cost="<%= feature.cost %>">
-                  <div class="image">
-                    <%= draw_feature feature, strip_hidden_part: false %>
+        <b>Features on your preference list</b>
+        <div  style="overflow-y:scroll;max-height:450px">
+          <table>
+            <% @features.each do |feature| %>
+              <tr>
+                <td>
+                  <hr/>
+                  <div class="placeable_feature" data-feature-id="<%= feature.id %>" data-cost="<%= feature.cost %>">
+                    <div class="image">
+                      <%= draw_feature feature, strip_hidden_part: false %>
+                    </div>
                   </div>
-                </div>
-                <%= feature.name %><br/>
-                <b>Cost:</b> <%= feature.cost %><br/>
-                <span class="feature_details" data-feature-id="<%= feature.id %>">*Details</span>
-                <%= render partial: 'feature_details', locals: { feature: feature } %>
-              </td>
-            </tr>
-          <% end %>
-        </table>
+                  <b><%= feature.name %></b><br/>
+                  <b>Cost:</b> <%= feature.cost %><br/>
+                  <span class="feature_details" data-feature-id="<%= feature.id %>">*Details</span>
+                  <%= render partial: 'feature_details', locals: { feature: feature } %>
+                </td>
+              </tr>
+            <% end %>
+          </table>
         </div>
       </td>
 
       <!-- Map -->
-      <td>
+      <td valign="top">
+        <p>Drag and drop featues from your preference list. You may have other features available,
+           but unless they are on your preference list they won't appear here. Click <i>'*Details'</i>
+           for more information about a feature. <i>Dark gray</i> are invalid locations, <i>light gray</i>
+           is ok. The <i>black outline</i> hilights your current new changes. These changes will not
+           be saved until you click 'Update level'.</p>
         <table id="level_map">
           <% 0.upto(@level.maxy-1) do |y| %>
           <tr>

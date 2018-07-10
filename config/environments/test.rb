@@ -42,5 +42,6 @@ AsciiGame3::Application.configure do
     Bullet.enable = true
     Bullet.bullet_logger = true
     Bullet.raise = true
+    # Bullet.add_whitelist type: :n_plus_one_query, class_name: "Event", association: :thing
   end
 end
