@@ -69,6 +69,7 @@ class Event < ActiveRecord::Base
 
   def self.sys_gen(n)
     @sys_gen_event = self.new(n)
+    @sys_gen_event.system_generated = true
     @sys_gen_event.kingdom_id = -1
     @sys_gen_event.player_id = -1
     @sys_gen_event.armed = 1

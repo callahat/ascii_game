@@ -17,32 +17,6 @@ module ManagementHelper
     (@ret + "\n</table>\n").html_safe
   end
 
-  def edit_kingdom_map(where)
-    @ret = "<table>"
-    0.upto(where.maxy-1){ |y|
-      @ret += "<tr>\n"
-      0.upto(where.maxx-1){ |x|
-        @ret += "<td>\n"
-        square = where.level_maps.where(ypos: y, xpos: x).last.feature
-        if square.nil? || square.name == "\nEmpty"
-          @ret += "<select name=\"map[#{ y }][#{ x }]\" style=\"width:9em\">\n" +
-                  "  <option value = \"\"></option>\n  " +
-                  "  #{ options_from_collection_for_select(@features, 'id','name') }\n"
-        elsif square.name[0..0] == "\n"
-          @ret += h(square.name[1..12]) + ( square.name[13..13] ? "..." : "" ) +
-                  "<input type='hidden' value=\"#{ square.id }\" name=\"map[#{ y }][#{ x }]\"/>\n".html_safe
-        else
-          @ret += "<select name=\"map[#{ y }][#{ x }]\" style=\"width:9em\">\n" +
-                  "  <option value = \"\">#{ (square ? "("+square.name+")" : "" ) }</option>\n" +
-                  "  #{ options_from_collection_for_select(@features,'id','name', nil ) }\n"
-        end
-      @ret += "</td>\n"
-      }
-    @ret += "</tr>\n"
-    }
-    (@ret + "</table>\n").html_safe
-  end
-
   def npc_summary_rows(npcs)
     npcs.inject(""){|ret, npc|
       ret += "  <tr>

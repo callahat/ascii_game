@@ -33,7 +33,7 @@ class Management::CastlesControllerTest < ActionController::TestCase
     assert_difference 'session[:kingdom].gold', -500 do
       post :create, level: {id: @level.id}
       assert Feature
-                 .where(name: "\nCastle #{session[:kingdom].name}")
+                 .where(name: "Castle #{session[:kingdom].name}", system_generated: true)
                  .first
                  .local_move_events
                  .where(thing_id: @level.id)
@@ -43,7 +43,7 @@ class Management::CastlesControllerTest < ActionController::TestCase
   test "should destroy level stairs" do
     delete :destroy, id: events(:local_move_event)
     assert_equal [], Feature
-               .where(name: "\nCastle #{session[:kingdom].name}")
+               .where(name: "Castle #{session[:kingdom].name}", system_generated: true)
                .first
                .local_move_events
   end
@@ -72,7 +72,7 @@ class Management::CastlesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:squares)
     assert_template :throne
 
-    throne_feature_name = "\nThrone #{session[:kingdom].name}"
+    throne_feature_name = "Throne #{session[:kingdom].name}"
 
     level_maps(:test_level_map_2_0).update_attribute :feature_id, features(:empty_feature).id
 

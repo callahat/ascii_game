@@ -116,7 +116,8 @@ throne_event:
   kingdom: kingdom_one
   player_id: -1
   event_rep_type: <%= SpecialCode.get_code('event_rep_type','unlimited') %>
-  name: "\nThrone HealthyTestKingdom event"
+  name: "Throne HealthyTestKingdom event"
+  system_generated: true
   kind: "EventThrone"
   armed: 1
   cost: 0

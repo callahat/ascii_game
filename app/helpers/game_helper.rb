@@ -22,6 +22,13 @@ module GameHelper
   end
   
 #protected
+  def draw_feature feature, strip_hidden_part: true
+    <<-HTML.html_safe
+      <span class="feature image"
+            title="#{ strip_hidden_part ? feature.name.split("::").first : feature.name }">#{ html_escape feature.image.image_text }</span>
+    HTML
+  end
+
   def draw_kingdom_map(where)
     @ret = "<p><b>" + where.kingdom.name + ", level " + where.level.to_s + "</b></p>\n"
     @ret += "<p>" + helper_link_to('Leave Kingdom', :action => 'leave_kingdom') + "</p>\n" if where.level == 0
@@ -30,13 +37,8 @@ module GameHelper
       @ret += "<tr>\n"
       0.upto(where.maxx-1){|x|
         level_map = where.level_maps.where(ypos: y, xpos: x).last
-        if level_map && feature = level_map.feature
-          @ret += "<td>\n<a href=\"/game/feature?id=" + level_map.id.to_s + "\" class=\"map\">" + 
-                  "<span class=\"feature image\" title=\"" + (feature.name.split("::").first) + "\">"  + html_escape(feature.image.image_text) + "</span>\n</a></td>\n"
-        else
-          @ret += "<td>\n<a href=\"#\" class=\"map\"><pre class=\"feature image\" title=\"Empty\">" +
-                  h(EMPTY_IMAGE) + "</span></a></td>\n"
-        end
+        @ret += "<td>\n<a href=\"/game/feature?id=" + level_map.id.to_s + "\" class=\"map\">" +
+            draw_feature(level_map.feature) + "</a></td>\n"
       }
       @ret += "</tr>\n"
     }
@@ -78,15 +80,9 @@ module GameHelper
       @ret += "<tr>"
       1.upto(where[0].maxx){|x|
         wm = where[0].world_maps.where(bigypos: where[2], bigxpos: where[1], ypos: y, xpos: x).last
-        if wm && f = wm.feature
-          @ret += "<td><a href=\"/game/feature?id=" + wm.id.to_s + "\" class=\"map\">" +
-                  "<span class=\"world_feature image\" title=\"" + h(f.name.split("::").first) + "\">" + h(f.image.image_text) + "</span>" +
-                  "</a></td>"
-        else
-          @ret += "<td><a href=# class=\"map\">" +
-                  "<span class=\"world_feature image\" title=\"Empty\">" + h(EMPTY_IMAGE) + "</span>" +
-                  "</a></td>"
-        end
+        @ret += "<td><a href=\"/game/feature?id=" + wm.id.to_s + "\" class=\"map\">" +
+                draw_feature(wm.feature) +
+                "</a></td>"
       }
       @ret += "</tr>"
     }

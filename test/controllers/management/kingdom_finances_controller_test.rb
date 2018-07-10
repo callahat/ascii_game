@@ -23,6 +23,11 @@ class Management::KingdomFinancesControllerTest < ActionController::TestCase
       assert_redirected_to edit_management_kingdom_finances_path
     end
 
+    assert_no_difference 'session[:kingdom].reload.gold' do
+      post :withdraw, withdraw: -50
+      assert_redirected_to edit_management_kingdom_finances_path
+    end
+
     session[:kingdom].update_attribute :gold, 500
     assert_difference 'session[:kingdom].player_character.reload.gold', +30 do
       assert_difference 'session[:kingdom].reload.gold', -30 do
@@ -36,6 +41,11 @@ class Management::KingdomFinancesControllerTest < ActionController::TestCase
     session[:kingdom].player_character.update_attribute :gold, 0
     assert_no_difference 'session[:kingdom].player_character.reload.gold' do
       post :deposit, deposit: 9999999
+      assert_redirected_to edit_management_kingdom_finances_path
+    end
+
+    assert_no_difference 'session[:kingdom].player_character.reload.gold' do
+      post :deposit, deposit: -50
       assert_redirected_to edit_management_kingdom_finances_path
     end
 

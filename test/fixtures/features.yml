@@ -29,7 +29,7 @@ kingdom_spawn_feature:
   name: "Kingdom Spawn Feature"
   description: "An unarmed feature for testing the controllers"
 empty_feature:
-  name: "\nEmpty"
+  name: "Empty"
   player_id: -1
   kingdom_id: -1
   world_feature: 1
@@ -57,5 +57,6 @@ multiclass_npc:
 
 kingdom_one_castle_feature:
   <<: *default_feature
-  name: "\nCastle HealthyTestKingdom"
+  name: "Castle HealthyTestKingdom"
+  system_generated: true
   description: "HealthyTestKingdom's castle"

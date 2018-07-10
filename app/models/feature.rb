@@ -20,6 +20,7 @@ class Feature < ActiveRecord::Base
   def self.sys_gen(name, image_id)
     @sys_gen_feature = Feature.new
     @sys_gen_feature.name = name
+    @sys_gen_feature.system_generated = true
     @sys_gen_feature.kingdom_id = -1
     @sys_gen_feature.player_id = -1
     @sys_gen_feature.world_feature = false
@@ -67,6 +68,10 @@ class Feature < ActiveRecord::Base
     pri = feature_events.find_by(['priority > ?', priority])
     return nil unless pri
     pri.priority
+  end
+
+  def valid_throne_location
+    name == 'Empty' or (name =~ /Throne/ and system_generated)
   end
   
   #Pagination related stuff

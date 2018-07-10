@@ -14,8 +14,8 @@
     <% (0..@squares.maxx-1).each do |x| %>
     <td><% @lm = @squares.level_maps.where(ypos: y, xpos: x).last %>
     <%= feature_name = @lm.feature.try(:name).to_s %>
-    <%= feature_name =~ /\nThrone/ %>
-    <%= radio_button_tag 'throne[spot]', @lm.id, feature_name =~ /\nThrone/, disabled: (feature_name !~ /\n(Empty|Throne)|\A\z/ ) %>
+    <%= feature_name =~ /Throne/ %>
+    <%= radio_button_tag 'throne[spot]', @lm.id, feature_name =~ /Throne/, disabled: !@lm.feature.valid_throne_location %>
     </td>
 <%  end %>
 </tr>

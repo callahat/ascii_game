@@ -1,17 +1,96 @@
+<%= javascript_include_tag 'levels_edit' %>
+
 <h1>Editing level</h1>
 
 <%= form_for [:management,@level], path: management_level_path  do |f| %>
-	<%= edit_kingdom_map(@level) %>
-	<%= f.submit %>
+
+  <table>
+    <tr>
+      <!-- Available Features -->
+      <td>
+        <b>Features on your preference list</b>
+        <div  style="overflow-y:scroll;max-height:450px">
+          <table>
+            <% @features.each do |feature| %>
+              <tr>
+                <td>
+                  <hr/>
+                  <div class="placeable_feature" data-feature-id="<%= feature.id %>" data-cost="<%= feature.cost %>">
+                    <div class="image">
+                      <%= draw_feature feature, strip_hidden_part: false %>
+                    </div>
+                  </div>
+                  <b><%= feature.name %></b><br/>
+                  <b>Cost:</b> <%= feature.cost %><br/>
+                  <span class="feature_details" data-feature-id="<%= feature.id %>">*Details</span>
+                  <%= render partial: 'feature_details', locals: { feature: feature } %>
+                </td>
+              </tr>
+            <% end %>
+          </table>
+        </div>
+      </td>
+
+      <!-- Map -->
+      <td valign="top">
+        <p>Drag and drop featues from your preference list. You may have other features available,
+           but unless they are on your preference list they won't appear here. Click <i>'*Details'</i>
+           for more information about a feature. <i>Dark gray</i> are invalid locations, <i>light gray</i>
+           is ok. The <i>black outline</i> hilights your current new changes. These changes will not
+           be saved until you click 'Update level'.</p>
+        <table id="level_map">
+          <% 0.upto(@level.maxy-1) do |y| %>
+          <tr>
+            <% 0.upto(@level.maxx-1) do |x|
+              square = @level.level_maps.where(ypos: y, xpos: x).last.feature
+              square ||= @empty_feature %>
+            <td>
+              <% if square and square.system_generated %>
+                <div>
+                  <div class="unchangeable_feature_slot" data-feature-id="<%= square.id %>">
+                    <%= draw_feature square %>
+                  </div>
+
+                  <%= hidden_field_tag "map[#{ y }][#{ x }]", square.id %>
+                </div>
+              <% else %>
+                <div>
+                  <div class="feature_slot" data-cost="0">
+                    <%= draw_feature square, strip_hidden_part: false %>
+                  </div>
+
+                  <%= hidden_field_tag "map[#{ y }][#{ x }]", square.id, class: 'coordinate' %>
+                </div>
+              <% end %>
+
+            </td>
+            <% end %>
+          </tr>
+          <% end %>
+
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="100%">
+        <table>
+          <tr>
+            <td>Kingdom Coffers:</td>
+            <td style="text-align:right"><%= @gold %></td>
+          </tr>
+          <tr>
+            <td>Estimate of new construction:</td>
+            <td style="text-align:right"><span id="estimate">0</span></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+	<%= f.submit %> |
+  <%= link_to 'Clear changes', :action => 'edit', :id => @level %> |
+  <%= link_to 'Show', :action => 'show', :id => @level %> |
+  <%= link_to 'List Levels', :action => 'index' %>
 <% end %>
-<table>
-<tr><td>Kingdom Coffers : <%= @gold %></td></tr>
-<tr><td colspan=2>Pricing:</td></tr>
- <% for feature in @features %>
- <tr><td><label for="c<%= feature.id %>"></label> <%= feature.name %> </td><td><%= feature.cost %></td></tr>
- <% end %>
-</table>
 
 
-<%= link_to 'Show', :action => 'show', :id => @level %> |
-<%= link_to 'List Levels', :action => 'index' %>
