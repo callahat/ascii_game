@@ -50,6 +50,11 @@ class ForumControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test "view_thred when not signed in" do
+    get :threds, bname: forum_nodes(:board_1).name, tname: forum_nodes(:thread_1_1).name
+    assert_response :success
+  end
+
   test "new_thred" do
     sign_in players(:test_player_mod)
     get :new_thred, bname: forum_nodes(:board_1).name

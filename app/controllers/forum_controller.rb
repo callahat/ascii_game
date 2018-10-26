@@ -55,8 +55,8 @@ class ForumController < ApplicationController
   
   def threds
     @more_conds = node_flags(current_player)
-    if current_player.forum_attribute.mod_level > 2
-    @threds = ForumNodeThread.get_page(params[:page], @more_conds, @board.id).includes(last_post: [:player])
+    if player_signed_in? && current_player.forum_attribute.mod_level > 2
+      @threds = ForumNodeThread.get_page(params[:page], @more_conds, @board.id).includes(last_post: [:player])
     else
       @threds = ForumNodeThread.get_page(params[:page], @more_conds, @board.id).includes(:parent,:forum_node,last_post: [:player])
     end
