@@ -79,7 +79,7 @@ namespace :maintenance do
   
   desc "This wipes all player data, boards, forums, pc's, player accounts, etc"
   task(:nuke_all_player_data => :environment) do
-    puts "Are you sure motherfucker?"
+    puts "Are you sure you want to delete all player data?"
     x = STDIN.gets
 
     puts x[0]
@@ -150,7 +150,7 @@ namespace :maintenance do
       puts "Destroying players"
       nuke_array(Player.where('id > 1'))
     else
-      puts "...pussy"
+      puts "aborting "
     end
   end
   

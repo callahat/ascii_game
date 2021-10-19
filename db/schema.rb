@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180709023304) do
+ActiveRecord::Schema.define(version: 20211019102350) do
 
   create_table "attack_spells", force: :cascade do |t|
     t.string   "name",         limit: 32,  default: "", null: false
@@ -722,7 +722,7 @@ ActiveRecord::Schema.define(version: 20180709023304) do
     t.string   "handle",                 limit: 32,    default: "",    null: false
     t.string   "passwd",                 limit: 256,   default: "",    null: false
     t.string   "city",                   limit: 32,    default: ""
-    t.string   "state",                  limit: 2,     default: ""
+    t.string   "state",                  limit: 32,    default: ""
     t.string   "country",                limit: 32,    default: ""
     t.string   "email",                  limit: 64,    default: ""
     t.string   "AIM",                    limit: 32,    default: ""

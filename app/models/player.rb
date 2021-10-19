@@ -32,7 +32,14 @@ class Player < ActiveRecord::Base
             :presence => true,
             :uniqueness => {
                 :case_sensitive => false
-            }
+            },
+            length: {maximum: 32}
+  validates :city, length: {maximum: 32}
+  validates :state, length: {maximum: 32}
+  validates :country, length: {maximum: 32}
+  validates :email, length: {maximum: 64}
+  validates :AIM, length: {maximum: 32}
+  validates :yahoo_sn, length: {maximum: 32}
 
   #Pagination related stuff
   def self.get_page(page)
